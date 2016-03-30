@@ -52,7 +52,6 @@ public:
 	// managing Sources
 
 	void addFunctionAndWakeup(RunloopFuncSP runloopFuncSP);
-	void notifyWork();
 	static void addFunctionAndWakeup(std::function<void(void)> Func, RunloopNum rlNum);
 
 	runLoop() :workVectorSP_(new std::vector<RunloopFuncSP>()){
@@ -65,6 +64,9 @@ private:
 		return runloopMap_.at(rlNum);
 	}
 	*/
+// must lock mutexWorkVectorSP_
+	void notifyWorkNotlock();
+	void notifyWorklock();
 
 	WorkVectorSP getVectorSP() {
 		std::lock_guard<std::mutex> l(mutexWorkVectorSP_);
@@ -117,11 +119,19 @@ void runLoop::addFunctionAndWakeup(runLoop::RunloopFuncSP runloopFuncSP) {
 	}
 	this->workVectorSP_->push_back(std::move(runloopFuncSP));
 	// notify thread work
-	notifyWork();
+	notifyWorkNotlock();
 }
 
-void runLoop::notifyWork() {
+void runLoop::notifyWorkNotlock() {
 	// notify thread work
+	if (this->isWait_) {
+		this->isWait_ = false;
+		this->workVectorCondVar_.notify_one();
+	}
+}
+
+void runLoop::notifyWorklock() {
+	std::lock_guard<std::mutex> l(this->mutexWorkVectorSP_);
 	if (this->isWait_) {
 		this->isWait_ = false;
 		this->workVectorCondVar_.notify_one();
