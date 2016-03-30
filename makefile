@@ -1,10 +1,9 @@
 src = $(wildcard ./yijian/base/*.cpp) $(wildcard ./*.cpp)
 #notDirSrc = $(notdir $(src))
 objects = $(patsubst %.cpp, %.o, $(src))
-
 cleanObjects = $(shell find ./ -type f | grep "\.o$$");
-
 target = a.out
+
 ALL:$(target)
 #ALL:
 #	@echo $(src)
