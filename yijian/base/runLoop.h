@@ -101,11 +101,13 @@ void runLoop::run() {
 					return !isWait_;
 					});
 		}
-		if (NULL != workVectorSP)
-		for (const auto& funcP: *workVectorSP) {
-			(*funcP)();
+		if (NULL != workVectorSP) {
+			printf("%lu",workVectorSP->size());
+			for (const auto& funcP: *workVectorSP) {
+				(*funcP)();
+			}
+			workVectorSP->clear();
 		}
-		workVectorSP->clear();
 	}
 }
 

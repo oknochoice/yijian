@@ -1,8 +1,8 @@
 src = $(wildcard ./yijian/base/*.cpp) $(wildcard ./*.cpp)
 #notDirSrc = $(notdir $(src))
 objects = $(patsubst %.cpp, %.o, $(src))
-cleanObjects = $(shell find ./ -type f | grep "\.o$$");
 target = a.out
+cleanObjects = $(shell find ./ -type f | grep "\.o$$") $(target)
 
 ALL:$(target)
 #ALL:
@@ -22,6 +22,6 @@ $(objects):%.o:%.cpp
 	#$(CC) -c $< $(CFLAGS) -o $(addprefix $(objectPath),$@)
 
 clean:
-	-rm -f $(cleanObjects)
+	-rm -f $(cleanObjects) 
 
 .PHONY: ALL 
