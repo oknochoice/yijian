@@ -1,4 +1,4 @@
-src = $(wildcard ./yijian/base/*.cpp) $(wildcard ./*.cpp)
+src = $(wildcard ./yijian/*.cpp) $(wildcard ./*.cpp)
 #notDirSrc = $(notdir $(src))
 objects = $(patsubst %.cpp, %.o, $(src))
 target = a.out
@@ -13,7 +13,7 @@ ALL:$(target)
 #	@echo "end"
 
 CC = g++
-CFLAGS = -Wl,--no-as-needed -std=c++11 -pthread -I./yijian/base -g
+CFLAGS = -Wl,--no-as-needed -std=c++11 -pthread -I./yijian -g
 
 $(target):$(objects)
 	$(CC) -o $@ $^ $(CFLAGS)

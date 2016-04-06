@@ -75,7 +75,7 @@ private:
 
 private:
 
-	bool isNeedRun = true;
+	bool isNeedRun_ = true;
 	std::mutex mutexRequestStop_;
 
 	WorkVectorSP workVectorSP_;
@@ -92,7 +92,7 @@ std::map<runLoop::RunloopNum, runLoop::RunloopSP> runLoop::runloopMap_;
 std::mutex runLoop::mutexRunloopMap_;
 
 void runLoop::run() {
-	while (isNeedRun) {
+	while (isNeedRun_) {
 		auto workVectorSP = getVectorSP();
 		if (NULL == workVectorSP || workVectorSP->empty()) {
 			std::unique_lock<std::mutex> ul(mutexWorkVectorSP_);
