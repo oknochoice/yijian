@@ -32,7 +32,6 @@ private:
 class epoll:public noncopyable {
 
 class data {
-#warning writing 
 public:
 	bool isReadable = false;
 	bool isWritable = false;

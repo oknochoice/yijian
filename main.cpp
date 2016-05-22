@@ -30,7 +30,7 @@ int main()
 	while (1) {
 		unsigned int randomNum = u(e);
 		index = randomNum % 2 + 1;
-		//std::cout << "random number = " << randomNum<< ", index = "<< index << std::endl;
+		std::cout << "random number = " << randomNum<< ", index = "<< index << std::endl;
 		yijian::runLoop::addFunctionAndWakeup([=] () mutable{
 					std::cout << "t" << yijian::currentThread::runloopNum << ": running...  " << std::endl;
 					},index);

@@ -27,6 +27,7 @@ public:
 	typedef unsigned int RunloopNum;
 	typedef std::shared_ptr<std::vector<RunloopFuncSP>> WorkVectorSP;
 
+
 	// getting a runloop
 	static RunloopSP& currentRunloop(RunloopNum rlNum) {
 		if (likely(0 == currentThread::runloopNum)) {
@@ -51,8 +52,8 @@ public:
 	void run();
 	// managing Sources
 
-	void addFunctionAndWakeup(RunloopFuncSP runloopFuncSP);
-	static void addFunctionAndWakeup(std::function<void(void)> Func, RunloopNum rlNum);
+	void addFunctionAndWakeup(RunloopFunc && func);
+	static void addFunctionAndWakeup(RunloopFunc &&func, RunloopNum rlNum);
 
 	runLoop() :workVectorSP_(new std::vector<RunloopFuncSP>()){
 	}
@@ -65,7 +66,7 @@ private:
 	}
 	*/
 // must lock mutexWorkVectorSP_
-	void notifyWorkNotlock();
+	void notifyWorkNolock();
 	void notifyWorklock();
 
 	WorkVectorSP getVectorSP() {
@@ -79,7 +80,6 @@ private:
 	std::mutex mutexRequestStop_;
 
 	WorkVectorSP workVectorSP_;
-	bool isWait_ = true;
 	std::mutex mutexWorkVectorSP_;
 	std::condition_variable workVectorCondVar_;
 
@@ -94,53 +94,49 @@ std::mutex runLoop::mutexRunloopMap_;
 void runLoop::run() {
 	while (isNeedRun_) {
 		auto workVectorSP = getVectorSP();
-		if (NULL == workVectorSP || workVectorSP->empty()) {
-			std::unique_lock<std::mutex> ul(mutexWorkVectorSP_);
-			isWait_ = true;
-			workVectorCondVar_.wait(ul, [&]{
-					return !isWait_;
-					});
-		}
-		if (NULL != workVectorSP) {
-			printf("%lu",workVectorSP->size());
+//		printf("before vector size %lu\n",workVectorSP->size());
+		if (NULL != workVectorSP && !workVectorSP->empty()) {
+//			printf("vector size %lu\n",workVectorSP->size());
 			for (const auto& funcP: *workVectorSP) {
 				(*funcP)();
 			}
 			workVectorSP->clear();
+		}else{
+			std::unique_lock<std::mutex> ul(mutexWorkVectorSP_);
+//			printf("wait\n");
+			workVectorCondVar_.wait(ul, [&]{
+//					printf("wake\n %lu", workVectorSP->size());
+					return !this->workVectorSP_->empty();
+					});
 		}
 	}
 }
 
-void runLoop::addFunctionAndWakeup(runLoop::RunloopFuncSP runloopFuncSP) {
+void runLoop::addFunctionAndWakeup(RunloopFunc && func) {
 	// get runloop workvector add function
 	//std::shared_ptr<runLoop> runloopSP(this);
 	std::lock_guard<std::mutex> l(this->mutexWorkVectorSP_);
 	if (!this->workVectorSP_.unique()) {
-		WorkVectorSP workVectorSP(new std::vector<RunloopFuncSP>());
-		this->workVectorSP_.swap(workVectorSP);
+		this->workVectorSP_.reset(new std::vector<RunloopFuncSP>());
 	}
-	this->workVectorSP_->push_back(std::move(runloopFuncSP));
+	this->workVectorSP_->push_back(RunloopFuncSP(new RunloopFunc(func)));
+
+	//printf("add vector size %lu\n",this->workVectorSP_->size());
 	// notify thread work
-	notifyWorkNotlock();
+	notifyWorkNolock();
 }
 
-void runLoop::notifyWorkNotlock() {
+void runLoop::notifyWorkNolock() {
 	// notify thread work
-	if (this->isWait_) {
-		this->isWait_ = false;
-		this->workVectorCondVar_.notify_one();
-	}
+	this->workVectorCondVar_.notify_one();
 }
 
 void runLoop::notifyWorklock() {
 	std::lock_guard<std::mutex> l(this->mutexWorkVectorSP_);
-	if (this->isWait_) {
-		this->isWait_ = false;
-		this->workVectorCondVar_.notify_one();
-	}
+	this->workVectorCondVar_.notify_one();
 }
 
-void runLoop::addFunctionAndWakeup(std::function<void(void)> Func, RunloopNum rlNum) {
+void runLoop::addFunctionAndWakeup(RunloopFunc && func, RunloopNum rlNum) {
 	// get runloop
 	std::unique_lock<std::mutex> ul(mutexRunloopMap_);
 	if (runloopMap_.find(rlNum) == runloopMap_.end())
@@ -148,8 +144,7 @@ void runLoop::addFunctionAndWakeup(std::function<void(void)> Func, RunloopNum rl
 	auto& runloopSP = runloopMap_.at(rlNum);
 	ul.unlock();
 	// get runloop workvector add function
-	RunloopFuncSP runloopFuncSP(new RunloopFunc(Func));
-	runloopSP->addFunctionAndWakeup(runloopFuncSP);
+	runloopSP->addFunctionAndWakeup(std::forward<RunloopFunc>(func));
 }
 
 
