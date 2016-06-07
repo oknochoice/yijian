@@ -1,3 +1,6 @@
+//#define CATCH_CONFIG_RUNNER
+//#include "catch.hpp"
+
 #include <iostream>
 #include <sstream>
 #include <string.h>
@@ -7,8 +10,15 @@
 #include <random>
 
 #include "runLoop.h"
-int main()
+
+
+int main(int argc, char * argv[])
 {
+
+//	int result = Catch::Session().run(argc, argv);
+
+//	return result;
+
 	std::thread t1([]{
 			std::cout << "t1 begin..." << std::endl;
 			yijian::runLoop::currentRunloop(1)->run();
