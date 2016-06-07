@@ -1,5 +1,5 @@
-//#define CATCH_CONFIG_RUNNER
-//#include "catch.hpp"
+#define CATCH_CONFIG_RUNNER
+#include "catch.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -15,9 +15,9 @@
 int main(int argc, char * argv[])
 {
 
-//	int result = Catch::Session().run(argc, argv);
+	int result = Catch::Session().run(argc, argv);
 
-//	return result;
+	return result;
 
 	std::thread t1([]{
 			std::cout << "t1 begin..." << std::endl;
