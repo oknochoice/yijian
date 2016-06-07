@@ -1,7 +1,7 @@
 # MQTT
 MQTT c++11
 
-cd MQTT
+cd MQTT \n
 mkdir build
 cd build
 cmake ..
