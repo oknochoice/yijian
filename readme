@@ -1,4 +1,6 @@
 cd MQTT
+git submodule update --init submodules/
+cp ./cmake/catch ./submodules/Catch/CMakeLists.txt
 mkdir build
 cd build
 cmake ..
