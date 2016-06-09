@@ -1,10 +1,10 @@
 install step：
 
-cd MQTT
-git submodule update --init submodules/
-cp ./cmake/catch ./submodules/Catch/CMakeLists.txt
+cd mqtt
 mkdir build
 cd build
 cmake ..
+#maybe need cd /build/catch/src/
+#maybe need git clone git@github.com:oknochoice/MQTT.git catch
 make
 ./a.out
