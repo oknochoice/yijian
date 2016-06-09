@@ -7,6 +7,7 @@ ExternalProject_Add(
 	catch
 	PREFIX ${CMAKE_BINARY_DIR}/catch
 	GIT_REPOSITORY https://github.com/philsquared/Catch.git
+	#GIT_REPOSITORY ""
 	TIMEOUT 10
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""

@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8)
 project(yijian)
 
-add_executable(a.out main.cxx)
 
 set(CMAKE_BUILD_TYPE "Debug")
 set(CXX_FLAGS "-std=c++11 -pthread")
@@ -14,9 +13,10 @@ add_subdirectory(yijian)
 include_directories(yijian)
 #target_link_libraries(a.out yijian)
 
-# catch
-set(EXT_PROJECTS_DIR submodules)
-add_subdirectory(${EXT_PROJECTS_DIR}/Catch)
-include_directories(submodules/Catch/include)
+# Includes Catch in the project:
+set(EXT_PROJECTS_DIR externals)
+add_subdirectory(${EXT_PROJECTS_DIR}/catch)
+include_directories(${CATCH_INCLUDE_DIR} ${COMMON_INCLUDES})
 enable_testing(true)  # Enables unit-testing
 
+add_executable(a.out main.cxx)

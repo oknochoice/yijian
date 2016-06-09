@@ -19,6 +19,7 @@ int main(int argc, char * argv[])
 
 	return result;
 
+	/*
 	std::thread t1([]{
 			std::cout << "t1 begin..." << std::endl;
 			yijian::runLoop::currentRunloop(1)->run();
@@ -48,4 +49,38 @@ int main(int argc, char * argv[])
 	}
 	
 	return 0;
+	*/
+}
+
+TEST_CASE( "vectors can be sized and resized", "[vector]" ) {
+
+    std::vector<int> v( 5 );
+
+    REQUIRE( v.size() == 5 );
+    REQUIRE( v.capacity() >= 5 );
+
+    SECTION( "resizing bigger changes size and capacity" ) {
+        v.resize( 10 );
+
+        REQUIRE( v.size() == 10 );
+        REQUIRE( v.capacity() >= 10 );
+    }
+    SECTION( "resizing smaller changes size but not capacity" ) {
+        v.resize( 0 );
+
+        REQUIRE( v.size() == 0 );
+        REQUIRE( v.capacity() >= 5 );
+    }
+    SECTION( "reserving bigger changes capacity but not size" ) {
+        v.reserve( 10 );
+
+        REQUIRE( v.size() == 5 );
+        REQUIRE( v.capacity() >= 10 );
+    }
+    SECTION( "reserving smaller does not change size or capacity" ) {
+        v.reserve( 0 );
+
+        REQUIRE( v.size() == 5 );
+        REQUIRE( v.capacity() >= 5 );
+    }
 }
