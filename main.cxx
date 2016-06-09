@@ -52,6 +52,10 @@ int main(int argc, char * argv[])
 	*/
 }
 
+TEST_CASE("my test", "[test]") {
+	REQUIRE( 1 != 1 );
+}
+
 TEST_CASE( "vectors can be sized and resized", "[vector]" ) {
 
     std::vector<int> v( 5 );
