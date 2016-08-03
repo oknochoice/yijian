@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8)
 project(yijian)
-
+add_executable(a.out main.cxx)
 
 set(CMAKE_BUILD_TYPE "Debug")
 set(CXX_FLAGS "-std=c++11 -pthread")
@@ -19,4 +19,3 @@ add_subdirectory(${EXT_PROJECTS_DIR}/catch)
 include_directories(${CATCH_INCLUDE_DIR} ${COMMON_INCLUDES})
 enable_testing(true)  # Enables unit-testing
 
-add_executable(a.out main.cxx)
