@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string.h>
 #include <vector>
 #include <thread>
@@ -126,8 +127,19 @@ int main(int argc, char * argv[])
 		std::cout << s1 << std::endl;
 	}
 
-	int result = Catch::Session().run(argc, argv);
+	{
+		std::ostream hexout(std::cout.rdbuf());
+		hexout.setf(std::ios::hex, std::ios::basefield);
+		hexout.setf(std::ios::showpos);
 
+		hexout << "hexout: " << 177 << " ";
+		std::cout << "cout: " << 177 << " ";
+		hexout << "hexout: " << -49 << " ";
+		std::cout << "cout: " << -49 << " ";
+		hexout << std::endl;
+	}
+
+	int result = Catch::Session().run(argc, argv);
 	return result;
 
 	/*
@@ -145,7 +157,6 @@ int main(int argc, char * argv[])
 			});
 	t2.detach();
 
-	unsigned int index = 1;
 	std::default_random_engine e;
 	std::uniform_int_distribution<unsigned> u(0,100);
 
