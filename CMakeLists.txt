@@ -13,9 +13,13 @@ add_subdirectory(yijian)
 include_directories(yijian)
 #target_link_libraries(a.out yijian)
 
-# Includes Catch in the project:
+#
 set(EXT_PROJECTS_DIR externals)
+# Includes Catch in the project:
 add_subdirectory(${EXT_PROJECTS_DIR}/catch)
 include_directories(${CATCH_INCLUDE_DIR} ${COMMON_INCLUDES})
+# Includes Spdlog in the project:
+add_subdirectory(${EXT_PROJECTS_DIR}/spdlog)
+include_directories(${SPDLOG_INCLUDE_DIR} ${COMMON_INCLUDES})
+#
 enable_testing(true)  # Enables unit-testing
-

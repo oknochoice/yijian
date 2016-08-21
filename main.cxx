@@ -1,5 +1,7 @@
 #define CATCH_CONFIG_RUNNER
+#define YILOG_ON
 #include "catch.hpp"
+#include "spdlog/spdlog.h"
 
 #include <iostream>
 #include <sstream>
@@ -34,6 +36,12 @@ void printClockData () {
 
 int main(int argc, char * argv[])
 {
+  {
+    std::cout << "logger" << std::endl;
+    YILOG_CRITICAL("log");
+    YILOG_ERROR("log");
+  }
+
 	{
 		std::cout << "system_clock: " << std::endl;
 		printClockData<std::chrono::system_clock>();
