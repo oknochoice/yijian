@@ -5,7 +5,6 @@
 #include <string>
 #include <stdio.h>
 #include <assert.h>
-#include <string.h>
 #include "spdlog/spdlog.h"
 
 #define likely(x) __builtin_expect(!!(x),1)
