@@ -1,40 +1,42 @@
 #include "message.h"
 
-void packet::write_string(std::string && str, char *& pos) {
+size_t packet::write_string(std::string && str, char *& pos) {
   uint16_t net_length = htons(str.length());
+  YILOG_TRACE(__func__);
+
   std::memcpy(pos, &net_length, sizeof(net_length));
   pos += sizeof(net_length);
   std::memcpy(pos, str.data(), str.size());
   pos += str.size();
+  return sizeof(net_length) + str.size();
 }
 
 void connect::setup_fixed_header(uint32_t remain_length) {
   YILOG_TRACE(__func__);
 
   // fixed header
-  char * fixed_header_pos = *(fixed_header_.first);
+  char * fixed_header_pos = fixed_header_.first;
   // control packet type
   getBitset().reset();
   getBitset().set(4);
   uint8_t control_type = getBitset().to_ulong();
   std::memcpy(fixed_header_pos, &control_type, sizeof(control_type));
   fixed_header_pos += sizeof(control_type);
+  fixed_header_.second = 1;
   // remain length
   int multiplier = 1;
   int value = 0;
   uint8_t encodeByte;
-  int count = 0;
   do {
     encodeByte = remain_length % 128;
     value += (encodeByte & 127) * multiplier;
     multiplier *= 128;
     if (multiplier > 128 * 128 * 128) 
       throw std::invalid_argument("Malformed Remaining Length");
-    count++;
     std::memcpy(fixed_header_pos, &encodeByte, 1);
-    fixed_header_pos++;
+    ++fixed_header_pos;
+    ++fixed_header_.second;
   }while((encodeByte & 128) != 0);
-  fixed_header_.second = 1 + count;
   fixed_header_pos = nullptr;
 }
 
@@ -49,13 +51,18 @@ void connect::setup_variable_header(
     bool username_flag,
     uint16_t keep_alive) {
   YILOG_TRACE(__func__);
+
   // variable header
-  char * var_header_pos = *(variable_header_.first);
+  char * var_header_pos = variable_header_.first;
+  variable_header_.second = 0;
   // protocol name
-  write_string(std::forward<std::string>(protocol_name), var_header_pos);
+  variable_header_.second += write_string(
+                             std::forward<std::string>(protocol_name), 
+                             var_header_pos);
   // protocol level
   std::memcpy(var_header_pos, &mqtt_level, sizeof(mqtt_level));
   var_header_pos += sizeof(mqtt_level);
+  variable_header_.second += sizeof(mqtt_level);
   // connect flags
   getBitset().reset();
   if (clean_session) getBitset().set(2);
@@ -68,20 +75,23 @@ void connect::setup_variable_header(
   uint8_t connect_flags = getBitset().to_ulong();
   std::memcpy(var_header_pos, &connect_flags, sizeof(connect_flags));
   var_header_pos += sizeof(connect_flags);
+  variable_header_.second += sizeof(connect_flags);
   // keep alive
   uint16_t keep_alive_net = htons(keep_alive);
   std::memcpy(var_header_pos, &keep_alive_net, sizeof(keep_alive_net));
+  variable_header_.second += sizeof(keep_alive_net);
+
   var_header_pos = nullptr;
 }
 
 
 void connect::setup_payload(std::string && client_id,
-    std::shared_ptr<std::string*> will_topic,
-    std::shared_ptr<std::string*> will_message,
-    std::shared_ptr<std::string*> username,
-    std::shared_ptr<std::string*> password) {
+    std::shared_ptr<std::string> will_topic,
+    std::shared_ptr<std::string> will_message,
+    std::shared_ptr<std::string> username,
+    std::shared_ptr<std::string> password) {
   YILOG_TRACE(__func__);
   // payload
-  char * payload_pos = *(payload_.first);
+  char * payload_pos = payload_[0].first;
   write_string(std::forward<std::string>(client_id),payload_pos)  ;
 }

@@ -4,18 +4,20 @@
 #include <arpa/inet.h>
 
 static std::bitset<8> & getBitset() {
+  YILOG_TRACE(__func__);
   static thread_local std::bitset<8> bitset_8;
   return bitset_8;
 };
+
 
 class packet
   : public yijian::noncopyable {
 public:
   // where, length
-  typedef std::pair<std::shared_ptr<char *>, int> Data;
+  typedef std::pair<char *, int> Data;
   typedef std::vector<Data> Payload;
 protected:
-  void write_string(std::string && str, char *& pos);
+  size_t write_string(std::string && str, char *& pos);
   Data fixed_header_;
   Data variable_header_;
   Payload payload_;
@@ -44,8 +46,8 @@ void setup_variable_header(
     bool username_flag,
     uint16_t keep_alive);
 void setup_payload(std::string && client_id,
-    std::shared_ptr<std::string*> will_topic,
-    std::shared_ptr<std::string*> will_message,
-    std::shared_ptr<std::string*> username,
-    std::shared_ptr<std::string*> password);
+    std::shared_ptr<std::string> will_topic,
+    std::shared_ptr<std::string> will_message,
+    std::shared_ptr<std::string> username,
+    std::shared_ptr<std::string> password);
 };
