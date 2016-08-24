@@ -57,6 +57,7 @@ public:
     std::size_t size();
 private:
     void clean();
+    void assign(buffer& buf);
 private:
     uint8_t * header_pos_;
     uint8_t * current_pos_;
@@ -72,9 +73,12 @@ class buffers
 public:
     //construct
     buffers(message_type msg_type);
+    buffers(buffers&& bufs) noexcept;
+    buffers& operator=(buffers&& bufs) noexcept;
     //member func
     void write(uint8_t * pos, uint_fast64_t length);
 private:
+    void assign(buffers& bufs);
 private:
     std::vector<buffer> array_;
     uint8_t * pos_;
