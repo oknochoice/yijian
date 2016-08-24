@@ -1,7 +1,12 @@
+#ifndef __MESSAGE_H__
+#define __MESSAGE_H__
 #include "macro.h"
+#include "buffer.h"
 
 #include <bitset>
 #include <arpa/inet.h>
+
+namespace yijian {
 
 static std::bitset<8> & getBitset() {
   YILOG_TRACE(__func__);
@@ -13,14 +18,11 @@ static std::bitset<8> & getBitset() {
 class packet
   : public yijian::noncopyable {
 public:
-  // where, length
-  typedef std::pair<char *, int> Data;
-  typedef std::vector<Data> Payload;
 protected:
   size_t write_string(std::string && str, char *& pos);
-  Data fixed_header_;
-  Data variable_header_;
-  Payload payload_;
+  buffer fixed_header_;
+  buffer variable_header_;
+  buffers payload_;
 };
 
 class connect
@@ -31,7 +33,7 @@ public:
       std::string protocol_name = "MQTT", 
       uint8_t mqtt_level = 4) {
     YILOG_TRACE(__func__);
-
+    fixed_header_ = get    
   }
 private:
 void setup_fixed_header(uint32_t remain_length);
@@ -51,3 +53,7 @@ void setup_payload(std::string && client_id,
     std::shared_ptr<std::string> username,
     std::shared_ptr<std::string> password);
 };
+
+}
+
+#endif
