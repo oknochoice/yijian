@@ -19,9 +19,8 @@ class packet
   : public yijian::noncopyable {
 public:
 protected:
-  size_t write_string(std::string && str, char *& pos);
-  buffer fixed_header_;
-  buffer variable_header_;
+  buffer fixed_header_ = buffer(message_type::fixed_header);
+  buffer variable_header_ = buffer(message_type::variable_header);
   buffers payload_;
 };
 
@@ -33,7 +32,9 @@ public:
       std::string protocol_name = "MQTT", 
       uint8_t mqtt_level = 4) {
     YILOG_TRACE(__func__);
-    fixed_header_ = get    
+    payload_ = buffers(message_type::small_message);
+
+    setup_variable_header()
   }
 private:
 void setup_fixed_header(uint32_t remain_length);

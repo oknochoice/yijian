@@ -79,6 +79,7 @@ static std::shared_ptr<spdlog::logger>& getConsole() {
 #define YILOG_CRITICAL(...)
 #endif
 
+#define MQTT_BUFFER_SIZE (1024 * 2)
 #define MQTT_SESSION_COUNT (20 * 1000)
 
 #endif
