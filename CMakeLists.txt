@@ -3,9 +3,9 @@ project(yijian)
 add_executable(a.out main.cxx)
 
 set(CMAKE_BUILD_TYPE "Debug")
-set(CXX_FLAGS "-std=c++11 -pthread")
+set(CXX_FLAGS "-std=c++14 -pthread")
 message(STATUS ${CXX_FLAGS})
-#set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_FLAGS} -O0 -Wall -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "${CXX_FLAGS} -O3 -Wall")
 

@@ -1,7 +1,6 @@
-#ifndef __MESSAGE_H__
-#define __MESSAGE_H__
+#ifndef MESSAGE_H_YIJIAN
+#define MESSAGE_H_YIJIAN
 #include "macro.h"
-#include "buffer.h"
 
 #include <bitset>
 #include <arpa/inet.h>

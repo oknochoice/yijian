@@ -11,20 +11,70 @@
 #include <vector>
 #include <thread>
 #include <future>
-#include <random>
 #include <chrono>
 #include <iomanip>
 #include <list>
 #include <deque>
+#include <boost/hana.hpp>
 
+void test();
+void hana();
 
 int main(int argc, char * argv[])
 {
+//  test();
+//	int result = Catch::Session().run();
+  hana();
   return 0;
 }
 
+using namespace boost::hana;
 
-/*
+template <typename X, typename Y>
+struct plus_my {
+  using type = integral_constant<
+    decltype(X::value + Y::value),
+        X::value + Y::value
+            >;
+};
+
+using three = plus_my<integral_constant<int, 1>, integral_constant<int, 2>>::type;
+
+template <typename V, V v, typename U, U u>
+constexpr auto
+operator+(integral_constant<V, v>, integral_constant<U, u>) {
+  return integral_constant<decltype(u + v), u + v>{};
+}
+
+auto three_obj = integral_constant<int, 1>{} + integral_constant<int, 2>{};
+
+template <int i>
+constexpr integral_constant<int, i> int_ccc{};
+
+auto three_int_c = int_ccc<1> + int_ccc<2>;
+
+using namespace boost::hana::literals;
+auto three_c = 1_c + 2_c;
+
+// error 
+template <typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args) {
+  if (std::is_constructible<T, Args...>::value) {
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+  }else {
+    return std::unique_ptr<T>(new T{std::forward<Args>(args)...});
+  } 
+}
+
+auto one_two_three = boost::hana::if_(boost::hana::true_c, 123, "hello");
+auto hello = boost::hana::if_(boost::hana::false_c, 123, "hello");
+
+void hana() {
+  std::cout << "hana test begin ..." << std::endl;
+  std::cout << "hana test end ..." << std::endl;
+}
+
+
 TEST_CASE("my test", "[test]") {
 	REQUIRE( 1 != 1 );
 }
@@ -189,7 +239,5 @@ void test() {
 		hexout << std::endl;
 	}
 
-	int result = Catch::Session().run();
 }
 
-*/
