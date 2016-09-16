@@ -21,5 +21,11 @@ include_directories(${CATCH_INCLUDE_DIR} ${COMMON_INCLUDES})
 # Includes Spdlog in the project:
 add_subdirectory(${EXT_PROJECTS_DIR}/spdlog)
 include_directories(${SPDLOG_INCLUDE_DIR} ${COMMON_INCLUDES})
+# Includes limzmq in the project:
+add_subdirectory(${EXT_PROJECTS_DIR}/libzmq)
+include_directories(${LIBZMQ_INCLUDE_DIR} ${COMMON_INCLUDES})
+# Includes czmq in the project:
+add_subdirectory(${EXT_PROJECTS_DIR}/czmq)
+include_directories(${CZMQ_INCLUDE_DIR} ${COMMON_INCLUDES})
 #
 enable_testing(true)  # Enables unit-testing
