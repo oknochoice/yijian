@@ -2,7 +2,6 @@
 #define YILOG_ON
 #include "macro.h"
 #include "catch.hpp"
-#include "spdlog/spdlog.h"
 
 #include <iostream>
 #include <sstream>
@@ -16,16 +15,51 @@
 #include <list>
 #include <deque>
 #include <boost/hana.hpp>
+#include <ev.h>
 
 void test();
 void hana();
+void libev();
 
 int main(int argc, char * argv[])
 {
 //  test();
 //	int result = Catch::Session().run();
-  hana();
+//	hana();
+
+  libev();
   return 0;
+}
+
+ev_io stdin_watcher;
+ev_timer timeout_watcher;
+
+static void
+stdin_cb(EV_P_ ev_io * w, int revents) {
+  puts("stdin ready");
+  ev_io_stop(EV_A_ w);
+  ev_break(EV_A_ EVBREAK_ALL);
+}
+
+static void
+timeout_cb(EV_P_ ev_timer * w, int revents) {
+  puts("time out");
+
+  ev_break(EV_A_ EVBREAK_ONE);
+}
+
+void libev() {
+  struct ev_loop * loop = EV_DEFAULT;
+
+  ev_io_init(&stdin_watcher, stdin_cb, 0, EV_READ);
+  ev_io_start(loop, &stdin_watcher);
+
+  ev_timer_init(&timeout_watcher, timeout_cb, 5.5, 0.);
+  ev_timer_start(loop, &timeout_watcher);
+
+  ev_run(loop, 0);
+
+
 }
 
 using namespace boost::hana;
