@@ -6,6 +6,7 @@
 #include <boost/atomic.hpp>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <list>
 
 class Connection {
 public:
@@ -70,12 +71,12 @@ private:
   boost::asio::io_service & ios_;
   boost::asio::ip::tcp::acceptor acceptor_;
   boost::atomic<bool> is_stopped_;
+  std::list<std::shared_ptr<Connection>> list_;
 };
 
 class Server {
 public:
-  Server(boost::asio::io_service & s, 
-      boost::asio::ip::tcp::endpoint const & listen_endpoint)
+  Server(boost::asio::io_service & s)
     : ios_(s), signal_set_(s) {
     YILOG_TRACE("func: {} ", __func__);
 
@@ -88,36 +89,27 @@ public:
 
   }
 
-  void Start (unsigned short port_num,
-      unsigned int thread_pool_size) {
+  void Start (unsigned short port_num) {
+    YILOG_TRACE("func: {} ", __func__);
     assert(thread_pool_size > 0 ) ;
 
     acc_.reset(new Acceptor(ios_, port_num));
     acc_->Start();
 
-    for (unsigned int i = 0 ; i < thread_pool_size; i++) {
-      std::unique_ptr<std::thread> th(
-          new std::thread([this](){
-            ios_.run();
-            }));
-      thread_pool_.push_back(std::move(th));
-    }
+    ios_.run();
   }
 private:
   void Stop() {
+    YILOG_TRACE("func: {} ", __func__);
     acc_->Stop();
     ios_.stop();
 
-    for (auto & th : thread_pool_) {
-      th->join();
-    }
   }
 private:
   boost::asio::io_service & ios_;
   boost::asio::signal_set signal_set_;
   std::unique_ptr<boost::asio::io_service::work>work_;
   std::unique_ptr<Acceptor> acc_;
-  std::vector<std::unique_ptr<std::thread>> thread_pool_;
 };
 
 
