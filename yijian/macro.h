@@ -22,7 +22,7 @@ public:
 // c++11 thread-safe
 static std::shared_ptr<spdlog::logger>& getConsole() {
   auto static console = spdlog::stdout_logger_mt("console", true);
-  console->set_level(spdlog::level::critical);
+  console->set_level(spdlog::level::trace);
   return console;
 }
 
