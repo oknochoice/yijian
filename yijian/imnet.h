@@ -18,12 +18,57 @@ public:
     YILOG_TRACE("func: {} ", __func__);
     socket_->close();
   }
-
   void Start_work() {
     YILOG_TRACE("func: {} ", __func__);
+    boost::asio::async_read_until(*socket_.get(), request_, '\n',
+        [this](const boost::system::error_code & ec,
+              std::size_t bytes_transferred) {
+          onRequestReceived(ec, bytes_transferred);
+        });
+  }
+private:
+  void onRequestReceived(const boost::system::error_code & ec,
+      std::size_t bytes_transferred) {
+    if (0 != ec) {
+      YILOG_ERROR ("Error occured! Error code = {}. "
+          "Message: {}", ec.value(), ec.message());
+      onFinish();
+      return;
+    }
+
+    response_ = ProcessRequest(request_);
+    
+    boost::asio::async_write(*socket_.get(), 
+        boost::asio::buffer(response_),
+        [this](const boost::system::error_code & ec,
+            std::size_t bytes_transferred) {
+          onRequestSent(ec, bytes_transferred);
+        });
+  }
+  void onRequestSent (const boost::system::error_code & ec, 
+      std::size_t bytes_transferred) {
+    if (0 != ec) {
+      YILOG_ERROR ("Error occured! Error code {} . "
+          "Message: {}", ec.value(), ec.message());
+    }
+    onFinish();
+  }
+  void onFinish () {
+    delete this;
+  }
+
+  std::string ProcessRequest (boost::asio::streambuf & request) {
+    int i = 0;
+    while (i != 1'000'000) {
+      i++;
+    }
+    std::string response = "Response\n";
+    return response;
   }
 public:
   std::shared_ptr<boost::asio::ip::tcp::socket> & socket_;
+  std::string response_;
+  boost::asio::streambuf request_;
 };
 
 class Acceptor {
