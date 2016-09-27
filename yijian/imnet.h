@@ -12,23 +12,34 @@ class Connection {
 public:
   Connection(std::shared_ptr<boost::asio::ip::tcp::socket> & s)
     : socket_(s) {
+
     YILOG_TRACE("func: {} ", __func__);
+
   }
   ~Connection() {
+    
     YILOG_TRACE("func: {} ", __func__);
+
     socket_->close();
+
   }
   void Start_work() {
+
     YILOG_TRACE("func: {} ", __func__);
+
     boost::asio::async_read_until(*socket_.get(), request_, '\n',
         [this](const boost::system::error_code & ec,
               std::size_t bytes_transferred) {
           onRequestReceived(ec, bytes_transferred);
         });
+
   }
 private:
   void onRequestReceived(const boost::system::error_code & ec,
       std::size_t bytes_transferred) {
+
+    YILOG_TRACE("func: {} ", __func__);
+
     if (0 != ec) {
       YILOG_ERROR ("Error occured! Error code = {}. "
           "Message: {}", ec.value(), ec.message());
@@ -37,6 +48,11 @@ private:
     }
 
     response_ = ProcessRequest(request_);
+    std::istream is(&request_);
+    std::string s;
+    is >> s;
+    YILOG_INFO ("request : {}. \n"
+      "response : {}", s, response_);
     
     boost::asio::async_write(*socket_.get(), 
         boost::asio::buffer(response_),
@@ -47,17 +63,28 @@ private:
   }
   void onRequestSent (const boost::system::error_code & ec, 
       std::size_t bytes_transferred) {
+
+    YILOG_TRACE("func: {} ", __func__);
+
     if (0 != ec) {
       YILOG_ERROR ("Error occured! Error code {} . "
           "Message: {}", ec.value(), ec.message());
     }
+
     onFinish();
   }
   void onFinish () {
+
+    YILOG_TRACE("func: {} ", __func__);
+
+    
     delete this;
   }
 
   std::string ProcessRequest (boost::asio::streambuf & request) {
+
+    YILOG_TRACE("func: {} ", __func__);
+
     int i = 0;
     while (i != 1'000'000) {
       i++;
@@ -66,7 +93,7 @@ private:
     return response;
   }
 public:
-  std::shared_ptr<boost::asio::ip::tcp::socket> & socket_;
+  std::shared_ptr<boost::asio::ip::tcp::socket> socket_;
   std::string response_;
   boost::asio::streambuf request_;
 };
@@ -80,17 +107,28 @@ public:
           boost::asio::ip::address_v4::any(),
           port_num)),
       is_stopped_(false){
+
     YILOG_TRACE("func: {} ", __func__);
+    
   }
   void Start() {
+
+    YILOG_TRACE("func: {} ", __func__);
+
     acceptor_.listen();
     InitAccept();
   }
   void Stop() {
+
+    YILOG_TRACE("func: {} ", __func__);
+    
     is_stopped_.store(true);
   }
 private:
   void InitAccept() {
+
+    YILOG_TRACE("func: {} ", __func__);
+
     std::shared_ptr<boost::asio::ip::tcp::socket> 
       sock(new boost::asio::ip::tcp::socket(ios_));
     acceptor_.async_accept(*sock.get(),
@@ -101,6 +139,9 @@ private:
   }
   void onAccept(const boost::system::error_code & ec,
           std::shared_ptr<boost::asio::ip::tcp::socket> sock) {
+
+    YILOG_TRACE("func: {} ", __func__);
+
     if ( 0 == ec) {
       (new Connection(sock))->Start_work();
     }else {
@@ -121,39 +162,39 @@ private:
 
 class Server {
 public:
-  Server(boost::asio::io_service & s)
-    : ios_(s), signal_set_(s) {
+  Server() {
+
     YILOG_TRACE("func: {} ", __func__);
 
-    work_.reset(new boost::asio::io_service::work(ios_));
-    
-    signal_set_.add(SIGINT);
-    signal_set_.add(SIGTERM);
-    signal_set_.add(SIGQUIT);
-    signal_set_.async_wait(boost::bind(&Server::Stop, this));
+    /*
+    boost::asio::signal_set signal_set(ios_);
+    signal_set.add(SIGINT);
+    signal_set.add(SIGTERM);
+    signal_set.add(SIGQUIT);
+    signal_set.async_wait(boost::bind(&Server::Stop, this));
+    */
 
   }
 
   void Start (unsigned short port_num) {
+
     YILOG_TRACE("func: {} ", __func__);
-    assert(thread_pool_size > 0 ) ;
 
     acc_.reset(new Acceptor(ios_, port_num));
     acc_->Start();
 
     ios_.run();
   }
-private:
   void Stop() {
+
     YILOG_TRACE("func: {} ", __func__);
+
     acc_->Stop();
     ios_.stop();
-
   }
 private:
-  boost::asio::io_service & ios_;
-  boost::asio::signal_set signal_set_;
-  std::unique_ptr<boost::asio::io_service::work>work_;
+private:
+  boost::asio::io_service ios_;
   std::unique_ptr<Acceptor> acc_;
 };
 

@@ -17,8 +17,10 @@ int main(int argc, char * argv[])
     YILOG_INFO ("Response recived: {}", response);
     client.close();
   }catch (boost::system::system_error & e) {
+    std::ostringstream s;
+    s << e.code();
     YILOG_ERROR ("Error occured! Error code = {}. "
-        "Message: {}", e.code(), e.what());
+        "Message: {}", s.rdstate() , e.what());
   }
   return 0;
 }

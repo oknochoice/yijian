@@ -7,7 +7,10 @@
 
 int main(int argc, char * argv[])
 {
-  YILOG_TRACE("func :{}", __func__);
+  int i = 1;
+  std::string s = "qqq";
+  YILOG_TRACE("func :{} int: {}"
+      " auok?", __func__, s );
   return 0;
 }
 
