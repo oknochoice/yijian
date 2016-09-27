@@ -7,6 +7,7 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <list>
+#include <ctime>
 
 class Connection {
 public:
@@ -25,20 +26,24 @@ public:
   }
   void Start_work() {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Connection func: {} ", __func__);
 
     boost::asio::async_read_until(*socket_.get(), request_, '\n',
         [this](const boost::system::error_code & ec,
               std::size_t bytes_transferred) {
+
+          YILOG_TRACE("Connection async_read_until func: {} ", __func__);
+
           onRequestReceived(ec, bytes_transferred);
         });
+    last_msg_time_ = time(NULL);
 
   }
 private:
   void onRequestReceived(const boost::system::error_code & ec,
       std::size_t bytes_transferred) {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Connection func: {} ", __func__);
 
     if (0 != ec) {
       YILOG_ERROR ("Error occured! Error code = {}. "
@@ -58,13 +63,16 @@ private:
         boost::asio::buffer(response_),
         [this](const boost::system::error_code & ec,
             std::size_t bytes_transferred) {
+
+          YILOG_TRACE("Connection async_write func: {} ", __func__);
+
           onRequestSent(ec, bytes_transferred);
         });
   }
   void onRequestSent (const boost::system::error_code & ec, 
       std::size_t bytes_transferred) {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Connection func: {} ", __func__);
 
     if (0 != ec) {
       YILOG_ERROR ("Error occured! Error code {} . "
@@ -76,14 +84,13 @@ private:
   void onFinish () {
 
     YILOG_TRACE("func: {} ", __func__);
-
     
     delete this;
   }
 
   std::string ProcessRequest (boost::asio::streambuf & request) {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Connection func: {} ", __func__);
 
     int i = 0;
     while (i != 1'000'000) {
@@ -93,9 +100,12 @@ private:
     return response;
   }
 public:
+  time_t last_msg_time_;
   std::shared_ptr<boost::asio::ip::tcp::socket> socket_;
   std::string response_;
   boost::asio::streambuf request_;
+  std::list<std::shared_ptr<Connection>>::iterator iterator;
+
 };
 
 class Acceptor {
@@ -113,37 +123,46 @@ public:
   }
   void Start() {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Acceptor func: {} ", __func__);
 
     acceptor_.listen();
     InitAccept();
   }
   void Stop() {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Acceptor func: {} ", __func__);
     
     is_stopped_.store(true);
   }
 private:
   void InitAccept() {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Acceptor func: {} ", __func__);
 
     std::shared_ptr<boost::asio::ip::tcp::socket> 
       sock(new boost::asio::ip::tcp::socket(ios_));
     acceptor_.async_accept(*sock.get(),
       [this, sock](
         const boost::system::error_code & error) {
+
+        YILOG_TRACE("Acceptor async_accept func: {} ", __func__);
+
         onAccept(error, sock);
       });
   }
   void onAccept(const boost::system::error_code & ec,
           std::shared_ptr<boost::asio::ip::tcp::socket> sock) {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Acceptor func: {} ", __func__);
 
     if ( 0 == ec) {
-      (new Connection(sock))->Start_work();
+      std::shared_ptr<Connection> connection(new Connection(sock));
+      // add connect to list;
+      list_sp_c_.push_back(connection);
+      connection->iterator = list_sp_c_.back()->iterator;
+
+      connection->Start_work();
+      //(new Connection(sock))->Start_work();
     }else {
       YILOG_ERROR("Error occured! Error code = {} .Message: {}", ec.value(), ec.message());
     }
@@ -157,7 +176,7 @@ private:
   boost::asio::io_service & ios_;
   boost::asio::ip::tcp::acceptor acceptor_;
   boost::atomic<bool> is_stopped_;
-  std::list<std::shared_ptr<Connection>> list_;
+  std::list<std::shared_ptr<Connection>> list_sp_c_;
 };
 
 class Server {
@@ -166,28 +185,34 @@ public:
 
     YILOG_TRACE("func: {} ", __func__);
 
-    /*
-    boost::asio::signal_set signal_set(ios_);
-    signal_set.add(SIGINT);
-    signal_set.add(SIGTERM);
-    signal_set.add(SIGQUIT);
-    signal_set.async_wait(boost::bind(&Server::Stop, this));
-    */
-
+    signal_set_.reset(new boost::asio::signal_set(ios_));
+    signal_set_->add(SIGINT);
+    signal_set_->add(SIGTERM);
+    signal_set_->add(SIGQUIT);
+    signal_set_->async_wait(boost::bind(&Server::SignalHandler, this, _1, _2));
   }
 
   void Start (unsigned short port_num) {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Server func: {} ", __func__);
 
     acc_.reset(new Acceptor(ios_, port_num));
     acc_->Start();
 
     ios_.run();
   }
+  void SignalHandler(const boost::system::error_code & ec,
+      int signal_number) {
+    YILOG_TRACE("Server func: {} ", __func__);
+    if (0 != ec) {
+      YILOG_ERROR("Error occured! Error code = {} .Message: {}. "
+          "signal number {}.", ec.value(), ec.message(), signal_number);
+    }
+    Stop();
+  }
   void Stop() {
 
-    YILOG_TRACE("func: {} ", __func__);
+    YILOG_TRACE("Server func: {} ", __func__);
 
     acc_->Stop();
     ios_.stop();
@@ -195,6 +220,7 @@ public:
 private:
 private:
   boost::asio::io_service ios_;
+  std::unique_ptr<boost::asio::signal_set> signal_set_;
   std::unique_ptr<Acceptor> acc_;
 };
 
