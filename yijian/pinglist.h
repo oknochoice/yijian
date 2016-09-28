@@ -4,6 +4,7 @@
 #include "macro.h"
 #include <list>
 #include <stdlib.h>
+#include <functional>
 
 #ifdef __cpluscplus
 extern "C" {
@@ -18,14 +19,14 @@ struct Node {
 };
 
 
-inline List creat_pinglist() {
+inline List create_pinglist() {
 
   YILOG_TRACE ("func :", __func__);
 
   return (new Imp_list);
 }
 
-inline void append(List list_sp, void * p) {
+inline void ping_append(List list_sp, Node * p) {
 
   YILOG_TRACE ("func :", __func__);
 
@@ -36,7 +37,7 @@ inline void append(List list_sp, void * p) {
   node->iter = list_sp_l->insert(list_sp_l->end(), node);
 }
 
-inline void move2back(List list_sp, void * p) {
+inline void ping_move2back(List list_sp, Node * p) {
   
   YILOG_TRACE ("func :", __func__);
 
@@ -46,7 +47,7 @@ inline void move2back(List list_sp, void * p) {
   node->iter = list_sp_l->insert(list_sp_l->end(), node);
 }
 
-inline void erase(List list_sp, void * p) {
+inline void ping_erase(List list_sp, Node * p) {
 
   YILOG_TRACE ("func :", __func__);
 
@@ -56,8 +57,8 @@ inline void erase(List list_sp, void * p) {
   free(node);
 }
 
-inline void foreach_list(List list_sp, 
-    void *func(void *p, bool * isStop)) {
+inline void ping_foreach(List list_sp, 
+    std::function<void(Node *p, bool * isStop)> func) {
 
   YILOG_TRACE ("func :", __func__);
 
@@ -67,7 +68,8 @@ inline void foreach_list(List list_sp,
     if (true == is_stop_l) {
       break;
     }
-    func(&node, &is_stop_l);
+    struct Node * n = reinterpret_cast<struct Node*>(&node);
+    func(n->data, &is_stop_l);
   }
 }
 
