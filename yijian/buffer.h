@@ -4,7 +4,10 @@
 #include <macro.h>
 #include <deque>
 
-#define BUFFER_SIZE 
+enum class message_type : std::size_t {
+  message = 128,
+  multimedia = 1024 * 4
+};
 
 namespace yijian {
 
@@ -12,24 +15,27 @@ namespace yijian {
 class buffer 
   : public yijian::noncopyable{
 public:
-    typedef std::pair<const uint8_t * , uint_fast32_t> Unwrited_Data;
+    typedef std::pair<const char * , std::size_t> Unwrited_Data;
     
     //construct
-    buffer();
+    buffer(message_type type);
     // move constructor
     buffer(buffer&& buf) = delete;
     buffer& operator=(buffer&& buf) = delete;
 
     ~buffer();
     // member func
-    bool setIntegritySize(uint_fast64_t size);
+    // know length
+    Unwrited_Data write(const char * pos, std::size_t length) noexcept;
+    // socket unknow length
+    char * socket_write(int sfd);
     bool isIntegrity();
-    Unwrited_Data write(const uint8_t * pos, std::size_t length) noexcept;
+
     std::size_t size();
-    std::size_t writable_size();
 private:
-    uint8_t * header_pos_;
-    uint8_t * current_pos_;
+    char * header_pos_;
+    char * current_pos_;
+    message_type buffer_type_;
     std::size_t max_size_;
     std::size_t remain_length_;
     std::size_t integrity_size_;

@@ -5,17 +5,24 @@ namespace yijian {
 
 // buffer 
 // construct
-buffer::buffer() {
+buffer::buffer(message_type type) 
+  : buffer_type_(type), integrity_size_(0){
 
   YILOG_TRACE(__func__);
 
-  header_pos_ = malloc()
+  std::size_t init_size = static_cast<std::size_t>(type);
+  header_pos_ = (char *)malloc(init_size);
+  current_pos_ = header_pos_;
+  remain_length_ = init_size;
+  max_size_ = init_size;
 
 };
 
 buffer::~buffer() {
 
   YILOG_TRACE(__func__);
+
+  free(header_pos_);
 
 }
 
@@ -34,9 +41,9 @@ bool buffer::isIntegrity() {
   else return false;
 }
 
-buffer::Unwrited_Data buffer::write(const uint8_t * pos, std::size_t length) noexcept{
+buffer::Unwrited_Data buffer::write(const char * pos, std::size_t length) noexcept{
   YILOG_TRACE(__func__);
-  uint_fast32_t real_length;
+  std::size_t real_length;
   if (remain_length_ >= length) {
     real_length = length;
   }else {
