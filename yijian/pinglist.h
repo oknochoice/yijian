@@ -2,6 +2,7 @@
 #define PINGLIST_H_
 
 #include "macro.h"
+#include "buffer.h"
 #include <list>
 #include <stdlib.h>
 #include <functional>
@@ -17,9 +18,16 @@ typedef void* List;
 typedef std::list<PingNode*> Imp_list;
 
 struct PingNode {
+  // watcher
   ev_io io;
+  // if io is read, contra_io is write
+  // if io is write, contra_io io read
+  ev_io * contra_io;
+  // pint list
   time_t ping_time;
   Imp_list::iterator iter;
+  // socket buffer
+  yijian::buffer * buffer;
 };
 
 

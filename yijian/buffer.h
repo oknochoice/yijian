@@ -25,14 +25,24 @@ public:
 
     ~buffer();
     // member func
+    // socket unknow length
+    void socket_read(int sfd);
+    bool isReadfinish();
+
+    void socket_write(int sfd);
+    bool isWritefinish();
+
+    uint_fast16_t datatype();
+    char * data();
+    std::size_t data_size();
+    
+    char * header();
+    std::size_t size();
+
     // know length
     Unwrited_Data write(const char * pos, std::size_t length) noexcept;
-    // socket unknow length
-    char * socket_write(int sfd);
-    bool isIntegrity();
-
-    std::size_t size();
 private:
+    uint_fast16_t data_type_;
     char * header_pos_;
     char * current_pos_;
     message_type buffer_type_;
