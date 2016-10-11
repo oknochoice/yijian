@@ -207,9 +207,8 @@ void connection_read_callback (struct ev_loop * loop,
   Connection_IO * io = reinterpret_cast<Connection_IO*>(rw);
 
   // read to buffer 
-  io->buffer->socket_read(io->io.fd);
   // if read complete stop watch && update ping
-  if (io->buffer->isReadfinish()) {
+  if (io->buffer->socket_read(io->io.fd)) {
     // stop read
     ev_io_stop (loop, rw);
     // update ping time
@@ -238,9 +237,8 @@ void connection_write_callback (struct ev_loop * loop,
   Connection_IO * io = reinterpret_cast<Connection_IO*>(ww);
 
   // write to socket
-  io->buffer->socket_write(io->io.fd);
   // if write finish stop write, start read.
-  if (io->buffer->isWritefinish()) {
+  if (io->buffer->socket_write(io->io.fd)) {
     ev_io_stop(loop, ww);
     ev_io_start(loop, io->contra_io);
   }
