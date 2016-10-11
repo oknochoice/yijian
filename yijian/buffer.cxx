@@ -5,7 +5,7 @@ namespace yijian {
 
 // buffer 
 // construct
-buffer::buffer(message_type type) 
+buffer::buffer(Message_Type type) 
   : buffer_type_(type) {
 
   YILOG_TRACE("func: {}", __func__);
@@ -89,6 +89,10 @@ inline char * buffer::header() {
 inline std::size_t buffer::size() {
   YILOG_TRACE("func: {}", __func__);
   return current_pos_ - header_pos_;
+}
+
+inline Message_Type buffer::buffer_type() {
+  return buffer_type_;
 }
 
 std::pair<uint_fast32_t, char *>

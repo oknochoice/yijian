@@ -7,7 +7,7 @@
 
 #define MESSAGE_TYPE_LENGTH 1
 
-enum class message_type : std::size_t {
+enum class Message_Type : std::size_t {
   message = 128,
   multimedia = 1024 * 4
 };
@@ -20,7 +20,7 @@ public:
     typedef std::pair<const char * , std::size_t> Unwrited_Data;
     
     //construct
-    buffer(message_type type);
+    buffer(Message_Type type);
     // move constructor
     buffer(buffer&& buf) = delete;
     buffer& operator=(buffer&& buf) = delete;
@@ -37,8 +37,8 @@ public:
     
     char * header();
     std::size_t size();
-
-private:
+    Message_Type buffer_type();
+//private:
     std::pair<uint_fast32_t, char *>
     decoding_var_Length(char * pos);
     char *
@@ -52,7 +52,7 @@ private:
 
     uint_fast16_t data_type_;
 
-    message_type buffer_type_;
+    Message_Type buffer_type_;
 
     char * header_pos_;
     char * data_pos_;
