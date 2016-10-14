@@ -7,6 +7,7 @@ List pinglist() {
 
   static List list = create_pinglist();
   return list;
+
 }
 
 struct ev_loop * loop() {
@@ -220,6 +221,7 @@ void connection_read_callback (struct ev_loop * loop,
           YILOG_TRACE ("mongo insert");
 #warning  write here
         },
+        io,
         [=](){
           YILOG_TRACE ("ev_async_send");
           ev_async_send(loop, &write_asyn_watcher()->as);

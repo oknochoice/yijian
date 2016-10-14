@@ -5,6 +5,7 @@ add_executable(server.out server.cxx)
 add_executable(client.out client.cxx)
 
 set(CMAKE_BUILD_TYPE "Debug")
+#c++ --std=c++11 test.cpp -o test $(pkg-config --cflags --libs libmongocxx))
 set(CXX_FLAGS "-std=c++14 -pthread -lboost_system")
 message(STATUS ${CXX_FLAGS})
 #set(CMAKE_CXX_COMPILER "/usr/bin/g++")
