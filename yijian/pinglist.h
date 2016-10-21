@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <functional>
 #include <ev.h>
+#include <mongocxx/cursor.hpp>
 
 #ifdef __cpluscplus
 extern "C" {
@@ -16,6 +17,11 @@ struct PingNode;
 
 typedef void* List;
 typedef std::list<PingNode*> Imp_list;
+
+struct Database {
+  std::string id;
+  std::vector<std::string> newMessageIDs;
+};
 
 struct PingNode {
   // watcher
@@ -28,6 +34,8 @@ struct PingNode {
   Imp_list::iterator iter;
   // socket buffer
   yijian::buffer * buffer;
+  // db
+  Database * db;
 };
 
 

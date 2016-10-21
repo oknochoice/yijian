@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package chat;
+
+option cc_enable_arenas = true;
+
+message Error {
+  uint32 errnum = 1;
+  string errmsg = 2;
+}
+
+message Noti_Message {
+  string nodeID = 1;
+  string messageID = 2;
+}
+
+message Noti_Unread {
+  map<string, uint32> unreadNodes = 1;
+}
+
+message UserInfo {
+  string id = 1;
+  string toNodeID = 2;
+  string nickname = 3;
+  uint32 unReadMessage = 4;
+}
+
+message GroupInfo {
+  string id = 1;
+  string toNodeID = 2;
+  uint32 unReadMessage = 3;
+}
+
+message Group {
+  enum Authorize {creator = 0; manager = 1; member = 2;}
+  string id = 1;
+  string toNodeID = 2;
+  Authorize authorize = 3;// cread
+  string creatorID = 4;
+  repeated string managerIDs = 5;
+  repeated UserInfo members = 6;
+}
+
+message User {
+  string id = 1;
+  string realname = 2;
+  string nickname = 3;
+  bytes icon= 4;
+  string description = 5;
+  bool   isMale = 6;
+  string phoneNo = 7;
+  uint32 birthday = 8;
+  repeated UserInfo friends = 9;
+  repeated string blacklist = 10;
+  repeated GroupInfo groups = 11;
+}
+
+message Register {
+
+  uint32 phoneNo = 1;
+  uint32 countryCode = 2;// default is 86
+  string iChingID = 3;// default is phoneNo
+  string password = 4; // sha1 double
+  string nickname = 5;
+
+}
+
+message Login {
+
+  string iChingOrOther = 1;
+  string password = 2; // sha1 double
+  string messageVersion = 3;
+
+}
+
+message Logout {
+
+  string iChingID = 1;
+
+}
+
+message ChatMessage {
+  
+  enum   Type { TEXT = 0; JPG = 1; MP3 = 2;}
+  string fromUserID = 1;
+  string toNodeID = 2;
+  uint32 incrementID = 3;
+  uint32 totalCount = 4;
+  uint32 currentIndex = 5;
+  uint32 timestampClient = 6;
+  uint32 timestampMessageinsert = 7;
+  Type   type = 8;
+  bytes  content = 9;
+  
+}
+

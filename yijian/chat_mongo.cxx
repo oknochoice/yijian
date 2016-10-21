@@ -1,12 +1,10 @@
-}
 #include "chat_mongo.h"
-#include "threads_work.h"
 
-chat_mongo::chat_mongo() {
-  yijian::not
+mongo_client::mongo_client() {
+  mongocxx::uri uri("mongodb://localhost:27017");
+  client_ = mongocxx::client(uri);
 }
 
 
-
-chat_mongo::~chat_mongo () {
+mongo_client::~mongo_client () {
 }

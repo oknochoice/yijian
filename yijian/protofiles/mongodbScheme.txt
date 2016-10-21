@@ -1,0 +1,176 @@
+iching database
+http://www.4hu54.com
+// protoc --proto_path=./ --cpp_out=./
+
+collections:
+
+user.profile:
+index _id: 1,
+iChingID: 1,
+nickname: 1,
+{
+    "_id": ObjectID,
+    "ts": ISODateTime(...),
+    "iChingID": "oknochoice",
+    "profile": {
+      "version": 1,
+      "nickname": "未济得鼎",
+      "icon": "URI",
+      "description": "未济征凶利涉大川"
+      "isMale": 1,
+      "isFemale" 0,
+      "phone":{
+        "cellPhone": "18514029918",
+      },
+      "birthday": "1987/03/22/16/05",
+      "BaZi": "丁卯癸卯庚午甲申"
+    },
+    "friends": [
+        {
+            "userID": ObjectID,
+            "iChingID": "oneLeafBook",
+            "toID": ObjectID,
+            "remark": "xx同学",
+            "icon": "URI",
+            "nickname": "一叶书",
+            "isCommentVisible": 1,
+            "ts": ISODateTime(...),
+        },
+        ...
+    ],
+    "groups": [
+      {
+      "gid": ObjectID,
+      "toID": ObjectID,
+         "groupName": "三人行",
+         "isMessageSilence": 0,
+         "ts": ISODateTime(...),
+      },
+      ...
+    ],
+    //黑名单
+    "blackList": [
+        ObjectID,
+        ...
+    ],
+    //被 黑的 名单 既 无法添加为还有的名单
+    "blackedList": [
+        ObjectID,
+        ...
+    ],
+}
+
+message.profile
+index _id: 1,
+{
+    "_id": ObjectID,
+    "groupid": ObjectID,
+    "ts": ISODateTime(...),
+   "authorize", "member",// group(creator manager member) pair
+   "members": [
+        {
+            "userID": ObjectID,
+            "tsAdd": ISODateTime(...),
+            "groupTitle": "creator",// creator manager member
+        },
+       ...
+    ],
+},
+
+
+
+message
+index _id: 1, 
+    toID: 1, ts: -1,
+{
+  "_id": ObjectID,
+  "ts": ISODateTime(...),
+  "fromID":ObjectID,
+  "toMessageID": Message.profile id,
+  "toMemberID": user id,
+  "type": "text",
+  "content": "a u ok?",
+},
+
+
+
+iching.book
+index iChingIndex: 1
+{
+    "_id": ObjectID,
+    "ts": IOSDateTime(...),
+  /*
+    "卦名 乾": 1100
+    "卦辞": 1110
+    "彖传": 1120
+    "大象": 1130
+    "爻辞": 1140 1141 1142 1143 1144 1145
+    "小象": 1150 1151 1152 1153 1154 1155
+    "文言": 1160 ~ 1165
+  */
+    "iChingIndex": 1100,
+    "content": "卦一 乾",
+}
+
+iching.comment
+index iChingIndex: 1, uts: 1
+    iChingIndex: 1, likeOptCount: 1
+    by.iChingID: 1, iChingIndex: 1
+{
+    "_id": ObjectID,
+    "ts": IOSDateTime(...),
+    "uts": IOSDateTime(...),
+    "iChingIndex": 1100,
+    "by": {
+        "_id": ObjectID,
+        "iChingID": "oknochoice",
+        "nickname": "闲来无事卜一卦",
+    }
+    "likeOptCount": 12,
+    "content": [
+    {
+      "ts": IOSDateTime(...),
+      "order": 1,
+      "type": content,
+      "content": "大明, 日, 太阳",
+    },
+  ],
+    "publishMessage": [
+        {
+            "publishMessageID": ObjectID,
+      "ts": IOSDateTime(...),
+      "by": {
+        "_id": ObjectID,
+        "iChingID": "bingo",
+        "nickname": "一矢亡",
+      }
+        },
+    ]
+}
+
+iching.life
+index by._id
+{
+    "_id": ObjectID,
+    "ts": IOSDateTime(...),
+    "uts": IOSDateTime(...),
+    "iChingIndex": 1100,
+    "by": {
+        "_id": ObjectID,
+        "iChingID": "oknochoice",
+        "nickname": "闲来无事卜一卦",
+    }
+    "likeOptCount": 12,
+    "content": [
+    {
+      "ts": IOSDateTime(...),
+      "order": 1,
+      "type": content,
+      "content": "大明, 日, 太阳",
+    },
+  ],
+  "symbol": [
+    1110, 1141, 1145
+  ],
+}
+

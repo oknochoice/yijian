@@ -1,5 +1,8 @@
 #include "buffer.h"
+
+#include <stdlib.h>
 #include <arpa/inet.h>
+#include <string.h>
 
 namespace yijian {
 
@@ -66,7 +69,7 @@ bool buffer::socket_write(int sfd) {
   return isFinish_;
 }
 
-uint_fast16_t buffer::datatype() {
+uint_fast8_t buffer::datatype() {
   YILOG_TRACE("func: {}", __func__);
   return data_type_;
 }

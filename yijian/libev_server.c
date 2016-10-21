@@ -1,4 +1,6 @@
 #include "libev_server.h"
+#include <map>
+#include <function>
 
 
 List pinglist() {
@@ -8,6 +10,11 @@ List pinglist() {
   static List list = create_pinglist();
   return list;
 
+}
+
+static std::map<uint_fast8_t, std::function<void(void)> >& fucMap {
+  static auto funcMap = std::map<uint_fast8_t, std::function<void(void)>>;
+  return funcMap;
 }
 
 struct ev_loop * loop() {
@@ -26,6 +33,7 @@ struct ev_io * accept_watcher() {
   static struct ev_io * accept_watcher = 
     (struct ev_io*)malloc(sizeof(struct ev_io));
   return accept_watcher;
+
 }
 
 struct Write_Asyn * write_asyn_watcher() {
@@ -218,7 +226,7 @@ void connection_read_callback (struct ev_loop * loop,
     // do work 
     noti_threads()->sentWork(
         [=](){
-          YILOG_TRACE ("mongo insert");
+          YILOG_TRACE ("mongo query");
 #warning  write here
         },
         io,

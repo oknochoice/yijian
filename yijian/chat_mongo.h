@@ -5,20 +5,43 @@
 #include <cstdint>
 #include <vector>
 
-#include <bsoncxx/v_noabi/bsoncxx/json.hpp>
-#include <mongocxx/v_noabi/mongocxx/client.hpp>
+#include <bsoncxx/json.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
 
-class chat_mongo {
+#include <mongocxx/client.hpp>
+#include <mongocxx/instance.hpp>
+
+#include "protofiles/chat_message.pb.h"
+
+class mongo_client {
 public:
-  using bsoncxx::builder::stream::close_array;
-  using bsoncxx::builder::stream::close_document;
-  using bsoncxx::builder::stream::document;
-  using bsoncxx::builder::stream::finalize;
-  using bsoncxx::builder::stream::open_array;
-  using bsoncxx::builder::stream::open_document;
-  chat_mongo();
-  ~chat_mongo();
+  mongo_client();
+  ~mongo_client();
+
+  // user
+  void enrollUser(chat::Register && user);
+  chat::User && login(chat::Login && login);
+  void logout(chat::Logout && logout);
+  chat::User && queryUser(std::string && userID);
+  void incrementUserUnread(std::string && userID, std::string && nodeID);
+  void cleanUserUnread(std::string && userID, std::string && nodeID);
+
+  // message
+  std::string && insertOne(chat::ChatMessage && message);
+
+  chat::ChatMessage && queryMessageOne(std::string && messageID);
+
+  mongocxx::cursor && queryNodeOne(uint_fast32_t incrementID);
+  mongocxx::cursor && queryNode(uint_fast32_t fromIncrementID, 
+      uint_fast32_t toIncrementID);
+  mongocxx::cursor && queryNode(uint_fast32_t toIncrementID);
+
+private:
+
+  mongocxx::client client_;
+
 }
+
 
 
 #endif

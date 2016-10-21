@@ -1,7 +1,7 @@
 #ifndef BUFFER_H_YIJIAN
 #define BUFFER_H_YIJIAN
 
-#include <macro.h>
+#include "macro.h"
 #include <deque>
 #include <unistd.h>
 
@@ -31,7 +31,7 @@ public:
     bool socket_read(int sfd);
     bool socket_write(int sfd);
 
-    uint_fast16_t datatype();
+    uint_fast8_t datatype();
     char * data();
     std::size_t data_size();
     
@@ -50,7 +50,7 @@ private:
     bool isParseFinish_ = false;
     bool isFinish_ = false;
 
-    uint_fast16_t data_type_;
+    uint_fast8_t data_type_;
 
     Message_Type buffer_type_;
 

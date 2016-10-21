@@ -3,6 +3,9 @@
 
 #include <assert.h>
 #include "spdlog/spdlog.h"
+#include <inttypes.h>
+#include <memory>
+#include <system_error>
 #define likely(x) __builtin_expect(!!(x),1)
 #define unlikely(x) __builtin_expect(!!(x),0)
 
@@ -21,8 +24,8 @@ public:
 }
 
 // c++11 thread-safe
-static std::shared_ptr<spdlog::logger>& getConsole() {
-  auto static console = spdlog::stdout_logger_mt("console", true);
+static auto& getConsole() {
+  auto static console = spdlog::stdout_logger_mt("console");
   console->set_level(spdlog::level::trace);
   return console;
 }
