@@ -13,12 +13,19 @@ buffer::buffer(Message_Type type)
 
   YILOG_TRACE("func: {}", __func__);
 
-  std::size_t init_size = static_cast<std::size_t>(type);
+  std::size_t init_size = static_cast<std::size_t>(buffer_type_);
   header_pos_ = (char *)malloc(init_size);
+
+  reset();
+
+};
+
+void buffer::reset() {
+
   data_pos_ = header_pos_;
   current_pos_ = header_pos_;
 
-};
+}
 // destruct
 buffer::~buffer() {
 
@@ -27,6 +34,27 @@ buffer::~buffer() {
   free(header_pos_);
 
 }
+
+inline char * buffer::header() {
+  YILOG_TRACE("func: {}", __func__);
+  return header_pos_;
+}
+
+inline std::size_t buffer::size() {
+  YILOG_TRACE("func: {}", __func__);
+  return current_pos_ - header_pos_;
+}
+
+inline std::size_t buffer::remain_size() {
+  YILOG_TRACE("func: {}", __func__);
+  return static_cast<std::size_t>(buffer_type_) - size();
+}
+
+inline Message_Type buffer::buffer_type() {
+  YILOG_TRACE("func: {}", __func__);
+  return buffer_type_;
+}
+
 
 bool buffer::socket_read(int sfd) {
   YILOG_TRACE("func: {}", __func__);
@@ -47,7 +75,8 @@ bool buffer::socket_read(int sfd) {
 
       if (remain_data_length_ + 4 + MESSAGE_TYPE_LENGTH > 
           static_cast<std::size_t>(buffer_type_)) {
-        throw std::range_error("transfer data over buffer size");
+        throw std::system_error(std::error_code(20000, std::generic_category()),
+            "transfer data over buffer size");
       }
     }
   }else if(!isFinish_){// read remain data;
@@ -84,20 +113,6 @@ std::size_t buffer::data_size() {
   return current_pos_ - data_pos_;
 }
 
-inline char * buffer::header() {
-  YILOG_TRACE("func: {}", __func__);
-  return header_pos_;
-}
-
-inline std::size_t buffer::size() {
-  YILOG_TRACE("func: {}", __func__);
-  return current_pos_ - header_pos_;
-}
-
-inline Message_Type buffer::buffer_type() {
-  return buffer_type_;
-}
-
 std::pair<uint_fast32_t, char *>
 buffer::decoding_var_Length(char * pos) {
   YILOG_TRACE("func: {}", __func__);
@@ -110,7 +125,8 @@ buffer::decoding_var_Length(char * pos) {
     ++pos;
     multiplier *= 128;
     if (multiplier > 128 * 128 * 128)
-      throw std::range_error("Malformed Remaining Length");
+      throw std::system_error(std::error_code(20001, std::generic_category()),
+          "Malformed Remaining Length");
   }while((encodeByte & 128) != 0);
   return std::make_pair(value, pos);
 }
@@ -136,8 +152,7 @@ inline std::size_t buffer::socket_read(int sfd, std::size_t count) {
   if (-1 != readed) {
     current_pos_ += readed;
   }else {
-    throw std::system_error(std::error_code(errno, std::generic_category()),
-        "read buffer");
+    throw std::system_error(std::error_code(errno, std::system_category()), "read buffer");
   }
   return readed;
 }
@@ -148,8 +163,7 @@ inline std::size_t buffer::socket_write(int sfd, std::size_t count) {
   if (-1 != writed) {
     current_pos_ += writed;
   }else {
-    throw std::system_error(std::error_code(errno, std::generic_category()),
-        "write buffer");
+    throw std::system_error(std::error_code(errno, std::system_category()), "write buffer");
   }
   return writed;
 }

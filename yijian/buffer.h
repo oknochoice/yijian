@@ -20,24 +20,31 @@ public:
     typedef std::pair<const char * , std::size_t> Unwrited_Data;
     
     //construct
-    buffer(Message_Type type);
+    buffer(Message_Type type = Message_Type::message);
+    void reset();
+    ~buffer();
     // move constructor
     buffer(buffer&& buf) = delete;
     buffer& operator=(buffer&& buf) = delete;
 
-    ~buffer();
+    char * header();
+    std::size_t size();
+    std::size_t remain_size();
+    Message_Type buffer_type();
+
     // member func
     // socket read write if finish return ture
     bool socket_read(int sfd);
     bool socket_write(int sfd);
+    bool socket_read_media(int sfd);
 
     uint_fast8_t datatype();
     char * data();
     std::size_t data_size();
-    
-    char * header();
-    std::size_t size();
-    Message_Type buffer_type();
+
+    void data_encoding_length(uint_fast32_t length);
+    void data_encoding_type(uint8_t);
+    char * data_encoding_current();
 //private:
     std::pair<uint_fast32_t, char *>
     decoding_var_Length(char * pos);

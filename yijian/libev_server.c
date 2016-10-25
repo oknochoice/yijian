@@ -2,6 +2,8 @@
 #include <map>
 #include <function>
 
+#include "message_typemap.h"
+
 
 List pinglist() {
 
@@ -10,11 +12,6 @@ List pinglist() {
   static List list = create_pinglist();
   return list;
 
-}
-
-static std::map<uint_fast8_t, std::function<void(void)> >& fucMap {
-  static auto funcMap = std::map<uint_fast8_t, std::function<void(void)>>;
-  return funcMap;
 }
 
 struct ev_loop * loop() {
@@ -182,9 +179,9 @@ void socket_accept_callback (struct ev_loop * loop,
   
   // Connection_IO watcher for client
   Connection_IO * client_read_watcher = 
-    (Connection_IO *) malloc(sizeof(Connection_IO));
+    (Connection_IO *) createReadPingNode();
   Connection_IO * client_write_watcher = 
-    (Connection_IO *) malloc(sizeof(Connection_IO));
+    (Connection_IO *) createWritePingNode();
 
   if (NULL == client_read_watcher || 
       NULL == client_write_watcher) {
@@ -217,7 +214,7 @@ void connection_read_callback (struct ev_loop * loop,
 
   // read to buffer 
   // if read complete stop watch && update ping
-  if (io->buffer->socket_read(io->io.fd)) {
+  if (io->io_area.buffer_sp->socket_read(io->io.fd)) {
     // stop read
     ev_io_stop (loop, rw);
     // update ping time
@@ -227,7 +224,7 @@ void connection_read_callback (struct ev_loop * loop,
     noti_threads()->sentWork(
         [=](){
           YILOG_TRACE ("mongo query");
-#warning  write here
+          dispatch(io);
         },
         io,
         [=](){
@@ -248,7 +245,8 @@ void connection_write_callback (struct ev_loop * loop,
 
   // write to socket
   // if write finish stop write, start read.
-  if (io->buffer->socket_write(io->io.fd)) {
+  if (io->io_area.buffer_sp->->socket_write(io->io.fd)) {
+    io->io_area.vector_p
     ev_io_stop(loop, ww);
     ev_io_start(loop, io->contra_io);
   }

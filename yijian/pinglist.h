@@ -8,35 +8,56 @@
 #include <functional>
 #include <ev.h>
 #include <mongocxx/cursor.hpp>
+#include <queue>
 
 #ifdef __cpluscplus
 extern "C" {
 #endif
 
+union IO_Area {
+  std::shared_ptr<yijian::buffer> buffer_sp;
+  std::queue<std::shared_ptr<yijian::buffer>> * buffers_p;
+}
 struct PingNode;
 
 typedef void* List;
 typedef std::list<PingNode*> Imp_list;
-
-struct Database {
-  std::string id;
-  std::vector<std::string> newMessageIDs;
-};
 
 struct PingNode {
   // watcher
   ev_io io;
   // if io is read, contra_io is write
   // if io is write, contra_io io read
-  ev_io * contra_io;
+  struct PingNode * contra_io;
   // pint list
   time_t ping_time;
   Imp_list::iterator iter;
   // socket buffer
-  yijian::buffer * buffer;
-  // db
-  Database * db;
+  IO_Area io_area;
+  IO_Area multimedia;
 };
+
+PingNode * createReadPingNode() {
+  YILOG_TRACE ("func : {}", __func__);
+  PingNode * node = malloc(sizeof(PingNode));
+  node->io_area.buffer_sp = std::make_shared<yijian::buffer>();
+  return node;
+}
+void destoryReadPingNode(PingNode * node) {
+  YILOG_TRACE ("func : {}", __func__);
+  free(node);
+}
+PingNode * createWritePingNode() {
+  YILOG_TRACE ("func : {}", __func__);
+  PingNode * node = malloc(sizeof(PingNode));
+  node->buffer.buffers_p = new std::vector<std::shared_ptr<yijian::buffer>();
+  return node;
+}
+void destoryWritePingNode(PingNode * node) {
+  YILOG_TRACE ("func : {}", __func__);
+  delete node->buffer.buffers_p;
+  free(node);
+}
 
 
 inline List create_pinglist() {

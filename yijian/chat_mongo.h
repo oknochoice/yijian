@@ -12,6 +12,14 @@
 #include <mongocxx/instance.hpp>
 
 #include "protofiles/chat_message.pb.h"
+namespace yijian {
+  namespace threadCurrent {
+    mongo_client & mongoClient() {
+      static thread_local auto client = mongo_client();
+      return client;
+}
+  }
+}
 
 class mongo_client {
 public:
@@ -19,10 +27,11 @@ public:
   ~mongo_client();
 
   // user
-  void enrollUser(chat::Register && user);
+  void enrollUser(chat::User && user);
   chat::User && login(chat::Login && login);
   void logout(chat::Logout && logout);
-  chat::User && queryUser(std::string && userID);
+  chat::User && queryUserID(std::string && userID);
+  bool isUserRollined(std::string && phone, std::string && countryCode);
   void incrementUserUnread(std::string && userID, std::string && nodeID);
   void cleanUserUnread(std::string && userID, std::string && nodeID);
 

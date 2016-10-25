@@ -32,36 +32,37 @@ message GroupInfo {
 }
 
 message Group {
-  enum Authorize {creator = 0; manager = 1; member = 2;}
-  string id = 1;
-  string toNodeID = 2;
-  Authorize authorize = 3;// cread
-  string creatorID = 4;
-  repeated string managerIDs = 5;
-  repeated UserInfo members = 6;
+  enum      Authorize {creator = 0; manager = 1; member = 2;}
+  string    id = 1;
+  string    toNodeID = 2;
+  Authorize authorize = 3;
+  string    creatorID = 4;
+  repeated  string managerIDs = 5;
+  repeated  UserInfo members = 6;
 }
 
 message User {
-  string id = 1;
-  string realname = 2;
-  string nickname = 3;
-  bytes icon= 4;
-  string description = 5;
-  bool   isMale = 6;
-  string phoneNo = 7;
-  uint32 birthday = 8;
-  repeated UserInfo friends = 9;
-  repeated string blacklist = 10;
-  repeated GroupInfo groups = 11;
+  string    id = 1;
+  string    realname = 2;
+  string    nickname = 3;
+  bytes     icon= 4;
+  string    description = 5;
+  bool      isMale = 6;
+  string    phoneNo = 7;
+  string    countryCode = 8;// default is 86
+  string    password = 9; // sha1 double
+  uint32    birthday = 10;
+  repeated  UserInfo friends = 11;
+  repeated  string blacklist = 12;
+  repeated  GroupInfo groups = 13;
 }
 
 message Register {
 
-  uint32 phoneNo = 1;
-  uint32 countryCode = 2;// default is 86
-  string iChingID = 3;// default is phoneNo
-  string password = 4; // sha1 double
-  string nickname = 5;
+  string phoneNo = 1;
+  string countryCode = 2;// default is 86
+  string password = 3; // sha1 double
+  string nickname = 4;
 
 }
 
@@ -75,7 +76,8 @@ message Login {
 
 message Logout {
 
-  string iChingID = 1;
+  string phoneNo = 1;
+  string countryCode = 2;// default is 86
 
 }
 

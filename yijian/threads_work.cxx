@@ -1,4 +1,5 @@
 #include "threads_work.h"
+#include "stdlib.h"
 
 namespace yijian {
 
@@ -68,8 +69,19 @@ void noti_threads::foreachio(
 
 }
 
+namespace threadCurrent {
+Thread_Data * threadData(Thread_Data* currentData) {
+  static thread_local auto threaddata = currentData;
+  return threaddata;
+}
+Thread_Data * threadData() {
+  return threadData(nullptr);
+}
+}
+
 void noti_threads::thread_func(Thread_Data* thread_data) {
   bool isContine = true;
+  threadCurrent::threadData(thread_data);
   while (isContine) {
     
     if (thread_data->isContine_.load()){

@@ -13,6 +13,11 @@ struct PingNode;
 
 namespace yijian {
 
+namespace threadCurrent {
+Thread_Data * threadData(Thread_Data* currentData);
+Thread_Data * threadData();
+}
+
 struct Thread_Data {
   typedef std::vector<PingNode*> Vector_Node;
   typedef std::shared_ptr<Vector_Node>  Vector_Node_SP;
