@@ -143,7 +143,7 @@ void start_write_callback (struct ev_loop * loop,  ev_async * w, int revents) {
   noti_threads()->foreachio([=](struct PingNode * node) {
       Connection_IO * io = reinterpret_cast<Connection_IO*>(node);
       ev_io_stop(loop, &io->io);
-      ev_io_start(loop, io->contra_io);
+      ev_io_start(loop, &io->contra_io->io);
       });
 
 }
@@ -193,8 +193,8 @@ void socket_accept_callback (struct ev_loop * loop,
       connection_read_callback, client_sd, EV_READ);
   ev_io_init (&client_write_watcher->io,
       connection_read_callback, client_sd, EV_WRITE);
-  client_read_watcher->contra_io = &client_write_watcher->io;
-  client_write_watcher->contra_io = &client_read_watcher->io;
+  client_read_watcher->contra_io = client_write_watcher;
+  client_write_watcher->contra_io = client_read_watcher;
 
   ev_io_start (loop, &client_read_watcher->io);
 
@@ -214,7 +214,15 @@ void connection_read_callback (struct ev_loop * loop,
 
   // read to buffer 
   // if read complete stop watch && update ping
-  if (io->io_area.buffer_sp->socket_read(io->io.fd)) {
+  
+  bool isReaded = false;
+  
+  if (io->multimedia.buffers_p) {
+    isReaded = io->multimedia.buffer_sp->socket_read_media(io->io.fd);
+  }else {
+    isReaded = io->io_area.buffer_sp->socket_read(io->io.fd);
+  }
+  if (isReaded) {
     // stop read
     ev_io_stop (loop, rw);
     // update ping time
@@ -245,11 +253,16 @@ void connection_write_callback (struct ev_loop * loop,
 
   // write to socket
   // if write finish stop write, start read.
-  if (io->io_area.buffer_sp->->socket_write(io->io.fd)) {
-    io->io_area.vector_p
-    ev_io_stop(loop, ww);
-    ev_io_start(loop, io->contra_io);
+  bool isEmpty = io->io_area.buffers_p->empty();
+  while (!isEmpty) {
+    if (io->io_area.buffers_p->front()->socket_write(io->io.fd)) {
+      io->io_area.buffers_p->pop();
+    }
   }
-  
+  if (isEmpty) {
+    io->contra_io->io_area.buffer_sp->reset();
+    ev_io_stop(loop, ww);
+    ev_io_start(loop, &io->contra_io->io);
+  }
 }
 
