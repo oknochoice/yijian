@@ -24,6 +24,8 @@ void buffer::reset() {
 
   data_pos_ = header_pos_;
   current_pos_ = header_pos_;
+  isFinish_ = false;
+  isParseFinish_ = false;
 
 }
 // destruct
@@ -98,6 +100,25 @@ bool buffer::socket_write(int sfd) {
   return isFinish_;
 }
 
+
+void buffer::set_socketreadmedia_length(std::size_t length) {
+  remain_data_length_ = length;
+}
+
+bool buffer::socket_read_media(int sfd) {
+  YILOG_TRACE("func: {}", __func__);
+
+  if (!isFinish_) {
+    remain_data_length_ -= socket_read(sfd, remain_data_length_);
+    if (0 == remain_data_length_)
+      isFinish_ = true;
+  }
+
+  return isFinish_;
+
+}
+
+
 uint_fast8_t buffer::datatype() {
   YILOG_TRACE("func: {}", __func__);
   return data_type_;
@@ -111,6 +132,20 @@ char * buffer::data() {
 std::size_t buffer::data_size() {
   YILOG_TRACE("func: {}", __func__);
   return current_pos_ - data_pos_;
+}
+
+
+void buffer::data_encoding_length(uint_fast32_t length) {
+  current_pos_ = encoding_var_Length(current_pos_, length);
+}
+void buffer::data_encoding_type(uint8_t type) {
+  memcpy(current_pos_, &type, 1);
+}
+char * buffer::data_encoding_current() {
+  return current_pos_;
+}
+void buffer::data_encoding_reset_size(std::size_t length) {
+  current_pos_ += length;
 }
 
 std::pair<uint_fast32_t, char *>
@@ -152,7 +187,8 @@ inline std::size_t buffer::socket_read(int sfd, std::size_t count) {
   if (-1 != readed) {
     current_pos_ += readed;
   }else {
-    throw std::system_error(std::error_code(errno, std::system_category()), "read buffer");
+    throw std::system_error(std::error_code(errno, std::system_category()),
+        "read buffer");
   }
   return readed;
 }
@@ -163,7 +199,8 @@ inline std::size_t buffer::socket_write(int sfd, std::size_t count) {
   if (-1 != writed) {
     current_pos_ += writed;
   }else {
-    throw std::system_error(std::error_code(errno, std::system_category()), "write buffer");
+    throw std::system_error(std::error_code(errno, std::system_category()), 
+        "write buffer");
   }
   return writed;
 }

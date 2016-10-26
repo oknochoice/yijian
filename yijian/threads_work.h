@@ -10,17 +10,20 @@ struct PingNode;
 #include <tuple>
 #include <atomic>
 #include <string>
+#include <queue>
 
 namespace yijian {
 
 namespace threadCurrent {
 Thread_Data * threadData(Thread_Data* currentData);
 Thread_Data * threadData();
+void pushPingnode(PingNode * node);
 }
 
 struct Thread_Data {
   typedef std::vector<PingNode*> Vector_Node;
   typedef std::shared_ptr<Vector_Node>  Vector_Node_SP;
+  typedef std::function<void(void)> Thread_Function;
 
   std::thread thread_;
 
@@ -29,12 +32,12 @@ struct Thread_Data {
   bool c_isWait_;
   std::condition_variable c_var_;
 
-  std::function<void(void)> && work_func_;
-  std::function<void(void)> && workFinish_func_;
+  std::mutex q_workfun_mutex_;
+  std::queue<Thread_Function> q_workfun_;
 
-  std::mutex v_mutex_;
+  std::mutex v_pingnode_mutex_;
   Vector_Node_SP v_pingnode_sp_;
-  PingNode * current_node_;
+  
 };
 
 class noti_threads : public noncopyable{
@@ -44,9 +47,7 @@ public:
   ~noti_threads();
 
   // push to vec_threads_
-  void sentWork(std::function<void(void)> && func,
-      PingNode * node, 
-      std::function<void(void)> && finish);
+  void sentWork(Thread_Data::Thread_Function && func);
   void foreachio(std::function<void(struct PingNode *)> && func);
   void thread_func(Thread_Data * thread_data);
 private:

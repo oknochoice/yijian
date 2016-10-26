@@ -18,6 +18,18 @@ message Noti_Unread {
   map<string, uint32> unreadNodes = 1;
 }
 
+message Device {
+  enum    OperatingSystem {iOS = 0; Android = 1;}
+  OperatingSystem OS = 1;
+  string          OSVersion = 2;
+  string          clientVersion = 3;// Dot-decimal notation
+  string          appVersion = 4; // Dot-decimal notaiton
+  string          deviceModel = 5;
+  string          UUID = 6;
+  bool            isLogin = 7;
+  bool            isConnected = 8;
+}
+
 message UserInfo {
   string id = 1;
   string toNodeID = 2;
@@ -55,6 +67,7 @@ message User {
   repeated  UserInfo friends = 11;
   repeated  string blacklist = 12;
   repeated  GroupInfo groups = 13;
+  repeated  Device devices = 14;
 }
 
 message Register {
@@ -68,9 +81,10 @@ message Register {
 
 message Login {
 
-  string iChingOrOther = 1;
-  string password = 2; // sha1 double
-  string messageVersion = 3;
+  string phoneNo = 1;
+  string countryCode = 2;// default is 86
+  string password = 3; // sha1 double
+  Device device = 4;
 
 }
 
@@ -78,6 +92,7 @@ message Logout {
 
   string phoneNo = 1;
   string countryCode = 2;// default is 86
+  Device device = 3;
 
 }
 

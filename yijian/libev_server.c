@@ -217,28 +217,46 @@ void connection_read_callback (struct ev_loop * loop,
   
   bool isReaded = false;
   
-  if (io->multimedia.buffers_p) {
-    isReaded = io->multimedia.buffer_sp->socket_read_media(io->io.fd);
+  if (1 == io->buffers_p.size()) {
+    isReaded = io->buffers_p.front()->socket_read(io->io.fd);
+    if (isReaded) {
+      // stop read
+      ev_io_stop (loop, rw);
+      // update ping time
+      time(&io->ping_time);
+      ping_move2back(pinglist(), io);
+      // do work 
+      noti_threads()->sentWork(
+          [=](){
+            YILOG_TRACE ("dispatch message");
+            dispatch(io);
+          },
+          io,
+          [=](){
+            YILOG_TRACE ("ev_async_send message");
+            ev_async_send(loop, &write_asyn_watcher()->as);
+          });
+    }
   }else {
-    isReaded = io->io_area.buffer_sp->socket_read(io->io.fd);
-  }
-  if (isReaded) {
-    // stop read
-    ev_io_stop (loop, rw);
-    // update ping time
-    time(&io->ping_time);
-    ping_move2back(pinglist(), io);
-    // do work 
-    noti_threads()->sentWork(
-        [=](){
-          YILOG_TRACE ("mongo query");
-          dispatch(io);
-        },
-        io,
-        [=](){
-          YILOG_TRACE ("ev_async_send");
-          ev_async_send(loop, &write_asyn_watcher()->as);
-        });
+    isReaded = io->buffers_p.back()->socket_read_media(io->io.fd);
+    if (isReaded) {
+      // stop read
+      ev_io_stop (loop, rw);
+      // update ping time
+      time(&io->ping_time);
+      ping_move2back(pinglist(), io);
+      // do work 
+      noti_threads()->sentWork(
+          [=](){
+            YILOG_TRACE ("dispatch block");
+            dispatch(io->buffers_p.back());
+          },
+          io,
+          [=](){
+            YILOG_TRACE ("ev_async_send block");
+            ev_async_send(loop, &write_asyn_watcher()->as);
+          });
+    }
   }
 
 }

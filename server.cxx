@@ -81,6 +81,7 @@ int main(int argc, char * argv[])
   dispatch(a);
   dispatch(b);
   dispatch(d);
+  std::vector<int> v = std::vector<int>();
 
   return 0;
 }
