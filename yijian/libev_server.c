@@ -230,10 +230,6 @@ void connection_read_callback (struct ev_loop * loop,
           [=](){
             YILOG_TRACE ("dispatch message");
             dispatch(io);
-          },
-          io,
-          [=](){
-            YILOG_TRACE ("ev_async_send message");
             ev_async_send(loop, &write_asyn_watcher()->as);
           });
     }
@@ -250,10 +246,6 @@ void connection_read_callback (struct ev_loop * loop,
           [=](){
             YILOG_TRACE ("dispatch block");
             dispatch(io->buffers_p.back());
-          },
-          io,
-          [=](){
-            YILOG_TRACE ("ev_async_send block");
             ev_async_send(loop, &write_asyn_watcher()->as);
           });
     }
@@ -271,14 +263,12 @@ void connection_write_callback (struct ev_loop * loop,
 
   // write to socket
   // if write finish stop write, start read.
-  bool isEmpty = io->io_area.buffers_p->empty();
-  while (!isEmpty) {
-    if (io->io_area.buffers_p->front()->socket_write(io->io.fd)) {
-      io->io_area.buffers_p->pop();
+  if (!io->buffers_p.empty()) {
+    if (io->buffers_p.front()->socket_write(io->io.fd)) {
+      io->buffers_p.pop();
     }
   }
-  if (isEmpty) {
-    io->contra_io->io_area.buffer_sp->reset();
+  if (io->buffers_p.empty()) {
     ev_io_stop(loop, ww);
     ev_io_start(loop, &io->contra_io->io);
   }
