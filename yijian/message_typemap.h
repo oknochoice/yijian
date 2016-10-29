@@ -19,14 +19,11 @@ constexpr uint8_t dispatchType(chat::Error & error);
 
 void dispatch(chat::Error& error);
 
-std::shared_ptr<yijian::buffer>
-dispatch(chat::Register & rollin);
+void dispatch(chat::Register & rollin);
 
-std::shared_ptr<yijian::buffer>
-dispatch(chat::Login & login);
+void dispatch(chat::Login & login);
 
-std::function<Buffer_SP(void)>& 
-dispatch(int type, char * header, std::size_t length);
+void dispatch(int type, char * header, std::size_t length);
 
 void dispatch(PingNode* node);
 

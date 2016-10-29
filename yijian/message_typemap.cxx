@@ -3,13 +3,14 @@
 #include <map>
 #include <mutex>
 
-#include "chat_mongo.h"
+#include "mongo.h"
 #include "protofiles/chat_message.pb.h"
 #include "pinglist.h"
 #include "threads_work.h"
 #include <string>
 #include <queue>
 #include "buffer.h"
+
 
 #ifdef __cpluscplus
 extern "C" {
@@ -74,7 +75,7 @@ auto dispatch(Any & a) {
 */
 
 template <typename Any>
-void dispatch(Any & a) {
+void dispatch(Any & ) {
   YILOG_TRACE ("func: {}. ", __func__);
   throw std::system_error(std::error_code(11000, std::generic_category()), 
       "unkonw dispatch type");
@@ -127,6 +128,13 @@ constexpr uint8_t dispatchType(chat::Noti_Message & ) {
 constexpr uint8_t dispatchType(chat::Noti_Unread & ) {
   return ChatType::notiunread;
 }
+
+static auto &
+bufferQueue() {
+  static auto queue = std::queue<std::pair<Buffer_SP, std::string>>();
+  return queue;
+}
+
 // dispatch 
 void dispatch(chat::Error& ) {
 
@@ -149,21 +157,20 @@ encoding(Proto any) {
     return buf;
 }
 
-std::shared_ptr<yijian::buffer>
-dispatch(chat::Register & rollin) {
+void dispatch(chat::Register & rollin) {
   
   YILOG_TRACE ("func: {}. ", __func__);
 
   auto client = yijian::threadCurrent::mongoClient();
 
-  bool isRollin = client.isUserRollined(rollin.phoneno(), rollin.countrycode());
+  bool isRollin = client->isUserRollined(rollin.phoneno(), rollin.countrycode());
   if (isRollin) {
 
     auto error = chat::Error();
     error.set_errnum(11002);
     error.set_errmsg("user is already in database");
 
-    return encoding(error);
+    bufferQueue().push(std::make_pair(encoding(error), std::string()));
 
   }else {
     auto user = chat::User();
@@ -171,25 +178,24 @@ dispatch(chat::Register & rollin) {
     user.set_countrycode(rollin.countrycode());
     user.set_password(rollin.password());
     user.set_nickname(rollin.nickname());
-    client.enrollUser(user);
+    client->enrollUser(std::move(user));
 
     auto error = chat::Error();
     error.set_errnum(0);
     error.set_errmsg("success");
 
-    return encoding(error);
+    bufferQueue().push(std::make_pair(encoding(error), std::string()));
 
   }
 
 }
 
-std::shared_ptr<yijian::buffer>
-dispatch(chat::Login & login) {
+void dispatch(chat::Login & login) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   auto client = yijian::threadCurrent::mongoClient();
 
-  bool isRollin = client.isUserRollined(login.phoneno(), login.countrycode());
+  bool isRollin = client->isUserRollined(login.phoneno(), login.countrycode());
   if (isRollin) {
     
   }else {
@@ -200,77 +206,110 @@ dispatch(chat::Login & login) {
 }
 
 
-std::function<Buffer_SP(void)>& 
-dispatch(int type, char * header, std::size_t length) {
-  auto static map_p = new std::map<int, std::function<Buffer_SP(void)>>();
+void dispatch(int type, char * header, std::size_t length) {
+  auto static map_p = new std::map<int, std::function<void(void)>>();
   std::once_flag flag;
   std::call_once(flag, [&]() {
-      (*map_p)[ChatType::error] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::error] = [=]() {
         auto chat = chat::Error();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::registor] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::registor] = [=]() {
         auto chat = chat::Register();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::login] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::login] = [=]() {
         auto chat = chat::Login();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::logout] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::logout] = [=]() {
         auto chat = chat::Logout();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::user] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::user] = [=]() {
         auto chat = chat::User();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::userinfo] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::userinfo] = [=]() {
         auto chat = chat::UserInfo();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::group] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::group] = [=]() {
         auto chat = chat::Group();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::groupinfo] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::groupinfo] = [=]() {
         auto chat = chat::GroupInfo();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::chatmessage] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::chatmessage] = [=]() {
         auto chat = chat::ChatMessage();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::notimessage] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::notimessage] = [=]() {
         auto chat = chat::Noti_Message();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::notiunread] = [=]() -> Buffer_SP {
+      (*map_p)[ChatType::notiunread] = [=]() {
         auto chat = chat::Noti_Unread();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
   });
-  return (*map_p)[type];
+  (*map_p)[type]();
 }
 
 struct PingNode;
 
 void dispatch(PingNode* node) {
-  auto buf = dispatch(node->buffers_p.front()->datatype(), 
+
+  dispatch(node->buffers_p.front()->datatype(), 
           node->buffers_p.front()->data(),
           node->buffers_p.front()->data_size());
-  node->contra_io->buffers_p.push(buf());
+
+  while (!bufferQueue().empty()) {
+    auto pair = bufferQueue().front();
+    if (pair.second.empty()) {
+      node->contra_io->buffers_p.push(pair.first);
+    }else {
+      auto inClient = yijian::threadCurrent::inmemClient();
+      auto cursor = inClient->devices(pair.second, SERVER_NAME);
+      for (auto doc : cursor) {
+        if (doc["isLogin"].get_bool()) {
+          if (doc["isConnected"].get_bool()) {
+            YILOG_TRACE ("online");
+            // get pingnode
+            uint64_t nodepointor = doc["nodepointor"].get_int64();
+            PingNode * lnode = reinterpret_cast<PingNode*>(nodepointor);
+            // if node is request pass
+            if (node == lnode) continue;// 
+            // mount buffer to pingnode
+            lnode->contra_io->buffers_p.push(pair.first);
+            // mount pingnode to thread data ,then stop read start write
+            yijian::threadCurrent::pushPingnode(node);
+          }else if (doc["isReciveNoti"].get_bool()) {
+            YILOG_TRACE ("offline");
+#warning need push server;
+            std::cout << "push to " << doc["UUID"].get_utf8().value 
+              << std::endl;
+          }
+#warning need transmit to peer server
+        }
+      }
+    }
+    bufferQueue().pop();
+  }
+
 }
 
 

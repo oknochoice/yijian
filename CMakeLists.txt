@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8)
 project(yijian)
-add_executable(a.out main.cxx)
+add_executable(a.out main.cxx ./yijian/pinglist.cxx ./yijian/buffer.cxx)
 add_executable(server.out server.cxx)
 add_executable(client.out client.cxx)
 
@@ -17,6 +17,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CXX_FLAGS} -O3 -Wall")
 add_subdirectory(yijian)
 include_directories(yijian)
 #target_link_libraries(a.out yijian)
+#target_link_libraries(server.out yijian)
+#target_link_libraries(client.out yijian)
 
 #
 set(EXT_PROJECTS_DIR externals)
@@ -26,5 +28,5 @@ include_directories(${CATCH_INCLUDE_DIR} ${COMMON_INCLUDES})
 # Includes Spdlog in the project:
 add_subdirectory(${EXT_PROJECTS_DIR}/spdlog)
 include_directories(${SPDLOG_INCLUDE_DIR} ${COMMON_INCLUDES})
-#
-enable_testing(true)  # Enables unit-testing
+# Enables unit-testing
+enable_testing(true)  

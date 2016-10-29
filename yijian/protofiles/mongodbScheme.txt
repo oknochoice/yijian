@@ -1,5 +1,4 @@
 iching database
-http://www.4hu54.com
 // protoc --proto_path=./ --cpp_out=./
 
 collections:

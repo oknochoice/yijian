@@ -3,7 +3,15 @@
 #include "macro.h"
 #include "catch.hpp"
 #include "spdlog/spdlog.h"
+#include <cstdint>
+#include <iostream>
+#include <vector>
+#include <bsoncxx/json.hpp>
+#include <mongocxx/client.hpp>
+#include <mongocxx/stdx.hpp>
+#include <mongocxx/uri.hpp>
 
+/*
 #include <boost/hana.hpp>
 #include <boost/any.hpp>
 #include <boost/hana/integral_constant.hpp>
@@ -72,16 +80,46 @@ auto dispatch(Any & a) {
       default_([]() {std::cout << "default" << std::endl;})
       );
 }
+*/
+
+using bsoncxx::builder::stream::close_array;
+using bsoncxx::builder::stream::close_document;
+using bsoncxx::builder::stream::document;
+using bsoncxx::builder::stream::finalize;
+using bsoncxx::builder::stream::open_array;
+using bsoncxx::builder::stream::open_document;
 
 int main(int argc, char * argv[])
 {
-  boost::any a = 'x';
-  boost::any b = 1;
-  boost::any d = 2.5;
-  dispatch(a);
-  dispatch(b);
-  dispatch(d);
-  std::vector<int> v = std::vector<int>();
+
+  mongocxx::uri uri("mongodb://localhost:27017");
+	mongocxx::client client(uri);
+
+	auto db = client["test"];
+	auto user = db["user"];
+
+  auto build = bsoncxx::builder::stream::document{};
+  bsoncxx::document::value doc_value = build
+    << "name" << "jiwei" 
+    << "age" << 200
+    << "status" << "good"
+    << bsoncxx::builder::stream::finalize;
+
+  user.insert_one(doc_value.view());
+
+  {
+    auto jiwei = build 
+      << "name" << "jiwei"
+      << finalize;
+
+    auto cursor = user.find(jiwei.view());
+    for (auto doc: cursor) {
+      auto name = doc["name"];
+      std::cout << name.get_utf8().value << std::endl;
+    }
+    std::cout << "----" << std::endl;
+  }
+
 
   return 0;
 }

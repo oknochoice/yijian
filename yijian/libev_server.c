@@ -133,7 +133,7 @@ int start_server_libev() {
 
 }
 
-void start_write_callback (struct ev_loop * loop,  ev_async * w, int revents) {
+void start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
   
   YILOG_TRACE ("func: {}. ", __func__);
 

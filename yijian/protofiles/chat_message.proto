@@ -10,8 +10,7 @@ message Error {
 }
 
 message Noti_Message {
-  string nodeID = 1;
-  string messageID = 2;
+  string messageID = 1;
 }
 
 message Noti_Unread {
@@ -26,8 +25,10 @@ message Device {
   string          appVersion = 4; // Dot-decimal notaiton
   string          deviceModel = 5;
   string          UUID = 6;
-  bool            isLogin = 7;
-  bool            isConnected = 8;
+  uint32          shortID = 7;// from 1 ...
+  bool            isLogin = 8;
+  bool            isConnected = 9;
+  bool            isReciveNoti = 10;
 }
 
 message UserInfo {
@@ -101,13 +102,44 @@ message ChatMessage {
   enum   Type { TEXT = 0; JPG = 1; MP3 = 2;}
   string fromUserID = 1;
   string toNodeID = 2;
-  uint32 incrementID = 3;
+  uint32 repeatedNo = 3;
   uint32 totalCount = 4;
-  uint32 currentIndex = 5;
+  uint32 deviceShortID = 5;
   uint32 timestampClient = 6;
-  uint32 timestampMessageinsert = 7;
+  uint32 timestampServer = 7;
   Type   type = 8;
   bytes  content = 9;
   
 }
+
+message Connect {
+  string userID = 1;
+  string UUID = 2;
+  bool   isLogin = 3;
+  bool   isConnected = 4;
+  bool   isReciveNoti = 5;
+}
+
+message DisConnect {
+  string userID = 1;
+  string UUID = 2;
+}
+
+// in memory mongodb 
+// user login connect pushMessage info.
+// index chatMessageNode userID 1, UUID 1
+
+message ConnectInfo {
+  string nodeID = 1;
+  string userID = 2;
+  string UUID = 3;
+  bool   isLogin = 4;
+  bool   isConnected = 5;
+  bool   isReciveNoti = 6;
+  string serverName = 7;
+  uint64 nodepointor = 8;
+}
+
+
+
 

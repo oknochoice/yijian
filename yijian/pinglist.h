@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-class PingNode;
+struct PingNode;
 
 typedef void* List;
 typedef std::list<PingNode*> Imp_list;
@@ -40,15 +40,15 @@ PingNode * createWritePingNode();
 void destoryWritePingNode(PingNode * node);
 
 
-inline List create_pinglist();
+List create_pinglist();
 
-inline void ping_append(List list_sp, PingNode * p);
+void ping_append(List list_sp, PingNode * p);
 
-inline void ping_move2back(List list_sp, PingNode * p);
+void ping_move2back(List list_sp, PingNode * p);
 
-inline void ping_erase(List list_sp, PingNode * p);
+void ping_erase(List list_sp, PingNode * p);
 
-inline void ping_foreach(List list_sp, 
+void ping_foreach(List list_sp, 
     std::function<void(PingNode *p, bool * isStop)> func);
 
 #ifdef __cpluscplus
