@@ -31,7 +31,7 @@ public:
 }
 
 // c++11 thread-safe
-static auto& getConsole() {
+inline static auto& getConsole() {
   auto static console = spdlog::stdout_logger_mt("console");
   console->set_level(spdlog::level::trace);
   return console;
@@ -51,8 +51,8 @@ static auto& getConsole() {
 #define YILOG_DEBUG(...)
 #define YILOG_INFO(...)
 #define YILOG_WARN(...)
-#define YILOG_ERROR(...)
-#define YILOG_CRITICAL(...)
+#define YILOG_ERROR(...) getConsole()->error(__VA_ARGS__)
+#define YILOG_CRITICAL(...) getConsole()->critical(__VA_ARGS__)
 #endif
 
 #define MQTT_BUFFER_SIZE (1024 * 2)
