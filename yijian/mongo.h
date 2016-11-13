@@ -35,9 +35,6 @@ public:
   std::shared_ptr<chat::User> 
   queryUser(const std::string & userID);
 
-  std::shared_ptr<chat::QueryUserRes>
-  queryUser(const chat::QueryUser & queryUser);
-
   std::shared_ptr<chat::AddFriendAuthorizeInfo>
   addFriendAuthorize(const std::string & inviter, 
       const std::string & inviterNickname,

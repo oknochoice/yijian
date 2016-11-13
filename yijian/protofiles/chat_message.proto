@@ -82,16 +82,17 @@ message QueryUser {
 }
 
 message QueryUserRes {
-  string    id = 1;
-  string    realname = 2;
-  string    nickname = 3;
-  bytes     icon = 4;
-  string    description = 5;
-  bool      isMale = 6;
-  string    phoneNo = 7;// code_phone 86_18514029918
-  string    countryCode = 8;// default is 86
-  int32     birthday = 9;
-  string    toUserID_outer = 10;
+  User    user = 1;// clean password
+  string  toUserID_outer = 2;
+}
+
+message QueryUserVersion {
+  string userID = 1;
+}
+
+message QueryUserVersionRes {
+  string toUserID_outer = 1;
+  int32  version = 2;
 }
 
 message QueryNode {

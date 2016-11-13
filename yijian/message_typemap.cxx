@@ -721,8 +721,7 @@ void dispatch(chat::QueryUser & queryUser) {
   YILOG_TRACE ("func: {}. ", __func__);
   try {
     auto client = yijian::threadCurrent::mongoClient();
-    auto queryUserRes = client->queryUser(queryUser);
-    /*
+    auto user_sp = client->queryUser(queryUser.userid());
     auto queryUserRes = chat::QueryUserRes();
     queryUserRes.set_id(user_sp->id());
     queryUserRes.set_realname(user_sp->realname());
@@ -733,8 +732,7 @@ void dispatch(chat::QueryUser & queryUser) {
     queryUserRes.set_phoneno(user_sp->phoneno());
     queryUserRes.set_countrycode(user_sp->countrycode());
     queryUserRes.set_birthday(user_sp->birthday());
-    */
-    mountBuffer2Node(encoding(*queryUserRes), node_self_);
+    mountBuffer2Node(encoding(queryUserRes), node_self_);
 //    queryUserRes.set_touserid(currentNode_->userid);
 //    mountBuffer2Node(encoding(queryUserRes), node_peer_);
   }catch (std::system_error & sys_error) {
