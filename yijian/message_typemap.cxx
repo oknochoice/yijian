@@ -722,16 +722,17 @@ void dispatch(chat::QueryUser & queryUser) {
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto user_sp = client->queryUser(queryUser.userid());
+    user_sp->clear_password();
     auto queryUserRes = chat::QueryUserRes();
-    queryUserRes.set_id(user_sp->id());
-    queryUserRes.set_realname(user_sp->realname());
-    queryUserRes.set_nickname(user_sp->nickname());
-    queryUserRes.set_icon(user_sp->icon());
-    queryUserRes.set_description(user_sp->description());
-    queryUserRes.set_ismale(user_sp->ismale());
-    queryUserRes.set_phoneno(user_sp->phoneno());
-    queryUserRes.set_countrycode(user_sp->countrycode());
-    queryUserRes.set_birthday(user_sp->birthday());
+    auto queryuser = queryUserRes.mutable_user();
+    if (queryUser.userid() != currentNode_->userid) {
+      user_sp->clear_version();
+      user_sp->clear_friends();
+      user_sp->clear_blacklist();
+      user_sp->clear_groupids();
+      user_sp->clear_devices();
+    }
+    *queryuser = *user_sp;
     mountBuffer2Node(encoding(queryUserRes), node_self_);
 //    queryUserRes.set_touserid(currentNode_->userid);
 //    mountBuffer2Node(encoding(queryUserRes), node_peer_);

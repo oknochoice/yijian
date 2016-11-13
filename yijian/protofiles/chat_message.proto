@@ -68,7 +68,7 @@ message User {
   bool      isMale = 6;
   string    phoneNo = 7;// code_phone 86_18514029918 insert
   string    countryCode = 8;// default is 86 insert
-  string    password = 9; // sha1 double insert
+  string    password = 9; // sha1 double insert 
   int32     birthday = 10;
   int32     version = 11;
   repeated  UserInfo friends = 12;
@@ -82,8 +82,26 @@ message QueryUser {
 }
 
 message QueryUserRes {
-  User    user = 1;// clean password
-  string  toUserID_outer = 2;
+  string toUserID_outer = 1;
+  User   user = 2;
+/*
+  string    id = 1;
+  string    realname = 2;
+  string    nickname = 3;
+  bytes     icon = 4;
+  string    description = 5;
+  bool      isMale = 6;
+  string    phoneNo = 7;// code_phone 86_18514029918
+  string    countryCode = 8;// default is 86
+  int32     birthday = 9;
+  string    toUserID_outer = 10;
+  // self
+  int32     version = 11;
+  repeated  UserInfo friends = 12;
+  repeated  string blacklist = 13;
+  repeated  string groupIDs = 14;
+  repeated  Device devices = 15;
+  */
 }
 
 message QueryUserVersion {
