@@ -1,8 +1,37 @@
 #include "libev_server.h"
 #include <map>
 #include <function>
+#include <mutex>
+#include <arpa/inet.h>
 
 #include "message_typemap.h"
+
+
+struct Peer_Servers peer_servers_;
+void set_peer_servers() {
+  peer_servers_.peer_servers_.reset(new std::list<PingNode*>());
+}
+std::shared_ptr<std::list<PingNode*>> peer_servers() {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+
+  std::unique_lock<std::mutex> ul(peer_servers_.mutex_);
+
+  return peer_servers_.peer_servers_;
+
+}
+
+std::shared_ptr<std::list<PingNode*>> peer_servers_write() {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+
+  std::unique_lock<std::mutex> ul(peer_servers_.mutex_);
+  if (!peer_servers_.peer_servers_.unique()) {
+    peer_servers_.peer_servers_.reset(new 
+        std::list<PingNode*>(*peer_servers_.peer_servers_));
+  }
+  return peer_servers_.peer_servers_;
+}
 
 
 List pinglist() {
@@ -46,6 +75,7 @@ struct Write_Asyn * write_asyn_watcher() {
 }
 
 
+
 void
 sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
 
@@ -63,6 +93,9 @@ yijian::noti_threads * noti_threads() {
   return noti_threads;
 }
 
+
+
+
 int open_thread_manager () {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -70,12 +103,15 @@ int open_thread_manager () {
   noti_threads();
   
   return 0;
+
 }
 
 
-int start_server_libev() {
+int start_server_libev(std::vector<std::pair<std::string, int>> & ips ) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  // set peer server list
+  set_peer_servers();
 
   // manager thread
   if (0 > open_thread_manager()) {
@@ -129,6 +165,13 @@ int start_server_libev() {
 
   ev_run (loop(), 0);
 
+
+  // connect to peer server
+  for (auto & pair: ips) {
+    auto p = peer_servers_write();
+    p->push_back(connect_peer(pair.first, pair.second));
+  }
+
   return 0;
 
 }
@@ -141,9 +184,9 @@ void start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
   // Write_Asyn * as = reinterpret_cast<Write_Asyn*>(w);
 
   noti_threads()->foreachio([=](struct PingNode * node) {
-      Connection_IO * io = reinterpret_cast<Connection_IO*>(node);
-      ev_io_stop(loop, &io->io);
-      ev_io_start(loop, &io->contra_io->io);
+        Connection_IO * io = reinterpret_cast<Connection_IO*>(node);
+        //ev_io_stop(loop, &io->io);
+        ev_io_start(loop, &io->contra_io->io);
       });
 
 }
@@ -215,40 +258,34 @@ void connection_read_callback (struct ev_loop * loop,
   // read to buffer 
   // if read complete stop watch && update ping
   
-  bool isReaded = false;
-  
-  if (1 == io->buffers_p.size()) {
-    isReaded = io->buffers_p.front()->socket_read(io->io.fd);
-    if (isReaded) {
-      // stop read
-      ev_io_stop (loop, rw);
-      // update ping time
-      time(&io->ping_time);
-      ping_move2back(pinglist(), io);
+  if (io->buffers_p.front()->socket_read(io->io.fd)) {
+    // stop read
+    ev_io_stop (loop, rw);
+    // update ping time
+    time(&io->ping_time);
+    ping_move2back(pinglist(), io);
+    if (unlikely(io->buffers_p.front()->datatype() == 
+          ChatType::serverconnect)) {
+      // remove peer server's pingnode from pinglist
+      // add to peer server list;
+      ping_erase(pinglist(), io);
+      auto p = peer_servers_write();
+      p->push_back(io);
+    }else if (unlikely(io->buffers_p.front()->datatype() == 
+          ChatType::serverdisconnect)) {
+      // remove peer server list;
+      auto p = peer_servers_write();
+      p->remove(io);
+    }else {
       // do work 
       noti_threads()->sentWork(
           [=](){
             YILOG_TRACE ("dispatch message");
-            dispatch(io);
+            dispatch(io, io->buffers_p.front());
             ev_async_send(loop, &write_asyn_watcher()->as);
           });
     }
-  }else {
-    isReaded = io->buffers_p.back()->socket_read_media(io->io.fd);
-    if (isReaded) {
-      // stop read
-      ev_io_stop (loop, rw);
-      // update ping time
-      time(&io->ping_time);
-      ping_move2back(pinglist(), io);
-      // do work 
-      noti_threads()->sentWork(
-          [=](){
-            YILOG_TRACE ("dispatch block");
-            dispatch(io->buffers_p.back());
-            ev_async_send(loop, &write_asyn_watcher()->as);
-          });
-    }
+    io->buffers_p.front().reset(new yijian::buffer());
   }
 
 }
@@ -263,14 +300,65 @@ void connection_write_callback (struct ev_loop * loop,
 
   // write to socket
   // if write finish stop write, start read.
+  std::unique_lock<std::mutex> ul(io->buffers_p_mutex);
   if (!io->buffers_p.empty()) {
-    if (io->buffers_p.front()->socket_write(io->io.fd)) {
+    auto p = io->buffers_p.front();
+    ul.unlock();
+    if (p->socket_write(io->io.fd)) {
+      ul.lock();
       io->buffers_p.pop();
+      ul.unlock();
     }
   }
   if (io->buffers_p.empty()) {
+    ul.unlock();
     ev_io_stop(loop, ww);
-    ev_io_start(loop, &io->contra_io->io);
   }
 }
+
+PingNode * connect_peer(std::string ip, int port) {
+  int sfd;
+  struct sockaddr_in addr;
+  sfd = socket(PF_INET, SOCK_STREAM, 0);
+  if (sfd < 0) {
+    perror("socket error");
+  }
+
+  bzero(&addr, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(port);
+  addr.sin_addr.s_addr = inet_addr(ip.data());
+
+  if (connect(sfd, (struct sockaddr*) &addr, sizeof(addr)) < 0) {
+    perror("Failed to connect server");
+  }
+
+  printf("Connected Success %s:%d", ip.data(), port);
+
+  // Connection_IO watcher for client
+  Connection_IO * client_read_watcher = 
+    (Connection_IO *) createReadPingNode();
+  Connection_IO * client_write_watcher = 
+    (Connection_IO *) createWritePingNode();
+
+  if (NULL == client_read_watcher || 
+      NULL == client_write_watcher) {
+    perror ("malloc client watcher error");
+  }
+
+  ev_io_init (&client_read_watcher->io, 
+      connection_read_callback, sfd, EV_READ);
+  ev_io_init (&client_write_watcher->io,
+      connection_read_callback, sfd, EV_WRITE);
+  client_read_watcher->contra_io = client_write_watcher;
+  client_write_watcher->contra_io = client_read_watcher;
+
+  ev_io_start (loop(), &client_read_watcher->io);
+
+  return client_read_watcher;
+}
+
+
+
+
 

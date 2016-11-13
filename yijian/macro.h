@@ -10,6 +10,11 @@
 #define unlikely(x) __builtin_expect(!!(x),0)
 
 #define SERVER_NAME "yijian_1"
+typedef int64_t Pointor_t;
+
+#define TO_PEER_SERVER "to_peer_server_yijian"
+#define TO_PEER_USER "to_peer_user_yijian"
+#define TO_SPECIFY_USER "to_specify_user_yijian"
 
 namespace yijian {
 

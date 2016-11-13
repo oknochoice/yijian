@@ -8,7 +8,7 @@
 #define MESSAGE_TYPE_LENGTH 1
 
 enum class Message_Type : std::size_t {
-  message = 128,
+  message = 1024,
   multimedia = 1024 * 4
 };
 
@@ -42,8 +42,8 @@ public:
     bool socket_write(int sfd);
     // socket read fixed length 
     // first set length second read
-    void set_socketreadmedia_length(std::size_t length);
-    bool socket_read_media(int sfd);
+    //void set_socketreadmedia_length(std::size_t length);
+    //bool socket_read_media(int sfd);
     // used for proto model parse
     uint_fast8_t datatype();
     char * data();

@@ -101,6 +101,7 @@ bool buffer::socket_write(int sfd) {
 }
 
 
+/*
 void buffer::set_socketreadmedia_length(std::size_t length) {
   remain_data_length_ = length;
 }
@@ -117,6 +118,8 @@ bool buffer::socket_read_media(int sfd) {
   return isFinish_;
 
 }
+*/
+
 
 
 uint_fast8_t buffer::datatype() {

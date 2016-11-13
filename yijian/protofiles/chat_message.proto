@@ -2,74 +2,119 @@ syntax = "proto3";
 
 package chat;
 
-option cc_enable_arenas = true;
+option cc_enable_arenas = false;
+
+message NodeSelfDevice {
+}
+
+message NodePeerServer {
+}
+
+message NodeSpecifiy {
+  string toNodeID = 1;
+}
+
+message NodeUser {
+  string toUserID = 1;
+}
 
 message Error {
-  uint32 errnum = 1;
+  int32 errnum = 1;
   string errmsg = 2;
 }
 
-message Noti_Message {
-  string messageID = 1;
-}
-
-message Noti_Unread {
-  map<string, uint32> unreadNodes = 1;
-}
-
 message Device {
+
   enum    OperatingSystem {iOS = 0; Android = 1;}
   OperatingSystem OS = 1;
   string          OSVersion = 2;
   string          clientVersion = 3;// Dot-decimal notation
   string          appVersion = 4; // Dot-decimal notaiton
   string          deviceModel = 5;
-  string          UUID = 6;
-  uint32          shortID = 7;// from 1 ...
+  string          deviceNickname = 6;
+  string          UUID = 7;
   bool            isLogin = 8;
   bool            isConnected = 9;
   bool            isReciveNoti = 10;
+
 }
 
 message UserInfo {
-  string id = 1;
-  string toNodeID = 2;
-  string nickname = 3;
-  uint32 unReadMessage = 4;
+  string toNodeID = 1;
+  string nickname = 2;
+  string userID = 3;
 }
 
-message GroupInfo {
-  string id = 1;
-  string toNodeID = 2;
-  uint32 unReadMessage = 3;
-}
-
-message Group {
-  enum      Authorize {creator = 0; manager = 1; member = 2;}
-  string    id = 1;
-  string    toNodeID = 2;
-  Authorize authorize = 3;
-  string    creatorID = 4;
+// mongo scheme
+message MessageNode {
+  enum      Authorize {creator = 0; manager = 1; member = 2; peer = 3;}
+  string    id = 1;// to node 
+  Authorize authorize = 2;
+  string    creatorID = 3;
+  string    nickname = 4;
   repeated  string managerIDs = 5;
-  repeated  UserInfo members = 6;
+  repeated  string members = 6;
 }
 
+// mongo scheme
+// index code_phone 1
 message User {
   string    id = 1;
   string    realname = 2;
-  string    nickname = 3;
-  bytes     icon= 4;
+  string    nickname = 3; // insert
+  string    icon = 4;
   string    description = 5;
   bool      isMale = 6;
-  string    phoneNo = 7;
-  string    countryCode = 8;// default is 86
-  string    password = 9; // sha1 double
-  uint32    birthday = 10;
-  repeated  UserInfo friends = 11;
-  repeated  string blacklist = 12;
-  repeated  GroupInfo groups = 13;
-  repeated  Device devices = 14;
+  string    phoneNo = 7;// code_phone 86_18514029918 insert
+  string    countryCode = 8;// default is 86 insert
+  string    password = 9; // sha1 double insert
+  int32     birthday = 10;
+  int32     version = 11;
+  repeated  UserInfo friends = 12;
+  repeated  string blacklist = 13;
+  repeated  string groupIDs = 14;
+  repeated  Device devices = 15;
 }
+
+message QueryUser {
+  string userID = 1;
+}
+
+message QueryUserRes {
+  string    id = 1;
+  string    realname = 2;
+  string    nickname = 3;
+  bytes     icon = 4;
+  string    description = 5;
+  bool      isMale = 6;
+  string    phoneNo = 7;// code_phone 86_18514029918
+  string    countryCode = 8;// default is 86
+  int32     birthday = 9;
+  string    toUserID_outer = 10;
+}
+
+message QueryNode {
+  string toNodeID = 1;
+}
+
+message QueryNodeRes {
+  string      toUserID_outer = 1;
+  MessageNode node = 2;
+}
+
+// mongo scheme
+message UnreadInfo {
+  string userID = 1;
+  string toNodeID = 2;
+  int32  unreadNo = 3;
+}
+
+message Noti_Unread {
+
+  map<string, int32> unreadNodes = 1;
+
+}
+
 
 message Register {
 
@@ -89,35 +134,22 @@ message Login {
 
 }
 
-message Logout {
+message LoginRes {
 
-  string phoneNo = 1;
-  string countryCode = 2;// default is 86
-  Device device = 3;
+  string UUID = 1;
+  string userID = 2;
 
-}
-
-message ChatMessage {
-  
-  enum   Type { TEXT = 0; JPG = 1; MP3 = 2;}
-  string fromUserID = 1;
-  string toNodeID = 2;
-  uint32 repeatedNo = 3;
-  uint32 totalCount = 4;
-  uint32 deviceShortID = 5;
-  uint32 timestampClient = 6;
-  uint32 timestampServer = 7;
-  Type   type = 8;
-  bytes  content = 9;
-  
 }
 
 message Connect {
   string userID = 1;
   string UUID = 2;
-  bool   isLogin = 3;
-  bool   isConnected = 4;
-  bool   isReciveNoti = 5;
+  bool   isReciveNoti = 3;
+}
+
+message ConnectRes {
+  string UUID = 1;
+  string userID = 2;
 }
 
 message DisConnect {
@@ -125,19 +157,154 @@ message DisConnect {
   string UUID = 2;
 }
 
+message DisConnectRes {
+  string UUID = 1;
+  string userID = 2;
+}
+
+message Logout {
+
+  string userID = 1;
+  string UUID = 2;
+
+}
+
+message LogoutRes {
+  string UUID = 1;
+  string userID = 2;
+}
+
+message AddFriend {
+  string inviteeID = 1;
+  string nickname = 2;
+  string msg = 3;
+}
+
+message AddFriendRes {
+  string inviterID = 1;
+  string inviteeID = 2; 
+  string nickname = 3;
+  string msg = 4;
+}
+
+message AddFriendAuthorize {
+  string inviteeID = 1;
+  string inviterID = 2;
+  string inviterNickname = 3;
+  string inviteeNickname = 4;
+  bool   isAgree = 5;
+}
+
+message AddFriendAuthorizeInfo {
+  string   toNodeID = 1;
+  int32    inviterUserVersion = 2;
+  int32    inviteeUserVersion = 3;
+}
+
+message AddFriendAuthorizeRes {
+  bool     isAgree = 1;
+  UserInfo friend = 2;
+  int32    userVersion = 3;
+}
+
+message CreateGroup {
+  string userID = 1;
+  string nickname = 2;
+  repeated string membersID = 3; // at last 2
+}
+
+message CreateGroupRes {
+  string toUserID_outer = 1;
+  string nickname = 2;
+  string toNodeID = 3;
+}
+
+message GroupAddMember {
+  string groupID = 1;
+  repeated string membersID = 2;
+}
+
+message GroupAddMemberRes {
+  string toUserID_outer = 1;
+  string groupID = 2;
+}
+
+// mongo scheme 
+// index toNodeID 1, incrementID 1
+message UserMessage {
+  
+  enum   Type { TEXT = 0; JPG = 1; MP3 = 2;}
+  string id = 1; 
+  // client responsibility
+  string fromUserID = 2;
+  string toNodeID = 3;
+  int32  incrementID = 4;// 
+  Type   type = 5;
+  bytes  content = 6;// nontext base64
+
+  string toUserID = 7; // server use to search device
+  
+}
+
+// mongo scheme 
+// index toNodeID 1, incrementID 1
+message NodeMessage {
+  
+  enum   Type { TEXT = 0; JPG = 1; MP3 = 2;}
+  string id = 1; 
+  // client responsibility
+  string fromUserID = 2;
+  string toNodeID = 3;
+  int32  incrementID = 4;// 
+  Type   type = 5;
+  bytes  content = 6;// nontext base64
+  
+}
+message MessageUserRes {
+  string messageNodeID = 1;
+  string fromUserID = 2;
+  string toNodeID = 3;
+  int32  incrementID = 4;
+
+  string toUserID_outer = 5;
+}
+
+message MessageNodeRes {
+
+  string messageNodeID = 1;
+  string fromUserID = 2;
+  string toNodeID = 3;
+  int32  incrementID = 4;
+
+}
+
+message ServerConnect {
+  string serverName = 1;
+  string serverIP = 2;
+}
+
+message ServerDisconnect {
+  string serverName = 1;
+  string serverIP = 2;
+}
+
 // in memory mongodb 
 // user login connect pushMessage info.
-// index chatMessageNode userID 1, UUID 1
-
+// index chatMessageNode 
+// toNodeID 1 serverName 1, 
+// userID 1 serverName 1 toNodeID 1,
+// UUID 1
 message ConnectInfo {
-  string nodeID = 1;
-  string userID = 2;
-  string UUID = 3;
+
+  string UUID = 1;
+  string toNodeID = 2;
+  string userID = 3;
   bool   isLogin = 4;
   bool   isConnected = 5;
   bool   isReciveNoti = 6;
   string serverName = 7;
-  uint64 nodepointor = 8;
+  int64  nodepointor = 8;
+
 }
 
 

@@ -10,6 +10,8 @@
 #include <mongocxx/client.hpp>
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
+#include <bsoncxx/builder/stream/array.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
 
 /*
 #include <boost/hana.hpp>
@@ -88,6 +90,7 @@ using bsoncxx::builder::stream::document;
 using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
+using bsoncxx::builder::stream::array;
 
 int main(int argc, char * argv[])
 {
@@ -98,26 +101,46 @@ int main(int argc, char * argv[])
 	auto db = client["test"];
 	auto user = db["user"];
 
+  auto arrayBuild = array{};
+  for (int i = 0; i < 9; ++i) {
+    arrayBuild << i;
+  }
+  auto array = arrayBuild << finalize;
+
   auto build = bsoncxx::builder::stream::document{};
-  bsoncxx::document::value doc_value = build
+  build
     << "name" << "jiwei" 
-    << "age" << 200
+    << "age" << 1999
     << "status" << "good"
+    << "friend" << array;
+  auto doc = build
     << bsoncxx::builder::stream::finalize;
 
-  user.insert_one(doc_value.view());
+//  user.insert_one(doc.view());
 
+  std::string userid = "5827e5de4b99d9495f68d141";
+  auto result = user.find_one(
+      document{} << "_id" << bsoncxx::oid{userid}
+      << finalize);
+  std::cout << bsoncxx::to_json(result->view()) << std::endl;
+  std::cout << result->view()["_id"].get_oid().value.to_string() << std::endl;
   {
-    auto jiwei = build 
-      << "name" << "jiwei"
-      << finalize;
-
-    auto cursor = user.find(jiwei.view());
-    for (auto doc: cursor) {
-      auto name = doc["name"];
-      std::cout << name.get_utf8().value << std::endl;
+    std::vector<void *> vector;
+    vector.push_back(nullptr);
+    vector.push_back(nullptr);
+    vector.push_back(nullptr);
+    vector.push_back(nullptr);
+    std::cout << "vector size: " << vector.size() << std::endl;
+    for (auto & p: vector) {
+      if (p == nullptr) {
+        std::cout << "nullptr" << std::endl;
+      }
     }
-    std::cout << "----" << std::endl;
+  }
+  {
+    std::vector<std::pair<std::shared_ptr<int64_t>, std::string>> vector;
+    vector.push_back(std::make_pair(nullptr, ""));
+    std::cout << "vector size: " << vector.size() << std::endl;
   }
 
 

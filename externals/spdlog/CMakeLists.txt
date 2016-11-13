@@ -6,8 +6,8 @@ find_package(Git REQUIRED)
 ExternalProject_Add(
 	spdlog
 	PREFIX ${CMAKE_BINARY_DIR}/spdlog
-	GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  #GIT_REPOSITORY ""
+  #GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_REPOSITORY ""
 	TIMEOUT 10
 	CONFIGURE_COMMAND ""
 	BUILD_COMMAND ""

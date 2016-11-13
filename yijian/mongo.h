@@ -7,6 +7,7 @@
 
 #include <bsoncxx/json.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/builder/stream/array.hpp>
 
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
@@ -20,18 +21,59 @@ public:
   ~mongo_client();
 
   // user
-  void enrollUser(const chat::User & user);
-  chat::User && login(const chat::Login & login);
-  void logout(const chat::Logout & logout);
-  chat::User && queryUserID(const std::string & userID);
-  bool isUserRollined(const std::string & phone, const std::string & countryCode);
-  void incrementUserUnread(const std::string & userID, const std::string & nodeID);
-  void cleanUserUnread(const std::string & userID, const std::string & nodeID);
+  void insertUser(const chat::Register & enroll);
+
+  // mongo pull device push device
+//  void upsertDevice(const std::string & userID, const chat::Device & device);
+  void updateDevice(const std::string & userID, const chat::Device & device);
+  void insertDevice(const std::string & userID, const chat::Device & device);
+
+  std::shared_ptr<chat::User> 
+  queryUser(const std::string & phoneNo, const std::string & countryCode);
+  
+  
+  std::shared_ptr<chat::User> 
+  queryUser(const std::string & userID);
+
+  std::shared_ptr<chat::QueryUserRes>
+  queryUser(const chat::QueryUser & queryUser);
+
+  std::shared_ptr<chat::AddFriendAuthorizeInfo>
+  addFriendAuthorize(const std::string & inviter, 
+      const std::string & inviterNickname,
+      const std::string & invitee,
+      const std::string & inviteeNickname);
+
+  // group  
+  // insert all memeber group id
+  std::shared_ptr<chat::CreateGroupRes>
+  createGroup(const chat::CreateGroup & cGroup);
+
+  // insert all memeber group info
+  std::shared_ptr<chat::GroupAddMemberRes>
+  addMembers2Group(chat::GroupAddMember & groupMember);
+
+  std::shared_ptr<chat::QueryNodeRes>
+  queryNode(const std::string & nodeID);
 
   // message
-  std::string && insertOne(const chat::ChatMessage & message);
+  // in incomplete message, out complete message
+  // add incrementID value
+  std::shared_ptr<chat::MessageUserRes> 
+  insertMessage(chat::UserMessage & message);
+  
+  std::shared_ptr<chat::MessageNodeRes> 
+  insertMessage(chat::NodeMessage & message);
 
-  chat::ChatMessage && queryMessageOne(const std::string & messageID);
+  std::shared_ptr<chat::UserMessage>
+  queryMessage(chat::MessageUserRes & userRes);
+
+  std::shared_ptr<chat::NodeMessage>
+  queryMessage(chat::MessageNodeRes & nodeRes);
+
+  // message node 
+  std::shared_ptr<chat::MessageNode>
+  insertToNode(const std::string & userID, const std::string & friendID);
 
 private:
 
@@ -44,9 +86,17 @@ public:
   inmem_client(std::string serverName);
   ~inmem_client();
 
-  void insertOrUpdateDeivce(const chat::ConnectInfo & connectInfo);
-  mongocxx::cursor devices(const std::string & chatMessageNode,
+  // query current server device connect info
+  mongocxx::cursor devices(const chat::NodeSpecifiy& node_specifiy,
       const std::string && serverName);
+
+  mongocxx::cursor devices(const chat::NodeUser & node_user,
+      const std::string && serverName);
+  
+  void removeConnectInfos(const std::string & UUID);
+
+  void insertConnectInfo(const chat::ConnectInfo & connectInfo);
+  
 private:
 
   mongocxx::client client_;

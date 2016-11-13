@@ -10,6 +10,7 @@
 #include <signal.h>
 #include <ev.h>
 #include <netinet/in.h>
+#include <string>
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,11 +24,19 @@ struct Write_Asyn {
   ev_async as;
 };
 
+struct Peer_Servers {
+std::mutex mutex_;
+std::shared_ptr<std::list<PingNode*> > peer_servers_;
+}
+
+std::shared_ptr<std::list<PingNode*>> peer_servers();
+
 static List pinglist();
 static struct ev_loop * loop();
 static struct ev_io * accept_watcher();
 static struct Write_Asyn * write_asyn_watcher();
 static yijian::noti_threads * noti_treads();
+
 
 static void
 sigint_cb (struct ev_loop * loop, ev_signal * w, int revents);
@@ -41,7 +50,9 @@ connection_read_callback (struct ev_loop * loop, ev_io * rw, int revents);
 static void
 connection_write_callback (struct ev_loop * loop, ev_io * ww, int revents);
 
-int start_server_libev();
+PingNode * connect_peer(std::string ip, int port);
+
+int start_server_libev(std::vector<std::pair<std::string, int>> & ips );
 
 
 #ifdef __cplusplus
