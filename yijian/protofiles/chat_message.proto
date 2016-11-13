@@ -1,3 +1,4 @@
+// protoc --proto_path=./ --cpp_out=./
 syntax = "proto3";
 
 package chat;
