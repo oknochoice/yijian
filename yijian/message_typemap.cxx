@@ -717,6 +717,24 @@ void dispatch(chat::GroupAddMemberRes & addMemberRes) {
 
 }
 
+void dispatch(chat::QueryUserVersion & ) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    auto user_sp = client->queryUser(currentNode_->userid);
+    auto version = chat::QueryUserVersionRes();
+    version.set_version(user_sp->version());
+    mountBuffer2Node(encoding(version), node_self_);
+//    queryUserRes.set_touserid(currentNode_->userid);
+//    mountBuffer2Node(encoding(queryUserRes), node_peer_);
+  }catch (std::system_error & sys_error) {
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
+        node_self_);
+  }
+
+
+}
+
 void dispatch(chat::QueryUser & queryUser) {
   YILOG_TRACE ("func: {}. ", __func__);
   try {
@@ -741,6 +759,23 @@ void dispatch(chat::QueryUser & queryUser) {
         node_self_);
   }
 
+}
+
+void dispatch(chat::QueryNode & querynode) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    auto node_sp = client->queryNode(querynode.tonodeid());
+    auto querynoderes = chat::QueryNodeRes();
+    auto node = querynoderes.mutable_node();
+    *node = *node_sp;
+    mountBuffer2Node(encoding(querynoderes), node_self_);
+  }catch (std::system_error & sys_error) {
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
+        node_self_);
+  }
 }
 
 /* 

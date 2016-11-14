@@ -62,15 +62,15 @@ message MessageNode {
 message User {
   string    id = 1;
   string    realname = 2;
-  string    nickname = 3; // insert
+  string    nickname = 3; 
   string    icon = 4;
   string    description = 5;
   bool      isMale = 6;
-  string    phoneNo = 7;// code_phone 86_18514029918 insert
-  string    countryCode = 8;// default is 86 insert
-  string    password = 9; // sha1 double insert 
+  string    phoneNo = 7;// code_phone 86_18514029918 
+  string    countryCode = 8;// default is 86 
+  string    password = 9; // sha1 double 
   int32     birthday = 10;
-  int32     version = 11;
+  int32     version = 11;// exclude password blacklist devices groupIDs
   repeated  UserInfo friends = 12;
   repeated  string blacklist = 13;
   repeated  string groupIDs = 14;
@@ -105,12 +105,10 @@ message QueryUserRes {
 }
 
 message QueryUserVersion {
-  string userID = 1;
 }
 
 message QueryUserVersionRes {
-  string toUserID_outer = 1;
-  int32  version = 2;
+  int32  version = 1;
 }
 
 message QueryNode {

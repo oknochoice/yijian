@@ -58,6 +58,52 @@ void deviceDocument(chat::Device & device,
 
 }
 
+std::shared_ptr<chat::User> userDocoument(bsoncxx::document::view & user_view) {
+  YILOG_TRACE ("func: {}. ", __func__);
+
+    auto user_sp = std::make_shared<chat::User>();
+
+    userNodocNoarr(*user_sp, user_view);
+
+    auto friends = user_view["friends"].get_array().value;
+    for (auto it = friends.begin();
+        it != friends.end();
+        ++it) {
+      auto doc_view = it->get_document().view();
+      auto userinfo = user_sp->mutable_friends()->Add();
+      userinfoDocument(*userinfo, doc_view);
+    }
+
+    auto blacklist = 
+      user_view["blacklist"].get_array().value;
+    for (auto it = blacklist.begin();
+        it != blacklist.end();
+        ++it) {
+      auto blackname = user_sp->mutable_blacklist()->Add();
+      *blackname = it->get_utf8().value.to_string();
+    }
+
+    auto groupids = 
+      user_view["groupIDs"].get_array().value;
+    for (auto it = groupids.begin();
+        it != groupids.end();
+        ++it) {
+      auto doc_id = it->get_utf8().value.to_string();
+      auto groupid = user_sp->mutable_groupids()->Add();
+      *groupid = doc_id;
+    }
+
+    auto devices = 
+      user_view["devices"].get_array().value;
+    for (auto it = devices.begin();
+        it != devices.end();
+        ++it) {
+      auto doc_view = it->get_document().view();
+      auto device = user_sp->mutable_devices()->Add();
+      deviceDocument(*device, doc_view);
+    }
+    return user_sp;
+}
 
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
@@ -148,52 +194,6 @@ void mongo_client::insertDevice(
       );
 }
 
-std::shared_ptr<chat::User> userDocoument(bsoncxx::document::view & user_view) {
-  YILOG_TRACE ("func: {}. ", __func__);
-
-    auto user_sp = std::make_shared<chat::User>();
-
-    userNodocNoarr(*user_sp, user_view);
-
-    auto friends = user_view["friends"].get_array().value;
-    for (auto it = friends.begin();
-        it != friends.end();
-        ++it) {
-      auto doc_view = it->get_document().view();
-      auto userinfo = user_sp->mutable_friends()->Add();
-      userinfoDocument(*userinfo, doc_view);
-    }
-
-    auto blacklist = 
-      user_view["blacklist"].get_array().value;
-    for (auto it = blacklist.begin();
-        it != blacklist.end();
-        ++it) {
-      auto blackname = user_sp->mutable_blacklist()->Add();
-      *blackname = it->get_utf8().value.to_string();
-    }
-
-    auto groupids = 
-      user_view["groupIDs"].get_array().value;
-    for (auto it = groupids.begin();
-        it != groupids.end();
-        ++it) {
-      auto doc_id = it->get_utf8().value.to_string();
-      auto groupid = user_sp->mutable_groupids()->Add();
-      *groupid = doc_id;
-    }
-
-    auto devices = 
-      user_view["devices"].get_array().value;
-    for (auto it = devices.begin();
-        it != devices.end();
-        ++it) {
-      auto doc_view = it->get_document().view();
-      auto device = user_sp->mutable_devices()->Add();
-      deviceDocument(*device, doc_view);
-    }
-    return user_sp;
-}
 
 std::shared_ptr<chat::User> 
 mongo_client::queryUser(const std::string & phoneNo, 

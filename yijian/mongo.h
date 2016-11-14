@@ -50,7 +50,7 @@ public:
   std::shared_ptr<chat::GroupAddMemberRes>
   addMembers2Group(chat::GroupAddMember & groupMember);
 
-  std::shared_ptr<chat::QueryNodeRes>
+  std::shared_ptr<chat::MessageNode>
   queryNode(const std::string & nodeID);
 
   // message
