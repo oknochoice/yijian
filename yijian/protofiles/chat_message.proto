@@ -249,23 +249,6 @@ message GroupAddMemberRes {
 
 // mongo scheme 
 // index toNodeID 1, incrementID 1
-message UserMessage {
-  
-  enum   Type { TEXT = 0; JPG = 1; MP3 = 2;}
-  string id = 1; 
-  // client responsibility
-  string fromUserID = 2;
-  string toNodeID = 3;
-  int32  incrementID = 4;// 
-  Type   type = 5;
-  bytes  content = 6;// nontext base64
-
-  string toUserID = 7; // server use to search device
-  
-}
-
-// mongo scheme 
-// index toNodeID 1, incrementID 1
 message NodeMessage {
   
   enum   Type { TEXT = 0; JPG = 1; MP3 = 2;}
@@ -275,11 +258,13 @@ message NodeMessage {
   string toNodeID = 3;
   int32  incrementID = 4;// 
   Type   type = 5;
-  bytes  content = 6;// nontext base64
+  string content = 6;// nontext base64
+
+  string toUserID_outer = 7; // server use to search device
   
 }
-message MessageUserRes {
-  string messageNodeID = 1;
+message NodeMessageRes {
+  string messageID = 1;
   string fromUserID = 2;
   string toNodeID = 3;
   int32  incrementID = 4;
@@ -287,14 +272,17 @@ message MessageUserRes {
   string toUserID_outer = 5;
 }
 
-message MessageNodeRes {
-
-  string messageNodeID = 1;
-  string fromUserID = 2;
-  string toNodeID = 3;
-  int32  incrementID = 4;
-
+message QueryOneMessage {
+  string toNodeID = 1;
+  int32 incrementID = 2;
 }
+
+message QueryMessage {
+  string toNodeID = 1;
+  int32  fromIncrementID = 2;//[fromIncrementID, toIncrementID)
+  int32  toIncrementID = 3;
+}
+
 
 message ServerConnect {
   string serverName = 1;

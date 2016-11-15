@@ -50,27 +50,27 @@ public:
   std::shared_ptr<chat::GroupAddMemberRes>
   addMembers2Group(chat::GroupAddMember & groupMember);
 
+  // node
   std::shared_ptr<chat::MessageNode>
   queryNode(const std::string & nodeID);
 
   // message
   // in incomplete message, out complete message
   // add incrementID value
-  std::shared_ptr<chat::MessageUserRes> 
-  insertMessage(chat::UserMessage & message);
-  
-  std::shared_ptr<chat::MessageNodeRes> 
+  std::shared_ptr<chat::NodeMessageRes> 
   insertMessage(chat::NodeMessage & message);
 
-  std::shared_ptr<chat::UserMessage>
-  queryMessage(chat::MessageUserRes & userRes);
+  std::shared_ptr<chat::NodeMessage>
+  queryMessage(chat::NodeMessageRes & nodeRes);
 
   std::shared_ptr<chat::NodeMessage>
-  queryMessage(chat::MessageNodeRes & nodeRes);
+  queryMessage(chat::QueryOneMessage & query);
 
-  // message node 
-  std::shared_ptr<chat::MessageNode>
-  insertToNode(const std::string & userID, const std::string & friendID);
+  std::shared_ptr<mongocxx::cursor>
+  cursor(chat::QueryMessage & query);
+
+  std::shared_ptr<chat::NodeMessage>
+  queryMessage(std::shared_ptr<mongocxx::cursor> cursor_sp);
 
 private:
 
@@ -84,18 +84,19 @@ public:
   ~inmem_client();
 
   // query current server device connect info
-  mongocxx::cursor devices(const chat::NodeSpecifiy& node_specifiy,
-      const std::string && serverName);
+  std::shared_ptr<mongocxx::cursor>
+  devices(const chat::NodeSpecifiy& node_specifiy);
 
-  mongocxx::cursor devices(const chat::NodeUser & node_user,
-      const std::string && serverName);
+  std::shared_ptr<mongocxx::cursor>
+  devices(const chat::NodeUser & node_user);
   
-  void removeConnectInfos(const std::string & UUID);
+  void removeConnectInfo(const std::string & uuid);
 
   void insertConnectInfo(const chat::ConnectInfo & connectInfo);
   
 private:
 
+  std::string serverName_;
   mongocxx::client client_;
 
 }

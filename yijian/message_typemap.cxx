@@ -126,7 +126,7 @@ using yijian::threadCurrent::node_specifiy_;
 template <typename Any>
 void mountBuffer2Node(Any &) {
   YILOG_TRACE ("func: {}. ", __func__);
-  throw std::system_error(std::error_code(11010, std::generic_category()), 
+  throw std::system_error(std::error_code(11007, std::generic_category()), 
       "unkonw node type");
 }
 
@@ -181,14 +181,14 @@ void traverseDevices(mongocxx::cursor & cursor, Buffer_SP buf_sp) {
 // current server subscribe to toNode devices(exclude require device)
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
   auto inClient = yijian::threadCurrent::inmemClient();
-  auto cursor = inClient->devices(node_specifiy, SERVER_NAME);
-  traverseDevices(cursor, buf_sp);
+  auto cursor = inClient->devices(node_specifiy);
+  traverseDevices(*cursor, buf_sp);
 }
 
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user_) {
   auto inClient = yijian::threadCurrent::inmemClient();
-  auto cursor = inClient->devices(node_user_, SERVER_NAME);
-  traverseDevices(cursor, buf_sp);
+  auto cursor = inClient->devices(node_user_);
+  traverseDevices(*cursor, buf_sp);
 }
 
 template <typename Any>
@@ -387,6 +387,7 @@ void dispatch(chat::Logout & logout) {
       node_user_.set_touserid(currentNode_->userid);
       res.set_userid(currentNode_->userid);
       mountBuffer2Node(encoding(res), node_user_);
+      mountBuffer2Node(encoding(res), node_peer_);
     }
 
   }catch (std::system_error & sys_error) {
@@ -540,10 +541,10 @@ void dispatch(chat::AddFriend & frd) {
     // send to friend
     node_user_.set_touserid(res->inviteeid());
     mountBuffer2Node(buf_sp, node_user_);
+    mountBuffer2Node(encoding(*res), node_peer_);
     // send to other self
     node_user_.set_touserid(res->inviterid());
     mountBuffer2Node(buf_sp, node_user_);
-    // send to peer server
     mountBuffer2Node(encoding(*res), node_peer_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -780,57 +781,6 @@ void dispatch(chat::QueryNode & querynode) {
   }
 }
 
-void dispatch(chat::UserMessage & message)  {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-
-
-  try {
-    auto client = yijian::threadCurrent::mongoClient();
-    auto res = client->insertMessage(message);
-    auto encoding_res_sp = encoding(*res);
-    mountBuffer2Node(encoding_res_sp, node_self_);
-    mountBuffer2Node(encoding_res_sp, node_peer_);
-
-    // set up increment id
-    message.set_incrementid(res->incrementid());
-    node_user_.set_touserid(res->touserid_outer());
-    // to friend
-    mountBuffer2Node(encoding(message), node_user_);
-    // to self other device
-    node_user_.set_touserid(currentNode_->userid);
-    mountBuffer2Node(encoding(message), node_user_);
-  }catch (std::system_error & sys_error) {
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
-        node_self_);
-  }
-
-}
-
-void dispatch(chat::MessageUserRes & messageRes) {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-
-
-  try {
-    auto client = yijian::threadCurrent::mongoClient();
-    auto sp = client->queryMessage(messageRes);
-    // clear to user id
-    sp->clear_touserid();
-
-    auto encoding_sp = encoding(*sp);
-    // to self other device
-    node_user_.set_touserid(messageRes.fromuserid());
-    mountBuffer2Node(encoding_sp, node_user_);
-    // to friend
-    node_user_.set_touserid(messageRes.touserid_outer());
-    mountBuffer2Node(encoding_sp, node_user_);
-  }catch (std::system_error & sys_error) {
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
-        node_self_);
-  }
-
-}
 
 void dispatch(chat::NodeMessage & message) {
 
@@ -840,16 +790,31 @@ void dispatch(chat::NodeMessage & message) {
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto res = client->insertMessage(message);
-    auto encoding_res_sp = encoding(*res);
-    mountBuffer2Node(encoding_res_sp, node_self_);
-    mountBuffer2Node(encoding_res_sp, node_peer_);
+    if (likely(message.touserid_outer().empty())) {// node
+      auto encoding_res_sp = encoding(*res);
+      mountBuffer2Node(encoding_res_sp, node_self_);
+      mountBuffer2Node(encoding_res_sp, node_peer_);
 
-    // set up increment id
-    message.set_incrementid(res->incrementid());
-    // send to node
-    auto node_specifiy = chat::NodeSpecifiy();
-    node_specifiy.set_tonodeid(res->tonodeid());
-    mountBuffer2Node(encoding(message), node_specifiy);
+      // send to node
+      auto node_specifiy = chat::NodeSpecifiy();
+      node_specifiy.set_tonodeid(res->tonodeid());
+      mountBuffer2Node(encoding(message), node_specifiy);
+    }else {// user
+      // self
+      mountBuffer2Node(encoding(*res), node_self_);
+      // peer
+
+      // to friend
+      node_user_.set_touserid(message.touserid_outer());
+      mountBuffer2Node(encoding(message), node_user_);
+      res->set_touserid_outer(message.touserid_outer());
+      mountBuffer2Node(encoding(*res), node_peer_);
+      // to self other device
+      node_user_.set_touserid(currentNode_->userid);
+      mountBuffer2Node(encoding(message), node_user_);
+      res->set_touserid_outer(currentNode_->userid);
+      mountBuffer2Node(encoding(*res), node_peer_);
+    }
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
@@ -857,23 +822,75 @@ void dispatch(chat::NodeMessage & message) {
 
 }
 
-void dispatch(chat::MessageNodeRes & messageRes) {
+void dispatch(chat::NodeMessageRes & messageRes) {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto sp = client->queryMessage(messageRes);
-    auto encoding_sp = encoding(*sp);
-    // sent to node
-    auto node_specifiy = chat::NodeSpecifiy();
-    node_specifiy.set_tonodeid(sp->tonodeid());
-    mountBuffer2Node(encoding_sp, node_specifiy);
+    if (messageRes.touserid_outer().empty()) {
+      // sent to node
+      auto node_specifiy = chat::NodeSpecifiy();
+      node_specifiy.set_tonodeid(sp->tonodeid());
+      mountBuffer2Node(encoding(*sp), node_specifiy);
+    }else {
+      auto encoding_sp = encoding(*sp);
+      // to user
+      node_user_.set_touserid(messageRes.touserid_outer());
+      mountBuffer2Node(encoding_sp, node_user_);
+    }
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
 
+}
+
+void dispatch(chat::QueryOneMessage & query) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    auto sp = client->queryMessage(query);
+    mountBuffer2Node(encoding(*sp), node_self_);
+  }catch (std::system_error & sys_error) {
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+        node_self_);
+  }
+}
+
+void dispatch(chat::QueryMessage & query) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    if (!query.tonodeid().empty() &&
+        currentNode_->id_cursor.first != query.tonodeid()) {
+      currentNode_->id_cursor.first = query.tonodeid();
+      currentNode_->id_cursor.second = client->cursor(query);
+    }
+    if (unlikely(currentNode_->id_cursor.first.empty() ||
+          currentNode_->id_cursor.second == nullptr)) {
+      throw std::system_error(std::error_code(11008, std::generic_category()),
+          "query tonodeid is empty");
+    }
+    bool isStop = false;
+    int  count = 0;
+    do {
+      auto nodemessage_sp = client->queryMessage(
+          currentNode_->id_cursor.second);
+      if (nodemessage_sp->incrementid() <= query.fromincrementid()) {
+        isStop = true;
+      }
+      if (10 == count) {
+        isStop = true;
+      }
+      ++count;
+      mountBuffer2Node(encoding(*nodemessage_sp), node_self_);
+    }while(isStop);
+  }catch (std::system_error & sys_error) {
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+        node_self_);
+  }
 }
 
 void dispatch(int type, char * header, std::size_t length) {

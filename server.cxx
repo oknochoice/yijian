@@ -12,6 +12,9 @@
 #include <mongocxx/uri.hpp>
 #include <bsoncxx/builder/stream/array.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
+#include <mongocxx/cursor.hpp>
+#include <mongocxx/options/find.hpp>
+#include <mongocxx/stdx.hpp>
 
 /*
 #include <boost/hana.hpp>
@@ -118,12 +121,32 @@ int main(int argc, char * argv[])
 
 //  user.insert_one(doc.view());
 
-  std::string userid = "5827e5de4b99d9495f68d141";
-  auto result = user.find_one(
-      document{} << "_id" << bsoncxx::oid{userid}
-      << finalize);
-  std::cout << bsoncxx::to_json(result->view()) << std::endl;
-  std::cout << result->view()["_id"].get_oid().value.to_string() << std::endl;
+//  std::string userid = "5827e5de4b99d9495f68d141";
+  auto optsort = mongocxx::options::find{};
+  optsort.sort(
+    document{} << "age" << 1
+    << finalize);
+  auto result = user.find(
+      document{} 
+      << "name" << "jiwei" 
+      << finalize,
+      optsort
+      );
+  auto sp = std::make_shared<mongocxx::cursor>(std::forward<mongocxx::cursor>(result));
+  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
+  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
+  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
+  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
+  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
+  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
+  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
+
+  std::shared_ptr<std::string>(new std::string(), [](auto p) {
+        std::cout << "delete" << std::endl;
+        delete p;
+      });
+
+  /*
   {
     std::vector<void *> vector;
     vector.push_back(nullptr);
@@ -142,6 +165,7 @@ int main(int argc, char * argv[])
     vector.push_back(std::make_pair(nullptr, ""));
     std::cout << "vector size: " << vector.size() << std::endl;
   }
+  */
 
 
   return 0;
