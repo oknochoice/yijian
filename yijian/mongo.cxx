@@ -52,9 +52,6 @@ void deviceDocument(chat::Device & device,
   device.set_devicenickname(device_view["deviceNickname"].
       get_utf8().value.to_string());
   device.set_uuid(device_view["UUID"].get_utf8().value.to_string());
-  device.set_islogin(device_view["isLogin"].get_bool().value);
-  device.set_isconnected(device_view["isConnected"].get_bool().value);
-  device.set_isrecivenoti(device_view["isReciveNoti"].get_bool().value);
 
 }
 
@@ -122,13 +119,13 @@ std::shared_ptr<chat::User> userDocoument(bsoncxx::document::view & user_view) {
       *blackname = it->get_utf8().value.to_string();
     }
 
-    auto groupids = 
-      user_view["groupIDs"].get_array().value;
-    for (auto it = groupids.begin();
-        it != groupids.end();
+    auto groupnodeids = 
+      user_view["groupNodeIDs"].get_array().value;
+    for (auto it = groupnodeids.begin();
+        it != groupnodeids.end();
         ++it) {
       auto doc_id = it->get_utf8().value.to_string();
-      auto groupid = user_sp->mutable_groupids()->Add();
+      auto groupid = user_sp->mutable_groupnodeids()->Add();
       *groupid = doc_id;
     }
 
@@ -179,7 +176,7 @@ void mongo_client::insertUser(const chat::Register & enroll) {
     << "version" << "1"
     << "friends" << open_array << close_array
     << "blacklist" << open_array << close_array
-    << "groupIDs" << open_array << close_array
+    << "groupNodeIDs" << open_array << close_array
     << "devices" << open_array << close_array
     << finalize;
   user_collection.insert_one(doc_value.view());
@@ -202,10 +199,7 @@ void mongo_client::updateDevice(
       << "appVersion" << device.appversion()
       << "deviceModel" << device.devicemodel()
       << "UUID" << device.uuid()
-      << "isLogin" << device.islogin()
-      << "isConnected" << device.isconnected()
-      << "isReciveNoti" << device.isrecivenoti() << close_document
-      << close_document 
+      << close_document << close_document
       << finalize
       );
 }
@@ -225,10 +219,7 @@ void mongo_client::insertDevice(
       << "appVersion" << device.appversion()
       << "deviceModel" << device.devicemodel()
       << "UUID" << device.uuid()
-      << "isLogin" << device.islogin()
-      << "isConnected" << device.isconnected()
-      << "isReciveNoti" << device.isrecivenoti() << close_document
-      << close_document 
+      << close_document << close_document
       << finalize
       );
 }
@@ -451,7 +442,7 @@ mongo_client::createGroup(const chat::CreateGroup & cGroup) {
           document{} << "_id" << bsoncxx::oid(memberid)
           << finalize,
           document{} << "$addToSet" << open_document
-          << "groupIDs" << obj_id
+          << "groupNodeIDs" << obj_id
           << close_document
           << finalize);
     }
@@ -481,7 +472,7 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
   }
   auto membersid = arraybuilder << finalize;
   auto updateNode_result = messageNode_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(groupMember.groupid())
+      document{} << "_id" << bsoncxx::oid(groupMember.groupnodeid())
       << finalize,
       document{} << "$addToSet" << open_document
       << "membersid" << open_document
@@ -494,12 +485,12 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
         document{} << "_id" << bsoncxx::oid(memberid)
         << finalize,
         document{} << "$addToSet" << open_document
-        << "groupIDs" << groupMember.groupid()
+        << "groupNodeIDs" << groupMember.groupnodeid()
         << close_document
         << finalize);
   }
   auto addGroupRes = std::make_shared<chat::GroupAddMemberRes>();
-  addGroupRes->set_groupid(groupMember.groupid());
+  addGroupRes->set_groupnodeid(groupMember.groupnodeid());
   return addGroupRes;
 }
 
@@ -661,9 +652,8 @@ inmem_client::inmem_client(std::string serverName)
 inmem_client::~inmem_client () {
 }
 
-std::shared_ptr<mongocxx::cursor>
-inmem_client::devices(
-    const chat::NodeSpecifiy& node_specifiy) {
+void inmem_client::devices(const chat::NodeSpecifiy& node_specifiy, 
+    std::function<void(chat::ConnectInfoLittle&)> && func) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
@@ -671,13 +661,18 @@ inmem_client::devices(
       document{} << "toNodeID" << node_specifiy.tonodeid()
       << "serverName" << serverName_
       << finalize);
-  return std::make_shared<mongocxx::cursor>(
-      std::forward<mongocxx::cursor>(cursor));
+  auto infolittle = chat::ConnectInfoLittle();
+  for (auto doc: cursor) {
+    infolittle.set_uuid(doc["UUID"].get_utf8().value.to_string());
+    infolittle.set_islogin(doc["isLogin"].get_bool());
+    infolittle.set_isconnected(doc["isConnected"].get_bool());
+    infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool());
+    func(infolittle);
+  }
 }
 
-std::shared_ptr<mongocxx::cursor>
-inmem_client::devices(
-    const chat::NodeUser & node_user) {
+void inmem_client::devices(const chat::NodeUser & node_user, 
+      std::function<void(chat::ConnectInfoLittle&)> && func) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
@@ -685,8 +680,14 @@ inmem_client::devices(
       document{} << "userID" << node_user.touserid()
       << "serverName" << serverName_
       << finalize);
-  return std::make_shared<mongocxx::cursor>(
-      std::forward<mongocxx::cursor>(cursor));
+  auto infolittle = chat::ConnectInfoLittle();
+  for (auto doc: cursor) {
+    infolittle.set_uuid(doc["UUID"].get_utf8().value.to_string());
+    infolittle.set_islogin(doc["isLogin"].get_bool());
+    infolittle.set_isconnected(doc["isConnected"].get_bool());
+    infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool());
+    func(infolittle);
+  }
 }
 
 void inmem_client::removeConnectInfo(const std::string & uuid) {
@@ -703,15 +704,21 @@ void inmem_client::removeConnectInfo(const std::string & uuid) {
 
 }
 
-void inmem_client::insertConnectInfo(const chat::ConnectInfo & connectInfo) {
+void inmem_client::insertConnectInfo(
+    const chat::ConnectInfo & connectInfo) {
 
   YILOG_TRACE ("func: {}. ", __func__);
   
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
+  auto arraybuilder = array{};
+  for (auto & tonodeid: connectInfo.tonodeids()) {
+    arraybuilder << tonodeid;
+  }
+  auto tonodeid_array = arraybuilder << finalize;
   auto maybe_result = connectinfo_col.insert_one(
-      document{} << "UUID" << connectInfo.uuid()
-      << "toNodeID" << connectInfo.tonodeid()
+      document{} << "UUID" << connectInfo.uuid() 
+      << "toNodeIDs" << tonodeid_array
       << "userID" << connectInfo.userid()
       << "isLogin" << connectInfo.islogin()
       << "isConnected" << connectInfo.isconnected()
@@ -720,10 +727,101 @@ void inmem_client::insertConnectInfo(const chat::ConnectInfo & connectInfo) {
       << "nodepointor" << connectInfo.nodepointor()
       << finalize);
   if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("insert many devices error, uuid :{} .", connectInfo.uuid());
+    YILOG_ERROR ("insert many error, uuid :{} .", connectInfo.uuid());
   }
 
 }
+
+void inmem_client::addTonodeidConnectInfo(
+    const chat::ConnectInfo & connectInfo) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+  
+  auto db = client_["chatdb"];
+  auto connectinfo_col = db["connectInfo"];
+  auto arraybuilder = array{};
+  for (auto & tonodeid: connectInfo.tonodeids()) {
+    arraybuilder << tonodeid;
+  }
+  auto tonodeid_array = arraybuilder << finalize;
+  auto maybe_result = connectinfo_col.update_one(
+      document{} << "UUID" << connectInfo.uuid() 
+      << finalize,
+      document{} << "$addToSet" << open_document
+      << "toNodeIDs" << open_document 
+      << "$each" << tonodeid_array << close_document
+      << close_document << finalize);
+  if (unlikely(!maybe_result)) {
+    YILOG_ERROR ("spectify device add tonodeids error, uuid :{} .", 
+        connectInfo.uuid());
+  }
+}
+
+template <class Vec_like> void 
+inmem_client::addTonodeidConnectInfo(
+    const Vec_like &  membersid, const std::string & tonodeid) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+  
+  auto db = client_["chatdb"];
+  auto connectinfo_col = db["connectInfo"];
+  auto arraybuilder = array{};
+  for (auto & memberid: membersid) {
+    arraybuilder << memberid;
+  }
+  auto member_array = arraybuilder << finalize;
+
+  auto maybe_result = connectinfo_col.update_many(
+      document{} << "userID" << open_document
+      << "$in" << member_array << close_document
+      << finalize,
+      document{} << "$addToSet" << open_document
+      << "toNodeIDs" << tonodeid
+      << close_document << finalize);
+  if (unlikely(!maybe_result)) {
+    for (auto & memberid: membersid) {
+      arraybuilder << memberid;
+      YILOG_ERROR("user's devices add tonodeid error, userid :{} ,"
+          " tonodeid :{}", memberid, tonodeid);
+    }
+  }
+}
+
+void inmem_client::updateConnectInfo(
+      const chat::ConnectInfoLittle & infolittle) {
+  auto db = client_["chatdb"];
+  auto connectinfo_col = db["connectInfo"];
+  auto maybe_result = connectinfo_col.update_one(
+      document{} << "UUID" << infolittle.uuid()
+      << finalize,
+      document{} << "$set" << open_document
+      << "isLogin" << infolittle.islogin()
+      << "isReciveNoti" << infolittle.isrecivenoti()
+      << "isConnected" << infolittle.isconnected()
+      << "nodepointor" << infolittle.nodepointor()
+      << close_document << finalize);
+  if (unlikely(!maybe_result)) {
+    YILOG_ERROR ("update connect info little error, uuid :{} .", 
+        infolittle.uuid());
+  }
+}
+
+void inmem_client::disconnectInfo(const std::string & uuid) {
+  auto db = client_["chatdb"];
+  auto connectinfo_col = db["connectInfo"];
+  auto maybe_result = connectinfo_col.update_one(
+      document{} << "UUID" << uuid
+      << finalize,
+      document{} << "$set" << open_document
+      << "isConnected" << false
+      << "nodepointor" << 0
+      << close_document << finalize);
+  if (unlikely(!maybe_result)) {
+    YILOG_ERROR ("dis connect info little error, uuid :{} .", 
+        uuid);
+  }
+}
+
 namespace yijian {
 
   namespace threadCurrent {

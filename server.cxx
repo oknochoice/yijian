@@ -104,6 +104,21 @@ int main(int argc, char * argv[])
 	auto db = client["test"];
 	auto user = db["user"];
 
+  auto opt = mongocxx::options::update{};
+  opt.upsert(true);
+
+  user.update_one(
+      document{} << "$and" << open_array << open_document
+      << "name" << "yijian" << close_document << open_document
+      << "age" << 1198 << close_document << close_array
+      << finalize,
+      document{} << "$set" << open_document
+      << "status" << "very good" 
+      << "friend" << open_array << close_array  << close_document
+      << finalize,
+      opt
+      );
+
   auto arrayBuild = array{};
   for (int i = 0; i < 9; ++i) {
     arrayBuild << i;
@@ -122,30 +137,6 @@ int main(int argc, char * argv[])
 //  user.insert_one(doc.view());
 
 //  std::string userid = "5827e5de4b99d9495f68d141";
-  auto optsort = mongocxx::options::find{};
-  optsort.sort(
-    document{} << "age" << 1
-    << finalize);
-  auto result = user.find(
-      document{} 
-      << "name" << "jiwei" 
-      << finalize,
-      optsort
-      );
-  auto sp = std::make_shared<mongocxx::cursor>(std::forward<mongocxx::cursor>(result));
-  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
-  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
-  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
-  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
-  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
-  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
-  std::cout << bsoncxx::to_json(*sp->begin()) << std::endl;
-
-  std::shared_ptr<std::string>(new std::string(), [](auto p) {
-        std::cout << "delete" << std::endl;
-        delete p;
-      });
-
   /*
   {
     std::vector<void *> vector;

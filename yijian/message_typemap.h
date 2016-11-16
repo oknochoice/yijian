@@ -6,6 +6,7 @@
 #include <boost/any.hpp>
 #include <functional>
 #include "pinglist.h"
+#include "protofiles/chat_message.pb.h"
 
 #ifdef __cpluscplus
 extern "C" {
@@ -15,6 +16,7 @@ namespace yijian {
   namespace threadCurrent {
     static thread_local PingNode * currentNode_;
     static thread_local chat::ConnectInfo connectInfo_;
+    static thread_local chat::ConnectInfoLittle infolittle_;
     static thread_local chat::NodeSelfDevice node_self_;
     static thread_local chat::NodePeerServer node_peer_;
     static thread_local chat::NodeUser node_user_;

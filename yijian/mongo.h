@@ -84,15 +84,21 @@ public:
   ~inmem_client();
 
   // query current server device connect info
-  std::shared_ptr<mongocxx::cursor>
-  devices(const chat::NodeSpecifiy& node_specifiy);
-
-  std::shared_ptr<mongocxx::cursor>
-  devices(const chat::NodeUser & node_user);
+  void devices(const chat::NodeSpecifiy& node_specifiy, 
+      std::function<void(chat::ConnectInfoLittle&)> && func);
+  void devices(const chat::NodeUser & node_user, 
+      std::function<void(chat::ConnectInfoLittle&)> && func);
   
   void removeConnectInfo(const std::string & uuid);
-
   void insertConnectInfo(const chat::ConnectInfo & connectInfo);
+  // spectify device add tonodeids
+  void addTonodeidConnectInfo(const chat::ConnectInfo & connectInfo);
+  // user's all device add tonodeid
+  template <class Vec_like>
+  void addTonodeidConnectInfo(const Vec_like &membersid,
+      const std::string & tonodeid);
+  void updateConnectInfo(const chat::ConnectInfoLittle & infolittle);
+  void disconnectInfo(const std::string & uuid);
   
 private:
 

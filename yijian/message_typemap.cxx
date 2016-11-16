@@ -122,6 +122,7 @@ using yijian::threadCurrent::node_self_;
 using yijian::threadCurrent::node_peer_;
 using yijian::threadCurrent::node_user_;
 using yijian::threadCurrent::node_specifiy_;
+using yijian::threadCurrent::infolittle_;
 
 template <typename Any>
 void mountBuffer2Node(Any &) {
@@ -151,29 +152,27 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodePeerServer & ) {
   }
 }
 
-void traverseDevices(mongocxx::cursor & cursor, Buffer_SP buf_sp) {
-  for (auto doc : cursor) {
-    if (doc["isLogin"].get_bool()) {
-      if (doc["isConnected"].get_bool()) {
-        YILOG_TRACE ("online");
-        // get pingnode
-        Pointor_t nodepointor = doc["nodepointor"].get_int64();
-        PingNode * lnode = reinterpret_cast<PingNode*>(nodepointor);
-        // if node is request pass
-        if (unlikely(currentNode_ == lnode)) continue;
-        // mount buffer to pingnode
-        {
-          std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
-          lnode->contra_io->buffers_p.push(buf_sp);
-        }
-        // mount pingnode to thread data ,then stop read start write
-        yijian::threadCurrent::pushPingnode(lnode);
-      }else if (doc["isReciveNoti"].get_bool()) {
-        YILOG_TRACE ("offline");
-#warning need push server;
-        std::cout << "push to " << doc["UUID"].get_utf8().value 
-          << std::endl;
+void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
+  if (infolittle.islogin()) {
+    if (infolittle.isconnected()) {
+      YILOG_TRACE ("online");
+      // get pingnode
+      Pointor_t nodepointor = infolittle.nodepointor();
+      PingNode * lnode = reinterpret_cast<PingNode*>(nodepointor);
+      // if node is request pass
+      if (unlikely(currentNode_ == lnode)) return;
+      // mount buffer to pingnode
+      {
+        std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
+        lnode->contra_io->buffers_p.push(buf_sp);
       }
+      // mount pingnode to thread data ,then stop read start write
+      yijian::threadCurrent::pushPingnode(lnode);
+    }else if (infolittle.isrecivenoti()) {
+      YILOG_TRACE ("offline");
+#warning need push server;
+      std::cout << "push to " << infolittle.uuid() 
+        << std::endl;
     }
   }
 }
@@ -181,14 +180,16 @@ void traverseDevices(mongocxx::cursor & cursor, Buffer_SP buf_sp) {
 // current server subscribe to toNode devices(exclude require device)
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
   auto inClient = yijian::threadCurrent::inmemClient();
-  auto cursor = inClient->devices(node_specifiy);
-  traverseDevices(*cursor, buf_sp);
+  inClient->devices(node_specifiy, [buf_sp](chat::ConnectInfoLittle & infolittle) {
+        traverseDevices(infolittle, buf_sp);
+      });
 }
 
-void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user_) {
+void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user) {
   auto inClient = yijian::threadCurrent::inmemClient();
-  auto cursor = inClient->devices(node_user_);
-  traverseDevices(*cursor, buf_sp);
+  inClient->devices(node_user, [buf_sp](chat::ConnectInfoLittle & infolittle) {
+        traverseDevices(infolittle, buf_sp);
+      });
 }
 
 template <typename Any>
@@ -276,36 +277,29 @@ void dispatch(chat::Login & login) {
       device->set_appversion(login.device().appversion());
       device->set_devicemodel(login.device().devicemodel());
       device->set_uuid(login.device().uuid());
-      device->set_islogin(true);
-      device->set_isconnected(true);
-      device->set_isrecivenoti(true);
       // check whether finded
       if (it != devices->end()) {
-        device->set_isrecivenoti(it->isrecivenoti());
         // update user
         client->updateDevice(user_sp->id(), *device);
       }else {
         client->insertDevice(user_sp->id(), *device);
       }
-      // remove device connect info
-      inmem_client->removeConnectInfos(device->uuid());
       // add global user connect info
-      // add new group connect info
       connectInfo_.set_uuid(device->uuid());
       connectInfo_.set_userid(user_sp->id());
-      connectInfo_.set_islogin(device->islogin());
-      connectInfo_.set_isconnected(device->isconnected());
-      connectInfo_.set_isrecivenoti(device->isrecivenoti());
+      connectInfo_.set_islogin(login.islogin());
+      connectInfo_.set_isconnected(login.isconnected());
+      connectInfo_.set_isrecivenoti(login.isrecivenoti());
       connectInfo_.set_servername(SERVER_NAME);
       connectInfo_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
-      // 1. insert global node (friend)
-      connectInfo_.set_tonodeid("0");
-      inmem_client->insertConnectInfo(connectInfo_);
-      for (auto & groupid: user_sp->groupids()) {
-        connectInfo_.set_tonodeid(groupid);
-        // 2. insert group node
-        inmem_client->insertConnectInfo(connectInfo_);
+      connectInfo_.clear_tonodeids();
+      connectInfo_.add_tonodeids("0");
+      // add new group connect info
+      for (auto & groupnodeid: user_sp->groupnodeids()) {
+        connectInfo_.add_tonodeids(groupnodeid);
       }
+      // insert connect info
+      inmem_client->insertConnectInfo(connectInfo_);
       // response request device
       auto res = chat::LoginRes();
       res.set_uuid(device->uuid());
@@ -358,29 +352,15 @@ void dispatch(chat::Logout & logout) {
                   return device.uuid() == logout.uuid();
                 });
     if (unlikely(it == devices->end())) {
-      mountBuffer2Node(errorBuffer(11002, "device not find"), 
-          node_self_);
+      throw std::system_error(std::error_code(11002, std::generic_category()),
+          "device not find");
     }else {
-      it->set_islogin(false);
-      it->set_isconnected(false);
-      it->set_isrecivenoti(false);
       client->updateDevice(user_sp->id(), *it);
       // update connect info
-      // 1. remove device connect info
+      // remove device connect info
       auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->removeConnectInfos(it->uuid());
-      // 2. insert in memory db connectinfo
-      connectInfo_.set_uuid(it->uuid());
-      connectInfo_.set_userid(user_sp->id());
-      connectInfo_.set_islogin(it->islogin());
-      connectInfo_.set_isconnected(it->isconnected());
-      connectInfo_.set_isrecivenoti(it->isrecivenoti());
-      connectInfo_.set_servername(SERVER_NAME);
-      connectInfo_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
-      for (auto & groupid: user_sp->groupids()) {
-        connectInfo_.set_tonodeid(groupid);
-        inmem_client->insertConnectInfo(connectInfo_);
-      }
+      inmem_client->removeConnectInfo(it->uuid());
+      // send buffer
       auto res = chat::LogoutRes();
       res.set_uuid(it->uuid());
       mountBuffer2Node(encoding(res), node_self_);
@@ -427,32 +407,22 @@ void dispatch(chat::Connect & connect)  {
       mountBuffer2Node(errorBuffer(11003, "device not find"), 
           node_self_);
     }else {
-      it->set_isconnected(true);
-      // update in memory db connectinfo
-      // remove old info
-      auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->removeConnectInfos(it->uuid());
-      // add global user connect info
-      // add new group connect info
-      connectInfo_.set_uuid(it->uuid());
-      connectInfo_.set_userid(user_sp->id());
-      connectInfo_.set_islogin(it->islogin());
-      connectInfo_.set_isconnected(it->isconnected());
-      connectInfo_.set_isrecivenoti(it->isrecivenoti());
-      connectInfo_.set_servername(SERVER_NAME);
-      connectInfo_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
-      connectInfo_.set_tonodeid("0");
-      inmem_client->insertConnectInfo(connectInfo_);
-      for (auto & groupid: user_sp->groupids()) {
-        connectInfo_.set_tonodeid(groupid);
-        inmem_client->insertConnectInfo(connectInfo_);
-      }
-      auto res = chat::ConnectRes();
-      res.set_uuid(connectInfo_.uuid());
-      mountBuffer2Node(encoding(res), node_self_);
       // set current node
       currentNode_->userid = connect.userid();
       currentNode_->deviceid = connect.uuid();
+      // update in memory db connectinfo
+      // add new group connect info
+      infolittle_.set_uuid(it->uuid());
+      infolittle_.set_islogin(true);
+      infolittle_.set_isconnected(true);
+      infolittle_.set_isrecivenoti(connect.isrecivenoti());
+      infolittle_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
+      auto inmem_client = yijian::threadCurrent::inmemClient();
+      inmem_client->updateConnectInfo(infolittle_);
+      // send buffer
+      auto res = chat::ConnectRes();
+      res.set_uuid(connectInfo_.uuid());
+      mountBuffer2Node(encoding(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -479,25 +449,10 @@ void dispatch(chat::DisConnect & disconnect)  {
       mountBuffer2Node(errorBuffer(11004, "device not find"),
           node_self_);
     }else {
-      it->set_isconnected(false);
       // update in memory db connectinfo
-      // remove old info
       auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->removeConnectInfos(it->uuid());
-      // add new info
-      connectInfo_.set_uuid(it->uuid());
-      connectInfo_.set_userid(user_sp->id());
-      connectInfo_.set_islogin(it->islogin());
-      connectInfo_.set_isconnected(it->isconnected());
-      connectInfo_.set_isrecivenoti(it->isrecivenoti());
-      connectInfo_.set_servername(SERVER_NAME);
-      connectInfo_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
-      connectInfo_.set_tonodeid("0");
-      inmem_client->insertConnectInfo(connectInfo_);
-      for (auto & groupid: user_sp->groupids()) {
-        connectInfo_.set_tonodeid(groupid);
-        inmem_client->insertConnectInfo(connectInfo_);
-      }
+      inmem_client->disconnectInfo(disconnect.uuid());
+      // send buffer
       auto res = chat::DisConnectRes();
       res.set_uuid(connectInfo_.uuid());
       mountBuffer2Node(encoding(res), node_self_);
@@ -648,8 +603,13 @@ void dispatch(chat::CreateGroup & group) {
       throw std::system_error(std::error_code(11006, std::generic_category()),
           "at least 3 people");
     }
-    // send to self
+    // mongo insert group info
     auto groupRes = client->createGroup(group);
+    // connectinfo insert info
+    auto inmem_client = yijian::threadCurrent::inmemClient();
+    inmem_client->addTonodeidConnectInfo(
+        group.membersid(), groupRes->tonodeid());
+    // send to self
     mountBuffer2Node(encoding(groupRes), node_self_);
     // self other device
     node_user_.set_touserid(currentNode_->userid);
@@ -695,8 +655,13 @@ void dispatch(chat::GroupAddMember & groupMember) {
         it = members->erase(it);
       }
     }
-    // send to self
+    // mongo insert group info
     auto addRes = client->addMembers2Group(groupMember);
+    // connectinfo insert info
+    auto inmem_client = yijian::threadCurrent::inmemClient();
+    inmem_client->addTonodeidConnectInfo(
+        groupMember.membersid(), groupMember.groupnodeid());
+    // send to self
     mountBuffer2Node(encoding(*addRes), node_self_);
     // send to self other device
     node_user_.set_touserid(addRes->touserid_outer());
@@ -752,7 +717,7 @@ void dispatch(chat::QueryUser & queryUser) {
       user_sp->clear_version();
       user_sp->clear_friends();
       user_sp->clear_blacklist();
-      user_sp->clear_groupids();
+      user_sp->clear_groupnodeids();
       user_sp->clear_devices();
     }
     *queryuser = *user_sp;
