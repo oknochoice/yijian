@@ -653,7 +653,7 @@ mongo_client::queryMessage(std::shared_ptr<mongocxx::cursor> cursor_sp) {
 
 inmem_client::inmem_client(std::string serverName)
   : serverName_(serverName){
-  mongocxx::uri uri("mongodb://localhost:27018");
+  mongocxx::uri uri("mongodb://localhost:27017");
   client_ = mongocxx::client(uri);
 }
 
