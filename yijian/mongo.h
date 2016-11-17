@@ -1,6 +1,7 @@
 #ifndef MONGO_H_
 #define MONGO_H_
 
+#include "macro.h"
 #include <iostream>
 #include <cstdint>
 #include <vector>

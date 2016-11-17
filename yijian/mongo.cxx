@@ -1,5 +1,4 @@
 #include "mongo.h"
-#include "macro.h"
 
 void userNodocNoarr(chat::User & user, bsoncxx::document::view & view) {
 
@@ -358,7 +357,7 @@ mongo_client::addFriendAuthorize(const std::string & inviter,
           << finalize);
       if(likely(inviter_version)) {
         info->set_inviteruserversion(inviter_version->view()["version"].
-            get_int32());
+            get_int32().value);
 
       }else {
         YILOG_ERROR("mongo update user version failure, user id {}"
@@ -381,7 +380,7 @@ mongo_client::addFriendAuthorize(const std::string & inviter,
           << finalize);
       if (likely(invitee_version)) {
         info->set_inviteeuserversion(invitee_version->view()["version"].
-            get_int32());
+            get_int32().value);
       }else {
         YILOG_ERROR("mongo update user version failure, user id {}"
             , invitee);
@@ -664,9 +663,9 @@ void inmem_client::devices(const chat::NodeSpecifiy& node_specifiy,
   auto infolittle = chat::ConnectInfoLittle();
   for (auto doc: cursor) {
     infolittle.set_uuid(doc["UUID"].get_utf8().value.to_string());
-    infolittle.set_islogin(doc["isLogin"].get_bool());
-    infolittle.set_isconnected(doc["isConnected"].get_bool());
-    infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool());
+    infolittle.set_islogin(doc["isLogin"].get_bool().value);
+    infolittle.set_isconnected(doc["isConnected"].get_bool().value);
+    infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool().value);
     func(infolittle);
   }
 }
@@ -683,9 +682,9 @@ void inmem_client::devices(const chat::NodeUser & node_user,
   auto infolittle = chat::ConnectInfoLittle();
   for (auto doc: cursor) {
     infolittle.set_uuid(doc["UUID"].get_utf8().value.to_string());
-    infolittle.set_islogin(doc["isLogin"].get_bool());
-    infolittle.set_isconnected(doc["isConnected"].get_bool());
-    infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool());
+    infolittle.set_islogin(doc["isLogin"].get_bool().value);
+    infolittle.set_isconnected(doc["isConnected"].get_bool().value);
+    infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool().value);
     func(infolittle);
   }
 }

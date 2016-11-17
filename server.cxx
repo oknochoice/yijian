@@ -108,11 +108,11 @@ int main(int argc, char * argv[])
   opt.upsert(true);
 
   user.update_one(
-      document{} << "$and" << open_array << open_document
-      << "name" << "yijian" << close_document << open_document
-      << "age" << 1198 << close_document << close_array
+      document{} 
+      << "name" << "yijian"
       << finalize,
       document{} << "$set" << open_document
+      << "age" << 9999
       << "status" << "very good" 
       << "friend" << open_array << close_array  << close_document
       << finalize,
