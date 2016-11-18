@@ -25,8 +25,8 @@ struct Write_Asyn {
 };
 
 struct Peer_Servers {
-std::mutex mutex_;
-std::shared_ptr<std::list<PingNode*> > peer_servers_;
+  std::mutex mutex_;
+  std::shared_ptr<std::list<PingNode*> > peer_servers_;
 }
 
 std::shared_ptr<std::list<PingNode*>> peer_servers();

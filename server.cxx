@@ -110,9 +110,11 @@ int main(int argc, char * argv[])
   user.update_one(
       document{} 
       << "name" << "yijian"
+      << "age" << 777
       << finalize,
       document{} << "$set" << open_document
-      << "age" << 9999
+      << "name" << "yijian"
+      << "age" << 777
       << "status" << "very good" 
       << "friend" << open_array << close_array  << close_document
       << finalize,

@@ -208,18 +208,76 @@ constexpr uint8_t dispatchType(chat::Register & ) {
 constexpr uint8_t dispatchType(chat::Login & ) {
   return ChatType::login;
 }
+constexpr uint8_t dispatchType(chat::LoginRes & ) {
+  return ChatType::loginres;
+}
 constexpr uint8_t dispatchType(chat::Logout & ) {
   return ChatType::logout;
 }
-constexpr uint8_t dispatchType(chat::User & ) {
-  return ChatType::user;
+constexpr uint8_t dispatchType(chat::LogoutRes & ) {
+  return ChatType::logoutres;
 }
-constexpr uint8_t dispatchType(chat::UserInfo & ) {
-  return ChatType::userinfo;
+constexpr uint8_t dispatchType(chat::Connect & ) {
+  return ChatType::connect;
 }
-constexpr uint8_t dispatchType(chat::Noti_Unread & ) {
-  return ChatType::notiunread;
+constexpr uint8_t dispatchType(chat::ConnectRes & ) {
+  return ChatType::connectres;
 }
+constexpr uint8_t dispatchType(chat::DisConnect & ) {
+  return ChatType::disconnect;
+}
+constexpr uint8_t dispatchType(chat::DisConnectRes & ) {
+  return ChatType::disconnectres;
+}
+constexpr uint8_t dispatchType(chat::QueryUser & ) {
+  return ChatType::queryuser;
+}
+constexpr uint8_t dispatchType(chat::QueryUserRes & ) {
+  return ChatType::queryuserres;
+}
+constexpr uint8_t dispatchType(chat::QueryUserVersion & ) {
+  return ChatType::queryuserversion;
+}
+constexpr uint8_t dispatchType(chat::QueryUserVersionRes & ) {
+  return ChatType::queryuserversionres;
+}
+constexpr uint8_t dispatchType(chat::AddFriend & ) {
+  return ChatType::addfriend;
+}
+constexpr uint8_t dispatchType(chat::AddFriendRes & ) {
+  return ChatType::addfriendres;
+}
+constexpr uint8_t dispatchType(chat::AddFriendAuthorize & ) {
+  return ChatType::addfriendauthorize;
+}
+constexpr uint8_t dispatchType(chat::AddFriendAuthorizeRes & ) {
+  return ChatType::addfriendres;
+}
+constexpr uint8_t dispatchType(chat::CreateGroup & ) {
+  return ChatType::creategroup;
+}
+constexpr uint8_t dispatchType(chat::CreateGroupRes & ) {
+  return ChatType::creategroupres;
+}
+constexpr uint8_t dispatchType(chat::GroupAddMember & ) {
+  return ChatType::groupaddmember;
+}
+constexpr uint8_t dispatchType(chat::GroupAddMemberRes & ) {
+  return ChatType::groupaddmemberres;
+}
+constexpr uint8_t dispatchType(chat::NodeMessage & ) {
+  return ChatType::nodemessage;
+}
+constexpr uint8_t dispatchType(chat::NodeMessageRes & ) {
+  return ChatType::nodemessageres;
+}
+constexpr uint8_t dispatchType(chat::QueryOneMessage & ) {
+  return ChatType::queryonemessage;
+}
+constexpr uint8_t dispatchType(chat::QueryMessage & ) {
+  return ChatType::querymessage;
+}
+
 
 
 // dispatch 
@@ -878,23 +936,118 @@ void dispatch(int type, char * header, std::size_t length) {
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
+      (*map_p)[ChatType::loginres] = [=]() {
+        auto chat = chat::LoginRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
       (*map_p)[ChatType::logout] = [=]() {
         auto chat = chat::Logout();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::user] = [=]() {
-        auto chat = chat::User();
+      (*map_p)[ChatType::logoutres] = [=]() {
+        auto chat = chat::LogoutRes();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::userinfo] = [=]() {
-        auto chat = chat::UserInfo();
+      (*map_p)[ChatType::connect] = [=]() {
+        auto chat = chat::Connect();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::notiunread] = [=]() {
-        auto chat = chat::Noti_Unread();
+      (*map_p)[ChatType::connectres] = [=]() {
+        auto chat = chat::ConnectRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::disconnect] = [=]() {
+        auto chat = chat::DisConnect();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::disconnectres] = [=]() {
+        auto chat = chat::DisConnectRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::queryuser] = [=]() {
+        auto chat = chat::QueryUser();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::queryuserres] = [=]() {
+        auto chat = chat::QueryUserRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::queryuserversion] = [=]() {
+        auto chat = chat::QueryUserVersion();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::queryuserversionres] = [=]() {
+        auto chat = chat::QueryUserVersionRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::addfriend] = [=]() {
+        auto chat = chat::AddFriend();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::addfriendres] = [=]() {
+        auto chat = chat::AddFriendRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::addfriendauthorize] = [=]() {
+        auto chat = chat::AddFriendAuthorize();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::addfriendauthorizeres] = [=]() {
+        auto chat = chat::AddFriendAuthorizeRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::creategroup] = [=]() {
+        auto chat = chat::CreateGroup();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::creategroupres] = [=]() {
+        auto chat = chat::CreateGroupRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::groupaddmember] = [=]() {
+        auto chat = chat::GroupAddMember();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::groupaddmemberres] = [=]() {
+        auto chat = chat::GroupAddMemberRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::nodemessage] = [=]() {
+        auto chat = chat::NodeMessage();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::nodemessageres] = [=]() {
+        auto chat = chat::NodeMessageRes();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::queryonemessage] = [=]() {
+        auto chat = chat::QueryOneMessage();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::querymessage] = [=]() {
+        auto chat = chat::QueryMessage();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
