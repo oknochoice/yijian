@@ -1,17 +1,18 @@
 #include "lib_client.h"
 #include <ev.h>
-#include "buffer.h"
+
 
 struct Connection_IO {
   // watcher
   ev_io io;
-  // if io is read, contra_io is write
-  // if io is write, contra_io io read
-  struct Connection_IO * contra_io;
   // socket buffer
-  std::mutex buffers_p_mutex;
+//  std::mutex buffers_p_mutex;
   std::queue<Buffer_SP> buffers_p;
 };
+
+static std::shared_ptr<Read_CB> sp_read_cb_;
+static Connection_IO * read_io_;
+static Connection_IO * write_io_;
 
 struct ev_loop * loop() {
 
@@ -34,32 +35,7 @@ void connection_read_callback (struct ev_loop * loop,
   // if read complete stop watch && update ping
   
   if (io->buffers_p.front()->socket_read(io->io.fd)) {
-    // stop read
-    ev_io_stop (loop, rw);
-    // update ping time
-    time(&io->ping_time);
-    ping_move2back(pinglist(), io);
-    if (unlikely(io->buffers_p.front()->datatype() == 
-          ChatType::serverconnect)) {
-      // remove peer server's pingnode from pinglist
-      // add to peer server list;
-      ping_erase(pinglist(), io);
-      auto p = peer_servers_write();
-      p->push_back(io);
-    }else if (unlikely(io->buffers_p.front()->datatype() == 
-          ChatType::serverdisconnect)) {
-      // remove peer server list;
-      auto p = peer_servers_write();
-      p->remove(io);
-    }else {
-      // do work 
-      noti_threads()->sentWork(
-          [=](){
-            YILOG_TRACE ("dispatch message");
-            dispatch(io, io->buffers_p.front());
-            ev_async_send(loop, &write_asyn_watcher()->as);
-          });
-    }
+    (*sp_read_cb_)(io->buffers_p.front());
     io->buffers_p.front().reset(new yijian::buffer());
   }
 
@@ -75,23 +51,19 @@ void connection_write_callback (struct ev_loop * loop,
 
   // write to socket
   // if write finish stop write, start read.
-  std::unique_lock<std::mutex> ul(io->buffers_p_mutex);
   if (!io->buffers_p.empty()) {
     auto p = io->buffers_p.front();
-    ul.unlock();
     if (p->socket_write(io->io.fd)) {
-      ul.lock();
       io->buffers_p.pop();
-      ul.unlock();
     }
   }
   if (io->buffers_p.empty()) {
-    ul.unlock();
     ev_io_stop(loop, ww);
   }
 }
 
-Connection_IO * connect_peer(std::string ip, int port) {
+static void init_io(std::string ip, int port) {
+  YILOG_TRACE ("func: {}. ", __func__);
   int sfd;
   struct sockaddr_in addr;
   sfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -111,30 +83,37 @@ Connection_IO * connect_peer(std::string ip, int port) {
   printf("Connected Success %s:%d", ip.data(), port);
 
   // Connection_IO watcher for client
-  Connection_IO * client_read_watcher = 
+  read_io_ = 
     (Connection_IO *) malloc(sizeof(Connection_IO));
-  Connection_IO * client_write_watcher = 
+  read_io_->buffers_p.front().reset(new yijian::buffer);
+  write_io_ = 
     (Connection_IO *) malloc(sizeof(Connection_IO));
 
-  if (NULL == client_read_watcher || 
-      NULL == client_write_watcher) {
+  if (NULL == read_io_ || 
+      NULL == write_io_) {
     perror ("malloc client watcher error");
   }
 
-  ev_io_init (&client_read_watcher->io, 
+  ev_io_init (&read_io_->io, 
       connection_read_callback, sfd, EV_READ);
-  ev_io_init (&client_write_watcher->io,
+  ev_io_init (&write_io_->io,
       connection_read_callback, sfd, EV_WRITE);
-  client_read_watcher->contra_io = client_write_watcher;
-  client_write_watcher->contra_io = client_read_watcher;
 
-  ev_io_start (loop(), &client_read_watcher->io);
 
-  return client_read_watcher;
+
+  ev_io_start (loop(), &read_io_->io);
+
 }
 
-void * create_client() {
-  Connection_IO* node = connect_peer("127.0.0.1", 5555);
+void create_client(Read_CB && read_cb) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  init_io("127.0.0.1", 5555);
+  sp_read_cb_.reset(new Read_CB(std::forward<Read_CB>(read_cb)));
+}
+
+void client_send(Buffer_SP sp_buffer) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  write_io_->buffers_p.push(sp_buffer);
 }
 
 

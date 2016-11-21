@@ -259,8 +259,6 @@ void connection_read_callback (struct ev_loop * loop,
   // if read complete stop watch && update ping
   
   if (io->buffers_p.front()->socket_read(io->io.fd)) {
-    // stop read
-    ev_io_stop (loop, rw);
     // update ping time
     time(&io->ping_time);
     ping_move2back(pinglist(), io);

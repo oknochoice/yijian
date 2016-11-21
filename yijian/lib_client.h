@@ -8,8 +8,14 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <ev.h>
+#include "buffer.h"
 
-void * create_client();
+typedef std::function<void(Buffer_SP)> Read_CB;
+
+// main thread
+void create_client(Read_CB && read_cb);
+// main thread
+void client_send(Buffer_SP sp_buffer);
 
 
 
