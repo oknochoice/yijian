@@ -253,13 +253,14 @@ message NodeMessage {
   enum   Type { TEXT = 0; JPG = 1; MP3 = 2;}
   string id = 1; 
   // client responsibility
-  string fromUserID = 2;
-  string toNodeID = 3;
-  int32  incrementID = 4;// 
-  Type   type = 5;
-  string content = 6;// nontext base64
+  int32  sessionID = 2;
+  string fromUserID = 3;
+  string toNodeID = 4;
+  int32  incrementID = 5;// 
+  Type   type = 6;
+  string content = 7;// nontext base64
 
-  string toUserID_outer = 7; // server use to search device
+  string toUserID_outer = 8; // server use to search device
   
 }
 message NodeMessageRes {

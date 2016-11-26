@@ -23,7 +23,7 @@ buffer::buffer(Message_Type type)
 void buffer::reset() {
 
   data_pos_ = header_pos_;
-  current_pos_ = header_pos_;
+  current_pos_ = header_pos_ + SESSIONID_LENGTH;
   isFinish_ = false;
   isParseFinish_ = false;
 
@@ -37,22 +37,22 @@ buffer::~buffer() {
 
 }
 
-inline char * buffer::header() {
+char * buffer::header() {
   YILOG_TRACE("func: {}", __func__);
   return header_pos_;
 }
 
-inline std::size_t buffer::size() {
+std::size_t buffer::size() {
   YILOG_TRACE("func: {}", __func__);
   return current_pos_ - header_pos_;
 }
 
-inline std::size_t buffer::remain_size() {
+std::size_t buffer::remain_size() {
   YILOG_TRACE("func: {}", __func__);
   return static_cast<std::size_t>(buffer_type_) - size();
 }
 
-inline Message_Type buffer::buffer_type() {
+Message_Type buffer::buffer_type() {
   YILOG_TRACE("func: {}", __func__);
   return buffer_type_;
 }
@@ -65,17 +65,19 @@ bool buffer::socket_read(int sfd) {
     if (0 != parse_length_) {
       parse_length_ -= socket_read(sfd, parse_length_);
     }else {
-      auto pair = decoding_var_Length(header_pos_);
-      data_pos_ = pair.second + MESSAGE_TYPE_LENGTH;
-      char type = *pair.second;
-      data_type_ = type;
+      // session id
+      session_id_ = *header_pos_;
+      // var_length
+      auto pair = decoding_var_Length(header_pos_ + SESSIONID_LENGTH);
+      data_pos_ = pair.second;
+      data_type_ =  *pair.second;
 
-      int readed = 4 + MESSAGE_TYPE_LENGTH - (pair.second - header_pos_);
+      int readed = PADDING_LENGTH - (pair.second - header_pos_);
 
       remain_data_length_ = pair.first - readed;
       isParseFinish_ = true;
 
-      if (remain_data_length_ + 4 + MESSAGE_TYPE_LENGTH > 
+      if (remain_data_length_ + PADDING_LENGTH > 
           static_cast<std::size_t>(buffer_type_)) {
         throw std::system_error(std::error_code(20000, std::generic_category()),
             "transfer data over buffer size");
@@ -122,7 +124,7 @@ bool buffer::socket_read_media(int sfd) {
 
 
 
-uint_fast8_t buffer::datatype() {
+uint8_t buffer::datatype() {
   YILOG_TRACE("func: {}", __func__);
   return data_type_;
 }
@@ -138,24 +140,32 @@ std::size_t buffer::data_size() {
 }
 
 
-void buffer::data_encoding_length(uint_fast32_t length) {
+void buffer::data_encoding_length(uint32_t length) {
   current_pos_ = encoding_var_Length(current_pos_, length);
 }
 void buffer::data_encoding_type(uint8_t type) {
   memcpy(current_pos_, &type, 1);
+  ++current_pos_;
 }
 char * buffer::data_encoding_current() {
   return current_pos_;
 }
-void buffer::data_encoding_reset_size(std::size_t length) {
+void buffer::data_encoding_current_addpos(std::size_t length) {
   current_pos_ += length;
 }
 
-std::pair<uint_fast32_t, char *>
+uint16_t buffer::session_id() {
+  return session_id_;
+}
+void buffer::set_sessionid(uint16_t sessionid) {
+  memcpy(header_pos_, &sessionid, 2);
+}
+
+std::pair<uint32_t, char *>
 buffer::decoding_var_Length(char * pos) {
   YILOG_TRACE("func: {}", __func__);
   int multiplier = 1;
-  uint_fast32_t value = 0;
+  uint32_t value = 0;
   uint8_t encodeByte;
   do {
     encodeByte = *pos;
@@ -170,7 +180,7 @@ buffer::decoding_var_Length(char * pos) {
 }
 
 char *
-buffer::encoding_var_Length(char * pos, uint_fast32_t length) {
+buffer::encoding_var_Length(char * pos, uint32_t length) {
   YILOG_TRACE("func: {}", __func__);
   do {
     uint8_t encodeByte = length % 128;
@@ -184,7 +194,7 @@ buffer::encoding_var_Length(char * pos, uint_fast32_t length) {
   return pos;
 }
 
-inline std::size_t buffer::socket_read(int sfd, std::size_t count) {
+std::size_t buffer::socket_read(int sfd, std::size_t count) {
   YILOG_TRACE("func: {}", __func__);
   int readed = read(sfd, current_pos_, count);
   if (-1 != readed) {
@@ -196,7 +206,7 @@ inline std::size_t buffer::socket_read(int sfd, std::size_t count) {
   return readed;
 }
 
-inline std::size_t buffer::socket_write(int sfd, std::size_t count) {
+std::size_t buffer::socket_write(int sfd, std::size_t count) {
   YILOG_TRACE("func: {}", __func__);
   int writed = write(sfd, current_pos_, count);
   if (-1 != writed) {

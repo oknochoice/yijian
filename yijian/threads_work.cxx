@@ -10,7 +10,10 @@ noti_threads::noti_threads(uint_fast16_t thread_num)
     for (uint_fast16_t i = 0; i < thread_num; i++) {
       auto thread_data = (Thread_Data*)malloc(sizeof(Thread_Data));
       thread_data->thread_ = 
-        std::thread(&noti_threads::thread_func, thread_data);
+//        std::thread(&noti_threads::thread_func, thread_data);
+          std::thread([&]() {
+               this->thread_func(thread_data);
+              });
       thread_data->isContine_ = true;
       thread_data->c_isWait_ = true;
       thread_data->v_pingnode_sp_.reset(new Thread_Data::Vector_Node);

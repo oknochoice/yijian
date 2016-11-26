@@ -27,32 +27,15 @@ struct Write_Asyn {
 struct Peer_Servers {
   std::mutex mutex_;
   std::shared_ptr<std::list<PingNode*> > peer_servers_;
-}
+};
 
-std::shared_ptr<std::list<PingNode*>> peer_servers();
+std::shared_ptr<std::list<PingNode*> > peer_servers();
 
-static List pinglist();
-static struct ev_loop * loop();
-static struct ev_io * accept_watcher();
-static struct Write_Asyn * write_asyn_watcher();
-static yijian::noti_threads * noti_treads();
-
-
-static void
-sigint_cb (struct ev_loop * loop, ev_signal * w, int revents);
-// ev_async watcher priority si EV_MAXPRI
-static void
-start_write_callback (struct ev_loop * loop, ev_async * w, int revents);
-static void
-socket_accept_callback (struct ev_loop * loop, ev_io * rw, int revents);
-static void
-connection_read_callback (struct ev_loop * loop, ev_io * rw, int revents);
-static void
-connection_write_callback (struct ev_loop * loop, ev_io * ww, int revents);
 
 PingNode * connect_peer(std::string ip, int port);
 
-int start_server_libev(std::vector<std::pair<std::string, int>> & ips );
+int start_server_libev(std::vector<std::pair<std::string, int>> ips = 
+    std::vector<std::pair<std::string, int>>());
 
 
 #ifdef __cplusplus

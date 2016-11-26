@@ -522,7 +522,7 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
       << "count" << 1 << close_document
       << finalize);
   if (likely(node_count)) {
-    uint32_t incrementid = node_count->view()["count"].get_int32().value;
+    int32_t incrementid = node_count->view()["count"].get_int32().value;
     auto maybe_result = nodemessage_collection.insert_one(
         document{} << "fromUserID" << message.fromuserid()
         << "toNodeID" << message.tonodeid()
@@ -753,36 +753,6 @@ void inmem_client::addTonodeidConnectInfo(
   if (unlikely(!maybe_result)) {
     YILOG_ERROR ("spectify device add tonodeids error, uuid :{} .", 
         connectInfo.uuid());
-  }
-}
-
-template <class Vec_like> void 
-inmem_client::addTonodeidConnectInfo(
-    const Vec_like &  membersid, const std::string & tonodeid) {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-  
-  auto db = client_["chatdb"];
-  auto connectinfo_col = db["connectInfo"];
-  auto arraybuilder = array{};
-  for (auto & memberid: membersid) {
-    arraybuilder << memberid;
-  }
-  auto member_array = arraybuilder << finalize;
-
-  auto maybe_result = connectinfo_col.update_many(
-      document{} << "userID" << open_document
-      << "$in" << member_array << close_document
-      << finalize,
-      document{} << "$addToSet" << open_document
-      << "toNodeIDs" << tonodeid
-      << close_document << finalize);
-  if (unlikely(!maybe_result)) {
-    for (auto & memberid: membersid) {
-      arraybuilder << memberid;
-      YILOG_ERROR("user's devices add tonodeid error, userid :{} ,"
-          " tonodeid :{}", memberid, tonodeid);
-    }
   }
 }
 

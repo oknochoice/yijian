@@ -77,7 +77,7 @@ private:
 
   mongocxx::client client_;
 
-}
+};
 
 class inmem_client {
 public:
@@ -95,9 +95,41 @@ public:
   // spectify device add tonodeids
   void addTonodeidConnectInfo(const chat::ConnectInfo & connectInfo);
   // user's all device add tonodeid
-  template <class Vec_like>
-  void addTonodeidConnectInfo(const Vec_like &membersid,
-      const std::string & tonodeid);
+  template <class Vec_like> void 
+  addTonodeidConnectInfo(
+      const Vec_like &  membersid, const std::string & tonodeid) {
+
+    YILOG_TRACE ("func: {}. ", __func__);
+    
+    auto db = client_["chatdb"];
+    auto connectinfo_col = db["connectInfo"];
+    auto arraybuilder = bsoncxx::builder::stream::array{};
+    for (auto & memberid: membersid) {
+      arraybuilder << memberid;
+    }
+    auto member_array = arraybuilder 
+        << bsoncxx::builder::stream::finalize;
+
+    auto maybe_result = connectinfo_col.update_many(
+        bsoncxx::builder::stream::document{} 
+        << "userID" << bsoncxx::builder::stream::open_document
+        << "$in" << member_array 
+        << bsoncxx::builder::stream::close_document
+        << bsoncxx::builder::stream::finalize,
+        bsoncxx::builder::stream::document{} 
+        << "$addToSet" << bsoncxx::builder::stream::open_document
+        << "toNodeIDs" << tonodeid
+        << bsoncxx::builder::stream::close_document
+        << bsoncxx::builder::stream::finalize
+        );
+    if (unlikely(!maybe_result)) {
+      for (auto & memberid: membersid) {
+        YILOG_ERROR("user's devices add tonodeid error, userid :{} ,"
+            " tonodeid :{}", memberid, tonodeid);
+      }
+    }
+  }
+
   void updateConnectInfo(const chat::ConnectInfoLittle & infolittle);
   void disconnectInfo(const std::string & uuid);
   
@@ -106,7 +138,7 @@ private:
   std::string serverName_;
   mongocxx::client client_;
 
-}
+};
 
 namespace yijian {
   namespace threadCurrent {

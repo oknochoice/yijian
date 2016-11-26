@@ -9,7 +9,6 @@
 #include <string>
 #include <queue>
 #include "buffer.h"
-#include "libev_server.h"
 #include "pinglist.h"
 #include "macro.h"
 
@@ -76,30 +75,9 @@ auto dispatch(Any & a) {
 }
 */
 
-template <typename Proto> Buffer_SP
-encoding(Proto any) {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-
-  auto buf = std::make_shared<yijian::buffer>();
-  buf->data_encoding_length(any.ByteSize());
-  buf->data_encoding_type(dispatchType(any));
-  any.SerializeToArray(buf->data_encoding_current(), buf->remain_size());
-  buf->data_encoding_reset_size(any.ByteSize());
-
-  return buf;
-}
 
 namespace yijian {
   namespace threadCurrent {
-    mongo_client * mongoClient() {
-      static thread_local auto client = new mongo_client();
-      return client;
-    }
-    inmem_client * inmemClient() {
-      static thread_local auto client = new inmem_client(SERVER_NAME);
-      return client;
-    }
     Buffer_SP errorBuffer() {
       static thread_local auto error = chat::Error();
       error.set_errnum(0);
@@ -110,7 +88,7 @@ namespace yijian {
       auto error = chat::Error();
       error.set_errnum(err_num);
       error.set_errmsg(err_msg);
-      return encoding(std::forward<std::string>(err_msg));
+      return encoding(error);
     }
   }
 }
@@ -123,13 +101,6 @@ using yijian::threadCurrent::node_peer_;
 using yijian::threadCurrent::node_user_;
 using yijian::threadCurrent::node_specifiy_;
 using yijian::threadCurrent::infolittle_;
-
-template <typename Any>
-void mountBuffer2Node(Any &) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  throw std::system_error(std::error_code(11007, std::generic_category()), 
-      "unkonw node type");
-}
 
 // user require device
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSelfDevice & ) {
@@ -190,92 +161,6 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user) {
   inClient->devices(node_user, [buf_sp](chat::ConnectInfoLittle & infolittle) {
         traverseDevices(infolittle, buf_sp);
       });
-}
-
-template <typename Any>
-void dispatch(Any & ) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  throw std::system_error(std::error_code(11000, std::generic_category()), 
-      "unkonw dispatch type");
-}
-
-constexpr uint8_t dispatchType(chat::Error & ) {
-  return ChatType::error;
-}
-constexpr uint8_t dispatchType(chat::Register & ) {
-  return ChatType::registor;
-}
-constexpr uint8_t dispatchType(chat::Login & ) {
-  return ChatType::login;
-}
-constexpr uint8_t dispatchType(chat::LoginRes & ) {
-  return ChatType::loginres;
-}
-constexpr uint8_t dispatchType(chat::Logout & ) {
-  return ChatType::logout;
-}
-constexpr uint8_t dispatchType(chat::LogoutRes & ) {
-  return ChatType::logoutres;
-}
-constexpr uint8_t dispatchType(chat::Connect & ) {
-  return ChatType::connect;
-}
-constexpr uint8_t dispatchType(chat::ConnectRes & ) {
-  return ChatType::connectres;
-}
-constexpr uint8_t dispatchType(chat::DisConnect & ) {
-  return ChatType::disconnect;
-}
-constexpr uint8_t dispatchType(chat::DisConnectRes & ) {
-  return ChatType::disconnectres;
-}
-constexpr uint8_t dispatchType(chat::QueryUser & ) {
-  return ChatType::queryuser;
-}
-constexpr uint8_t dispatchType(chat::QueryUserRes & ) {
-  return ChatType::queryuserres;
-}
-constexpr uint8_t dispatchType(chat::QueryUserVersion & ) {
-  return ChatType::queryuserversion;
-}
-constexpr uint8_t dispatchType(chat::QueryUserVersionRes & ) {
-  return ChatType::queryuserversionres;
-}
-constexpr uint8_t dispatchType(chat::AddFriend & ) {
-  return ChatType::addfriend;
-}
-constexpr uint8_t dispatchType(chat::AddFriendRes & ) {
-  return ChatType::addfriendres;
-}
-constexpr uint8_t dispatchType(chat::AddFriendAuthorize & ) {
-  return ChatType::addfriendauthorize;
-}
-constexpr uint8_t dispatchType(chat::AddFriendAuthorizeRes & ) {
-  return ChatType::addfriendres;
-}
-constexpr uint8_t dispatchType(chat::CreateGroup & ) {
-  return ChatType::creategroup;
-}
-constexpr uint8_t dispatchType(chat::CreateGroupRes & ) {
-  return ChatType::creategroupres;
-}
-constexpr uint8_t dispatchType(chat::GroupAddMember & ) {
-  return ChatType::groupaddmember;
-}
-constexpr uint8_t dispatchType(chat::GroupAddMemberRes & ) {
-  return ChatType::groupaddmemberres;
-}
-constexpr uint8_t dispatchType(chat::NodeMessage & ) {
-  return ChatType::nodemessage;
-}
-constexpr uint8_t dispatchType(chat::NodeMessageRes & ) {
-  return ChatType::nodemessageres;
-}
-constexpr uint8_t dispatchType(chat::QueryOneMessage & ) {
-  return ChatType::queryonemessage;
-}
-constexpr uint8_t dispatchType(chat::QueryMessage & ) {
-  return ChatType::querymessage;
 }
 
 
@@ -668,13 +553,13 @@ void dispatch(chat::CreateGroup & group) {
     inmem_client->addTonodeidConnectInfo(
         group.membersid(), groupRes->tonodeid());
     // send to self
-    mountBuffer2Node(encoding(groupRes), node_self_);
+    mountBuffer2Node(encoding(*groupRes), node_self_);
     // self other device
     node_user_.set_touserid(currentNode_->userid);
-    mountBuffer2Node(encoding(groupRes), node_user_);
+    mountBuffer2Node(encoding(*groupRes), node_user_);
     // peer 
     groupRes->set_touserid_outer(currentNode_->userid);
-    mountBuffer2Node(encoding(groupRes), node_peer_);
+    mountBuffer2Node(encoding(*groupRes), node_peer_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -951,12 +836,12 @@ void dispatch(int type, char * header, std::size_t length) {
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::connect] = [=]() {
+      (*map_p)[ChatType::clientconnect] = [=]() {
         auto chat = chat::Connect();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::connectres] = [=]() {
+      (*map_p)[ChatType::clientconnectres] = [=]() {
         auto chat = chat::ConnectRes();
         chat.ParseFromArray(header, length);
         dispatch(chat);

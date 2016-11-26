@@ -14,11 +14,6 @@ struct PingNode;
 
 namespace yijian {
 
-namespace threadCurrent {
-Thread_Data * threadData(Thread_Data* currentData);
-Thread_Data * threadData();
-void pushPingnode(PingNode * node);
-}
 
 struct Thread_Data {
   typedef std::vector<PingNode*> Vector_Node;
@@ -49,8 +44,8 @@ public:
   // push to vec_threads_
   void sentWork(Thread_Data::Thread_Function && func);
   void foreachio(std::function<void(struct PingNode *)> && func);
-  void thread_func(Thread_Data * thread_data);
 private:
+  void thread_func(Thread_Data * thread_data);
   uint_fast16_t thread_count_;
   std::vector<Thread_Data*> vec_threads_;
   std::mutex c_mutex_;
@@ -58,6 +53,11 @@ private:
   std::condition_variable c_var_;
 };
 
+namespace threadCurrent {
+  Thread_Data * threadData(Thread_Data* currentData);
+  Thread_Data * threadData();
+  void pushPingnode(PingNode * node);
+}
 
 }
 

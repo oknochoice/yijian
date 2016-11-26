@@ -1,10 +1,29 @@
 #include "libev_server.h"
 #include <map>
-#include <function>
+#include <functional>
 #include <mutex>
 #include <arpa/inet.h>
 
 #include "message_typemap.h"
+
+static List pinglist();
+static struct ev_loop * loop();
+static struct ev_io * accept_watcher();
+static struct Write_Asyn * write_asyn_watcher();
+static yijian::noti_threads * noti_threads();
+
+
+static void
+sigint_cb (struct ev_loop * loop, ev_signal * w, int revents);
+// ev_async watcher priority si EV_MAXPRI
+static void
+start_write_callback (struct ev_loop * loop, ev_async * w, int revents);
+static void
+socket_accept_callback (struct ev_loop * loop, ev_io * rw, int revents);
+static void
+connection_read_callback (struct ev_loop * loop, ev_io * rw, int revents);
+static void
+connection_write_callback (struct ev_loop * loop, ev_io * ww, int revents);
 
 
 struct Peer_Servers peer_servers_;
@@ -34,7 +53,7 @@ std::shared_ptr<std::list<PingNode*>> peer_servers_write() {
 }
 
 
-List pinglist() {
+static List pinglist() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -43,7 +62,7 @@ List pinglist() {
 
 }
 
-struct ev_loop * loop() {
+static struct ev_loop * loop() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -52,7 +71,7 @@ struct ev_loop * loop() {
 
 }
 
-struct ev_io * accept_watcher() {
+static struct ev_io * accept_watcher() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -62,7 +81,7 @@ struct ev_io * accept_watcher() {
 
 }
 
-struct Write_Asyn * write_asyn_watcher() {
+static struct Write_Asyn * write_asyn_watcher() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -76,7 +95,7 @@ struct Write_Asyn * write_asyn_watcher() {
 
 
 
-void
+static void
 sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -85,7 +104,7 @@ sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
   
 }
 
-yijian::noti_threads * noti_threads() {
+static yijian::noti_threads * noti_threads() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -107,7 +126,7 @@ int open_thread_manager () {
 }
 
 
-int start_server_libev(std::vector<std::pair<std::string, int>> & ips ) {
+int start_server_libev(std::vector<std::pair<std::string, int>> ips ) {
 
   YILOG_TRACE ("func: {}. ", __func__);
   // set peer server list
@@ -176,7 +195,8 @@ int start_server_libev(std::vector<std::pair<std::string, int>> & ips ) {
 
 }
 
-void start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
+static void 
+start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
   
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -191,7 +211,8 @@ void start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
 
 }
 
-void socket_accept_callback (struct ev_loop * loop, 
+static void 
+socket_accept_callback (struct ev_loop * loop, 
     ev_io * rw, int revents) {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -235,7 +256,7 @@ void socket_accept_callback (struct ev_loop * loop,
   ev_io_init (&client_read_watcher->io, 
       connection_read_callback, client_sd, EV_READ);
   ev_io_init (&client_write_watcher->io,
-      connection_read_callback, client_sd, EV_WRITE);
+      connection_write_callback, client_sd, EV_WRITE);
   client_read_watcher->contra_io = client_write_watcher;
   client_write_watcher->contra_io = client_read_watcher;
 
@@ -247,7 +268,8 @@ void socket_accept_callback (struct ev_loop * loop,
 
 }
 
-void connection_read_callback (struct ev_loop * loop, 
+static void 
+connection_read_callback (struct ev_loop * loop, 
     ev_io * rw, int revents) {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -288,7 +310,8 @@ void connection_read_callback (struct ev_loop * loop,
 
 }
 
-void connection_write_callback (struct ev_loop * loop, 
+static void 
+connection_write_callback (struct ev_loop * loop, 
     ev_io * ww, int revents) {
 
   YILOG_TRACE ("func: {}. ", __func__);

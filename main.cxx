@@ -4,6 +4,10 @@
 #include "catch.hpp"
 #include "spdlog/spdlog.h"
 #include "yijian/pinglist.h"
+#include "yijian/lib_client.h"
+#include "yijian/mongo.h"
+#include "yijian/protofiles/chat_message.pb.h"
+#include "yijian/message_typemap.h"
 
 #ifdef __cpluscplus
 extern "C" {
@@ -57,6 +61,29 @@ TEST_CASE("pinglist", "[pinglist]") {
           *isStop = false;
         });
   }
+}
+
+
+TEST_CASE("IM business","[business]") {
+
+  create_client([](Buffer_SP buffer_sp) {
+      std::cout << "client read callback" << std::endl;
+      });
+
+
+
+  SECTION("register") {
+    auto regst = chat::Register();
+    regst.set_phoneno("18514029918");
+    regst.set_countrycode("86");
+    regst.set_password("123456");
+    regst.set_nickname("yijian");
+    auto sp = encoding(regst);
+    client_send(sp);
+
+
+  }
+
 }
 
 

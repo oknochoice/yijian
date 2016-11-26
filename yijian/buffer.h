@@ -5,7 +5,9 @@
 #include <deque>
 #include <unistd.h>
 
-#define MESSAGE_TYPE_LENGTH 1
+// 4 max var_length length 1 type length 2 sessionid length
+#define SESSIONID_LENGTH 2
+#define PADDING_LENGTH (4 + 1 + SESSIONID_LENGTH)
 
 enum class Message_Type : std::size_t {
   message = 1024,
@@ -40,24 +42,43 @@ public:
     // socket read write if finish return ture
     bool socket_read(int sfd);
     bool socket_write(int sfd);
+
     // socket read fixed length 
     // first set length second read
     //void set_socketreadmedia_length(std::size_t length);
     //bool socket_read_media(int sfd);
     // used for proto model parse
-    uint_fast8_t datatype();
+    uint8_t datatype();
     char * data();
     std::size_t data_size();
+
     // encoding proto model to buffer
-    void data_encoding_length(uint_fast32_t length);
+    // buffer length
+    void data_encoding_length(uint32_t length);
+    // message type
     void data_encoding_type(uint8_t type);
+    // message content and adjust current pos
     char * data_encoding_current();
-    void data_encoding_reset_size(std::size_t length);
+    void data_encoding_current_addpos(std::size_t length);
+
+    // encoding protocol buffer
+    template <typename Proto> 
+    void encoding(Proto && any, uint8_t type) {
+      data_encoding_length(any.ByteSize());
+      data_encoding_type(type);
+      any.SerializeToArray(data_encoding_current(), remain_size());
+      data_encoding_current_addpos(any.ByteSize());
+    }
+
+    // session id
+    uint16_t session_id();
+    void set_sessionid(uint16_t sessionid);
+
 //private:
-    std::pair<uint_fast32_t, char *>
+    std::pair<uint32_t, char *>
     decoding_var_Length(char * pos);
     char *
-    encoding_var_Length(char * pos, uint_fast32_t length);
+    encoding_var_Length(char * pos, uint32_t length);
 
     std::size_t socket_read(int sfd, std::size_t count);
     std::size_t socket_write(int sfd, std::size_t count);
@@ -65,7 +86,7 @@ private:
     bool isParseFinish_ = false;
     bool isFinish_ = false;
 
-    uint_fast8_t data_type_;
+    uint8_t data_type_;
 
     Message_Type buffer_type_;
 
@@ -73,8 +94,10 @@ private:
     char * data_pos_;
     char * current_pos_;
 
+    uint16_t session_id_;
+
     // var_length length + data_type_length 
-    uint_fast8_t parse_length_ = 4 + MESSAGE_TYPE_LENGTH;
+    uint8_t parse_length_ = PADDING_LENGTH;
     // socket read or write buffer
     std::size_t remain_data_length_; 
 
