@@ -1,5 +1,4 @@
 #define CATCH_CONFIG_MAIN
-#define YILOG_ON
 #include "macro.h"
 #include "catch.hpp"
 #include "spdlog/spdlog.h"
@@ -8,17 +7,19 @@
 #include "yijian/mongo.h"
 #include "yijian/protofiles/chat_message.pb.h"
 #include "yijian/message_typemap.h"
+#include "buffer.h"
 
 #ifdef __cpluscplus
 extern "C" {
 #endif
 // pinglist
 TEST_CASE("pinglist", "[pinglist]") {
+  initConsoleLog();
   List list = create_pinglist();
   PingNode* ppp[10];
   int a [10] = {0,1,2,3,4,5,6,7,8,9};
   for (int i = 0; i < 10; ++i) {
-    PingNode * node = static_cast<PingNode*>(malloc(sizeof(PingNode)));
+    PingNode * node = new PingNode();
     node->ping_time = a[i];
     ppp[i] = node;
     ping_append(list, node);
@@ -63,6 +64,15 @@ TEST_CASE("pinglist", "[pinglist]") {
   }
 }
 
+TEST_CASE("buffer", "[buffer]") {
+  uint32_t length = 9;
+  char data[1024];
+  auto buffer_sp = new yijian::buffer();
+  buffer_sp->encoding_var_length(data, length);
+  auto pair = buffer_sp->decoding_var_length(data);
+  REQUIRE( length == pair.first);
+}
+
 
 TEST_CASE("IM business","[business]") {
 
@@ -80,7 +90,6 @@ TEST_CASE("IM business","[business]") {
     regst.set_nickname("yijian");
     auto sp = encoding(regst);
     client_send(sp);
-
 
   }
 

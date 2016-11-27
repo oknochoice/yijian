@@ -31,28 +31,24 @@ public:
 }
 
 // c++11 thread-safe
-inline static auto& getConsole() {
-  auto static console = spdlog::stdout_logger_mt("console");
-  console->set_level(spdlog::level::trace);
-  return console;
-}
+void initConsoleLog();
 
 #ifdef YILOG_ON
 #define YILOG_STR_H(x) #x
 #define YILOG_STR_HELPER(x) YILOG_STR_H(x)
-#define YILOG_TRACE(...) getConsole()->trace("[" __FILE__ " line #" YILOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
-#define YILOG_DEBUG(...) getConsole()->debug(__VA_ARGS__)
-#define YILOG_INFO(...) getConsole()->info(__VA_ARGS__)
-#define YILOG_WARN(...) getConsole()->warn(__VA_ARGS__)
-#define YILOG_ERROR(...) getConsole()->error(__VA_ARGS__)
-#define YILOG_CRITICAL(...) getConsole()->critical(__VA_ARGS__)
+#define YILOG_TRACE(...)      spdlog::get("console")->trace("[" __FILE__ " line #" YILOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
+#define YILOG_DEBUG(...)      spdlog::get("console")->debug(__VA_ARGS__)
+#define YILOG_INFO(...)       spdlog::get("console")->info(__VA_ARGS__)
+#define YILOG_WARN(...)       spdlog::get("console")->warn(__VA_ARGS__)
+#define YILOG_ERROR(...)      spdlog::get("console")->error(__VA_ARGS__)
+#define YILOG_CRITICAL(...)   spdlog::get("console")->critical(__VA_ARGS__)
 #else
 #define YILOG_TRACE(...)
 #define YILOG_DEBUG(...)
 #define YILOG_INFO(...)
 #define YILOG_WARN(...)
-#define YILOG_ERROR(...) getConsole()->error(__VA_ARGS__)
-#define YILOG_CRITICAL(...) getConsole()->critical(__VA_ARGS__)
+#define YILOG_ERROR(...)      spdlog::get("console")->error(__VA_ARGS__)
+#define YILOG_CRITICAL(...)   spdlog::get("console")->critical(__VA_ARGS__)
 #endif
 
 #define MQTT_BUFFER_SIZE (1024 * 2)

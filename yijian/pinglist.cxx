@@ -8,7 +8,7 @@ extern "C" {
 
 PingNode * createReadPingNode() {
   YILOG_TRACE ("func : {}", __func__);
-  PingNode * node = (PingNode*) malloc(sizeof(PingNode));
+  PingNode * node = new PingNode();
   node->buffers_p.push(std::make_shared<yijian::buffer>());
   return node;
 }
@@ -16,16 +16,16 @@ void destoryReadPingNode(PingNode * node) {
   YILOG_TRACE ("func : {}", __func__);
   while(!node->buffers_p.empty())
     node->buffers_p.pop();
-  free(node);
+  delete node;
 }
 PingNode * createWritePingNode() {
   YILOG_TRACE ("func : {}", __func__);
-  PingNode * node = (PingNode*) malloc(sizeof(PingNode));
+  PingNode * node = new PingNode();
   return node;
 }
 void destoryWritePingNode(PingNode * node) {
   YILOG_TRACE ("func : {}", __func__);
-  free(node);
+  delete node;
 }
 
 

@@ -19,12 +19,15 @@ extern "C" {
 #define PORT 5555
 #define MAX_CONNECTIONS 100
 
+typedef std::vector<std::pair<std::string, int>> IPS;
+
 typedef struct PingNode Connection_IO;
 struct Write_Asyn {
   ev_async as;
 };
 
 struct Peer_Servers {
+  IPS ips_;
   std::mutex mutex_;
   std::shared_ptr<std::list<PingNode*> > peer_servers_;
 };

@@ -12,8 +12,9 @@ buffer::buffer(Message_Type type)
   : buffer_type_(type) {
 
   YILOG_TRACE("func: {}", __func__);
-
   std::size_t init_size = static_cast<std::size_t>(buffer_type_);
+  YILOG_DEBUG("func: {}, size: {}", __func__, init_size);
+
   header_pos_ = (char *)malloc(init_size);
 
   reset();
@@ -21,6 +22,8 @@ buffer::buffer(Message_Type type)
 };
 
 void buffer::reset() {
+
+  YILOG_TRACE("func: {}", __func__);
 
   data_pos_ = header_pos_;
   current_pos_ = header_pos_ + SESSIONID_LENGTH;
@@ -64,13 +67,16 @@ bool buffer::socket_read(int sfd) {
   if (!isParseFinish_) {
     if (0 != parse_length_) {
       parse_length_ -= socket_read(sfd, parse_length_);
+      YILOG_DEBUG ("func: {}, parse length: {}", __func__, parse_length_);
     }else {
       // session id
       session_id_ = *header_pos_;
       // var_length
-      auto pair = decoding_var_Length(header_pos_ + SESSIONID_LENGTH);
+      auto pair = decoding_var_length(header_pos_ + SESSIONID_LENGTH);
       data_pos_ = pair.second;
       data_type_ =  *pair.second;
+      YILOG_DEBUG ("func: {}, type: {}, length: {}", 
+          __func__, data_type_, pair.first);
 
       int readed = PADDING_LENGTH - (pair.second - header_pos_);
 
@@ -141,7 +147,7 @@ std::size_t buffer::data_size() {
 
 
 void buffer::data_encoding_length(uint32_t length) {
-  current_pos_ = encoding_var_Length(current_pos_, length);
+  current_pos_ = encoding_var_length(current_pos_, length);
 }
 void buffer::data_encoding_type(uint8_t type) {
   memcpy(current_pos_, &type, 1);
@@ -162,7 +168,7 @@ void buffer::set_sessionid(uint16_t sessionid) {
 }
 
 std::pair<uint32_t, char *>
-buffer::decoding_var_Length(char * pos) {
+buffer::decoding_var_length(char * pos) {
   YILOG_TRACE("func: {}", __func__);
   int multiplier = 1;
   uint32_t value = 0;
@@ -180,7 +186,7 @@ buffer::decoding_var_Length(char * pos) {
 }
 
 char *
-buffer::encoding_var_Length(char * pos, uint32_t length) {
+buffer::encoding_var_length(char * pos, uint32_t length) {
   YILOG_TRACE("func: {}", __func__);
   do {
     uint8_t encodeByte = length % 128;
@@ -197,13 +203,17 @@ buffer::encoding_var_Length(char * pos, uint32_t length) {
 std::size_t buffer::socket_read(int sfd, std::size_t count) {
   YILOG_TRACE("func: {}", __func__);
   int readed = read(sfd, current_pos_, count);
-  if (-1 != readed) {
+  YILOG_DEBUG("func: {}, readed: {}", __func__, readed);
+  if (0 < readed) {
     current_pos_ += readed;
+    return readed;
+  }else if (0 == readed) {
+    current_pos_ += count;
+    return count;
   }else {
     throw std::system_error(std::error_code(errno, std::system_category()),
         "read buffer");
   }
-  return readed;
 }
 
 std::size_t buffer::socket_write(int sfd, std::size_t count) {

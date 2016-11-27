@@ -6,17 +6,18 @@ namespace yijian {
 // noti threads
 noti_threads::noti_threads(uint_fast16_t thread_num)
   : thread_count_(thread_num){
-  YILOG_TRACE("func: {}", __func__);
-    for (uint_fast16_t i = 0; i < thread_num; i++) {
-      auto thread_data = (Thread_Data*)malloc(sizeof(Thread_Data));
-      thread_data->thread_ = 
-//        std::thread(&noti_threads::thread_func, thread_data);
-          std::thread([&]() {
-               this->thread_func(thread_data);
-              });
+  YILOG_TRACE("func: {}. thread num {}. ", __func__, thread_num);
+    for (uint_fast16_t i = 0; i < thread_num; ++i) {
+      auto thread_data = new Thread_Data();
       thread_data->isContine_ = true;
       thread_data->c_isWait_ = true;
       thread_data->v_pingnode_sp_.reset(new Thread_Data::Vector_Node);
+      thread_data->thread_ = 
+//        std::thread(&noti_threads::thread_func, thread_data);
+          std::thread([&]() {
+                YILOG_TRACE("start thread");
+                this->thread_func(thread_data);
+              });
       vec_threads_.push_back(thread_data);
     }
 };
@@ -130,6 +131,7 @@ void noti_threads::thread_func(Thread_Data* thread_data) {
   while (true) {
 
     {
+      YILOG_TRACE("func: {}, wait...", __func__);
       std::unique_lock<std::mutex> ul(thread_data->c_mutex_);
       thread_data->c_var_.wait(ul, [&](){
            return !thread_data->c_isWait_;
@@ -138,6 +140,7 @@ void noti_threads::thread_func(Thread_Data* thread_data) {
     }
 
     while (!thread_data->q_workfun_.empty()){
+      YILOG_TRACE("func: {}, do work", __func__);
       std::unique_lock<std::mutex> ul(thread_data->q_workfun_mutex_);
       auto func = thread_data->q_workfun_.front();
       thread_data->q_workfun_.pop();
@@ -146,10 +149,12 @@ void noti_threads::thread_func(Thread_Data* thread_data) {
     }
 
     if (!thread_data->isContine_.load()) {
+      YILOG_TRACE("func: {}, stop thread", __func__);
       break;
     }
     
     {
+      YILOG_TRACE("func: {}, notify_one", __func__);
       std::unique_lock<std::mutex> ul(c_mutex_);
       c_isWait_ = false;
       c_var_.notify_one();
@@ -157,7 +162,7 @@ void noti_threads::thread_func(Thread_Data* thread_data) {
 
   }
 
-  YILOG_TRACE("func: {}", __func__);
+  YILOG_TRACE("func: {}, outer loop", __func__);
 
 }
 

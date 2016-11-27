@@ -27,9 +27,6 @@ connection_write_callback (struct ev_loop * loop, ev_io * ww, int revents);
 
 
 struct Peer_Servers peer_servers_;
-void set_peer_servers() {
-  peer_servers_.peer_servers_.reset(new std::list<PingNode*>());
-}
 std::shared_ptr<std::list<PingNode*>> peer_servers() {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -66,7 +63,7 @@ static struct ev_loop * loop() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
-  static struct ev_loop * loop = EV_DEFAULT;
+  static struct ev_loop * loop = ev_default_loop(0);
   return loop;
 
 }
@@ -86,7 +83,7 @@ static struct Write_Asyn * write_asyn_watcher() {
   YILOG_TRACE ("func: {}. ", __func__);
 
   // ev_async
-  Write_Asyn * start_write_watcher = reinterpret_cast<Write_Asyn*>(
+  static Write_Asyn * start_write_watcher = reinterpret_cast<Write_Asyn*>(
     malloc(sizeof(struct Write_Asyn)));
 
   return start_write_watcher;
@@ -95,20 +92,11 @@ static struct Write_Asyn * write_asyn_watcher() {
 
 
 
-static void
-sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-
-  //ev_break(loop, EVBREAK_ALL);
-  
-}
-
 static yijian::noti_threads * noti_threads() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
-  static yijian::noti_threads * noti_threads = new yijian::noti_threads();
+  static yijian::noti_threads * noti_threads = new yijian::noti_threads(1);
   return noti_threads;
 }
 
@@ -125,28 +113,57 @@ int open_thread_manager () {
 
 }
 
-
-int start_server_libev(std::vector<std::pair<std::string, int>> ips ) {
+static void
+sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
 
   YILOG_TRACE ("func: {}. ", __func__);
-  // set peer server list
-  set_peer_servers();
 
+#warning fixed me
   // manager thread
   if (0 > open_thread_manager()) {
     perror("thread manager open file");
-    return -1;
+    return;
   }
 
+  // connect to peer server
+  for (auto & pair: peer_servers_.ips_) {
+    auto p = peer_servers_write();
+    p->push_back(connect_peer(pair.first, pair.second));
+  }
+}
+
+
+static void
+sigusr1_cb (struct ev_loop * loop, ev_signal * w, int revents) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+  
+}
+void initSetup(IPS & ips) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  // set peer server list
+  peer_servers_.peer_servers_.reset(new std::list<PingNode*>());
+  peer_servers_.ips_ = ips;
+}
+
+int start_server_libev(IPS ips ) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+  initSetup(ips);
   // signal
-  ev_signal signal_watcher;
-  ev_signal_init (&signal_watcher, sigint_cb, SIGINT);
-  ev_signal_start (loop(), &signal_watcher);
+  ev_signal signal_int_watcher;
+  ev_signal_init (&signal_int_watcher, sigint_cb, SIGINT);
+  ev_signal_start (loop(), &signal_int_watcher);
+
+  ev_signal signal_user1_watcher;
+  ev_signal_init(&signal_user1_watcher, sigusr1_cb, SIGUSR1);
+  ev_signal_start(loop(), &signal_user1_watcher);
 
   // ev_async
-  ev_async_init(&write_asyn_watcher()->as, start_write_callback);
-  ev_set_priority(&write_asyn_watcher()->as, EV_MAXPRI);
-  ev_async_start(loop(), &write_asyn_watcher()->as);
+  struct ev_async * async_io = &write_asyn_watcher()->as;
+  ev_async_init(async_io, start_write_callback);
+  ev_set_priority(async_io, EV_MAXPRI);
+  ev_async_start(loop(), async_io);
 
   // socket 
   int sd;
@@ -179,21 +196,18 @@ int start_server_libev(std::vector<std::pair<std::string, int>> ips ) {
     return -1;
   }
 
-  ev_io_init(accept_watcher(), socket_accept_callback, sd, EV_READ);
-  ev_io_start(loop(), accept_watcher());
+  struct ev_io * accept_io = accept_watcher();
+  ev_io_init(accept_io, socket_accept_callback, sd, EV_READ);
+  ev_io_start(loop(), accept_io);
 
   ev_run (loop(), 0);
 
-
-  // connect to peer server
-  for (auto & pair: ips) {
-    auto p = peer_servers_write();
-    p->push_back(connect_peer(pair.first, pair.second));
-  }
-
+  YILOG_TRACE ("exit main");
   return 0;
 
 }
+
+
 
 static void 
 start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {

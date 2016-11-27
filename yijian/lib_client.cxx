@@ -80,14 +80,13 @@ static void init_io(std::string ip, int port) {
     perror("Failed to connect server");
   }
 
-  printf("Connected Success %s:%d", ip.data(), port);
+  YILOG_TRACE("Connected Success {}:{}.", ip.data(), port);
 
   // Connection_IO watcher for client
-  read_io_ = 
-    (Connection_IO *) malloc(sizeof(Connection_IO));
+  read_io_ = new Connection_IO();
+  read_io_->buffers_p.push(Buffer_SP());
   read_io_->buffers_p.front().reset(new yijian::buffer);
-  write_io_ = 
-    (Connection_IO *) malloc(sizeof(Connection_IO));
+  write_io_ = new Connection_IO();
 
   if (NULL == read_io_ || 
       NULL == write_io_) {
