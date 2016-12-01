@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "message_typemap.h"
+#include "server_msg_typemap.h"
 
 static List pinglist();
 static struct ev_loop * loop();

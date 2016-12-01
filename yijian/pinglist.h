@@ -14,12 +14,13 @@
 extern "C" {
 #endif
 
+using yijian::Buffer_SP;
+
 struct PingNode;
 
 typedef void* List;
 typedef std::list<PingNode*> Imp_list;
 typedef Imp_list::iterator Iter;
-typedef std::shared_ptr<yijian::buffer> Buffer_SP;
 
 struct PingNode {
   // watcher

@@ -4,6 +4,7 @@
 #include "macro.h"
 #include <deque>
 #include <unistd.h>
+#include "typemap.h"
 
 // 4 max var_length length 1 type length 2 sessionid length
 #define SESSIONID_LENGTH 2
@@ -16,6 +17,8 @@ enum class Message_Type : std::size_t {
 
 namespace yijian {
 
+class buffer;
+typedef std::shared_ptr<buffer> Buffer_SP;
 class buffer 
   : public yijian::noncopyable{
 public:
@@ -70,9 +73,9 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
     */
 
     template <typename Proto> 
-    void encoding(Proto && any, uint8_t type) {
-      YILOG_DEBUG ("func: {}, type: {}, length: {}",
-          __func__, type, any.ByteSize());
+    void encoding(Proto && any) {
+
+      uint8_t type = dispatchType(any);
       current_pos_ += SESSIONID_LENGTH;
       memcpy(current_pos_, &type, 1);
       ++current_pos_;
@@ -86,7 +89,12 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
       // set buffer 
       end_pos_ = current_pos_;
       current_pos_ = header_pos_;
+      YILOG_DEBUG ("func: {}, type: {}, length: {}",
+          __func__, type, any.ByteSize());
     }
+
+    template <typename Proto>
+    static Buffer_SP Buffer(Proto && any);
 
     // session id
     uint16_t session_id();
@@ -122,6 +130,13 @@ private:
 
 };
 
+template <typename Proto>
+Buffer_SP buffer::Buffer(Proto && any) {
+
+  auto buf = std::make_shared<yijian::buffer>();
+  buf->encoding(std::forward<Proto>(any));
+  return buf;
+}
 
 }
 

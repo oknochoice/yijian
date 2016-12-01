@@ -1,4 +1,4 @@
-#include "message_typemap.h"
+#include "server_msg_typemap.h"
 
 #include <map>
 #include <mutex>
@@ -75,6 +75,7 @@ auto dispatch(Any & a) {
 }
 */
 
+using yijian::buffer;
 
 namespace yijian {
   namespace threadCurrent {
@@ -82,13 +83,13 @@ namespace yijian {
       static thread_local auto error = chat::Error();
       error.set_errnum(0);
       error.set_errmsg("success");
-      return encoding(error);
+      return buffer::Buffer(error);
     }
     Buffer_SP errorBuffer(uint_fast32_t err_num, std::string && err_msg) {
       auto error = chat::Error();
       error.set_errnum(err_num);
       error.set_errmsg(err_msg);
-      return encoding(error);
+      return buffer::Buffer(error);
     }
   }
 }
@@ -262,11 +263,11 @@ void dispatch(chat::Login & login) {
       // response request device
       auto res = chat::LoginRes();
       res.set_uuid(device->uuid());
-      mountBuffer2Node(encoding(res), node_self_);
+      mountBuffer2Node(buffer::Buffer(res), node_self_);
       res.set_userid(currentNode_->userid);
-      mountBuffer2Node(encoding(res), node_peer_);
+      mountBuffer2Node(buffer::Buffer(res), node_peer_);
       node_user_.set_touserid(currentNode_->userid);
-      mountBuffer2Node(encoding(res), node_user_);
+      mountBuffer2Node(buffer::Buffer(res), node_user_);
       // set current node
       currentNode_->userid = user_sp->id();
       currentNode_->deviceid = login.device().uuid();
@@ -288,7 +289,7 @@ void dispatch(chat::LoginRes & res) {
   try {
     node_user_.set_touserid(res.userid());
     res.clear_userid();
-    mountBuffer2Node(encoding(res), node_user_);
+    mountBuffer2Node(buffer::Buffer(res), node_user_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -322,11 +323,11 @@ void dispatch(chat::Logout & logout) {
       // send buffer
       auto res = chat::LogoutRes();
       res.set_uuid(it->uuid());
-      mountBuffer2Node(encoding(res), node_self_);
+      mountBuffer2Node(buffer::Buffer(res), node_self_);
       node_user_.set_touserid(currentNode_->userid);
       res.set_userid(currentNode_->userid);
-      mountBuffer2Node(encoding(res), node_user_);
-      mountBuffer2Node(encoding(res), node_peer_);
+      mountBuffer2Node(buffer::Buffer(res), node_user_);
+      mountBuffer2Node(buffer::Buffer(res), node_peer_);
     }
 
   }catch (std::system_error & sys_error) {
@@ -342,7 +343,7 @@ void dispatch(chat::LogoutRes & res) {
   try {
     node_user_.set_touserid(res.userid());
     res.clear_userid();
-    mountBuffer2Node(encoding(res), node_user_);
+    mountBuffer2Node(buffer::Buffer(res), node_user_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -381,7 +382,7 @@ void dispatch(chat::Connect & connect)  {
       // send buffer
       auto res = chat::ConnectRes();
       res.set_uuid(connectInfo_.uuid());
-      mountBuffer2Node(encoding(res), node_self_);
+      mountBuffer2Node(buffer::Buffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -414,7 +415,7 @@ void dispatch(chat::DisConnect & disconnect)  {
       // send buffer
       auto res = chat::DisConnectRes();
       res.set_uuid(connectInfo_.uuid());
-      mountBuffer2Node(encoding(res), node_self_);
+      mountBuffer2Node(buffer::Buffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -449,17 +450,17 @@ void dispatch(chat::AddFriend & frd) {
     res->set_msg(frd.msg());
     res->set_nickname(frd.nickname());
     // send buffer
-    auto buf_sp = encoding(*res);
+    auto buf_sp = buffer::Buffer(*res);
     mountBuffer2Node(buf_sp, node_self_);
 
     // send to friend
     node_user_.set_touserid(res->inviteeid());
     mountBuffer2Node(buf_sp, node_user_);
-    mountBuffer2Node(encoding(*res), node_peer_);
+    mountBuffer2Node(buffer::Buffer(*res), node_peer_);
     // send to other self
     node_user_.set_touserid(res->inviterid());
     mountBuffer2Node(buf_sp, node_user_);
-    mountBuffer2Node(encoding(*res), node_peer_);
+    mountBuffer2Node(buffer::Buffer(*res), node_peer_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
@@ -472,7 +473,7 @@ void dispatch(chat::AddFriendRes & frdRes) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   try {
-    auto buf_sp = encoding(frdRes);
+    auto buf_sp = buffer::Buffer(frdRes);
     // send to friend
     node_user_.set_touserid(frdRes.inviteeid());
     mountBuffer2Node(buf_sp, node_user_);
@@ -505,7 +506,7 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
       authRes.set_userversion(info->inviteruserversion());
 
       node_user_.set_touserid(addAuth.inviterid());
-      auto inviter_buf = encoding(authRes);
+      auto inviter_buf = buffer::Buffer(authRes);
       mountBuffer2Node(inviter_buf, node_user_);
       mountBuffer2Node(inviter_buf, node_peer_);
       // invitee
@@ -515,7 +516,7 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
       authRes.set_userversion(info->inviteeuserversion());
 
       node_user_.set_touserid(addAuth.inviteeid());
-      auto invitee_buf = encoding(authRes);
+      auto invitee_buf = buffer::Buffer(authRes);
       mountBuffer2Node(invitee_buf, node_self_);
       mountBuffer2Node(invitee_buf, node_user_);
       mountBuffer2Node(invitee_buf, node_peer_);
@@ -532,7 +533,7 @@ void dispatch(chat::AddFriendAuthorizeRes & authRes) {
 
   try {
     node_user_.set_touserid(authRes.friend_().userid());
-    mountBuffer2Node(encoding(authRes), node_user_);
+    mountBuffer2Node(buffer::Buffer(authRes), node_user_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -569,13 +570,13 @@ void dispatch(chat::CreateGroup & group) {
     inmem_client->addTonodeidConnectInfo(
         group.membersid(), groupRes->tonodeid());
     // send to self
-    mountBuffer2Node(encoding(*groupRes), node_self_);
+    mountBuffer2Node(buffer::Buffer(*groupRes), node_self_);
     // self other device
     node_user_.set_touserid(currentNode_->userid);
-    mountBuffer2Node(encoding(*groupRes), node_user_);
+    mountBuffer2Node(buffer::Buffer(*groupRes), node_user_);
     // peer 
     groupRes->set_touserid_outer(currentNode_->userid);
-    mountBuffer2Node(encoding(*groupRes), node_peer_);
+    mountBuffer2Node(buffer::Buffer(*groupRes), node_peer_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -587,7 +588,7 @@ void dispatch(chat::CreateGroupRes & groupRes) {
   try {
     node_user_.set_touserid(groupRes.touserid_outer());
     groupRes.clear_touserid_outer();
-    mountBuffer2Node(encoding(groupRes), node_user_);
+    mountBuffer2Node(buffer::Buffer(groupRes), node_user_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -621,13 +622,13 @@ void dispatch(chat::GroupAddMember & groupMember) {
     inmem_client->addTonodeidConnectInfo(
         groupMember.membersid(), groupMember.groupnodeid());
     // send to self
-    mountBuffer2Node(encoding(*addRes), node_self_);
+    mountBuffer2Node(buffer::Buffer(*addRes), node_self_);
     // send to self other device
     node_user_.set_touserid(addRes->touserid_outer());
-    mountBuffer2Node(encoding(*addRes), node_user_);
+    mountBuffer2Node(buffer::Buffer(*addRes), node_user_);
     // send to peer
     addRes->set_touserid_outer(currentNode_->userid);
-    mountBuffer2Node(encoding(*addRes), node_peer_);
+    mountBuffer2Node(buffer::Buffer(*addRes), node_peer_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -640,7 +641,7 @@ void dispatch(chat::GroupAddMemberRes & addMemberRes) {
   YILOG_TRACE ("func: {}. ", __func__);
   try {
     node_user_.set_touserid(addMemberRes.touserid_outer());
-    mountBuffer2Node(encoding(addMemberRes), node_user_);
+    mountBuffer2Node(buffer::Buffer(addMemberRes), node_user_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -655,7 +656,7 @@ void dispatch(chat::QueryUserVersion & ) {
     auto user_sp = client->queryUser(currentNode_->userid);
     auto version = chat::QueryUserVersionRes();
     version.set_version(user_sp->version());
-    mountBuffer2Node(encoding(version), node_self_);
+    mountBuffer2Node(buffer::Buffer(version), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -680,7 +681,7 @@ void dispatch(chat::QueryUser & queryUser) {
       user_sp->clear_devices();
     }
     *queryuser = *user_sp;
-    mountBuffer2Node(encoding(queryUserRes), node_self_);
+    mountBuffer2Node(buffer::Buffer(queryUserRes), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -698,7 +699,7 @@ void dispatch(chat::QueryNode & querynode) {
     auto querynoderes = chat::QueryNodeRes();
     auto node = querynoderes.mutable_node();
     *node = *node_sp;
-    mountBuffer2Node(encoding(querynoderes), node_self_);
+    mountBuffer2Node(buffer::Buffer(querynoderes), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -715,29 +716,29 @@ void dispatch(chat::NodeMessage & message) {
     auto client = yijian::threadCurrent::mongoClient();
     auto res = client->insertMessage(message);
     if (likely(message.touserid_outer().empty())) {// node
-      auto encoding_res_sp = encoding(*res);
+      auto encoding_res_sp = buffer::Buffer(*res);
       mountBuffer2Node(encoding_res_sp, node_self_);
       mountBuffer2Node(encoding_res_sp, node_peer_);
 
       // send to node
       auto node_specifiy = chat::NodeSpecifiy();
       node_specifiy.set_tonodeid(res->tonodeid());
-      mountBuffer2Node(encoding(message), node_specifiy);
+      mountBuffer2Node(buffer::Buffer(message), node_specifiy);
     }else {// user
       // self
-      mountBuffer2Node(encoding(*res), node_self_);
+      mountBuffer2Node(buffer::Buffer(*res), node_self_);
       // peer
 
       // to friend
       node_user_.set_touserid(message.touserid_outer());
-      mountBuffer2Node(encoding(message), node_user_);
+      mountBuffer2Node(buffer::Buffer(message), node_user_);
       res->set_touserid_outer(message.touserid_outer());
-      mountBuffer2Node(encoding(*res), node_peer_);
+      mountBuffer2Node(buffer::Buffer(*res), node_peer_);
       // to self other device
       node_user_.set_touserid(currentNode_->userid);
-      mountBuffer2Node(encoding(message), node_user_);
+      mountBuffer2Node(buffer::Buffer(message), node_user_);
       res->set_touserid_outer(currentNode_->userid);
-      mountBuffer2Node(encoding(*res), node_peer_);
+      mountBuffer2Node(buffer::Buffer(*res), node_peer_);
     }
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -757,9 +758,9 @@ void dispatch(chat::NodeMessageRes & messageRes) {
       // sent to node
       auto node_specifiy = chat::NodeSpecifiy();
       node_specifiy.set_tonodeid(sp->tonodeid());
-      mountBuffer2Node(encoding(*sp), node_specifiy);
+      mountBuffer2Node(buffer::Buffer(*sp), node_specifiy);
     }else {
-      auto encoding_sp = encoding(*sp);
+      auto encoding_sp = buffer::Buffer(*sp);
       // to user
       node_user_.set_touserid(messageRes.touserid_outer());
       mountBuffer2Node(encoding_sp, node_user_);
@@ -776,7 +777,7 @@ void dispatch(chat::QueryOneMessage & query) {
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto sp = client->queryMessage(query);
-    mountBuffer2Node(encoding(*sp), node_self_);
+    mountBuffer2Node(buffer::Buffer(*sp), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
@@ -809,7 +810,7 @@ void dispatch(chat::QueryMessage & query) {
         isStop = true;
       }
       ++count;
-      mountBuffer2Node(encoding(*nodemessage_sp), node_self_);
+      mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);
     }while(isStop);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 

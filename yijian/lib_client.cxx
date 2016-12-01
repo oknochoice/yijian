@@ -1,6 +1,7 @@
 #include "lib_client.h"
 #include <ev.h>
 #include <utility>
+#include <queue>
 
 struct Connection_IO {
   // watcher
