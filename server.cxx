@@ -1,19 +1,13 @@
-#define CATCH_CONFIG_RUNNER
 #include "macro.h"
-#include "catch.hpp"
 #include "spdlog/spdlog.h"
-#include <cstdint>
+#include "yijian/pinglist.h"
+#include "yijian/lib_client.h"
+#include "yijian/mongo.h"
+#include "yijian/protofiles/chat_message.pb.h"
+#include "yijian/message_typemap.h"
+#include "buffer.h"
 #include <iostream>
-#include <vector>
-#include <bsoncxx/json.hpp>
-#include <mongocxx/client.hpp>
-#include <mongocxx/stdx.hpp>
-#include <mongocxx/uri.hpp>
-#include <bsoncxx/builder/stream/array.hpp>
-#include <bsoncxx/builder/stream/document.hpp>
-#include <mongocxx/cursor.hpp>
-#include <mongocxx/options/find.hpp>
-#include <mongocxx/stdx.hpp>
+#include <unistd.h>
 
 /*
 #include <boost/hana.hpp>
@@ -86,6 +80,7 @@ auto dispatch(Any & a) {
 }
 */
 
+/*
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
 using bsoncxx::builder::stream::document;
@@ -93,10 +88,19 @@ using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
 using bsoncxx::builder::stream::array;
+*/
 
 int main(int argc, char * argv[])
 {
+  initConsoleLog();
+  std::cout << "main" << std::endl;
+  YILOG_DEBUG("start");
 
+  std::mutex mutex;
+  std::unique_lock<std::mutex> ul(mutex);
+  ul.unlock();
+
+  /*
   mongocxx::uri uri("mongodb://localhost:27017");
 	mongocxx::client client(uri);
 
@@ -134,7 +138,7 @@ int main(int argc, char * argv[])
     << "friend" << array;
   auto doc = build
     << bsoncxx::builder::stream::finalize;
-
+  */
 //  user.insert_one(doc.view());
 
 //  std::string userid = "5827e5de4b99d9495f68d141";

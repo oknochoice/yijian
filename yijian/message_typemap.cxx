@@ -104,12 +104,18 @@ using yijian::threadCurrent::infolittle_;
 
 // user require device
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSelfDevice & ) {
+  YILOG_TRACE ("func: {}. self device", __func__);
   std::unique_lock<std::mutex> ul(currentNode_->buffers_p_mutex);
   currentNode_->contra_io->buffers_p.push(buf_sp);
+  YILOG_TRACE ("func: {}. self device, write queue count {}", 
+      __func__, currentNode_->contra_io->buffers_p.size());
+  // push node
+  yijian::threadCurrent::pushPingnode(currentNode_);
 }
 
 // peer server
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodePeerServer & ) {
+  YILOG_TRACE ("func: {}. peer server", __func__);
   //transmit to peer server
   auto sp = peer_servers();
   for (auto & lnode: *sp) {
@@ -117,6 +123,10 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodePeerServer & ) {
     {
       std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
       lnode->contra_io->buffers_p.push(buf_sp);
+      YILOG_TRACE ("func: {}. peer server, write queue count {}", 
+          __func__, lnode->contra_io->buffers_p.size());
+      // push node
+      yijian::threadCurrent::pushPingnode(lnode);
     }
     // mount pingnode to thread data ,then stop read start write
     yijian::threadCurrent::pushPingnode(lnode);
@@ -136,6 +146,10 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
       {
         std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
         lnode->contra_io->buffers_p.push(buf_sp);
+        YILOG_TRACE ("func: {}. , write queue count {}", 
+            __func__, lnode->contra_io->buffers_p.size());
+        // push node
+        yijian::threadCurrent::pushPingnode(lnode);
       }
       // mount pingnode to thread data ,then stop read start write
       yijian::threadCurrent::pushPingnode(lnode);
@@ -150,6 +164,7 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
 
 // current server subscribe to toNode devices(exclude require device)
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
+  YILOG_TRACE ("func: {}. node specifiy", __func__);
   auto inClient = yijian::threadCurrent::inmemClient();
   inClient->devices(node_specifiy, [buf_sp](chat::ConnectInfoLittle & infolittle) {
         traverseDevices(infolittle, buf_sp);
@@ -157,6 +172,7 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
 }
 
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user) {
+  YILOG_TRACE ("func: {}. node user", __func__);
   auto inClient = yijian::threadCurrent::inmemClient();
   inClient->devices(node_user, [buf_sp](chat::ConnectInfoLittle & infolittle) {
         traverseDevices(infolittle, buf_sp);
@@ -179,7 +195,7 @@ void dispatch(chat::Error& error) {
 
 void dispatch(chat::Register & enroll) {
   
-  YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_TRACE ("func: {}. register", __func__);
 
 
   try {
@@ -942,7 +958,12 @@ void dispatch(int type, char * header, std::size_t length) {
 
 void dispatch(PingNode* node, std::shared_ptr<yijian::buffer> sp) {
 
+  YILOG_TRACE ("func: {}. argc node sp", __func__);
+
   currentNode_ = node;
+
+  YILOG_TRACE("func: {}, sp {} {} {}", __func__,
+      sp->datatype(), sp->data(), sp->data_size());
 
   dispatch(sp->datatype(), sp->data(), sp->data_size());
 

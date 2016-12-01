@@ -116,7 +116,6 @@ message QueryNodeRes {
   MessageNode node = 2;
 }
 
-// mongo scheme
 message UnreadInfo {
   string userID = 1;
   string toNodeID = 2;

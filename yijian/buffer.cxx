@@ -26,7 +26,8 @@ void buffer::reset() {
   YILOG_TRACE("func: {}", __func__);
 
   data_pos_ = header_pos_;
-  current_pos_ = header_pos_ + SESSIONID_LENGTH;
+  end_pos_ = header_pos_;
+  current_pos_ = header_pos_;
   isFinish_ = false;
   isParseFinish_ = false;
 
@@ -47,7 +48,7 @@ char * buffer::header() {
 
 std::size_t buffer::size() {
   YILOG_TRACE("func: {}", __func__);
-  return current_pos_ - header_pos_;
+  return end_pos_ - header_pos_;
 }
 
 std::size_t buffer::remain_size() {
@@ -64,17 +65,27 @@ Message_Type buffer::buffer_type() {
 bool buffer::socket_read(int sfd) {
   YILOG_TRACE("func: {}", __func__);
   // parse length and data type
+  do {
+  YILOG_TRACE("func: {}, isParseFinish_: {}, isFinish_: {}", 
+      __func__, isParseFinish_, isFinish_);
   if (!isParseFinish_) {
     if (0 != parse_length_) {
-      parse_length_ -= socket_read(sfd, parse_length_);
-      YILOG_DEBUG ("func: {}, parse length: {}", __func__, parse_length_);
+      YILOG_DEBUG ("func: {}, read header", __func__);
+      int readed = socket_read(sfd, current_pos_, parse_length_);
+      current_pos_ += readed;
+      parse_length_ -= readed;
+      YILOG_DEBUG ("func: {}, parse_length_ : {}", __func__, parse_length_);
+      if (unlikely(0 == readed)) break;
     }else {
+      YILOG_DEBUG ("func: {}, parse header", __func__);
       // session id
       session_id_ = *header_pos_;
+      // type
+      data_type_ =  *(header_pos_ + SESSIONID_LENGTH);
       // var_length
-      auto pair = decoding_var_length(header_pos_ + SESSIONID_LENGTH);
+      auto pair = decoding_var_length(header_pos_ + SESSIONID_LENGTH + 1);
       data_pos_ = pair.second;
-      data_type_ =  *pair.second;
+
       YILOG_DEBUG ("func: {}, type: {}, length: {}", 
           __func__, data_type_, pair.first);
 
@@ -90,20 +101,32 @@ bool buffer::socket_read(int sfd) {
       }
     }
   }else if(!isFinish_){// read remain data;
+    YILOG_DEBUG ("func: {}, read reamin date remain_data_length_: {}", 
+        __func__, remain_data_length_);
 
-    remain_data_length_ -= socket_read(sfd, remain_data_length_);
+    int readed = socket_read(sfd, current_pos_, remain_data_length_);
+    current_pos_ += readed;
+    end_pos_ = current_pos_;
+    remain_data_length_ -= readed;
     if (0 == remain_data_length_)
       isFinish_ = true;
 
+    if (unlikely(isFinish_ || 0 == readed)) break;
   }
+
+  } while (!isFinish_);
+  YILOG_TRACE("func: {} read finish {}", __func__, isFinish_);
   return isFinish_;
 }
 
 bool buffer::socket_write(int sfd) {
-  YILOG_TRACE("func: {}", __func__);
-  remain_data_length_ -= socket_write(sfd, remain_data_length_);
+  YILOG_TRACE("func: 1 argm {}", __func__);
+  YILOG_TRACE("func: 1 argm {}, remain length{}", __func__, remain_data_length_);
+  remain_data_length_ -= socket_write(sfd, current_pos_, remain_data_length_);
+  YILOG_TRACE("func: 1 argm {}, remain length{}", __func__, remain_data_length_);
   if (0 == remain_data_length_) {
     isFinish_ = true;
+    YILOG_TRACE("func: 1 argm {} set finish true", __func__);
   }
   return isFinish_;
 }
@@ -142,23 +165,9 @@ char * buffer::data() {
 
 std::size_t buffer::data_size() {
   YILOG_TRACE("func: {}", __func__);
-  return current_pos_ - data_pos_;
+  return end_pos_ - data_pos_;
 }
 
-
-void buffer::data_encoding_length(uint32_t length) {
-  current_pos_ = encoding_var_length(current_pos_, length);
-}
-void buffer::data_encoding_type(uint8_t type) {
-  memcpy(current_pos_, &type, 1);
-  ++current_pos_;
-}
-char * buffer::data_encoding_current() {
-  return current_pos_;
-}
-void buffer::data_encoding_current_addpos(std::size_t length) {
-  current_pos_ += length;
-}
 
 uint16_t buffer::session_id() {
   return session_id_;
@@ -200,27 +209,30 @@ buffer::encoding_var_length(char * pos, uint32_t length) {
   return pos;
 }
 
-std::size_t buffer::socket_read(int sfd, std::size_t count) {
+std::size_t buffer::socket_read(int sfd, char * pos, std::size_t count) {
   YILOG_TRACE("func: {}", __func__);
-  int readed = read(sfd, current_pos_, count);
-  YILOG_DEBUG("func: {}, readed: {}", __func__, readed);
+  int readed = read(sfd, pos, count);
   if (0 < readed) {
-    current_pos_ += readed;
-    return readed;
+    YILOG_TRACE("func: {}, readed: {}", __func__, readed);
   }else if (0 == readed) {
-    current_pos_ += count;
-    return count;
+    YILOG_TRACE("func: {}, read end", __func__);
   }else {
-    throw std::system_error(std::error_code(errno, std::system_category()),
+    if (EAGAIN == errno) {
+      readed = 0;
+      YILOG_TRACE("func: {}, errno EAGAIN", __func__);
+    }else {
+      throw std::system_error(std::error_code(errno, std::system_category()),
         "read buffer");
+    }
   }
+  return readed;
 }
 
-std::size_t buffer::socket_write(int sfd, std::size_t count) {
-  YILOG_TRACE("func: {}", __func__);
-  int writed = write(sfd, current_pos_, count);
+std::size_t buffer::socket_write(int sfd, char * pos, std::size_t count) {
+  YILOG_TRACE("func: 3 argm{}", __func__);
+  int writed = write(sfd, pos, count);
+  YILOG_TRACE("func: 3 argm{}, writed {}", __func__, writed);
   if (-1 != writed) {
-    current_pos_ += writed;
   }else {
     throw std::system_error(std::error_code(errno, std::system_category()), 
         "write buffer");

@@ -149,12 +149,14 @@ using bsoncxx::builder::stream::open_document;
 using bsoncxx::builder::stream::array;
 
 mongo_client::mongo_client() {
+  YILOG_TRACE ("func: {}. ", __func__);
   mongocxx::uri uri("mongodb://localhost:27017");
   client_ = mongocxx::client(uri);
 }
 
 
 mongo_client::~mongo_client () {
+  YILOG_TRACE ("func: {}. ", __func__);
 }
 
 // user

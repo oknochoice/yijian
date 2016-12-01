@@ -7,7 +7,7 @@
 
 // 4 max var_length length 1 type length 2 sessionid length
 #define SESSIONID_LENGTH 2
-#define PADDING_LENGTH (4 + 1 + SESSIONID_LENGTH)
+#define PADDING_LENGTH (1 + 4 + SESSIONID_LENGTH)
 
 enum class Message_Type : std::size_t {
   message = 1024,
@@ -52,25 +52,40 @@ public:
     char * data();
     std::size_t data_size();
 
-    // encoding proto model to buffer
-    // buffer length
-    void data_encoding_length(uint32_t length);
-    // message type
-    void data_encoding_type(uint8_t type);
-    // message content and adjust current pos
-    char * data_encoding_current();
-    void data_encoding_current_addpos(std::size_t length);
-
     // encoding protocol buffer
+    /*
+char * buffer::data_encoding_length(uint32_t length) {
+  current_pos_ = encoding_var_length(current_pos_, length);
+}
+void buffer::data_encoding_type(uint8_t type) {
+  memcpy(current_pos_, &type, 1);
+  ++current_pos_;
+}
+char * buffer::data_encoding_current() {
+  return current_pos_;
+}
+void buffer::data_encoding_current_addpos(std::size_t length) {
+  current_pos_ += length;
+}
+    */
+
     template <typename Proto> 
     void encoding(Proto && any, uint8_t type) {
       YILOG_DEBUG ("func: {}, type: {}, length: {}",
           __func__, type, any.ByteSize());
-      data_encoding_length(any.ByteSize());
-      data_encoding_type(type);
-      any.SerializeToArray(data_encoding_current(), remain_size());
-      data_encoding_current_addpos(any.ByteSize());
-#warning add debug
+      current_pos_ += SESSIONID_LENGTH;
+      memcpy(current_pos_, &type, 1);
+      ++current_pos_;
+      auto current_end = encoding_var_length(current_pos_, any.ByteSize());
+      int varLength_length = current_end - current_pos_;
+      current_pos_ = current_end;
+      any.SerializeToArray(current_pos_, remain_size());
+      remain_data_length_ = 
+        SESSIONID_LENGTH + 1 + varLength_length + any.ByteSize();
+      current_pos_ += any.ByteSize();
+      // set buffer 
+      end_pos_ = current_pos_;
+      current_pos_ = header_pos_;
     }
 
     // session id
@@ -83,8 +98,8 @@ public:
     char *
     encoding_var_length(char * pos, uint32_t length);
 
-    std::size_t socket_read(int sfd, std::size_t count);
-    std::size_t socket_write(int sfd, std::size_t count);
+    std::size_t socket_read(int sfd, char * pos, std::size_t count);
+    std::size_t socket_write(int sfd, char * pos, std::size_t count);
 private:
     bool isParseFinish_ = false;
     bool isFinish_ = false;
@@ -94,6 +109,7 @@ private:
     Message_Type buffer_type_;
 
     char * header_pos_;
+    char * end_pos_;
     char * data_pos_;
     char * current_pos_;
 

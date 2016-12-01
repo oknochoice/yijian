@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.8)
 project(yijian)
 add_executable(a.out main.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/message_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/lib_client.cxx ./yijian/pinglist.cxx ./yijian/buffer.cxx)
-#add_executable(server.out server.cxx)
+add_executable(server.out server.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/message_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/lib_client.cxx ./yijian/pinglist.cxx ./yijian/buffer.cxx)
 #add_executable(client.out client.cxx)
 add_executable(im_server.out im_server.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/message_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/pinglist.cxx ./yijian/buffer.cxx)
 

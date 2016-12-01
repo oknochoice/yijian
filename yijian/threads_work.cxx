@@ -82,12 +82,15 @@ void noti_threads::sentWork(Thread_Data::Thread_Function && func) {
 void noti_threads::foreachio(
     std::function<void(struct PingNode *)> && func) {
 
+  YILOG_TRACE("func: {}", __func__);
   for (auto thread_data: vec_threads_) {
     Thread_Data::Vector_Node_SP data_sp;
     {
       std::unique_lock<std::mutex> ul(thread_data->v_pingnode_mutex_);
       data_sp = thread_data->v_pingnode_sp_;
+      thread_data->v_pingnode_sp_.reset(new Thread_Data::Vector_Node);
     }
+    YILOG_TRACE("func: {}, node count {}", __func__, data_sp->size());
     for (auto node: *data_sp) {
       func(node);
     }
@@ -113,11 +116,7 @@ void pushPingnode(PingNode * node) {
 
   auto thread_data = threadData();
   std::unique_lock<std::mutex> ul(thread_data->v_pingnode_mutex_);
-  auto v_pingnode = thread_data->v_pingnode_sp_;
-  if (!v_pingnode.unique()) {
-    v_pingnode.reset(new Thread_Data::Vector_Node);
-  }
-  v_pingnode->push_back(node);
+  thread_data->v_pingnode_sp_->push_back(node);
 
 }
 

@@ -3,6 +3,8 @@
 #include <functional>
 #include <mutex>
 #include <arpa/inet.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "message_typemap.h"
 
@@ -83,8 +85,7 @@ static struct Write_Asyn * write_asyn_watcher() {
   YILOG_TRACE ("func: {}. ", __func__);
 
   // ev_async
-  static Write_Asyn * start_write_watcher = reinterpret_cast<Write_Asyn*>(
-    malloc(sizeof(struct Write_Asyn)));
+  static Write_Asyn * start_write_watcher = new Write_Asyn();
 
   return start_write_watcher;
 
@@ -171,6 +172,8 @@ int start_server_libev(IPS ips ) {
   int addr_len = sizeof(addr);
 
   sd = socket(PF_INET, SOCK_STREAM, 0);
+  int flags = fcntl(sd, F_GETFL, 0);
+  fcntl(sd, F_SETFL, flags | O_NONBLOCK);
   if (sd < 0) {
     perror("socket error");
     return -1;
@@ -218,6 +221,7 @@ start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
   // Write_Asyn * as = reinterpret_cast<Write_Asyn*>(w);
 
   noti_threads()->foreachio([=](struct PingNode * node) {
+        YILOG_TRACE ("func: noti_threads foreachio. ");
         Connection_IO * io = reinterpret_cast<Connection_IO*>(node);
         //ev_io_stop(loop, &io->io);
         ev_io_start(loop, &io->contra_io->io);
@@ -252,6 +256,9 @@ socket_accept_callback (struct ev_loop * loop,
     close(client_sd);
     return;
   }
+
+  int flags = fcntl(client_sd, F_GETFL, 0);
+  fcntl(client_sd, F_SETFL, flags | O_NONBLOCK);
   
   YILOG_INFO ("client connected");
   
@@ -263,7 +270,7 @@ socket_accept_callback (struct ev_loop * loop,
 
   if (NULL == client_read_watcher || 
       NULL == client_write_watcher) {
-    perror ("malloc client watcher error");
+    perror ("new client watcher error");
     return;
   }
 
@@ -288,6 +295,8 @@ connection_read_callback (struct ev_loop * loop,
 
   YILOG_TRACE ("func: {}. ", __func__);
 
+  ev_io_stop(loop, rw);
+
   // converse to usable io
   Connection_IO * io = reinterpret_cast<Connection_IO*>(rw);
 
@@ -296,30 +305,37 @@ connection_read_callback (struct ev_loop * loop,
   
   if (io->buffers_p.front()->socket_read(io->io.fd)) {
     // update ping time
+    YILOG_TRACE ("func: {}. update ping time", __func__);
     time(&io->ping_time);
     ping_move2back(pinglist(), io);
     if (unlikely(io->buffers_p.front()->datatype() == 
           ChatType::serverconnect)) {
       // remove peer server's pingnode from pinglist
       // add to peer server list;
+      YILOG_TRACE ("func: {}. process peer sever connect", __func__);
       ping_erase(pinglist(), io);
       auto p = peer_servers_write();
       p->push_back(io);
     }else if (unlikely(io->buffers_p.front()->datatype() == 
           ChatType::serverdisconnect)) {
       // remove peer server list;
+      YILOG_TRACE ("func: {}. process peer sever disconnect", __func__);
       auto p = peer_servers_write();
       p->remove(io);
     }else {
       // do work 
+      YILOG_TRACE ("func: {}. subthread do work", __func__);
+      auto sp = io->buffers_p.front();
       noti_threads()->sentWork(
-          [=](){
+          [&io, &loop, sp](){
             YILOG_TRACE ("dispatch message");
-            dispatch(io, io->buffers_p.front());
+            dispatch(io, sp);
             ev_async_send(loop, &write_asyn_watcher()->as);
           });
     }
     io->buffers_p.front().reset(new yijian::buffer());
+  }else{
+    YILOG_TRACE ("read is not complete message");
   }
 
 }
@@ -344,9 +360,7 @@ connection_write_callback (struct ev_loop * loop,
       io->buffers_p.pop();
       ul.unlock();
     }
-  }
-  if (io->buffers_p.empty()) {
-    ul.unlock();
+  }else {
     ev_io_stop(loop, ww);
   }
 }
@@ -378,7 +392,7 @@ PingNode * connect_peer(std::string ip, int port) {
 
   if (NULL == client_read_watcher || 
       NULL == client_write_watcher) {
-    perror ("malloc client watcher error");
+    perror ("new client watcher error");
   }
 
   ev_io_init (&client_read_watcher->io, 
