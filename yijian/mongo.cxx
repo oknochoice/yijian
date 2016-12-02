@@ -160,8 +160,9 @@ mongo_client::~mongo_client () {
 }
 
 // user
-void mongo_client::insertUser(const chat::Register & enroll) {
+std::string& mongo_client::insertUser(const chat::Register & enroll) {
   YILOG_TRACE ("func: {}. ", __func__);
+
   auto db = client_["chatdb"];
   auto user_collection = db["user"];
   auto builder = document{};
@@ -180,7 +181,15 @@ void mongo_client::insertUser(const chat::Register & enroll) {
     << "groupNodeIDs" << open_array << close_array
     << "devices" << open_array << close_array
     << finalize;
-  user_collection.insert_one(doc_value.view());
+  static thread_local std::string id;
+  id.clear();
+  auto maybe_result = user_collection.insert_one(doc_value.view());
+  if (maybe_result) {
+    id = maybe_result->inserted_id().get_oid().value.to_string();
+    YILOG_TRACE ("func: {}. id {}", __func__, id);
+  }
+
+  return id;
 }
 
 void mongo_client::updateDevice(

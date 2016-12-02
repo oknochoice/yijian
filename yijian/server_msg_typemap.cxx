@@ -5,12 +5,10 @@
 
 #include "mongo.h"
 #include "protofiles/chat_message.pb.h"
-#include "threads_work.h"
 #include <string>
 #include <queue>
 #include "buffer.h"
-#include "pinglist.h"
-#include "macro.h"
+#include "libev_server.h"
 
 
 #ifdef __cpluscplus
@@ -79,12 +77,6 @@ using yijian::buffer;
 
 namespace yijian {
   namespace threadCurrent {
-    Buffer_SP errorBuffer() {
-      static thread_local auto error = chat::Error();
-      error.set_errnum(0);
-      error.set_errmsg("success");
-      return buffer::Buffer(error);
-    }
     Buffer_SP errorBuffer(uint_fast32_t err_num, std::string && err_msg) {
       auto error = chat::Error();
       error.set_errnum(err_num);
@@ -202,9 +194,20 @@ void dispatch(chat::Register & enroll) {
   try {
 
     auto client = yijian::threadCurrent::mongoClient();
-    client->insertUser(enroll);
+    auto id = client->insertUser(enroll);
 
-    mountBuffer2Node(errorBuffer(), node_self_);
+    YILOG_TRACE ("func: {}. register, userid {}.", 
+        __func__, id);
+
+    auto res = chat::RegisterRes();
+    if (likely(!id.empty())) {
+      res.set_issuccess(true);
+      res.set_userid(id);
+    }else {
+      res.set_issuccess(false);
+      res.set_userid("unknown id");
+    }
+    mountBuffer2Node(buffer::Buffer(res), node_self_);
 
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),

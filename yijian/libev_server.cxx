@@ -326,13 +326,17 @@ connection_read_callback (struct ev_loop * loop,
       // do work 
       YILOG_TRACE ("func: {}. subthread do work", __func__);
       auto sp = io->buffers_p.front();
+      auto watcher = &write_asyn_watcher()->as;
       noti_threads()->sentWork(
-          [&io, &loop, sp](){
+          [&io, &loop, watcher, sp](){
             YILOG_TRACE ("dispatch message");
             dispatch(io, sp);
-            ev_async_send(loop, &write_asyn_watcher()->as);
+            ev_async_send(loop, watcher);
           });
     }
+    
+    YILOG_TRACE("buffer sp reference count {}", 
+        io->buffers_p.front().use_count());
     io->buffers_p.front().reset(new yijian::buffer());
   }else{
     YILOG_TRACE ("read is not complete message");

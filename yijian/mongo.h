@@ -22,7 +22,7 @@ public:
   ~mongo_client();
 
   // user
-  void insertUser(const chat::Register & enroll);
+  std::string& insertUser(const chat::Register & enroll);
 
   // mongo pull device push device
 //  void upsertDevice(const std::string & userID, const chat::Device & device);

@@ -11,6 +11,7 @@ enum ChatType : uint8_t {
 
   error,
   registor,
+  registorres,
   login,
   loginres,
   clientconnect,
@@ -43,19 +44,15 @@ enum ChatType : uint8_t {
 };
 
 
-template <typename Any>
-void dispatchType(Any &) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  throw std::system_error(std::error_code(11009, std::generic_category()), 
-      "unkonw dispatch type");
-}
-
 
 constexpr uint8_t dispatchType(chat::Error &) {
   return ChatType::error;
 }
 constexpr uint8_t dispatchType(chat::Register &) {
   return ChatType::registor;
+}
+constexpr uint8_t dispatchType(chat::RegisterRes &) {
+  return ChatType::registorres;
 }
 constexpr uint8_t dispatchType(chat::Login &) {
   return ChatType::login;

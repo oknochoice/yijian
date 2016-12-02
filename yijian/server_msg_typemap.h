@@ -1,14 +1,16 @@
 #ifndef SERVER_MSG_TYPEMAP_H
 #define SERVER_MSG_TYPEMAP_H
 
+#include "macro.h"
 #include <typeindex>
 #include <boost/hana.hpp>
 #include <boost/any.hpp>
+
 #include <functional>
-#include "pinglist.h"
 #include "protofiles/chat_message.pb.h"
-#include "libev_server.h"
 #include "typemap.h"
+#include "threads_work.h"
+#include "pinglist.h"
 
 #ifdef __cpluscplus
 extern "C" {

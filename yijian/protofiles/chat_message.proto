@@ -138,6 +138,11 @@ message Register {
 
 }
 
+message RegisterRes {
+  bool    isSuccess = 1;
+  string  userID = 2;
+}
+
 message Login {
 
   string phoneNo = 1;
