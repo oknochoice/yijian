@@ -9,15 +9,14 @@
 #include <ev.h>
 #include "buffer.h"
 
-
 using yijian::Buffer_SP;
-typedef std::function<void(Buffer_SP)> Read_CB;
+
+typedef void (*IM_CB)(const char * header, uint32_t length, 
+                      uint16_t session, int type);
 
 // main thread
-void create_client(Read_CB && read_cb);
+void create_client(IM_CB callback);
 // main thread
 void client_send(Buffer_SP sp_buffer);
-
-
 
 #endif

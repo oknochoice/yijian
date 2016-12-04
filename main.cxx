@@ -9,42 +9,45 @@
 #include "buffer.h"
 #include <iostream>
 #include <unistd.h>
+#include <thread>
 
 #ifdef __cpluscplus
 extern "C" {
 #endif
 
+
 TEST_CASE("buffer", "[buffer]") {
   initConsoleLog();
+  /*
   SECTION("encoding | decoing var length") {
-    uint32_t length = 33;
-    char data[1024];
-    auto buffer_sp = new yijian::buffer();
-    buffer_sp->encoding_var_length(data, length);
-    auto pair = buffer_sp->decoding_var_length(data);
-    REQUIRE( length == pair.first);
+    for (unsigned int i = 0; i < 2097152; ++i) {
+      uint32_t length = i;
+      char data[1024];
+      auto buffer_sp = new yijian::buffer();
+      buffer_sp->encoding_var_length(data, i);
+      auto pair = buffer_sp->decoding_var_length(data);
+      REQUIRE( i == pair.first);
+    }
   }
+  */
+}
+
+void im_cb(const char * header, uint32_t length, 
+    uint16_t session, int type) {
+  std::cout << "length " << length
+    << ", session " << session
+    << ", type " << type << std::endl;
+  auto thread_id = std::this_thread::get_id();
+  std::cout << "sub thread id " << thread_id << std::endl;
+  std::cout << "content: " << std::string(header, length) << std::endl;
 }
 
 
 TEST_CASE("IM business","[business]") {
 
-  create_client([](Buffer_SP buffer_sp) {
-      YILOG_TRACE ("client read callback");
-      auto datatype = buffer_sp->datatype();
-      auto datasize = buffer_sp->data_size();
-      auto size = buffer_sp->size();
-      YILOG_TRACE ("buffer datatype {}, datasize {}, size {}", 
-          datatype, datasize, size);
-      auto error = chat::Error();
-      error.ParseFromArray(buffer_sp->data(), buffer_sp->data_size());
-      std::string error_string;
-      google::protobuf::util::MessageToJsonString(error, &error_string);
-      YILOG_TRACE("error: {}", error_string);
-      YILOG_TRACE("error num: {}, msg: {}", error.errnum(), error.errmsg());
-      });
-
-
+  auto thread_id = std::this_thread::get_id();
+  std::cout << "main thread id " << thread_id << std::endl;
+  create_client(im_cb);
 
   sleep(1);
   SECTION("register") {
@@ -60,8 +63,6 @@ TEST_CASE("IM business","[business]") {
   }
 
 }
-
-
 
 
 #ifdef __cpluscplus

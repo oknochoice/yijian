@@ -89,7 +89,7 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
       // set buffer 
       end_pos_ = current_pos_;
       current_pos_ = header_pos_;
-      YILOG_DEBUG ("func: {}, type: {}, length: {}",
+      YILOG_TRACE ("func: {}, type: {}, length: {}",
           __func__, type, any.ByteSize());
     }
 

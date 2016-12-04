@@ -5,3 +5,4 @@ buffer          200 00+
 libev_server    300 00+
 pinglist        310 00+
 mongo           400 00+
+clientdb        500 00+

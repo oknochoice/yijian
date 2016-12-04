@@ -11,7 +11,7 @@ struct Connection_IO {
   std::queue<Buffer_SP> buffers_p;
 };
 
-static std::shared_ptr<Read_CB> sp_read_cb_;
+static IM_CB read_cb_;
 static Connection_IO * read_io_;
 static Connection_IO * write_io_;
 
@@ -56,8 +56,13 @@ void connection_read_callback (struct ev_loop * loop,
   // read to buffer 
   // if read complete stop watch && update ping
   
+  
   if (io->buffers_p.front()->socket_read(io->io.fd)) {
-    (*sp_read_cb_)(io->buffers_p.front());
+    auto buffer_sp = io->buffers_p.front();
+    YILOG_TRACE ("length {}, session_id {}, type {}",
+        buffer_sp->data_size(), buffer_sp->session_id(), buffer_sp->datatype());
+    read_cb_(buffer_sp->data(), buffer_sp->data_size(),
+        buffer_sp->session_id(), buffer_sp->datatype());
     io->buffers_p.front().reset(new yijian::buffer());
   }
 
@@ -137,12 +142,12 @@ static void init_io(std::string ip, int port) {
 
 }
 
-void create_client(Read_CB && read_cb) {
+void create_client(IM_CB callback) {
   YILOG_TRACE ("func: {}. ", __func__);
   std::thread t([&](){
     YILOG_TRACE ("func: {}, thread start.", __func__);
     init_io("127.0.0.1", 5555);
-    sp_read_cb_.reset(new Read_CB(std::forward<Read_CB>(read_cb)));
+    read_cb_ = callback;
     ev_run(loop(), 0);
     YILOG_TRACE("exit thread");
       });

@@ -13,7 +13,7 @@ buffer::buffer(Message_Type type)
 
   YILOG_TRACE("func: {}", __func__);
   std::size_t init_size = static_cast<std::size_t>(buffer_type_);
-  YILOG_DEBUG("func: {}, size: {}", __func__, init_size);
+  YILOG_TRACE("func: {}, size: {}", __func__, init_size);
 
   header_pos_ = (char *)malloc(init_size);
 
@@ -70,14 +70,14 @@ bool buffer::socket_read(int sfd) {
       __func__, isParseFinish_, isFinish_);
   if (!isParseFinish_) {
     if (0 != parse_length_) {
-      YILOG_DEBUG ("func: {}, read header", __func__);
+      YILOG_TRACE ("func: {}, read header", __func__);
       int readed = socket_read(sfd, current_pos_, parse_length_);
       current_pos_ += readed;
       parse_length_ -= readed;
-      YILOG_DEBUG ("func: {}, parse_length_ : {}", __func__, parse_length_);
+      YILOG_TRACE ("func: {}, parse_length_ : {}", __func__, parse_length_);
       if (unlikely(0 == readed)) break;
     }else {
-      YILOG_DEBUG ("func: {}, parse header", __func__);
+      YILOG_TRACE ("func: {}, parse header", __func__);
       // session id
       session_id_ = *header_pos_;
       // type
@@ -86,7 +86,7 @@ bool buffer::socket_read(int sfd) {
       auto pair = decoding_var_length(header_pos_ + SESSIONID_LENGTH + 1);
       data_pos_ = pair.second;
 
-      YILOG_DEBUG ("func: {}, type: {}, length: {}", 
+      YILOG_TRACE ("func: {}, type: {}, length: {}", 
           __func__, data_type_, pair.first);
 
       int readed = PADDING_LENGTH - (pair.second - header_pos_);
@@ -101,7 +101,7 @@ bool buffer::socket_read(int sfd) {
       }
     }
   }else if(!isFinish_){// read remain data;
-    YILOG_DEBUG ("func: {}, read reamin date remain_data_length_: {}", 
+    YILOG_TRACE ("func: {}, read reamin date remain_data_length_: {}", 
         __func__, remain_data_length_);
 
     int readed = socket_read(sfd, current_pos_, remain_data_length_);
@@ -187,10 +187,13 @@ buffer::decoding_var_length(char * pos) {
     value += (encodeByte & 127) * multiplier;
     ++pos;
     multiplier *= 128;
+    YILOG_TRACE("func: {} value {}", __func__, value);
+#warning limit:2,097,151 max:268,435,455 i.e multiplier > 128 * 128 * 128 * 128
     if (multiplier > 128 * 128 * 128)
       throw std::system_error(std::error_code(20001, std::generic_category()),
           "Malformed Remaining Length");
   }while((encodeByte & 128) != 0);
+  YILOG_TRACE("func: {}, return", __func__);
   return std::make_pair(value, pos);
 }
 
@@ -200,9 +203,10 @@ buffer::encoding_var_length(char * pos, uint32_t length) {
   do {
     uint8_t encodeByte = length % 128;
     length = length / 128;
-    if (length > 128) {
+    if (length > 0) {
       encodeByte = encodeByte | 128;
     }
+    YILOG_TRACE("func: {} encodeByte {}", __func__, encodeByte);
     memcpy(pos, &encodeByte, 1);
     ++pos;
   }while (length > 0);
