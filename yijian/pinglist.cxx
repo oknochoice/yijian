@@ -10,6 +10,7 @@ PingNode * createReadPingNode() {
   YILOG_TRACE ("func : {}", __func__);
   PingNode * node = new PingNode();
   node->buffers_p.push(std::make_shared<yijian::buffer>());
+  node->unread_sp = std::make_shared<chat::Unread>();
   return node;
 }
 void destoryReadPingNode(PingNode * node) {

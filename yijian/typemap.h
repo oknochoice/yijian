@@ -16,8 +16,8 @@ enum ChatType : uint8_t {
   loginres,
   clientconnect,
   clientconnectres,
-  disconnect,
-  disconnectres,
+  clientdisconnect,
+  clientdisconnectres,
   logout,
   logoutres,
   queryuser,
@@ -36,10 +36,10 @@ enum ChatType : uint8_t {
   groupaddmemberres,
   nodemessage,
   nodemessageres,
-  queryonemessage,
   querymessage,
   serverconnect,// outer
   serverdisconnect,// outer
+  unread,
 
 };
 
@@ -126,11 +126,11 @@ constexpr uint8_t dispatchType(chat::NodeMessage & ) {
 constexpr uint8_t dispatchType(chat::NodeMessageRes & ) {
   return ChatType::nodemessageres;
 }
-constexpr uint8_t dispatchType(chat::QueryOneMessage & ) {
-  return ChatType::queryonemessage;
-}
 constexpr uint8_t dispatchType(chat::QueryMessage & ) {
   return ChatType::querymessage;
+}
+constexpr uint8_t dispatchType(chat::Unread & ) {
+  return ChatType::unread;
 }
 
 

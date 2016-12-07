@@ -127,31 +127,54 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodePeerServer & ) {
 }
 
 void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
-  if (infolittle.islogin()) {
-    if (infolittle.isconnected()) {
-      YILOG_TRACE ("online");
-      // get pingnode
-      Pointor_t nodepointor = infolittle.nodepointor();
-      PingNode * lnode = reinterpret_cast<PingNode*>(nodepointor);
-      // if node is request pass
-      if (unlikely(currentNode_ == lnode)) return;
-      // mount buffer to pingnode
-      {
-        std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
-        lnode->contra_io->buffers_p.push(buf_sp);
-        YILOG_TRACE ("func: {}. , write queue count {}", 
-            __func__, lnode->contra_io->buffers_p.size());
-        // push node
-        yijian::threadCurrent::pushPingnode(lnode);
-      }
-      // mount pingnode to thread data ,then stop read start write
-      yijian::threadCurrent::pushPingnode(lnode);
-    }else if (infolittle.isrecivenoti()) {
-      YILOG_TRACE ("offline");
-#warning need push server;
-      std::cout << "push to " << infolittle.uuid() 
-        << std::endl;
+  if (infolittle.isconnected()) {
+    YILOG_TRACE ("online");
+    // get pingnode
+    Pointor_t nodepointor = infolittle.nodepointor();
+    PingNode * lnode = reinterpret_cast<PingNode*>(nodepointor);
+    // if node is request pass
+    if (unlikely(currentNode_ == lnode)) return;
+    // mount buffer to pingnode
+    {
+      std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
+      lnode->contra_io->buffers_p.push(buf_sp);
+      YILOG_TRACE ("func: {}. , write queue count {}", 
+          __func__, lnode->contra_io->buffers_p.size());
     }
+    // mount pingnode to thread data ,then stop read start write
+    yijian::threadCurrent::pushPingnode(lnode);
+  }
+}
+
+void traverseDevices(chat::ConnectInfoLittle & infolittle,
+    const std::string & tonodeid,
+    const int32_t incrementid) {
+  if (infolittle.isconnected()) {
+    YILOG_TRACE ("online");
+    // get pingnode
+    Pointor_t nodepointor = infolittle.nodepointor();
+    PingNode * lnode = reinterpret_cast<PingNode*>(nodepointor);
+    // if node is request pass
+    if (unlikely(currentNode_ == lnode)) return;
+    // mount buffer to pingnode
+    {
+
+      auto unread = (*lnode->unread_sp).mutable_unreadnodes();
+      (*unread)[tonodeid] = incrementid;
+      auto buf_sp = buffer::Buffer(*lnode->unread_sp);
+
+      std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
+      lnode->contra_io->buffers_p.push(buf_sp);
+      YILOG_TRACE ("func: {}. , write queue count {}", 
+          __func__, lnode->contra_io->buffers_p.size());
+    }
+    // mount pingnode to thread data ,then stop read start write
+    yijian::threadCurrent::pushPingnode(lnode);
+  }else if (infolittle.isrecivenoti()) {
+    YILOG_TRACE ("offline");
+#warning need push server;
+    std::cout << "push to " << infolittle.uuid() 
+      << std::endl;
   }
 }
 
@@ -159,7 +182,8 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
   YILOG_TRACE ("func: {}. node specifiy", __func__);
   auto inClient = yijian::threadCurrent::inmemClient();
-  inClient->devices(node_specifiy, [buf_sp](chat::ConnectInfoLittle & infolittle) {
+  inClient->devices(node_specifiy, 
+      [buf_sp](chat::ConnectInfoLittle & infolittle) {
         traverseDevices(infolittle, buf_sp);
       });
 }
@@ -167,11 +191,33 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user) {
   YILOG_TRACE ("func: {}. node user", __func__);
   auto inClient = yijian::threadCurrent::inmemClient();
-  inClient->devices(node_user, [buf_sp](chat::ConnectInfoLittle & infolittle) {
+  inClient->devices(node_user, 
+      [buf_sp](chat::ConnectInfoLittle & infolittle) {
         traverseDevices(infolittle, buf_sp);
       });
 }
 
+void mountUnread2Node(const std::string & tonodeid, 
+    const int32_t incrementid, 
+    chat::NodeSpecifiy & node_specifiy) {
+  YILOG_TRACE ("func: {}. node user", __func__);
+  auto inClient = yijian::threadCurrent::inmemClient();
+  inClient->devices(node_specifiy, 
+      [&tonodeid, incrementid](chat::ConnectInfoLittle & infolittle) {
+        traverseDevices(infolittle, tonodeid, incrementid);
+      });
+}
+
+void mountUnread2Node(const std::string & tonodeid, 
+    const int32_t incrementid, 
+    chat::NodeUser & node_user) {
+  YILOG_TRACE ("func: {}. node user", __func__);
+  auto inClient = yijian::threadCurrent::inmemClient();
+  inClient->devices(node_user, 
+      [&tonodeid, incrementid](chat::ConnectInfoLittle & infolittle) {
+        traverseDevices(infolittle, tonodeid, incrementid);
+      });
+}
 
 
 // dispatch 
@@ -248,21 +294,48 @@ void dispatch(chat::Login & login) {
         client->insertDevice(user_sp->id(), *device);
       }
       // add global user connect info
-      connectInfo_.set_uuid(device->uuid());
-      connectInfo_.set_userid(user_sp->id());
-      connectInfo_.set_islogin(login.islogin());
-      connectInfo_.set_isconnected(login.isconnected());
-      connectInfo_.set_isrecivenoti(login.isrecivenoti());
-      connectInfo_.set_servername(SERVER_NAME);
-      connectInfo_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
-      connectInfo_.clear_tonodeids();
-      connectInfo_.add_tonodeids("0");
-      // add new group connect info
-      for (auto & groupnodeid: user_sp->groupnodeids()) {
-        connectInfo_.add_tonodeids(groupnodeid);
+      auto isFind = inmem_client->findUUID(device->uuid(), connectInfo_);
+      if (isFind) {
+        connectInfo_.set_uuid(device->uuid());
+        connectInfo_.set_userid(user_sp->id());
+        connectInfo_.set_islogin(true);
+        connectInfo_.set_isconnected(false);
+        connectInfo_.set_isrecivenoti(false);
+        connectInfo_.set_servername(SERVER_NAME);
+        connectInfo_.set_nodepointor(0);
+        connectInfo_.clear_tonodeids();
+        for (auto & groupnodeid: user_sp->groupnodeids()) {
+          connectInfo_.add_tonodeids(groupnodeid);
+        }
+        connectInfo_.add_tonodeids("0");
+        auto users_inconnectinfo = connectInfo_.mutable_users();
+        auto isfindsession = users_inconnectinfo->find(user_sp->id());
+        if (isfindsession == users_inconnectinfo->end()) {// not find
+          (*users_inconnectinfo)[user_sp->id()] = 1;
+        }else {
+        }
+
+        inmem_client->updateUUID(connectInfo_);
+      }else {
+        connectInfo_.set_uuid(device->uuid());
+        connectInfo_.set_userid(user_sp->id());
+        connectInfo_.set_islogin(true);
+        connectInfo_.set_isconnected(false);
+        connectInfo_.set_isrecivenoti(false);
+        connectInfo_.set_servername(SERVER_NAME);
+        connectInfo_.set_nodepointor(0);
+        connectInfo_.clear_tonodeids();
+        for (auto & groupnodeid: user_sp->groupnodeids()) {
+          connectInfo_.add_tonodeids(groupnodeid);
+        }
+        connectInfo_.add_tonodeids("0");
+        connectInfo_.clear_users();
+        auto users_inconnectinfo = connectInfo_.mutable_users();
+        (*users_inconnectinfo)[user_sp->id()] = 1;
+
+        // insert connect info
+        inmem_client->insertUUID(connectInfo_);
       }
-      // insert connect info
-      inmem_client->insertConnectInfo(connectInfo_);
       // response request device
       auto res = chat::LoginRes();
       res.set_uuid(device->uuid());
@@ -320,9 +393,16 @@ void dispatch(chat::Logout & logout) {
     }else {
       client->updateDevice(user_sp->id(), *it);
       // update connect info
-      // remove device connect info
       auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->removeConnectInfo(it->uuid());
+      inmem_client->findUUID(it->uuid(), connectInfo_);
+      connectInfo_.set_isconnected(false);
+      connectInfo_.set_islogin(false);
+      connectInfo_.set_nodepointor(0);
+      auto users_inconnectinfo = connectInfo_.mutable_users();
+      (*users_inconnectinfo)[logout.uuid()] = currentNode_->sessionid;
+      inmem_client->updateUUID(connectInfo_);
+
+      currentNode_->isConnect = false;
       // send buffer
       auto res = chat::LogoutRes();
       res.set_uuid(it->uuid());
@@ -352,7 +432,7 @@ void dispatch(chat::LogoutRes & res) {
         node_self_);
   }
 }
-void dispatch(chat::Connect & connect)  {
+void dispatch(chat::ClientConnect & connect)  {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -370,21 +450,22 @@ void dispatch(chat::Connect & connect)  {
       mountBuffer2Node(errorBuffer(11003, "device not find"), 
           node_self_);
     }else {
+      auto inmem_client = yijian::threadCurrent::inmemClient();
+      inmem_client->findUUID(connect.uuid(), connectInfo_);
       // set current node
       currentNode_->userid = connect.userid();
       currentNode_->deviceid = connect.uuid();
+      currentNode_->sessionid = connectInfo_.users().at(connect.userid());
+      currentNode_->isConnect = true;
       // update in memory db connectinfo
-      // add new group connect info
-      infolittle_.set_uuid(it->uuid());
-      infolittle_.set_islogin(true);
-      infolittle_.set_isconnected(true);
-      infolittle_.set_isrecivenoti(connect.isrecivenoti());
-      infolittle_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
-      auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->updateConnectInfo(infolittle_);
+      connectInfo_.set_isconnected(true);
+      connectInfo_.set_isrecivenoti(connect.isrecivenoti());
+      connectInfo_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
+      inmem_client->updateUUID(connectInfo_);
       // send buffer
-      auto res = chat::ConnectRes();
+      auto res = chat::ClientConnectRes();
       res.set_uuid(connectInfo_.uuid());
+      res.set_sessionid(currentNode_->sessionid);
       mountBuffer2Node(buffer::Buffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
@@ -394,7 +475,7 @@ void dispatch(chat::Connect & connect)  {
 
 }
 
-void dispatch(chat::DisConnect & disconnect)  {
+void dispatch(chat::ClientDisConnect & disconnect)  {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -414,9 +495,14 @@ void dispatch(chat::DisConnect & disconnect)  {
     }else {
       // update in memory db connectinfo
       auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->disconnectInfo(disconnect.uuid());
+      inmem_client->findUUID(disconnect.uuid(), connectInfo_);
+      connectInfo_.set_isconnected(false);
+      connectInfo_.set_nodepointor(0);
+      auto users_inconnectinfo = connectInfo_.mutable_users();
+      (*users_inconnectinfo)[disconnect.userid()] = currentNode_->sessionid;
+      inmem_client->updateUUID(connectInfo_);
       // send buffer
-      auto res = chat::DisConnectRes();
+      auto res = chat::ClientDisConnectRes();
       res.set_uuid(connectInfo_.uuid());
       mountBuffer2Node(buffer::Buffer(res), node_self_);
     }
@@ -570,7 +656,7 @@ void dispatch(chat::CreateGroup & group) {
     auto groupRes = client->createGroup(group);
     // connectinfo insert info
     auto inmem_client = yijian::threadCurrent::inmemClient();
-    inmem_client->addTonodeidConnectInfo(
+    inmem_client->addTonodeid2member(
         group.membersid(), groupRes->tonodeid());
     // send to self
     mountBuffer2Node(buffer::Buffer(*groupRes), node_self_);
@@ -622,7 +708,7 @@ void dispatch(chat::GroupAddMember & groupMember) {
     auto addRes = client->addMembers2Group(groupMember);
     // connectinfo insert info
     auto inmem_client = yijian::threadCurrent::inmemClient();
-    inmem_client->addTonodeidConnectInfo(
+    inmem_client->addTonodeid2member(
         groupMember.membersid(), groupMember.groupnodeid());
     // send to self
     mountBuffer2Node(buffer::Buffer(*addRes), node_self_);
@@ -724,9 +810,9 @@ void dispatch(chat::NodeMessage & message) {
       mountBuffer2Node(encoding_res_sp, node_peer_);
 
       // send to node
-      auto node_specifiy = chat::NodeSpecifiy();
-      node_specifiy.set_tonodeid(res->tonodeid());
-      mountBuffer2Node(buffer::Buffer(message), node_specifiy);
+      node_specifiy_ = chat::NodeSpecifiy();
+      node_specifiy_.set_tonodeid(res->tonodeid());
+      mountBuffer2Node(buffer::Buffer(message), node_specifiy_);
     }else {// user
       // self
       mountBuffer2Node(buffer::Buffer(*res), node_self_);
@@ -755,36 +841,23 @@ void dispatch(chat::NodeMessageRes & messageRes) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   try {
-    auto client = yijian::threadCurrent::mongoClient();
-    auto sp = client->queryMessage(messageRes);
+    
     if (messageRes.touserid_outer().empty()) {
       // sent to node
-      auto node_specifiy = chat::NodeSpecifiy();
-      node_specifiy.set_tonodeid(sp->tonodeid());
-      mountBuffer2Node(buffer::Buffer(*sp), node_specifiy);
+      node_specifiy_.set_tonodeid(messageRes.tonodeid());
+      mountUnread2Node(messageRes.tonodeid(), messageRes.incrementid(),
+          node_specifiy_);
     }else {
-      auto encoding_sp = buffer::Buffer(*sp);
       // to user
       node_user_.set_touserid(messageRes.touserid_outer());
-      mountBuffer2Node(encoding_sp, node_user_);
+      mountUnread2Node(messageRes.tonodeid(), messageRes.incrementid(),
+          node_user_);
     }
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
 
-}
-
-void dispatch(chat::QueryOneMessage & query) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  try {
-    auto client = yijian::threadCurrent::mongoClient();
-    auto sp = client->queryMessage(query);
-    mountBuffer2Node(buffer::Buffer(*sp), node_self_);
-  }catch (std::system_error & sys_error) {
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
-        node_self_);
-  }
 }
 
 void dispatch(chat::QueryMessage & query) {
@@ -857,22 +930,22 @@ void dispatch(int type, char * header, std::size_t length) {
         dispatch(chat);
       };
       (*map_p)[ChatType::clientconnect] = [=]() {
-        auto chat = chat::Connect();
+        auto chat = chat::ClientConnect();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
       (*map_p)[ChatType::clientconnectres] = [=]() {
-        auto chat = chat::ConnectRes();
+        auto chat = chat::ClientConnectRes();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::disconnect] = [=]() {
-        auto chat = chat::DisConnect();
+      (*map_p)[ChatType::clientdisconnect] = [=]() {
+        auto chat = chat::ClientDisConnect();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::disconnectres] = [=]() {
-        auto chat = chat::DisConnectRes();
+      (*map_p)[ChatType::clientdisconnectres] = [=]() {
+        auto chat = chat::ClientDisConnectRes();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
@@ -946,11 +1019,6 @@ void dispatch(int type, char * header, std::size_t length) {
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::queryonemessage] = [=]() {
-        auto chat = chat::QueryOneMessage();
-        chat.ParseFromArray(header, length);
-        dispatch(chat);
-      };
       (*map_p)[ChatType::querymessage] = [=]() {
         auto chat = chat::QueryMessage();
         chat.ParseFromArray(header, length);
@@ -966,10 +1034,38 @@ void dispatch(PingNode* node, std::shared_ptr<yijian::buffer> sp) {
 
   currentNode_ = node;
 
-  YILOG_TRACE("func: {}, sp {} {} {}", __func__,
-      sp->datatype(), sp->data(), sp->data_size());
-
-  dispatch(sp->datatype(), sp->data(), sp->data_size());
+  if (unlikely(currentNode_->sessionid != sp->session_id() && (
+            sp->datatype() == ChatType::queryuser ||
+            sp->datatype() == ChatType::queryuserversion ||
+            sp->datatype() == ChatType::querynode ||
+            sp->datatype() == ChatType::addfriend ||
+            sp->datatype() == ChatType::addfriendauthorize ||
+            sp->datatype() == ChatType::creategroup ||
+            sp->datatype() == ChatType::groupaddmember ||
+            sp->datatype() == ChatType::nodemessage ||
+            sp->datatype() == ChatType::querymessage
+          )
+        )) {
+    auto error = chat::Error();
+    error.set_errnum(11010);
+    auto err_msg = "session id error, right id is " + 
+      std::to_string(currentNode_->sessionid) + " .";
+    error.set_errmsg(err_msg);
+    mountBuffer2Node(buffer::Buffer(error), node_peer_);
+  }else {
+    YILOG_TRACE("func: {}, sp {} {} {}", __func__,
+        sp->datatype(), sp->data(), sp->data_size());
+    if (unlikely(false == currentNode_->isConnect && (
+              sp->datatype() == ChatType::registor ||
+              sp->datatype() == ChatType::login ||
+              sp->datatype() == ChatType::logout ||
+              sp->datatype() == ChatType::clientconnect ||
+              sp->datatype() == ChatType::clientdisconnect
+            )
+          ))
+    ++currentNode_->sessionid;
+    dispatch(sp->datatype(), sp->data(), sp->data_size());
+  }
 
 }
 

@@ -62,10 +62,7 @@ public:
   insertMessage(chat::NodeMessage & message);
 
   std::shared_ptr<chat::NodeMessage>
-  queryMessage(chat::NodeMessageRes & nodeRes);
-
-  std::shared_ptr<chat::NodeMessage>
-  queryMessage(chat::QueryOneMessage & query);
+  queryMessage(std::string & tonodeid, int32_t incrementid);
 
   std::shared_ptr<mongocxx::cursor>
   cursor(chat::QueryMessage & query);
@@ -90,13 +87,14 @@ public:
   void devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func);
   
-  void removeConnectInfo(const std::string & uuid);
-  void insertConnectInfo(const chat::ConnectInfo & connectInfo);
-  // spectify device add tonodeids
-  void addTonodeidConnectInfo(const chat::ConnectInfo & connectInfo);
-  // user's all device add tonodeid
+  void insertUUID(const chat::ConnectInfo & connectInfo);
+  void updateUUID(const chat::ConnectInfo & connectInfo);
+  bool findUUID(const std::string & uuid, 
+      chat::ConnectInfo & connectInfo);
+
+  // member's all device add tonodeid
   template <class Vec_like> void 
-  addTonodeidConnectInfo(
+  addTonodeid2member(
       const Vec_like &  membersid, const std::string & tonodeid) {
 
     YILOG_TRACE ("func: {}. ", __func__);
@@ -130,9 +128,6 @@ public:
     }
   }
 
-  void updateConnectInfo(const chat::ConnectInfoLittle & infolittle);
-  void disconnectInfo(const std::string & uuid);
-  
 private:
 
   std::string serverName_;

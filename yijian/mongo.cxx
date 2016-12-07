@@ -549,10 +549,7 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
           "inc nodeID count failure");
     }
     auto msgRes = std::make_shared<chat::NodeMessageRes>();
-    msgRes->set_messageid(maybe_result->inserted_id().
-        get_oid().value.to_string());
     msgRes->set_tonodeid(message.tonodeid());
-    msgRes->set_fromuserid(message.fromuserid());
     msgRes->set_incrementid(incrementid);
     return msgRes;
   }else {
@@ -563,12 +560,13 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
 }
 
 std::shared_ptr<chat::NodeMessage>
-mongo_client::queryMessage(chat::NodeMessageRes & nodeRes) {
+mongo_client::queryMessage(std::string & tonodeid, int32_t incrementid) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto nodemessage_collection = db["nodeMessage"];
   auto maybe_result = nodemessage_collection.find_one(
-      document{} << "_id" << bsoncxx::oid(nodeRes.messageid())
+      document{} << "toNodeID" << tonodeid
+      << "incrementID" << incrementid
       << finalize);
 
   if (maybe_result) {
@@ -577,32 +575,9 @@ mongo_client::queryMessage(chat::NodeMessageRes & nodeRes) {
     nodemessageDocument(*message_sp, view);
     return message_sp;
   }else {
-    YILOG_ERROR("can not find message messageid {}", nodeRes.messageid());
+    YILOG_ERROR("can not find message tonodeid {}, incrementid {}.", 
+        tonodeid, incrementid);
     throw std::system_error(std::error_code(40014, std::generic_category()),
-        "missing message");
-  }
-}
-
-std::shared_ptr<chat::NodeMessage>
-mongo_client::queryMessage(chat::QueryOneMessage & query) {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-  auto db = client_["chatdb"];
-  auto nodemessage_collection = db["nodeMessage"];
-  auto maybe_result = nodemessage_collection.find_one(
-      document{} << "toNodeID" << query.tonodeid() 
-      << "incrementID" << query.incrementid()
-      << finalize);
-
-  if (maybe_result) {
-    auto message_sp = std::make_shared<chat::NodeMessage>();
-    auto view = maybe_result->view();
-    nodemessageDocument(*message_sp, view);
-    return message_sp;
-  }else {
-    YILOG_ERROR("can not find message toNodeID {}, incrementid {}.", 
-        query.tonodeid(), query.incrementid());
-    throw std::system_error(std::error_code(40015, std::generic_category()),
         "missing message");
   }
 }
@@ -674,7 +649,6 @@ void inmem_client::devices(const chat::NodeSpecifiy& node_specifiy,
   auto infolittle = chat::ConnectInfoLittle();
   for (auto doc: cursor) {
     infolittle.set_uuid(doc["UUID"].get_utf8().value.to_string());
-    infolittle.set_islogin(doc["isLogin"].get_bool().value);
     infolittle.set_isconnected(doc["isConnected"].get_bool().value);
     infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool().value);
     func(infolittle);
@@ -689,45 +663,41 @@ void inmem_client::devices(const chat::NodeUser & node_user,
   auto cursor = connectinfo_col.find(
       document{} << "userID" << node_user.touserid()
       << "serverName" << serverName_
+      << "isLogin" << true
       << finalize);
   auto infolittle = chat::ConnectInfoLittle();
   for (auto doc: cursor) {
     infolittle.set_uuid(doc["UUID"].get_utf8().value.to_string());
-    infolittle.set_islogin(doc["isLogin"].get_bool().value);
     infolittle.set_isconnected(doc["isConnected"].get_bool().value);
     infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool().value);
     func(infolittle);
   }
 }
 
-void inmem_client::removeConnectInfo(const std::string & uuid) {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-  
-  auto db = client_["chatdb"];
-  auto connectinfo_col = db["connectInfo"];
-  auto maybe_result = connectinfo_col.delete_many(
-      document{} << "UUID" << uuid << finalize);
-  if (unlikely(maybe_result->deleted_count() > 1)) {
-    YILOG_ERROR ("delete many devices error, uuid :{} .", uuid);
-  }
-
-}
-
-void inmem_client::insertConnectInfo(
+void inmem_client::insertUUID(
     const chat::ConnectInfo & connectInfo) {
 
   YILOG_TRACE ("func: {}. ", __func__);
   
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
+  // tonodeid 
   auto arraybuilder = array{};
   for (auto & tonodeid: connectInfo.tonodeids()) {
     arraybuilder << tonodeid;
   }
   auto tonodeid_array = arraybuilder << finalize;
+  // session map {userid: sessionid}
+  auto sessionbuilder = array{};
+  for (auto & map: connectInfo.users()) {
+    sessionbuilder << open_document
+      << "userID" << map.first 
+      << "sessionID" << map.second << close_document;
+  }
+  auto users_array = sessionbuilder << finalize;
+  // insert
   auto maybe_result = connectinfo_col.insert_one(
-      document{} << "UUID" << connectInfo.uuid() 
+      document{} << "UUID" << connectInfo.uuid()
       << "toNodeIDs" << tonodeid_array
       << "userID" << connectInfo.userid()
       << "isLogin" << connectInfo.islogin()
@@ -735,58 +705,121 @@ void inmem_client::insertConnectInfo(
       << "isReciveNoti" << connectInfo.isrecivenoti()
       << "serverName" << serverName_
       << "nodepointor" << connectInfo.nodepointor()
-      << finalize);
+      << "users" << users_array
+      << finalize
+      );
   if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("insert many error, uuid :{} .", connectInfo.uuid());
+    YILOG_ERROR ("insert error, uuid :{} .", connectInfo.uuid());
   }
 
 }
-
-void inmem_client::addTonodeidConnectInfo(
-    const chat::ConnectInfo & connectInfo) {
+void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
 
   YILOG_TRACE ("func: {}. ", __func__);
   
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
+  // tonodeid 
   auto arraybuilder = array{};
   for (auto & tonodeid: connectInfo.tonodeids()) {
     arraybuilder << tonodeid;
   }
   auto tonodeid_array = arraybuilder << finalize;
+  // session map {userid: sessionid}
+  auto sessionbuilder = array{};
+  for (auto & map: connectInfo.users()) {
+    sessionbuilder << open_document
+      << "userID" << map.first 
+      << "sessionID" << map.second << close_document;
+  }
+  auto users_array = sessionbuilder << finalize;
+  // insert
   auto maybe_result = connectinfo_col.update_one(
-      document{} << "UUID" << connectInfo.uuid() 
+      document{} << "UUID" << connectInfo.uuid()
       << finalize,
-      document{} << "$addToSet" << open_document
-      << "toNodeIDs" << open_document 
-      << "$each" << tonodeid_array << close_document
-      << close_document << finalize);
+      document{}
+      << "toNodeIDs" << tonodeid_array
+      << "userID" << connectInfo.userid()
+      << "isLogin" << connectInfo.islogin()
+      << "isConnected" << connectInfo.isconnected()
+      << "isReciveNoti" << connectInfo.isrecivenoti()
+      << "serverName" << serverName_
+      << "nodepointor" << connectInfo.nodepointor()
+      << "users" << users_array
+      << finalize
+      );
   if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("spectify device add tonodeids error, uuid :{} .", 
-        connectInfo.uuid());
+    YILOG_ERROR ("update error, uuid :{} .", connectInfo.uuid());
   }
 }
 
-void inmem_client::updateConnectInfo(
-      const chat::ConnectInfoLittle & infolittle) {
+bool inmem_client::findUUID(const std::string & uuid,
+    chat::ConnectInfo & connectInfo) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+
+  auto db = client_["chatdb"];
+  auto connectinfo_col = db["connectInfo"];
+  auto maybe_result = connectinfo_col.find_one(
+      document{} << "UUID" << uuid << finalize);
+  if (maybe_result) {
+    auto connectinfo = maybe_result->view();
+    connectInfo.set_uuid(uuid);
+    auto toNodeIDs = connectinfo["toNodeIDs"].get_array().value;
+    for (auto it = toNodeIDs.begin();
+        it != toNodeIDs.end();
+        ++it) {
+      connectInfo.add_tonodeids(it->get_utf8().value.to_string());
+    }
+    connectInfo.set_userid(connectinfo["userID"].
+        get_utf8().value.to_string());
+    connectInfo.set_islogin(connectinfo["isLogin"].get_bool().value);
+    connectInfo.set_isconnected(connectinfo["isConnected"].
+        get_bool().value);
+    connectInfo.set_isrecivenoti(connectinfo["isReciveNoti"].
+        get_bool().value);
+    connectInfo.set_servername(serverName_);
+    connectInfo.set_nodepointor(connectinfo["nodepointor"].
+        get_int64().value);
+    auto users = connectinfo["users"].get_array().value;
+    auto musers = connectInfo.mutable_users();
+    for (auto it = users.begin();
+        it != users.end();
+        ++it) {
+      auto doc = it->get_document().view();
+      (*musers)[doc["userID"].get_utf8().value.to_string()] = 
+        doc["sessionID"].get_int32().value;
+    }
+    return true;
+  }else {
+    return false;
+  }
+
+}
+
+/*
+void inmem_client::updateUUIDconnect(const std::string & uuid,
+      bool isReciveNoti, int64_t nodepointor) {
+  YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
   auto maybe_result = connectinfo_col.update_one(
-      document{} << "UUID" << infolittle.uuid()
+      document{} << "UUID" << uuid
       << finalize,
       document{} << "$set" << open_document
-      << "isLogin" << infolittle.islogin()
-      << "isReciveNoti" << infolittle.isrecivenoti()
-      << "isConnected" << infolittle.isconnected()
-      << "nodepointor" << infolittle.nodepointor()
+      << "isReciveNoti" << isReciveNoti
+      << "isConnected" << true
+      << "nodepointor" << nodepointor
+      << "serverName" << serverName_
       << close_document << finalize);
   if (unlikely(!maybe_result)) {
     YILOG_ERROR ("update connect info little error, uuid :{} .", 
-        infolittle.uuid());
+        uuid);
   }
 }
 
-void inmem_client::disconnectInfo(const std::string & uuid) {
+void inmem_client::updateUUIDdisconnect(const std::string & uuid) {
+  YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
   auto maybe_result = connectinfo_col.update_one(
@@ -795,12 +828,14 @@ void inmem_client::disconnectInfo(const std::string & uuid) {
       document{} << "$set" << open_document
       << "isConnected" << false
       << "nodepointor" << 0
+      << "serverName" << serverName_
       << close_document << finalize);
   if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("dis connect info little error, uuid :{} .", 
+    YILOG_ERROR ("update connect info little error, uuid :{} .", 
         uuid);
   }
 }
+*/
 
 namespace yijian {
 

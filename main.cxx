@@ -10,15 +10,16 @@
 #include <iostream>
 #include <unistd.h>
 #include <thread>
+#include <condition_variable>
 
 #ifdef __cpluscplus
 extern "C" {
 #endif
 
 
+  /*
 TEST_CASE("buffer", "[buffer]") {
   initConsoleLog();
-  /*
   SECTION("encoding | decoing var length") {
     for (unsigned int i = 0; i < 2097152; ++i) {
       uint32_t length = i;
@@ -29,27 +30,43 @@ TEST_CASE("buffer", "[buffer]") {
       REQUIRE( i == pair.first);
     }
   }
+}
   */
+
+std::mutex mutex_;
+std::condition_variable cvar_;
+bool iswait_ = true;
+
+void mainwait() {
+  YILOG_TRACE("func: {}, iswait_: {}", __func__, iswait_);
+  std::unique_lock<std::mutex> ul(mutex_);
+  cvar_.wait(ul, [](){
+        YILOG_TRACE("iswait_: {}", iswait_);
+        return !iswait_;
+      });
+  iswait_ = true;
 }
 
-void im_cb(const char * header, uint32_t length, 
-    uint16_t session, int type) {
-  std::cout << "length " << length
-    << ", session " << session
-    << ", type " << type << std::endl;
-  auto thread_id = std::this_thread::get_id();
-  std::cout << "sub thread id " << thread_id << std::endl;
-  std::cout << "content: " << std::string(header, length) << std::endl;
+void notimain() {
+  YILOG_TRACE("func: {}, iswait_: {}", __func__, iswait_);
+  std::unique_lock<std::mutex> ul(mutex_);
+  iswait_ = false;
+  cvar_.notify_one();
 }
 
 
 TEST_CASE("IM business","[business]") {
+  initConsoleLog();
+  using yijian::Buffer_SP;
 
   auto thread_id = std::this_thread::get_id();
   std::cout << "main thread id " << thread_id << std::endl;
-  create_client(im_cb);
+  create_client([](Buffer_SP buffer_sp) {
+        YILOG_TRACE("client callback");
+        YILOG_TRACE("data {}", buffer_sp->data());
+        notimain();
+      });
 
-  sleep(1);
   SECTION("register") {
     auto regst = chat::Register();
     regst.set_phoneno("18514029919");
@@ -57,9 +74,10 @@ TEST_CASE("IM business","[business]") {
     regst.set_password("123456");
     regst.set_nickname("yijian");
     auto sp = yijian::buffer::Buffer(regst);
+    sleep(1);
     client_send(sp);
     YILOG_DEBUG ("size: {}", sp->size());
-    sleep(10);
+    mainwait();
   }
 
 }
