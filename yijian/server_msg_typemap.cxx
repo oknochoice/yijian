@@ -98,6 +98,7 @@ using yijian::threadCurrent::infolittle_;
 // user require device
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSelfDevice & ) {
   YILOG_TRACE ("func: {}. self device", __func__);
+  buf_sp->set_sessionid(currentNode_->sessionid - 1);
   std::unique_lock<std::mutex> ul(currentNode_->buffers_p_mutex);
   currentNode_->contra_io->buffers_p.push(buf_sp);
   YILOG_TRACE ("func: {}. self device, write queue count {}", 
