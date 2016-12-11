@@ -69,7 +69,7 @@ TEST_CASE("IM business","[business]") {
 
   SECTION("register") {
     auto regst = chat::Register();
-    regst.set_phoneno("18514029919");
+    regst.set_phoneno("18514029911");
     regst.set_countrycode("86");
     regst.set_password("123456");
     regst.set_nickname("yijian");

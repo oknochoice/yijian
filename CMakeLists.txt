@@ -12,7 +12,7 @@ set(CXX_MONGO_FLAGS "-I/usr/include/mongocxx/v_noabi -I/usr/include/libmongoc-1.
 #execute_process(COMMAND bash "-c" "pkg-config --cflags --libs protobuf" OUTPUT_VARIABLE CXX_PROTO_FLAGS)
 #execute_process(COMMAND bash "-c" "pkg-config --cflags --libs libmongocxx" OUTPUT_VARIABLE CXX_MONGO_FLAGS)
 set(CXX_PROTO_FLAGS "-pthread -lprotobuf -pthread -lpthread")
-set(CXX_FLAGS "-std=c++14 -D_GLIBCXX_USE_CXX11_ABI=1 -DYILOG_ON=1 -lev -pthread -lboost_system ${CXX_MONGO_FLAGS} ${CXX_PROTO_FLAGS}")
+set(CXX_FLAGS "-std=c++14 -D_GLIBCXX_USE_CXX11_ABI=1 -DYILOG_ON=1 -lev -pthread -lboost_system -lssl -lcrypto ${CXX_MONGO_FLAGS} ${CXX_PROTO_FLAGS}")
 message(STATUS ${CXX_FLAGS})
 #set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_FLAGS} -O0 -Wall -g -ggdb")

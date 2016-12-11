@@ -9,16 +9,19 @@
 #include <functional>
 #include "protofiles/chat_message.pb.h"
 #include "typemap.h"
+#include "buffer.h"
 #include "threads_work.h"
-#include "pinglist.h"
 
 #ifdef __cpluscplus
 extern "C" {
 #endif
 
+struct Read_IO;
+
+
 namespace yijian {
   namespace threadCurrent {
-    static thread_local PingNode * currentNode_;
+    static thread_local Read_IO * currentNode_;
     static thread_local chat::ConnectInfo connectInfo_;
     static thread_local chat::ConnectInfoLittle infolittle_;
     static thread_local chat::NodeSelfDevice node_self_;
@@ -30,7 +33,7 @@ namespace yijian {
   }
 }
 
-void dispatch(PingNode* node, std::shared_ptr<yijian::buffer> sp);
+void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp);
 
 
 template <typename Any>

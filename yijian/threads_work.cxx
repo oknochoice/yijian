@@ -80,7 +80,7 @@ void noti_threads::sentWork(Thread_Data::Thread_Function && func) {
 }
 
 void noti_threads::foreachio(
-    std::function<void(struct PingNode *)> && func) {
+    std::function<void(struct Read_IO *)> && func) {
 
   YILOG_TRACE("func: {}", __func__);
   for (auto thread_data: vec_threads_) {
@@ -111,7 +111,7 @@ Thread_Data * threadData() {
   return threadData(nullptr);
 }
 
-void pushPingnode(PingNode * node) {
+void pushPingnode(Read_IO * node) {
   YILOG_TRACE("func: {}", __func__);
 
   auto thread_data = threadData();

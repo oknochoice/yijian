@@ -99,10 +99,10 @@ using yijian::threadCurrent::infolittle_;
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSelfDevice & ) {
   YILOG_TRACE ("func: {}. self device", __func__);
   buf_sp->set_sessionid(currentNode_->sessionid - 1);
-  std::unique_lock<std::mutex> ul(currentNode_->buffers_p_mutex);
-  currentNode_->contra_io->buffers_p.push(buf_sp);
+  std::unique_lock<std::mutex> ul(currentNode_->writeio->buffers_p_mutex);
+  currentNode_->writeio->buffers_p.push(buf_sp);
   YILOG_TRACE ("func: {}. self device, write queue count {}", 
-      __func__, currentNode_->contra_io->buffers_p.size());
+      __func__, currentNode_->writeio->buffers_p.size());
   // push node
   yijian::threadCurrent::pushPingnode(currentNode_);
 }
@@ -115,10 +115,10 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodePeerServer & ) {
   for (auto & lnode: *sp) {
     // mount buffer to pingnode
     {
-      std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
-      lnode->contra_io->buffers_p.push(buf_sp);
+      std::unique_lock<std::mutex> ul(lnode->writeio->buffers_p_mutex);
+      lnode->writeio->buffers_p.push(buf_sp);
       YILOG_TRACE ("func: {}. peer server, write queue count {}", 
-          __func__, lnode->contra_io->buffers_p.size());
+          __func__, lnode->writeio->buffers_p.size());
       // push node
       yijian::threadCurrent::pushPingnode(lnode);
     }
@@ -132,15 +132,15 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
     YILOG_TRACE ("online");
     // get pingnode
     Pointor_t nodepointor = infolittle.nodepointor();
-    PingNode * lnode = reinterpret_cast<PingNode*>(nodepointor);
+    Read_IO * lnode = reinterpret_cast<Read_IO*>(nodepointor);
     // if node is request pass
     if (unlikely(currentNode_ == lnode)) return;
     // mount buffer to pingnode
     {
-      std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
-      lnode->contra_io->buffers_p.push(buf_sp);
+      std::unique_lock<std::mutex> ul(lnode->writeio->buffers_p_mutex);
+      lnode->writeio->buffers_p.push(buf_sp);
       YILOG_TRACE ("func: {}. , write queue count {}", 
-          __func__, lnode->contra_io->buffers_p.size());
+          __func__, lnode->writeio->buffers_p.size());
     }
     // mount pingnode to thread data ,then stop read start write
     yijian::threadCurrent::pushPingnode(lnode);
@@ -154,7 +154,7 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle,
     YILOG_TRACE ("online");
     // get pingnode
     Pointor_t nodepointor = infolittle.nodepointor();
-    PingNode * lnode = reinterpret_cast<PingNode*>(nodepointor);
+    Read_IO * lnode = reinterpret_cast<Read_IO*>(nodepointor);
     // if node is request pass
     if (unlikely(currentNode_ == lnode)) return;
     // mount buffer to pingnode
@@ -164,10 +164,10 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle,
       (*unread)[tonodeid] = incrementid;
       auto buf_sp = buffer::Buffer(*lnode->unread_sp);
 
-      std::unique_lock<std::mutex> ul(lnode->buffers_p_mutex);
-      lnode->contra_io->buffers_p.push(buf_sp);
+      std::unique_lock<std::mutex> ul(lnode->writeio->buffers_p_mutex);
+      lnode->writeio->buffers_p.push(buf_sp);
       YILOG_TRACE ("func: {}. , write queue count {}", 
-          __func__, lnode->contra_io->buffers_p.size());
+          __func__, lnode->writeio->buffers_p.size());
     }
     // mount pingnode to thread data ,then stop read start write
     yijian::threadCurrent::pushPingnode(lnode);
@@ -178,6 +178,7 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle,
       << std::endl;
   }
 }
+
 
 // current server subscribe to toNode devices(exclude require device)
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
@@ -247,13 +248,9 @@ void dispatch(chat::Register & enroll) {
         __func__, id);
 
     auto res = chat::RegisterRes();
-    if (likely(!id.empty())) {
-      res.set_issuccess(true);
-      res.set_userid(id);
-    }else {
-      res.set_issuccess(false);
-      res.set_userid("unknown id");
-    }
+    res.set_issuccess(true);
+    res.set_userid(id);
+
     mountBuffer2Node(buffer::Buffer(res), node_self_);
 
   }catch (std::system_error & sys_error) {
@@ -895,6 +892,54 @@ void dispatch(chat::QueryMessage & query) {
   }
 }
 
+void dispatch(chat::Media & media) {
+  YILOG_TRACE ("func: {}. media", __func__);
+  try {
+    auto mediares = chat::MediaRes();
+    mediares.set_sha1(media.sha1());
+    mediares.set_nth(media.nth());
+    currentNode_->media_vec.push_back(std::move(media));
+    mountBuffer2Node(buffer::Buffer(mediares), node_self_);
+  }catch (std::system_error & sys_error) {
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+        node_self_);
+  }
+}
+
+void dispatch(chat::MediaCheck & mediacheck) {
+  YILOG_TRACE ("func: {}. media", __func__);
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    client->insertMedia(currentNode_->media_vec);
+    currentNode_->media_vec.clear();
+    auto mediares = chat::MediaCheckRes();
+    mediares.set_sha1(mediacheck.sha1());
+    mediares.set_isintact(true);
+    mountBuffer2Node(buffer::Buffer(mediares), node_self_);
+  }catch (std::system_error & sys_error) {
+    currentNode_->media_vec.clear();
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+        node_self_);
+  }
+}
+
+void dispatch(chat::QueryMedia & querymedia) {
+  YILOG_TRACE ("func: {}. media", __func__);
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    int32_t maxlength = static_cast<int32_t>(Message_Type::message)
+      - PADDING_LENGTH;
+    std::vector<std::shared_ptr<chat::Media>> medias;
+    client->queryMedia(querymedia.sha1(), medias, maxlength);
+    for (auto media_sp: medias) {
+      mountBuffer2Node(buffer::Buffer(*media_sp), node_self_);
+    }
+  }catch (std::system_error & sys_error) {
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+        node_self_);
+  }
+}
+
 void dispatch(int type, char * header, std::size_t length) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto static map_p = new std::map<int, std::function<void(void)>>();
@@ -1029,7 +1074,7 @@ void dispatch(int type, char * header, std::size_t length) {
   (*map_p)[type]();
 }
 
-void dispatch(PingNode* node, std::shared_ptr<yijian::buffer> sp) {
+void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp) {
 
   YILOG_TRACE ("func: {}. argc node sp", __func__);
 

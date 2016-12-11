@@ -37,6 +37,11 @@ enum ChatType : uint8_t {
   nodemessage,
   nodemessageres,
   querymessage,
+  media,
+  mediares,
+  querymedia,
+  mediacheck,
+  mediacheckres,
   serverconnect,// outer
   serverdisconnect,// outer
   unread,
@@ -66,17 +71,17 @@ constexpr uint8_t dispatchType(chat::Logout & ) {
 constexpr uint8_t dispatchType(chat::LogoutRes & ) {
   return ChatType::logoutres;
 }
-constexpr uint8_t dispatchType(chat::Connect & ) {
+constexpr uint8_t dispatchType(chat::ClientConnect & ) {
   return ChatType::clientconnect;
 }
-constexpr uint8_t dispatchType(chat::ConnectRes & ) {
+constexpr uint8_t dispatchType(chat::ClientConnectRes & ) {
   return ChatType::clientconnectres;
 }
-constexpr uint8_t dispatchType(chat::DisConnect & ) {
-  return ChatType::disconnect;
+constexpr uint8_t dispatchType(chat::ClientDisConnect & ) {
+  return ChatType::clientdisconnect;
 }
-constexpr uint8_t dispatchType(chat::DisConnectRes & ) {
-  return ChatType::disconnectres;
+constexpr uint8_t dispatchType(chat::ClientDisConnectRes & ) {
+  return ChatType::clientdisconnectres;
 }
 constexpr uint8_t dispatchType(chat::QueryUser & ) {
   return ChatType::queryuser;
@@ -128,6 +133,21 @@ constexpr uint8_t dispatchType(chat::NodeMessageRes & ) {
 }
 constexpr uint8_t dispatchType(chat::QueryMessage & ) {
   return ChatType::querymessage;
+}
+constexpr uint8_t dispatchType(chat::Media & ) {
+  return ChatType::media;
+}
+constexpr uint8_t dispatchType(chat::MediaRes & ) {
+  return ChatType::mediares;
+}
+constexpr uint8_t dispatchType(chat::QueryMedia & ) {
+  return ChatType::querymedia;
+}
+constexpr uint8_t dispatchType(chat::MediaCheck & ) {
+  return ChatType::mediacheck;
+}
+constexpr uint8_t dispatchType(chat::MediaCheckRes & ) {
+  return ChatType::mediacheckres;
 }
 constexpr uint8_t dispatchType(chat::Unread & ) {
   return ChatType::unread;

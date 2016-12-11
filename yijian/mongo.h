@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdint>
 #include <vector>
+#include <openssl/sha.h>
 
 #include <bsoncxx/json.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
@@ -22,6 +23,7 @@ public:
   ~mongo_client();
 
   // user
+  // 40000 40010
   std::string& insertUser(const chat::Register & enroll);
 
   // mongo pull device push device
@@ -30,45 +32,55 @@ public:
   void insertDevice(const std::string & userID, const chat::Device & device);
 
   std::shared_ptr<chat::User> 
-  queryUser(const std::string & phoneNo, const std::string & countryCode);
+    queryUser(const std::string & phoneNo, const std::string & countryCode);
   
   
   std::shared_ptr<chat::User> 
-  queryUser(const std::string & userID);
+    queryUser(const std::string & userID);
 
   std::shared_ptr<chat::AddFriendAuthorizeInfo>
-  addFriendAuthorize(const std::string & inviter, 
-      const std::string & inviterNickname,
-      const std::string & invitee,
-      const std::string & inviteeNickname);
+    addFriendAuthorize(const std::string & inviter, 
+        const std::string & inviterNickname,
+        const std::string & invitee,
+        const std::string & inviteeNickname);
 
   // group  
+  // 40020
   // insert all memeber group id
   std::shared_ptr<chat::CreateGroupRes>
-  createGroup(const chat::CreateGroup & cGroup);
+    createGroup(const chat::CreateGroup & cGroup);
 
   // insert all memeber group info
   std::shared_ptr<chat::GroupAddMemberRes>
-  addMembers2Group(chat::GroupAddMember & groupMember);
+    addMembers2Group(chat::GroupAddMember & groupMember);
 
   // node
   std::shared_ptr<chat::MessageNode>
-  queryNode(const std::string & nodeID);
+    queryNode(const std::string & nodeID);
 
   // message
+  // 40050
   // in incomplete message, out complete message
   // add incrementID value
   std::shared_ptr<chat::NodeMessageRes> 
-  insertMessage(chat::NodeMessage & message);
+    insertMessage(chat::NodeMessage & message);
 
   std::shared_ptr<chat::NodeMessage>
-  queryMessage(std::string & tonodeid, int32_t incrementid);
+    queryMessage(std::string & tonodeid, int32_t incrementid);
 
   std::shared_ptr<mongocxx::cursor>
-  cursor(chat::QueryMessage & query);
+    cursor(chat::QueryMessage & query);
 
   std::shared_ptr<chat::NodeMessage>
-  queryMessage(std::shared_ptr<mongocxx::cursor> cursor_sp);
+    queryMessage(std::shared_ptr<mongocxx::cursor> cursor_sp);
+
+
+  // media
+  // 40060
+  void insertMedia(const std::vector<chat::Media> & media_vec);
+  void queryMedia(const std::string & sha1, 
+      std::vector<std::shared_ptr<chat::Media>> & media_vec,
+      int32_t maxLength);
 
 private:
 
@@ -87,12 +99,14 @@ public:
   void devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func);
   
+  // 40030
   void insertUUID(const chat::ConnectInfo & connectInfo);
   void updateUUID(const chat::ConnectInfo & connectInfo);
   bool findUUID(const std::string & uuid, 
       chat::ConnectInfo & connectInfo);
 
   // member's all device add tonodeid
+  // 40040
   template <class Vec_like> void 
   addTonodeid2member(
       const Vec_like &  membersid, const std::string & tonodeid) {

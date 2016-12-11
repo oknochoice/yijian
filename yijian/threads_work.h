@@ -3,7 +3,7 @@
 
 #include "macro.h"
 
-struct PingNode;
+struct Read_IO;
 #include <thread>
 #include <condition_variable>
 #include <utility>
@@ -16,7 +16,7 @@ namespace yijian {
 
 
 struct Thread_Data {
-  typedef std::vector<PingNode*> Vector_Node;
+  typedef std::vector<Read_IO*> Vector_Node;
   typedef std::shared_ptr<Vector_Node>  Vector_Node_SP;
   typedef std::function<void(void)> Thread_Function;
 
@@ -43,7 +43,7 @@ public:
 
   // push to vec_threads_
   void sentWork(Thread_Data::Thread_Function && func);
-  void foreachio(std::function<void(struct PingNode *)> && func);
+  void foreachio(std::function<void(struct Read_IO *)> && func);
 private:
   void thread_func(Thread_Data * thread_data);
   uint_fast16_t thread_count_;
@@ -56,7 +56,7 @@ private:
 namespace threadCurrent {
   Thread_Data * threadData(Thread_Data* currentData);
   Thread_Data * threadData();
-  void pushPingnode(PingNode * node);
+  void pushPingnode(Read_IO * node);
 }
 
 }

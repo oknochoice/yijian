@@ -29,7 +29,7 @@ connection_write_callback (struct ev_loop * loop, ev_io * ww, int revents);
 
 
 struct Peer_Servers peer_servers_;
-std::shared_ptr<std::list<PingNode*>> peer_servers() {
+std::shared_ptr<std::list<Read_IO*>> peer_servers() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -39,14 +39,14 @@ std::shared_ptr<std::list<PingNode*>> peer_servers() {
 
 }
 
-std::shared_ptr<std::list<PingNode*>> peer_servers_write() {
+std::shared_ptr<std::list<Read_IO*>> peer_servers_write() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
   std::unique_lock<std::mutex> ul(peer_servers_.mutex_);
   if (!peer_servers_.peer_servers_.unique()) {
     peer_servers_.peer_servers_.reset(new 
-        std::list<PingNode*>(*peer_servers_.peer_servers_));
+        std::list<Read_IO*>(*peer_servers_.peer_servers_));
   }
   return peer_servers_.peer_servers_;
 }
@@ -143,7 +143,7 @@ sigusr1_cb (struct ev_loop * loop, ev_signal * w, int revents) {
 void initSetup(IPS & ips) {
   YILOG_TRACE ("func: {}. ", __func__);
   // set peer server list
-  peer_servers_.peer_servers_.reset(new std::list<PingNode*>());
+  peer_servers_.peer_servers_.reset(new std::list<Read_IO*>());
   peer_servers_.ips_ = ips;
 }
 
@@ -220,11 +220,10 @@ start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
   // converse to usable io
   // Write_Asyn * as = reinterpret_cast<Write_Asyn*>(w);
 
-  noti_threads()->foreachio([=](struct PingNode * node) {
+  noti_threads()->foreachio([=](struct Read_IO * io) {
         YILOG_TRACE ("func: noti_threads foreachio. ");
-        Connection_IO * io = reinterpret_cast<Connection_IO*>(node);
         //ev_io_stop(loop, &io->io);
-        ev_io_start(loop, &io->contra_io->io);
+        ev_io_start(loop, &io->writeio->io);
       });
 
 }
@@ -263,10 +262,8 @@ socket_accept_callback (struct ev_loop * loop,
   YILOG_INFO ("client connected");
   
   // Connection_IO watcher for client
-  Connection_IO * client_read_watcher = 
-    (Connection_IO *) createReadPingNode();
-  Connection_IO * client_write_watcher = 
-    (Connection_IO *) createWritePingNode();
+  Read_IO * client_read_watcher = new Read_IO();
+  Write_IO * client_write_watcher = new Write_IO();
 
   if (NULL == client_read_watcher || 
       NULL == client_write_watcher) {
@@ -274,18 +271,18 @@ socket_accept_callback (struct ev_loop * loop,
     return;
   }
 
-  ev_io_init (&client_read_watcher->io, 
+  ev_io_init (&client_read_watcher->pingnode.io, 
       connection_read_callback, client_sd, EV_READ);
   ev_io_init (&client_write_watcher->io,
       connection_write_callback, client_sd, EV_WRITE);
-  client_read_watcher->contra_io = client_write_watcher;
-  client_write_watcher->contra_io = client_read_watcher;
+  client_read_watcher->writeio = client_write_watcher;
+  client_write_watcher->readio = client_read_watcher;
 
-  ev_io_start (loop, &client_read_watcher->io);
+  ev_io_start (loop, &client_read_watcher->pingnode.io);
 
   // add read wather to pinglist
-  ping_append(pinglist(), client_read_watcher);
-  time(&client_read_watcher->ping_time);
+  ping_append(pinglist(), &client_read_watcher->pingnode);
+  time(&client_read_watcher->pingnode.ping_time);
 
 }
 
@@ -298,25 +295,26 @@ connection_read_callback (struct ev_loop * loop,
   ev_io_stop(loop, rw);
 
   // converse to usable io
-  Connection_IO * io = reinterpret_cast<Connection_IO*>(rw);
+  Read_IO * io = reinterpret_cast<Read_IO*>(rw);
+  PingNode * pingnode = reinterpret_cast<PingNode*>(rw);
 
   // read to buffer 
   // if read complete stop watch && update ping
   
-  if (io->buffers_p.front()->socket_read(io->io.fd)) {
+  if (io->buffer_sp->socket_read(io->pingnode.io.fd)) {
     // update ping time
     YILOG_TRACE ("func: {}. update ping time", __func__);
-    time(&io->ping_time);
-    ping_move2back(pinglist(), io);
-    if (unlikely(io->buffers_p.front()->datatype() == 
+    time(&io->pingnode.ping_time);
+    ping_move2back(pinglist(), pingnode);
+    if (unlikely(io->buffer_sp->datatype() == 
           ChatType::serverconnect)) {
       // remove peer server's pingnode from pinglist
       // add to peer server list;
       YILOG_TRACE ("func: {}. process peer sever connect", __func__);
-      ping_erase(pinglist(), io);
+      ping_erase(pinglist(), pingnode);
       auto p = peer_servers_write();
       p->push_back(io);
-    }else if (unlikely(io->buffers_p.front()->datatype() == 
+    }else if (unlikely(io->buffer_sp->datatype() == 
           ChatType::serverdisconnect)) {
       // remove peer server list;
       YILOG_TRACE ("func: {}. process peer sever disconnect", __func__);
@@ -325,7 +323,7 @@ connection_read_callback (struct ev_loop * loop,
     }else {
       // do work 
       YILOG_TRACE ("func: {}. subthread do work", __func__);
-      auto sp = io->buffers_p.front();
+      auto sp = io->buffer_sp;
       auto watcher = &write_asyn_watcher()->as;
       noti_threads()->sentWork(
           [&io, &loop, watcher, sp](){
@@ -336,8 +334,8 @@ connection_read_callback (struct ev_loop * loop,
     }
     
     YILOG_TRACE("buffer sp reference count {}", 
-        io->buffers_p.front().use_count());
-    io->buffers_p.front().reset(new yijian::buffer());
+        io->buffer_sp.use_count());
+    io->buffer_sp.reset(new yijian::buffer());
   }else{
     YILOG_TRACE ("read is not complete message");
   }
@@ -351,7 +349,7 @@ connection_write_callback (struct ev_loop * loop,
   YILOG_TRACE ("func: {}. ", __func__);
 
   // converse to usable io
-  Connection_IO * io = reinterpret_cast<Connection_IO*>(ww);
+  Write_IO * io = reinterpret_cast<Write_IO*>(ww);
 
   // write to socket
   // if write finish stop write, start read.
@@ -369,7 +367,7 @@ connection_write_callback (struct ev_loop * loop,
   }
 }
 
-PingNode * connect_peer(std::string ip, int port) {
+Read_IO * connect_peer(std::string ip, int port) {
   int sfd;
   struct sockaddr_in addr;
   sfd = socket(PF_INET, SOCK_STREAM, 0);
@@ -389,24 +387,22 @@ PingNode * connect_peer(std::string ip, int port) {
   printf("Connected Success %s:%d", ip.data(), port);
 
   // Connection_IO watcher for client
-  Connection_IO * client_read_watcher = 
-    (Connection_IO *) createReadPingNode();
-  Connection_IO * client_write_watcher = 
-    (Connection_IO *) createWritePingNode();
+  Read_IO * client_read_watcher = new Read_IO();
+  Write_IO * client_write_watcher = new Write_IO();
 
   if (NULL == client_read_watcher || 
       NULL == client_write_watcher) {
     perror ("new client watcher error");
   }
 
-  ev_io_init (&client_read_watcher->io, 
+  ev_io_init (&client_read_watcher->pingnode.io, 
       connection_read_callback, sfd, EV_READ);
   ev_io_init (&client_write_watcher->io,
       connection_read_callback, sfd, EV_WRITE);
-  client_read_watcher->contra_io = client_write_watcher;
-  client_write_watcher->contra_io = client_read_watcher;
+  client_read_watcher->writeio = client_write_watcher;
+  client_write_watcher->readio = client_read_watcher;
 
-  ev_io_start (loop(), &client_read_watcher->io);
+  ev_io_start (loop(), &client_read_watcher->pingnode.io);
 
   return client_read_watcher;
 }

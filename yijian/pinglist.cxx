@@ -6,30 +6,6 @@
 extern "C" {
 #endif
 
-PingNode * createReadPingNode() {
-  YILOG_TRACE ("func : {}", __func__);
-  PingNode * node = new PingNode();
-  node->buffers_p.push(std::make_shared<yijian::buffer>());
-  node->unread_sp = std::make_shared<chat::Unread>();
-  return node;
-}
-void destoryReadPingNode(PingNode * node) {
-  YILOG_TRACE ("func : {}", __func__);
-  while(!node->buffers_p.empty())
-    node->buffers_p.pop();
-  delete node;
-}
-PingNode * createWritePingNode() {
-  YILOG_TRACE ("func : {}", __func__);
-  PingNode * node = new PingNode();
-  return node;
-}
-void destoryWritePingNode(PingNode * node) {
-  YILOG_TRACE ("func : {}", __func__);
-  delete node;
-}
-
-
 List create_pinglist() {
 
   YILOG_TRACE ("func : {}", __func__);
