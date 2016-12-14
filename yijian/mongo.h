@@ -99,11 +99,41 @@ public:
 //      std::function<void(chat::ConnectInfoLittle&)> && func);
   void devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func);
+
+  template <class Vec_like> 
+  void devices(const Vec_like & membersid, 
+      std::function<void(chat::ConnectInfoLittle&)> && func) {
+    auto db = client_["chatdb"];
+    auto connectinfo_col = db["connectInfo"];
+    auto arraybuilder = bsoncxx::builder::stream::array{};
+    for (auto & memberid: membersid) {
+      arraybuilder << memberid;
+    }
+    auto member_array = arraybuilder 
+        << bsoncxx::builder::stream::finalize;
+
+    auto cursor = connectinfo_col.find(
+        bsoncxx::builder::stream::document{} 
+        << "userID" << 
+        bsoncxx::builder::stream::open_document
+        << "$in" << member_array << 
+        bsoncxx::builder::stream::close_document 
+        << "serverName" << serverName_
+        << "isLogin" << true
+        << bsoncxx::builder::stream::finalize);
+    auto infolittle = chat::ConnectInfoLittle();
+    for (auto doc: cursor) {
+      infolittle.set_uuid(doc["UUID"].get_utf8().value.to_string());
+      infolittle.set_isconnected(doc["isConnected"].get_bool().value);
+      infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool().value);
+      func(infolittle);
+    }
+  }
   
   // 40030
   void insertUUID(const chat::ConnectInfo & connectInfo);
   void updateUUID(const chat::ConnectInfo & connectInfo);
-  void findUUID(const std::string & uuid, 
+  bool findUUID(const std::string & uuid, 
       chat::ConnectInfo & connectInfo);
 
   /*

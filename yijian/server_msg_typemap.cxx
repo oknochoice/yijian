@@ -184,7 +184,9 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle,
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
   YILOG_TRACE ("func: {}. node specifiy", __func__);
   auto inClient = yijian::threadCurrent::inmemClient();
-  inClient->devices(node_specifiy, 
+  auto client = yijian::threadCurrent::mongoClient();
+  auto node_sp = client->queryNode(node_specifiy.tonodeid());
+  inClient->devices(node_sp->members(), 
       [buf_sp](chat::ConnectInfoLittle & infolittle) {
         traverseDevices(infolittle, buf_sp);
       });
@@ -204,7 +206,9 @@ void mountUnread2Node(const std::string & tonodeid,
     chat::NodeSpecifiy & node_specifiy) {
   YILOG_TRACE ("func: {}. node user", __func__);
   auto inClient = yijian::threadCurrent::inmemClient();
-  inClient->devices(node_specifiy, 
+  auto client = yijian::threadCurrent::mongoClient();
+  auto node_sp = client->queryNode(node_specifiy.tonodeid());
+  inClient->devices(node_sp->members(), 
       [&tonodeid, incrementid](chat::ConnectInfoLittle & infolittle) {
         traverseDevices(infolittle, tonodeid, incrementid);
       });
@@ -269,12 +273,6 @@ void dispatch(chat::Login & login) {
   try {
     auto user_sp = client->queryUser(login.phoneno(), login.countrycode());
     if (user_sp->password() == login.password()) {
-      // find device from db
-      auto devices = user_sp->mutable_devices();
-      auto it = find_if(devices->begin(), devices->end(),
-                  [&](const chat::Device& device) -> bool {
-                    return device.uuid() == login.device().uuid();
-                  });
       // setup device
       auto device = std::make_shared<chat::Device>();
       device->set_os(login.device().os());
@@ -283,6 +281,12 @@ void dispatch(chat::Login & login) {
       device->set_appversion(login.device().appversion());
       device->set_devicemodel(login.device().devicemodel());
       device->set_uuid(login.device().uuid());
+      // find device from db
+      auto devices = user_sp->mutable_devices();
+      auto it = find_if(devices->begin(), devices->end(),
+                  [&](const chat::Device& device) -> bool {
+                    return device.uuid() == login.device().uuid();
+                  });
       // check whether finded
       if (it != devices->end()) {
         // update user
@@ -293,6 +297,12 @@ void dispatch(chat::Login & login) {
       // add global user connect info
       auto isFind = inmem_client->findUUID(device->uuid(), connectInfo_);
       if (isFind) {
+        auto users_inconnectinfo = connectInfo_.mutable_users();
+        auto it = users_inconnectinfo->find(user_sp->id());
+        if (it == users_inconnectinfo->end()) {// not find
+          (*users_inconnectinfo)[user_sp->id()] = 1;
+        }else {
+        }
         connectInfo_.set_uuid(device->uuid());
         connectInfo_.set_userid(user_sp->id());
         connectInfo_.set_islogin(true);
@@ -300,17 +310,6 @@ void dispatch(chat::Login & login) {
         connectInfo_.set_isrecivenoti(false);
         connectInfo_.set_servername(SERVER_NAME);
         connectInfo_.set_nodepointor(0);
-        connectInfo_.clear_tonodeids();
-        for (auto & groupnodeid: user_sp->groupnodeids()) {
-          connectInfo_.add_tonodeids(groupnodeid);
-        }
-        connectInfo_.add_tonodeids("0");
-        auto users_inconnectinfo = connectInfo_.mutable_users();
-        auto isfindsession = users_inconnectinfo->find(user_sp->id());
-        if (isfindsession == users_inconnectinfo->end()) {// not find
-          (*users_inconnectinfo)[user_sp->id()] = 1;
-        }else {
-        }
 
         inmem_client->updateUUID(connectInfo_);
       }else {
@@ -321,11 +320,6 @@ void dispatch(chat::Login & login) {
         connectInfo_.set_isrecivenoti(false);
         connectInfo_.set_servername(SERVER_NAME);
         connectInfo_.set_nodepointor(0);
-        connectInfo_.clear_tonodeids();
-        for (auto & groupnodeid: user_sp->groupnodeids()) {
-          connectInfo_.add_tonodeids(groupnodeid);
-        }
-        connectInfo_.add_tonodeids("0");
         connectInfo_.clear_users();
         auto users_inconnectinfo = connectInfo_.mutable_users();
         (*users_inconnectinfo)[user_sp->id()] = 1;
@@ -333,6 +327,10 @@ void dispatch(chat::Login & login) {
         // insert connect info
         inmem_client->insertUUID(connectInfo_);
       }
+      // set current node
+      currentNode_->userid = user_sp->id();
+      currentNode_->deviceid = login.device().uuid();
+      currentNode_->sessionid = connectInfo_.users().at(user_sp->id());
       // response request device
       auto res = chat::LoginRes();
       res.set_uuid(device->uuid());
@@ -341,9 +339,6 @@ void dispatch(chat::Login & login) {
       mountBuffer2Node(buffer::Buffer(res), node_peer_);
       node_user_.set_touserid(currentNode_->userid);
       mountBuffer2Node(buffer::Buffer(res), node_user_);
-      // set current node
-      currentNode_->userid = user_sp->id();
-      currentNode_->deviceid = login.device().uuid();
     }else {
       mountBuffer2Node(errorBuffer(11001, "password or account error"),
           node_self_);
@@ -388,10 +383,12 @@ void dispatch(chat::Logout & logout) {
       throw std::system_error(std::error_code(11002, std::generic_category()),
           "device not find");
     }else {
-      client->updateDevice(user_sp->id(), *it);
       // update connect info
       auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->findUUID(it->uuid(), connectInfo_);
+      auto isFind = inmem_client->findUUID(it->uuid(), connectInfo_);
+      if (unlikely(!isFind)) {
+        YILOG_ERROR ("logout not find connection info");
+      }
       connectInfo_.set_isconnected(false);
       connectInfo_.set_islogin(false);
       connectInfo_.set_nodepointor(0);
@@ -448,7 +445,10 @@ void dispatch(chat::ClientConnect & connect)  {
           node_self_);
     }else {
       auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->findUUID(connect.uuid(), connectInfo_);
+      auto isFind = inmem_client->findUUID(connect.uuid(), connectInfo_);
+      if (unlikely(!isFind)) {
+        YILOG_ERROR ("connect not find connection info");
+      }
       // set current node
       currentNode_->userid = connect.userid();
       currentNode_->deviceid = connect.uuid();
@@ -492,7 +492,10 @@ void dispatch(chat::ClientDisConnect & disconnect)  {
     }else {
       // update in memory db connectinfo
       auto inmem_client = yijian::threadCurrent::inmemClient();
-      inmem_client->findUUID(disconnect.uuid(), connectInfo_);
+      auto isFind = inmem_client->findUUID(disconnect.uuid(), connectInfo_);
+      if (unlikely(!isFind)) {
+        YILOG_ERROR ("disconnect not find connection info");
+      }
       connectInfo_.set_isconnected(false);
       connectInfo_.set_nodepointor(0);
       auto users_inconnectinfo = connectInfo_.mutable_users();
@@ -518,60 +521,56 @@ void dispatch(chat::AddFriend & frd) {
 
   try {
   /*
-  auto inviter_sp = queryUser(addfrd.inviterid());
-  auto & inviterreqs = inviter_sp->friendreqs();
-  auto inviter_it = find_if(inviterreqs.begin(), inviterreqs.end(),
-      [&](chat::FriendRequest & req) -> bool {
-        return req.tonodeid() == addfrd.inviteeid();
-      });
-  if (unlikely(inviter_it != inviterreqs.end())) {
-    if (inviter_it->isinviter()) {
-      throw std::system_error(std::error_code(40012, 
-            std::generic_category()),
-            "as inviter add friend already");
-    }else {
-      throw std::system_error(std::error_code(40013, 
-            std::generic_category()),
-            "as invitee add friend already");
-    }
-  }
-  auto invitee_sp = queryUser(addfrd.inviteeid());
-  auto & inviteereqs = invitee_sp->friendreqs();
-  auto invitee_it = find_if(inviteereqs.begin(), inviteereqs.end(),
-      [&](chat::FriendRequest & req) -> bool {
-        return req.tonodeid() == addfrd.inviterid();
-      });
-
-  if (unlikely(invitee_it != inviteereqs.end())) {
-    if (invitee_it->isinviter()) {
-      throw std::system_error(std::error_code(40014, 
-            std::generic_category()),
-            "as inviter add friend already");
-    }else {
-      throw std::system_error(std::error_code(40015, 
-            std::generic_category()),
-            "as invitee add friend already");
-    }
-  }
   */
     // check blacklist
     auto peerUser = client->queryUser(frd.inviteeid());
-    find_if(peerUser->blacklist().begin(), peerUser->blacklist().end(),
+    auto it = find_if(peerUser->blacklist().begin(), peerUser->blacklist().end(),
         [&](const std::string & black) -> bool{
-          bool re = black == frd.inviteeid();
-          if (re) {
-            throw std::system_error(
-                std::error_code(11005, std::generic_category()), 
-                "blacklist");
-          }
-          return re;
+          return black == frd.inviteeid();
         });
+    if (it != peerUser->blacklist().end()) {
+      throw std::system_error(
+          std::error_code(11005, std::generic_category()), 
+          "blacklist");
+    }
+    // check whether is request already (db maybe insert failure(unlikely))
+    auto user_sp = client->queryUser(frd.inviterid());
+    auto & user_reqs = user_sp->friendreqs();
+    auto user_it = find_if(user_reqs.begin(), user_reqs.end(),
+        [&](const chat::FriendRequest & req) -> bool {
+          return req.userid() == frd.inviteeid();
+        });
+    if (unlikely(user_it != user_reqs.end())) {
+      if (user_it->isinviter()) {
+        throw std::system_error(std::error_code(11020, 
+              std::generic_category()),
+              "as inviter add friend already");
+      }else {
+        throw std::system_error(std::error_code(11021, 
+              std::generic_category()),
+              "as invitee add friend already");
+      }
+    }
+    // double check is request already (db insert failure)
+    auto & peer_reqs = peerUser->friendreqs();
+    auto peer_it = find_if(peer_reqs.begin(), peer_reqs.end(),
+        [&](const chat::FriendRequest & req) -> bool {
+          return req.userid() == frd.inviterid();
+        });
+
+    if (unlikely(peer_it != peer_reqs.end())) {
+      if (peer_it->isinviter()) {
+        throw std::system_error(std::error_code(11022, 
+              std::generic_category()),
+              "as inviter add friend already and db insert failure");
+      }else {
+        throw std::system_error(std::error_code(11023, 
+              std::generic_category()),
+              "as invitee add friend already and db insert failure");
+      }
+    }
     // insert inviter invitee
     auto res = std::make_shared<chat::AddFriendRes>();
-    res->set_inviterid(currentNode_->userid);
-    res->set_inviteeid(frd.inviteeid());
-    res->set_msg(frd.msg());
-    res->set_nickname(frd.nickname());
     // send buffer
     auto buf_sp = buffer::Buffer(*res);
     mountBuffer2Node(buf_sp, node_self_);
@@ -612,56 +611,49 @@ void dispatch(chat::AddFriendRes & frdRes) {
 
 void dispatch(chat::AddFriendAuthorize & addAuth) {
   YILOG_TRACE ("func: {}. ", __func__);
+  auto client = yijian::threadCurrent::mongoClient();
   try {
-  /*
-  auto inviter_sp = queryUser(inviter);
-  auto & inviterreqs = inviter_sp->friendreqs();
-  auto inviter_it = find_if(inviterreqs.begin(), inviterreqs.end(),
-      [&](chat::FriendRequest & req) -> bool {
-        return req.tonodeid() == invitee &&
-                req.isinviter() == true;
-      });
-  if (unlikely(inviter_it == inviterreqs.end())) {
-    throw std::system_error(std::error_code(40010, std::generic_category()),
-          "no request in inviter");
-  }
-  auto invitee_sp = queryUser(invitee);
-  auto & inviteereqs = invitee_sp->friendreqs();
-  auto invitee_it = find_if(inviteereqs.begin(), inviteereqs.end(),
-      [&](chat::FriendRequest & req) -> bool {
-        return req.tonodeid() == inviter &&
-                req.isinviter() == false;
-      });
-  if (unlikely(invitee_it == inviteereqs.end())) {
-    throw std::system_error(std::error_code(40011, std::generic_category()),
-          "no request in invitee");
-  }
-  */
+    if (unlikely(addAuth.inviteeid() != currentNode_->userid)) {
+      throw std::system_error(std::error_code(11024, std::generic_category()),
+            "no request in inviter");
+    }
+    auto user_sp = client->queryUser(addAuth.inviteeid());
+    auto & user_reqs = user_sp->friendreqs();
+    auto user_it = find_if(user_reqs.begin(), user_reqs.end(),
+        [&](const chat::FriendRequest & req) -> bool {
+          return req.userid() == addAuth.inviterid() &&
+                  req.isinviter() == false;
+        });
+    if (unlikely(user_it == user_reqs.end())) {
+      throw std::system_error(std::error_code(11025, std::generic_category()),
+            "no request in inviter");
+    }
+    auto peer_sp = client->queryUser(addAuth.inviterid());
+    auto & peer_reqs = peer_sp->friendreqs();
+    auto peer_it = find_if(peer_reqs.begin(), peer_reqs.end(),
+        [&](const chat::FriendRequest & req) -> bool {
+          return req.userid() == addAuth.inviteeid() &&
+                  req.isinviter() == true;
+        });
+    if (unlikely(peer_it == peer_reqs.end())) {
+      throw std::system_error(std::error_code(11026, std::generic_category()),
+            "no request in invitee");
+    }
     if (addAuth.isagree() == true) {
       // add friend
-      auto client = yijian::threadCurrent::mongoClient();
-      auto info = client->addFriendAuthorize(
-          addAuth.inviterid(), addAuth.inviternickname(),
-          addAuth.inviteeid(), addAuth.inviteenickname());
+      client->addFriendAuthorize(addAuth.inviterid(),
+          addAuth.inviteeid(), addAuth.tonodeid());
       // send 
       auto authRes = chat::AddFriendAuthorizeRes();
-      authRes.set_isagree(true);
+      authRes.set_isagree(chat::IsAgree::agree);
       // inviter
-      authRes.mutable_friend_()->set_tonodeid(info->tonodeid());
-      authRes.mutable_friend_()->set_nickname(addAuth.inviternickname());
-      authRes.mutable_friend_()->set_userid(addAuth.inviterid());
-      authRes.set_userversion(info->inviteruserversion());
-
+      authRes.set_touserid_outer(addAuth.inviterid());
       node_user_.set_touserid(addAuth.inviterid());
       auto inviter_buf = buffer::Buffer(authRes);
       mountBuffer2Node(inviter_buf, node_user_);
       mountBuffer2Node(inviter_buf, node_peer_);
       // invitee
-      authRes.mutable_friend_()->set_tonodeid(info->tonodeid());
-      authRes.mutable_friend_()->set_nickname(addAuth.inviteenickname());
-      authRes.mutable_friend_()->set_userid(addAuth.inviteeid());
-      authRes.set_userversion(info->inviteeuserversion());
-
+      authRes.set_touserid_outer(addAuth.inviteeid());
       node_user_.set_touserid(addAuth.inviteeid());
       auto invitee_buf = buffer::Buffer(authRes);
       mountBuffer2Node(invitee_buf, node_self_);
@@ -679,7 +671,7 @@ void dispatch(chat::AddFriendAuthorizeRes & authRes) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   try {
-    node_user_.set_touserid(authRes.friend_().userid());
+    node_user_.set_touserid(authRes.touserid_outer());
     mountBuffer2Node(buffer::Buffer(authRes), node_user_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
@@ -712,10 +704,6 @@ void dispatch(chat::CreateGroup & group) {
     }
     // mongo insert group info
     auto groupRes = client->createGroup(group);
-    // connectinfo insert info
-    auto inmem_client = yijian::threadCurrent::inmemClient();
-    inmem_client->addTonodeid2member(
-        group.membersid(), groupRes->tonodeid());
     // send to self
     mountBuffer2Node(buffer::Buffer(*groupRes), node_self_);
     // self other device
@@ -764,10 +752,6 @@ void dispatch(chat::GroupAddMember & groupMember) {
     }
     // mongo insert group info
     auto addRes = client->addMembers2Group(groupMember);
-    // connectinfo insert info
-    auto inmem_client = yijian::threadCurrent::inmemClient();
-    inmem_client->addTonodeid2member(
-        groupMember.membersid(), groupMember.groupnodeid());
     // send to self
     mountBuffer2Node(buffer::Buffer(*addRes), node_self_);
     // send to self other device
@@ -868,13 +852,11 @@ void dispatch(chat::NodeMessage & message) {
       mountBuffer2Node(encoding_res_sp, node_peer_);
 
       // send to node
-      node_specifiy_ = chat::NodeSpecifiy();
       node_specifiy_.set_tonodeid(res->tonodeid());
       mountBuffer2Node(buffer::Buffer(message), node_specifiy_);
     }else {// user
       // self
       mountBuffer2Node(buffer::Buffer(*res), node_self_);
-      // peer
 
       // to friend
       node_user_.set_touserid(message.touserid_outer());

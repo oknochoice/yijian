@@ -349,6 +349,7 @@ mongo_client::addFriend(const chat::AddFriend & addfrd) {
       << "toNodeID" << msgNodeid 
       << "userID" << addfrd.inviteeid()
       << "isInviter" << true
+      << "isAgree" << chat::IsAgree::ignore
       << close_document 
       << "$inc" << "version"
       << close_document
@@ -367,6 +368,7 @@ mongo_client::addFriend(const chat::AddFriend & addfrd) {
       << "toNodeID" << msgNodeid 
       << "userID" << addfrd.inviterid()
       << "isInviter" << false
+      << "isAgree" << chat::IsAgree::ignore
       << close_document 
       << "$inc" << "version"
       << close_document
@@ -501,8 +503,22 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto messageNode_collection = db["messageNode"];
+  auto user_collection = db["user"];
+
+  // message node add member
+  auto arraybuilder = array{};
+  for (auto & memberid: groupMember.membersid()) {
+    arraybuilder << memberid;
+  }
+  auto membersid = arraybuilder << finalize;
+  auto updateNode_result = messageNode_collection.update_one(
+      document{} << "_id" << bsoncxx::oid(groupMember.groupnodeid())
+      << finalize,
+      document{} << "$addToSet" << open_document
+      << "membersid" << open_document
       << "$each" << membersid << close_document << close_document
       << finalize);
+
   if (unlikely(!updateNode_result)) {
     YILOG_ERROR ("add group member failure, groupid: {}", 
         groupMember.groupnodeid());
@@ -735,6 +751,7 @@ inmem_client::inmem_client(std::string serverName)
 inmem_client::~inmem_client () {
 }
 
+/*
 void inmem_client::devices(const chat::NodeSpecifiy& node_specifiy, 
     std::function<void(chat::ConnectInfoLittle&)> && func) {
   YILOG_TRACE ("func: {}. ", __func__);
@@ -752,6 +769,7 @@ void inmem_client::devices(const chat::NodeSpecifiy& node_specifiy,
     func(infolittle);
   }
 }
+*/
 
 void inmem_client::devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func) {
@@ -770,6 +788,7 @@ void inmem_client::devices(const chat::NodeUser & node_user,
     infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool().value);
     func(infolittle);
   }
+  
 }
 
 void inmem_client::insertUUID(
@@ -824,27 +843,14 @@ void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
   auto maybe_result = connectinfo_col.update_one(
       document{} << "UUID" << connectInfo.uuid()
       << finalize,
-      document{}
-  // session map {userid: sessionid}
-  auto sessionbuilder = array{};
-  for (auto & map: connectInfo.users()) {
-    sessionbuilder << open_document
-      << "userID" << map.first 
-      << "sessionID" << map.second << close_document;
-  }
-  auto users_array = sessionbuilder << finalize;
-  // insert
-  auto maybe_result = connectinfo_col.update_one(
-      document{} << "UUID" << connectInfo.uuid()
-      << finalize,
-      document{}
+      document{} << "$set" << open_document
       << "userID" << connectInfo.userid()
       << "isLogin" << connectInfo.islogin()
       << "isConnected" << connectInfo.isconnected()
       << "isReciveNoti" << connectInfo.isrecivenoti()
       << "serverName" << serverName_
       << "nodepointor" << connectInfo.nodepointor()
-      << "users" << users_array
+      << "users" << users_array << close_document
       << finalize
       );
   if (unlikely(!maybe_result)) {
@@ -854,7 +860,7 @@ void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
   }
 }
 
-void inmem_client::findUUID(const std::string & uuid,
+bool inmem_client::findUUID(const std::string & uuid,
     chat::ConnectInfo & connectInfo) {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -864,6 +870,7 @@ void inmem_client::findUUID(const std::string & uuid,
   auto maybe_result = connectinfo_col.find_one(
       document{} << "UUID" << uuid << finalize);
   if (!maybe_result) {
+    return false;
   }
   auto connectinfo = maybe_result->view();
   connectInfo.set_uuid(uuid);
@@ -886,6 +893,7 @@ void inmem_client::findUUID(const std::string & uuid,
     (*musers)[doc["userID"].get_utf8().value.to_string()] = 
       doc["sessionID"].get_int32().value;
   }
+  return true;
 
 }
 

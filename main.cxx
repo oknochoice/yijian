@@ -97,12 +97,12 @@ TEST_CASE("IM business","[business]") {
     regst.set_nickname("yijian");
     auto sp = yijian::buffer::Buffer(regst);
     sleep(1);
-    client_send(sp);
+    client_send(sp, nullptr);
     mainwait();
-    client_send(sp);
+    client_send(sp, nullptr);
     mainwait();
     auto msgTest = chat::NodeMessage();
-    client_send(yijian::buffer::Buffer(msgTest));
+    client_send(yijian::buffer::Buffer(msgTest), nullptr);
   }
 
 }

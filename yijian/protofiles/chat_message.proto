@@ -11,6 +11,10 @@ message NodeSelfDevice {
 message NodePeerServer {
 }
 
+message NodeSpecifiy {
+  string toNodeID = 1;
+}
+
 message NodeUser {
   string toUserID = 1;
 }
@@ -203,6 +207,7 @@ message AddFriendAuthorize {
 
 message AddFriendAuthorizeRes {
   IsAgree isAgree = 1;
+  string  toUserID_outer = 2;
 }
 
 message CreateGroup {
@@ -305,6 +310,7 @@ message ConnectInfo {
   bool   isReciveNoti = 5;
   string serverName = 6;
   int64  nodepointor = 7;
+  // userID sessionID
   map<string, int32> users = 8;
 
 }

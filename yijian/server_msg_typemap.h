@@ -28,6 +28,7 @@ namespace yijian {
     static thread_local chat::NodePeerServer node_peer_;
     static thread_local chat::NodeUser node_user_;
     static thread_local chat::NodeSpecifiy node_specifiy_;
+
     Buffer_SP errorBuffer();
     Buffer_SP errorBuffer(uint_fast32_t err_num, std::string && err_msg);
   }
