@@ -13,10 +13,10 @@
 using yijian::Buffer_SP;
 typedef std::function<void(Buffer_SP)> Read_CB;
 
-// main thread
+// main thread call, read_cb subthread callback
 void create_client(Read_CB && read_cb);
-// main thread
-void client_send(Buffer_SP sp_buffer);
+// main thread call
+void client_send(Buffer_SP sp_buffer, int16_t * sessionid);
 
 
 

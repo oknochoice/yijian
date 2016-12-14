@@ -38,11 +38,12 @@ public:
   std::shared_ptr<chat::User> 
     queryUser(const std::string & userID);
 
-  std::shared_ptr<chat::AddFriendAuthorizeInfo>
-    addFriendAuthorize(const std::string & inviter, 
-        const std::string & inviterNickname,
-        const std::string & invitee,
-        const std::string & inviteeNickname);
+  std::shared_ptr<chat::AddFriendRes>
+    addFriend(const chat::AddFriend & addfrd);
+
+  void addFriendAuthorize(const std::string & inviter, 
+      const std::string & invitee,
+      const std::string & tonodeid);
 
   // group  
   // 40020
@@ -94,17 +95,18 @@ public:
   ~inmem_client();
 
   // query current server device connect info
-  void devices(const chat::NodeSpecifiy& node_specifiy, 
-      std::function<void(chat::ConnectInfoLittle&)> && func);
+//  void devices(const chat::NodeSpecifiy& node_specifiy, 
+//      std::function<void(chat::ConnectInfoLittle&)> && func);
   void devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func);
   
   // 40030
   void insertUUID(const chat::ConnectInfo & connectInfo);
   void updateUUID(const chat::ConnectInfo & connectInfo);
-  bool findUUID(const std::string & uuid, 
+  void findUUID(const std::string & uuid, 
       chat::ConnectInfo & connectInfo);
 
+  /*
   // member's all device add tonodeid
   // 40040
   template <class Vec_like> void 
@@ -141,6 +143,7 @@ public:
       }
     }
   }
+  */
 
 private:
 

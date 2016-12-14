@@ -248,7 +248,6 @@ void dispatch(chat::Register & enroll) {
         __func__, id);
 
     auto res = chat::RegisterRes();
-    res.set_issuccess(true);
     res.set_userid(id);
 
     mountBuffer2Node(buffer::Buffer(res), node_self_);
@@ -518,6 +517,43 @@ void dispatch(chat::AddFriend & frd) {
   auto client = yijian::threadCurrent::mongoClient();
 
   try {
+  /*
+  auto inviter_sp = queryUser(addfrd.inviterid());
+  auto & inviterreqs = inviter_sp->friendreqs();
+  auto inviter_it = find_if(inviterreqs.begin(), inviterreqs.end(),
+      [&](chat::FriendRequest & req) -> bool {
+        return req.tonodeid() == addfrd.inviteeid();
+      });
+  if (unlikely(inviter_it != inviterreqs.end())) {
+    if (inviter_it->isinviter()) {
+      throw std::system_error(std::error_code(40012, 
+            std::generic_category()),
+            "as inviter add friend already");
+    }else {
+      throw std::system_error(std::error_code(40013, 
+            std::generic_category()),
+            "as invitee add friend already");
+    }
+  }
+  auto invitee_sp = queryUser(addfrd.inviteeid());
+  auto & inviteereqs = invitee_sp->friendreqs();
+  auto invitee_it = find_if(inviteereqs.begin(), inviteereqs.end(),
+      [&](chat::FriendRequest & req) -> bool {
+        return req.tonodeid() == addfrd.inviterid();
+      });
+
+  if (unlikely(invitee_it != inviteereqs.end())) {
+    if (invitee_it->isinviter()) {
+      throw std::system_error(std::error_code(40014, 
+            std::generic_category()),
+            "as inviter add friend already");
+    }else {
+      throw std::system_error(std::error_code(40015, 
+            std::generic_category()),
+            "as invitee add friend already");
+    }
+  }
+  */
     // check blacklist
     auto peerUser = client->queryUser(frd.inviteeid());
     find_if(peerUser->blacklist().begin(), peerUser->blacklist().end(),
@@ -577,6 +613,30 @@ void dispatch(chat::AddFriendRes & frdRes) {
 void dispatch(chat::AddFriendAuthorize & addAuth) {
   YILOG_TRACE ("func: {}. ", __func__);
   try {
+  /*
+  auto inviter_sp = queryUser(inviter);
+  auto & inviterreqs = inviter_sp->friendreqs();
+  auto inviter_it = find_if(inviterreqs.begin(), inviterreqs.end(),
+      [&](chat::FriendRequest & req) -> bool {
+        return req.tonodeid() == invitee &&
+                req.isinviter() == true;
+      });
+  if (unlikely(inviter_it == inviterreqs.end())) {
+    throw std::system_error(std::error_code(40010, std::generic_category()),
+          "no request in inviter");
+  }
+  auto invitee_sp = queryUser(invitee);
+  auto & inviteereqs = invitee_sp->friendreqs();
+  auto invitee_it = find_if(inviteereqs.begin(), inviteereqs.end(),
+      [&](chat::FriendRequest & req) -> bool {
+        return req.tonodeid() == inviter &&
+                req.isinviter() == false;
+      });
+  if (unlikely(invitee_it == inviteereqs.end())) {
+    throw std::system_error(std::error_code(40011, std::generic_category()),
+          "no request in invitee");
+  }
+  */
     if (addAuth.isagree() == true) {
       // add friend
       auto client = yijian::threadCurrent::mongoClient();
@@ -1089,7 +1149,10 @@ void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp) {
             sp->datatype() == ChatType::creategroup ||
             sp->datatype() == ChatType::groupaddmember ||
             sp->datatype() == ChatType::nodemessage ||
-            sp->datatype() == ChatType::querymessage
+            sp->datatype() == ChatType::querymessage ||
+            sp->datatype() == ChatType::media ||
+            sp->datatype() == ChatType::querymedia ||
+            sp->datatype() == ChatType::mediacheck
           )
         )) {
     auto error = chat::Error();
@@ -1101,16 +1164,22 @@ void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp) {
   }else {
     YILOG_TRACE("func: {}, sp {} {} {}", __func__,
         sp->datatype(), sp->data(), sp->data_size());
-    if (unlikely(false == currentNode_->isConnect && (
-              sp->datatype() == ChatType::registor ||
+    if (unlikely(false == currentNode_->isConnect)) {
+      if (likely(sp->datatype() == ChatType::registor ||
               sp->datatype() == ChatType::login ||
-              sp->datatype() == ChatType::logout ||
-              sp->datatype() == ChatType::clientconnect ||
-              sp->datatype() == ChatType::clientdisconnect
-            )
-          ))
-    ++currentNode_->sessionid;
-    dispatch(sp->datatype(), sp->data(), sp->data_size());
+              sp->datatype() == ChatType::clientconnect)) {
+        ++currentNode_->sessionid;
+        dispatch(sp->datatype(), sp->data(), sp->data_size());
+      }else {
+        auto error = chat::Error();
+        error.set_errnum(11011);
+        error.set_errmsg("need connect first");
+        mountBuffer2Node(buffer::Buffer(error), node_peer_);
+      }
+    }else {
+      ++currentNode_->sessionid;
+      dispatch(sp->datatype(), sp->data(), sp->data_size());
+    }
   }
 
 }

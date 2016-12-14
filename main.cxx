@@ -12,6 +12,8 @@
 #include <thread>
 #include <condition_variable>
 
+#include <boost/coroutine2/all.hpp>
+
 #ifdef __cpluscplus
 extern "C" {
 #endif
@@ -61,23 +63,46 @@ TEST_CASE("IM business","[business]") {
 
   auto thread_id = std::this_thread::get_id();
   std::cout << "main thread id " << thread_id << std::endl;
+
+  typedef boost::coroutines2::coroutine<chat::NodeMessage> coro_t;
+  coro_t::pull_type getOneMsg(
+      [](coro_t::push_type & sink){
+        auto msg = chat::NodeMessage();
+        for (int i = 0; i < 1000; ++i) {
+          
+        }
+      });
+
   create_client([](Buffer_SP buffer_sp) {
-        YILOG_TRACE("client callback");
-        YILOG_TRACE("data {}", buffer_sp->data());
+        // register login logout connect disconnect
+        YILOG_TRACE("client callback regist");
+        YILOG_TRACE("client callback duregist");
+        YILOG_TRACE("client callback login");
+        YILOG_TRACE("client callback logout");
+        YILOG_TRACE("client callback login");
+        YILOG_TRACE("client callback connect");
+        YILOG_TRACE("client callback logout");
+        YILOG_TRACE("client callback login");
+        YILOG_TRACE("client callback connect");
+        YILOG_TRACE("client callback disconnect");
+        YILOG_TRACE("client callback logout");
         notimain();
       });
 
   SECTION("register") {
     auto regst = chat::Register();
-    regst.set_phoneno("18514029911");
+    regst.set_phoneno("18514029918");
     regst.set_countrycode("86");
     regst.set_password("123456");
     regst.set_nickname("yijian");
     auto sp = yijian::buffer::Buffer(regst);
     sleep(1);
     client_send(sp);
-    YILOG_DEBUG ("size: {}", sp->size());
     mainwait();
+    client_send(sp);
+    mainwait();
+    auto msgTest = chat::NodeMessage();
+    client_send(yijian::buffer::Buffer(msgTest));
   }
 
 }

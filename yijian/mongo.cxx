@@ -29,8 +29,6 @@ void userinfoDocument(chat::UserInfo & userinfo,
 
   userinfo.set_tonodeid(userinfo_view["toNodeID"].
       get_utf8().value.to_string());
-  userinfo.set_nickname(userinfo_view["nickname"].
-      get_utf8().value.to_string());
   userinfo.set_userid(userinfo_view["userID"].
           get_utf8().value.to_string());
 
@@ -93,6 +91,12 @@ void nodemessageDocument(chat::NodeMessage & nodemessage,
       get_utf8().value.to_string());
 }
 
+void friendreqDocument(chat::FriendRequest & frdReq, 
+    bsoncxx::document::view & view) {
+  frdReq.set_isinviter(view["isInviter"].get_bool().value);
+  frdReq.set_userid(view["userID"].get_utf8().value.to_string());
+}
+
 std::shared_ptr<chat::User> userDocoument(bsoncxx::document::view & user_view) {
   YILOG_TRACE ("func: {}. ", __func__);
 
@@ -136,6 +140,16 @@ std::shared_ptr<chat::User> userDocoument(bsoncxx::document::view & user_view) {
       auto doc_view = it->get_document().view();
       auto device = user_sp->mutable_devices()->Add();
       deviceDocument(*device, doc_view);
+    }
+
+    auto friendreqs = 
+      user_view["friendreqs"].get_array().value;
+    for (auto it = friendreqs.begin();
+        it != friendreqs.end();
+        ++it) {
+      auto doc_view = it->get_document().view();
+      auto friendreq = user_sp->mutable_friendreqs()->Add();
+      friendreqDocument(*friendreq, doc_view);
     }
     return user_sp;
 }
@@ -182,6 +196,7 @@ std::string& mongo_client::insertUser(const chat::Register & enroll) {
     << "blacklist" << open_array << close_array
     << "groupNodeIDs" << open_array << close_array
     << "devices" << open_array << close_array
+    << "friendreqs" << open_array << close_array
     << finalize;
   auto maybe_result = user_collection.insert_one(doc_value.view());
   if (unlikely(!maybe_result)) {
@@ -288,150 +303,149 @@ mongo_client::queryUser(const std::string & userID) {
   return userDocoument(user_view);
 }
 
-std::shared_ptr<chat::AddFriendAuthorizeInfo>
-mongo_client::addFriendAuthorize(const std::string & inviter, 
-      const std::string & inviterNickname,
-      const std::string & invitee,
-      const std::string & inviteeNickname) {
+std::shared_ptr<chat::AddFriendRes>
+mongo_client::addFriend(const chat::AddFriend & addfrd) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+
+  auto db = client_["chatdb"];
+
+  // create new node
+  auto messageNode_collection = db["messageNode"];
+  auto msgNode_maybe_result = messageNode_collection.insert_one(
+      document{} << "authorize" << chat::MessageNode::peer
+      << "creatorID" << addfrd.inviterid()
+      << "nickname" << ""
+      << "managerIDs" << open_array << close_array
+      << "memebers" << open_array 
+      << addfrd.inviterid() << addfrd.inviteeid() << close_array
+      << finalize);
+  if (unlikely(!msgNode_maybe_result)) {
+    YILOG_ERROR("create message node failure");
+    throw std::system_error(std::error_code(40004, std::generic_category()),
+        "create message node failure");
+  }
+  auto msgNodeid = 
+      msgNode_maybe_result->inserted_id().get_oid().value.to_string();
+  // create messge node count
+  auto messageNode_count_col = db["messageNodeCount"];
+  auto count_maybe_result = messageNode_collection.insert_one(
+      document{} << "nodeID" << msgNodeid
+      << "count" << 0
+      << finalize);
+  if (unlikely(!count_maybe_result)) {
+    YILOG_ERROR("create message node count failure, message node id: {}",
+        msgNodeid);
+    throw std::system_error(std::error_code(40005, std::generic_category()),
+        "create message node count failure");
+  }
+  // add message node to inviter
+  auto user_collection = db["user"];
+  auto inviter_maybe_result = user_collection.update_one(
+      document{} << "_id" << bsoncxx::oid(addfrd.inviterid())
+      << finalize,
+      document{} << "$addToSet" << open_document
+      << "friendreqs" << open_document
+      << "toNodeID" << msgNodeid 
+      << "userID" << addfrd.inviteeid()
+      << "isInviter" << true
+      << close_document 
+      << "$inc" << "version"
+      << close_document
+      << finalize);
+  if (unlikely(!inviter_maybe_result)) {
+    YILOG_ERROR ("add friendreqs failure, user id {}", addfrd.inviterid());
+    throw std::system_error(std::error_code(40006, std::generic_category()),
+        "add friendreqs failure");
+  }
+  // add message node to invitee
+  auto invitee_maybe_result = user_collection.update_one(
+      document{} << "_id" << bsoncxx::oid(addfrd.inviteeid())
+      << finalize,
+      document{} << "$addToSet" << open_document
+      << "friendreqs" << open_document
+      << "toNodeID" << msgNodeid 
+      << "userID" << addfrd.inviterid()
+      << "isInviter" << false
+      << close_document 
+      << "$inc" << "version"
+      << close_document
+      << finalize);
+  if (unlikely(!inviter_maybe_result)) {
+    YILOG_ERROR ("add friendreqs failure, user id {}", addfrd.inviteeid());
+    throw std::system_error(std::error_code(40007, std::generic_category()),
+        "add friendreqs failure");
+  }
+
+  // insert request message
+  auto requestmsg = chat::NodeMessage();
+  requestmsg.set_fromuserid(addfrd.inviterid());
+  requestmsg.set_tonodeid(msgNodeid);
+  requestmsg.set_touserid_outer(addfrd.inviteeid());
+  requestmsg.set_type(chat::MediaType::TEXT);
+  requestmsg.set_content(addfrd.msg());
+  
+  insertMessage(requestmsg);
+
+  // return message
+  auto res = std::make_shared<chat::AddFriendRes>();
+  res->set_tonodeid(msgNodeid);
+  res->set_inviterid(addfrd.inviterid());
+  res->set_inviteeid(addfrd.inviteeid());
+  
+  return res;
+
+}
+
+void mongo_client::addFriendAuthorize(const std::string & inviter, 
+      const std::string & invitee, 
+      const std::string & tonodeid) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   auto db = client_["chatdb"];
   auto user_collection = db["user"];
-  // check old friendship
-  auto old_inviter_friend = user_collection.find_one(
+
+  auto inviter_result = user_collection.update_one(
       document{} << "_id" << bsoncxx::oid(inviter)
-      << "friends.userID" << invitee 
-      << finalize);
-  auto old_invitee_friend = user_collection.find_one(
-      document{} << "_id" << bsoncxx::oid(invitee)
-      << "friends.userID" << inviter 
-      << finalize);
-
-  if (unlikely(old_inviter_friend && old_invitee_friend)) {
-    YILOG_ERROR ("add friend duple, inviter {}, invitee",
+      << finalize,
+      document{} << "$addToSet" << open_document 
+      << "friends" << open_document
+      << "toNodeID" << tonodeid
+      << "userID" << invitee << close_document
+      << "$inc" << "version"
+      << "$pull" << open_document
+      << "friendreqs" << open_document
+      << "toNodeID" << tonodeid
+      << close_document << close_document
+      << close_document << finalize);
+  if (unlikely(!inviter_result)) {
+    YILOG_ERROR ("add friend authorize failure, userid {}"
+        "add userid {}",
         inviter, invitee);
-    throw std::system_error(std::error_code(40004, std::generic_category()),
-        "already friend");
+    throw std::system_error(std::error_code(40008, std::generic_category()),
+        "add friend authorize failure");
+  }
+  auto invitee_result = user_collection.update_one(
+      document{} << "_id" << bsoncxx::oid(invitee)
+      << finalize,
+      document{} << "$addToSet" << open_document 
+      << "friends" << open_document
+      << "toNodeID" << tonodeid
+      << "userID" << inviter << close_document
+      << "$inc" << "version"
+      << "$pull" << open_document
+      << "friendreqs" << open_document
+      << "toNodeID" << tonodeid
+      << close_document << close_document
+      << close_document << finalize);
+  if (unlikely(!invitee_result)) {
+    YILOG_ERROR ("add friend authorize failure, userid {}"
+        "add userid {}",
+        invitee, inviter);
+    throw std::system_error(std::error_code(40009, std::generic_category()),
+        "add friend authorize failure");
   }
 
-  if (unlikely(old_inviter_friend)) {
-    auto inviter_check = user_collection.update_one(
-        document{} << "_id" << bsoncxx::oid(inviter)
-        << "friends.userID" << invitee 
-        << finalize,
-        document{} << "$set" << open_document
-        << "friends.$.userID" << "-1" << close_document
-        << finalize);
-    YILOG_ERROR("add friend redundancy userid {}", inviter);
-  }
-  if (unlikely(old_invitee_friend)) {
-    auto invitee_check = user_collection.update_one(
-        document{} << "_id" << bsoncxx::oid(invitee)
-        << "friends.userID" << inviter 
-        << finalize,
-        document{} << "$set" << open_document
-        << "friends.$.userID" << "-1" << close_document
-        << finalize);
-    YILOG_ERROR("add friend redundancy userid {}", invitee);
-  }
-
-  // create new node
-  auto messageNode_collection = db["messageNode"];
-  auto maybe_result = messageNode_collection.insert_one(
-      document{} << "authorize" << chat::MessageNode::peer
-      << "creatorID" << inviter
-      << "nickname" << ""
-      << "managerIDs" << open_array << close_array
-      << "memebers" << open_array 
-      << inviter << invitee << close_array
-      << finalize);
-  // return info
-  auto info = std::make_shared<chat::AddFriendAuthorizeInfo>();
-  // add node to user
-  if (likely(maybe_result)) {
-    auto obj_id = maybe_result->inserted_id().get_oid().value.to_string();
-    // add message node count
-    auto messageNode_count_col = db["messageNodeCount"];
-    auto maybe_result_count = messageNode_collection.insert_one(
-        document{} << "nodeID" << obj_id
-        << "count" << 0
-        << finalize);
-
-    if (unlikely(!maybe_result_count)) {
-      YILOG_ERROR("insert messageNodeCount failure, nodeID {}"
-          , obj_id);
-      throw std::system_error(std::error_code(40005, std::generic_category()),
-          "insert message node count failure");
-    }
-
-    info->set_tonodeid(obj_id);
-    auto inviter_result = user_collection.update_one(
-        document{} << "_id" << bsoncxx::oid(inviter)
-        << finalize,
-        document{} << "$addToSet" << open_document 
-        << "friends" << open_document
-        << "toNodeID" << obj_id
-        << "nickname" << inviteeNickname
-        << "userID" << invitee << close_document
-        << close_document << finalize);
-    auto invitee_result = user_collection.update_one(
-        document{} << "_id" << bsoncxx::oid(invitee)
-        << finalize,
-        document{} << "$addToSet" << open_document 
-        << "friends" << open_document
-        << "toNodeID" << obj_id
-        << "nickname" << inviterNickname
-        << "userID" << inviter << close_document
-        << close_document << finalize);
-    if (likely(inviter_result)) {
-      auto inviter_version = user_collection.find_one_and_update(
-          document{} << "_id" << bsoncxx::oid(inviter)
-          << finalize,
-          document{} << "$inc" << "version"
-          << finalize);
-      if(likely(inviter_version)) {
-        info->set_inviteruserversion(inviter_version->view()["version"].
-            get_int32().value);
-
-      }else {
-        YILOG_ERROR("mongo update user version failure, user id {}"
-            , inviter);
-        throw std::system_error(std::error_code(40006, std::generic_category()),
-            "mongo update user version failure");
-      }
-    }else {
-      YILOG_ERROR("mongo add friend failure, messageNode {} user id {}"
-          , obj_id, inviter);
-      throw std::system_error(std::error_code(40007, std::generic_category()),
-          "create friend user info failure");
-    }
-      
-    if(likely(invitee_result)) {
-      auto invitee_version = user_collection.find_one_and_update(
-          document{} << "_id" << bsoncxx::oid(invitee)
-          << finalize,
-          document{} << "$inc" << "version"
-          << finalize);
-      if (likely(invitee_version)) {
-        info->set_inviteeuserversion(invitee_version->view()["version"].
-            get_int32().value);
-      }else {
-        YILOG_ERROR("mongo update user version failure, user id {}"
-            , invitee);
-        throw std::system_error(std::error_code(40008, std::generic_category()),
-            "mongo update user version failure");
-      }
-    }else {
-      YILOG_ERROR("mongo add friend failure, messageNode {} user id {}"
-          , obj_id, invitee);
-      throw std::system_error(std::error_code(40009, std::generic_category()),
-          "create friend user info failure");
-    }
-    return info;
-  }else {
-    throw std::system_error(std::error_code(40010, std::generic_category()),
-        "create message node for friend error");
-  }
 }
 
 // group
@@ -469,16 +483,6 @@ mongo_client::createGroup(const chat::CreateGroup & cGroup) {
       throw std::system_error(std::error_code(40020, std::generic_category()),
           "insert message node count failure");
     }
-    // add group to user
-    for (auto & memberid: cGroup.membersid()) {
-      auto updateOne_result = user_collection.update_one(
-          document{} << "_id" << bsoncxx::oid(memberid)
-          << finalize,
-          document{} << "$addToSet" << open_document
-          << "groupNodeIDs" << obj_id
-          << close_document
-          << finalize);
-    }
     auto re = std::make_shared<chat::CreateGroupRes>();
     re->set_tonodeid(obj_id);
     re->set_nickname(cGroup.nickname());
@@ -497,19 +501,6 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto messageNode_collection = db["messageNode"];
-  auto user_collection = db["user"];
-
-  // message node add member
-  auto arraybuilder = array{};
-  for (auto & memberid: groupMember.membersid()) {
-    arraybuilder << memberid;
-  }
-  auto membersid = arraybuilder << finalize;
-  auto updateNode_result = messageNode_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(groupMember.groupnodeid())
-      << finalize,
-      document{} << "$addToSet" << open_document
-      << "membersid" << open_document
       << "$each" << membersid << close_document << close_document
       << finalize);
   if (unlikely(!updateNode_result)) {
@@ -517,22 +508,7 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
         groupMember.groupnodeid());
     throw std::system_error(std::error_code(40022, std::generic_category()),
         "add group member failure");
-  }else {
 
-    // user add groupid
-    for (auto & memberid: groupMember.membersid()) {
-      auto updateOne_result = user_collection.update_one(
-          document{} << "_id" << bsoncxx::oid(memberid)
-          << finalize,
-          document{} << "$addToSet" << open_document
-          << "groupNodeIDs" << groupMember.groupnodeid()
-          << close_document
-          << finalize);
-      if (unlikely(!updateOne_result)) {
-        YILOG_ERROR ("user add to group failure, groupid: {}, userid :{}",
-            groupMember.groupnodeid(), memberid);
-      }
-    }
   }
   auto addGroupRes = std::make_shared<chat::GroupAddMemberRes>();
   addGroupRes->set_groupnodeid(groupMember.groupnodeid());
@@ -588,7 +564,7 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
           "insert nodeid message failure, message's incrementid:{}", 
           message.tonodeid(), incrementid);
       throw std::system_error(std::error_code(40050, std::generic_category()),
-          "inc nodeID count failure");
+          "insert message failure");
     }
     auto msgRes = std::make_shared<chat::NodeMessageRes>();
     msgRes->set_tonodeid(message.tonodeid());
@@ -803,12 +779,6 @@ void inmem_client::insertUUID(
   
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
-  // tonodeid 
-  auto arraybuilder = array{};
-  for (auto & tonodeid: connectInfo.tonodeids()) {
-    arraybuilder << tonodeid;
-  }
-  auto tonodeid_array = arraybuilder << finalize;
   // session map {userid: sessionid}
   auto sessionbuilder = array{};
   for (auto & map: connectInfo.users()) {
@@ -820,7 +790,6 @@ void inmem_client::insertUUID(
   // insert
   auto maybe_result = connectinfo_col.insert_one(
       document{} << "UUID" << connectInfo.uuid()
-      << "toNodeIDs" << tonodeid_array
       << "userID" << connectInfo.userid()
       << "isLogin" << connectInfo.islogin()
       << "isConnected" << connectInfo.isconnected()
@@ -843,12 +812,6 @@ void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
   
   auto db = client_["chatdb"];
   auto connectinfo_col = db["connectInfo"];
-  // tonodeid 
-  auto arraybuilder = array{};
-  for (auto & tonodeid: connectInfo.tonodeids()) {
-    arraybuilder << tonodeid;
-  }
-  auto tonodeid_array = arraybuilder << finalize;
   // session map {userid: sessionid}
   auto sessionbuilder = array{};
   for (auto & map: connectInfo.users()) {
@@ -862,7 +825,19 @@ void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
       document{} << "UUID" << connectInfo.uuid()
       << finalize,
       document{}
-      << "toNodeIDs" << tonodeid_array
+  // session map {userid: sessionid}
+  auto sessionbuilder = array{};
+  for (auto & map: connectInfo.users()) {
+    sessionbuilder << open_document
+      << "userID" << map.first 
+      << "sessionID" << map.second << close_document;
+  }
+  auto users_array = sessionbuilder << finalize;
+  // insert
+  auto maybe_result = connectinfo_col.update_one(
+      document{} << "UUID" << connectInfo.uuid()
+      << finalize,
+      document{}
       << "userID" << connectInfo.userid()
       << "isLogin" << connectInfo.islogin()
       << "isConnected" << connectInfo.isconnected()
@@ -879,7 +854,7 @@ void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
   }
 }
 
-bool inmem_client::findUUID(const std::string & uuid,
+void inmem_client::findUUID(const std::string & uuid,
     chat::ConnectInfo & connectInfo) {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -888,79 +863,31 @@ bool inmem_client::findUUID(const std::string & uuid,
   auto connectinfo_col = db["connectInfo"];
   auto maybe_result = connectinfo_col.find_one(
       document{} << "UUID" << uuid << finalize);
-  if (maybe_result) {
-    auto connectinfo = maybe_result->view();
-    connectInfo.set_uuid(uuid);
-    auto toNodeIDs = connectinfo["toNodeIDs"].get_array().value;
-    for (auto it = toNodeIDs.begin();
-        it != toNodeIDs.end();
-        ++it) {
-      connectInfo.add_tonodeids(it->get_utf8().value.to_string());
-    }
-    connectInfo.set_userid(connectinfo["userID"].
-        get_utf8().value.to_string());
-    connectInfo.set_islogin(connectinfo["isLogin"].get_bool().value);
-    connectInfo.set_isconnected(connectinfo["isConnected"].
-        get_bool().value);
-    connectInfo.set_isrecivenoti(connectinfo["isReciveNoti"].
-        get_bool().value);
-    connectInfo.set_servername(serverName_);
-    connectInfo.set_nodepointor(connectinfo["nodepointor"].
-        get_int64().value);
-    auto users = connectinfo["users"].get_array().value;
-    auto musers = connectInfo.mutable_users();
-    for (auto it = users.begin();
-        it != users.end();
-        ++it) {
-      auto doc = it->get_document().view();
-      (*musers)[doc["userID"].get_utf8().value.to_string()] = 
-        doc["sessionID"].get_int32().value;
-    }
-    return true;
-  }else {
-    return false;
+  if (!maybe_result) {
+  }
+  auto connectinfo = maybe_result->view();
+  connectInfo.set_uuid(uuid);
+  connectInfo.set_userid(connectinfo["userID"].
+      get_utf8().value.to_string());
+  connectInfo.set_islogin(connectinfo["isLogin"].get_bool().value);
+  connectInfo.set_isconnected(connectinfo["isConnected"].
+      get_bool().value);
+  connectInfo.set_isrecivenoti(connectinfo["isReciveNoti"].
+      get_bool().value);
+  connectInfo.set_servername(serverName_);
+  connectInfo.set_nodepointor(connectinfo["nodepointor"].
+      get_int64().value);
+  auto users = connectinfo["users"].get_array().value;
+  auto musers = connectInfo.mutable_users();
+  for (auto it = users.begin();
+      it != users.end();
+      ++it) {
+    auto doc = it->get_document().view();
+    (*musers)[doc["userID"].get_utf8().value.to_string()] = 
+      doc["sessionID"].get_int32().value;
   }
 
 }
-/*
-void inmem_client::updateUUIDconnect(const std::string & uuid,
-      bool isReciveNoti, int64_t nodepointor) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  auto db = client_["chatdb"];
-  auto connectinfo_col = db["connectInfo"];
-  auto maybe_result = connectinfo_col.update_one(
-      document{} << "UUID" << uuid
-      << finalize,
-      document{} << "$set" << open_document
-      << "isReciveNoti" << isReciveNoti
-      << "isConnected" << true
-      << "nodepointor" << nodepointor
-      << "serverName" << serverName_
-      << close_document << finalize);
-  if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("update connect info little error, uuid :{} .", 
-        uuid);
-  }
-}
-
-void inmem_client::updateUUIDdisconnect(const std::string & uuid) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  auto db = client_["chatdb"];
-  auto connectinfo_col = db["connectInfo"];
-  auto maybe_result = connectinfo_col.update_one(
-      document{} << "UUID" << uuid
-      << finalize,
-      document{} << "$set" << open_document
-      << "isConnected" << false
-      << "nodepointor" << 0
-      << "serverName" << serverName_
-      << close_document << finalize);
-  if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("update connect info little error, uuid :{} .", 
-        uuid);
-  }
-}
-*/
 
 namespace yijian {
 

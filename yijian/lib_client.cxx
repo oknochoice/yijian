@@ -3,7 +3,15 @@
 #include <utility>
 #include <queue>
 
-struct Connection_IO {
+struct Read_IO {
+  // watcher
+  ev_io io;
+  // socket buffer
+  Buffer_SP buffer_sp = std::make_shared<yijian::buffer>();
+  int16_t sessionid;
+};
+
+struct Write_IO {
   // watcher
   ev_io io;
   // socket buffer
@@ -12,8 +20,8 @@ struct Connection_IO {
 };
 
 static std::shared_ptr<Read_CB> sp_read_cb_;
-static Connection_IO * read_io_;
-static Connection_IO * write_io_;
+static Read_IO * read_io_;
+static Write_IO * write_io_;
 
 struct ev_loop * loop() {
 
@@ -51,14 +59,18 @@ void connection_read_callback (struct ev_loop * loop,
 
   ev_io_stop(loop, rw);
   // converse to usable io
-  Connection_IO * io = reinterpret_cast<Connection_IO*>(rw);
+  Read_IO * io = reinterpret_cast<Read_IO*>(rw);
 
   // read to buffer 
   // if read complete stop watch && update ping
   
-  if (io->buffers_p.front()->socket_read(io->io.fd)) {
-    (*sp_read_cb_)(io->buffers_p.front());
-    io->buffers_p.front().reset(new yijian::buffer());
+  if (io->buffer_sp->socket_read(io->io.fd)) {
+    if (unlikely(io->buffer_sp->datatype() == 
+          ChatType::clientconnectres)) {
+      read_io_->sessionid =  io->buffer_sp->session_id();
+    }
+    (*sp_read_cb_)(io->buffer_sp);
+    io->buffer_sp.reset(new yijian::buffer());
   }
 
 }
@@ -69,7 +81,7 @@ void connection_write_callback (struct ev_loop * loop,
   YILOG_TRACE ("func: {}. ", __func__);
 
   // converse to usable io
-  Connection_IO * io = reinterpret_cast<Connection_IO*>(ww);
+  Write_IO * io = reinterpret_cast<Write_IO*>(ww);
 
   // write to socket
   // if write finish stop write, start read.
@@ -118,9 +130,8 @@ static void init_io(std::string ip, int port) {
   YILOG_TRACE("ev_async init Success");
 
   // Connection_IO watcher for client
-  read_io_ = new Connection_IO();
-  read_io_->buffers_p.push(std::make_shared<yijian::buffer>());
-  write_io_ = new Connection_IO();
+  read_io_ = new Read_IO();
+  write_io_ = new Write_IO();
 
   if (NULL == read_io_ || 
       NULL == write_io_) {
@@ -145,13 +156,19 @@ void create_client(Read_CB && read_cb) {
     sp_read_cb_.reset(new Read_CB(std::forward<Read_CB>(read_cb)));
     ev_run(loop(), 0);
     YILOG_TRACE("exit thread");
-      });
+  });
   t.detach();
 }
 
-void client_send(Buffer_SP sp_buffer) {
+void client_send(Buffer_SP sp_buffer,
+    int16_t * sessionid) {
   YILOG_TRACE ("func: {}. ", __func__);
-
+  
+  auto sid = read_io_->sessionid++;
+  if (nullptr != sessionid) {
+    *sessionid = sid;
+  }
+  sp_buffer->set_sessionid(sid);
   std::unique_lock<std::mutex> ul(write_io_->buffers_p_mutex);
   write_io_->buffers_p.push(sp_buffer);
   auto watcher = write_asyn_watcher();
