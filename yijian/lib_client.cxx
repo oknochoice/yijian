@@ -44,6 +44,15 @@ struct ev_async * write_asyn_watcher() {
 
 }
 
+struct ev_async * readcb_asyn_watcher() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  // ev_async
+  static struct ev_async * readcb_watcher = reinterpret_cast<struct ev_async*>(
+    malloc(sizeof(struct ev_async)));
+
+  return readcb_watcher;
+}
+
 void start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
   
   YILOG_TRACE ("func: {}. ", __func__);

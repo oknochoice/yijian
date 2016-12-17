@@ -29,7 +29,7 @@ struct Read_IO {
   // socket buffer
   Buffer_SP buffer_sp = std::make_shared<yijian::buffer>();
   // node info
-  int16_t sessionid;
+  unsigned int16_t sessionid;
   bool     isConnect = false;
   std::string userid;
   std::string deviceid;

@@ -1,10 +1,22 @@
-// protoc --proto_path=./ --cpp_out=./
+// protoc --proto_path=./ --cpp_out=./ ./
 syntax = "proto3";
 
 package chat;
 
 option cc_enable_arenas = false;
+// client
 
+message NodeInfo {
+  int32 updatetime = 1;
+  int32 readedIncrementid = 2;
+  int32 unreadIncrementid = 3;
+}
+
+message TalkList {
+  map<string, NodeInfo> nodemap  = 1;
+}
+
+// server & client
 message NodeSelfDevice {
 }
 
@@ -98,10 +110,12 @@ message QueryUserRes {
 }
 
 message QueryUserVersion {
+  string userID = 1;
 }
 
 message QueryUserVersionRes {
-  int32  version = 1;
+  string userID = 1;
+  int32  version = 2;
 }
 
 message QueryNode {
@@ -129,11 +143,15 @@ message Register {
   string countryCode = 2;// default is 86
   string password = 3; // sha1 double
   string nickname = 4;
+  string verifycode = 5;
 
 }
 
 message RegisterRes {
   string  userID = 1;
+  bool    isSuccess = 2;
+  string  e_msg = 3;
+  int32   e_no = 4;
 }
 
 message Login {
@@ -149,6 +167,9 @@ message LoginRes {
 
   string UUID = 1;
   string userID = 2;
+  bool    isSuccess = 3;
+  string  e_msg = 4;
+  int32   e_no = 5;
 
 }
 
@@ -161,7 +182,10 @@ message ClientConnect {
 message ClientConnectRes {
   string  UUID = 1;
   string  userID = 2;
-  int32  sessionid = 3;
+  int32   sessionid = 3;
+  bool    isSuccess = 4;
+  string  e_msg = 5;
+  int32   e_no = 6;
 }
 
 message ClientDisConnect {

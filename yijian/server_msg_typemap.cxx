@@ -253,12 +253,15 @@ void dispatch(chat::Register & enroll) {
 
     auto res = chat::RegisterRes();
     res.set_userid(id);
-
+    res.set_issuccess(true);
     mountBuffer2Node(buffer::Buffer(res), node_self_);
 
   }catch (std::system_error & sys_error) {
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
-        node_self_);
+    auto res = chat::RegisterRes();
+    res.set_issuccess(false);
+    res.set_e_no(sys_error.code().value());
+    res.set_e_msg(sys_error.what());
+    mountBuffer2Node(buffer::Buffer(res), node_self_);
   }
 
 }
@@ -333,6 +336,7 @@ void dispatch(chat::Login & login) {
       currentNode_->sessionid = connectInfo_.users().at(user_sp->id());
       // response request device
       auto res = chat::LoginRes();
+      res.set_issuccess(true);
       res.set_uuid(device->uuid());
       mountBuffer2Node(buffer::Buffer(res), node_self_);
       res.set_userid(currentNode_->userid);
@@ -345,8 +349,11 @@ void dispatch(chat::Login & login) {
     }
 
   }catch (std::system_error & sys_error) {
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
-        node_self_);
+    auto res = chat::LoginRes();
+    res.set_issuccess(false);
+    res.set_e_no(sys_error.code().value());
+    res.set_e_msg(sys_error.what());
+    mountBuffer2Node(buffer::Buffer(res), node_self_);
   }
 
 }
@@ -461,13 +468,17 @@ void dispatch(chat::ClientConnect & connect)  {
       inmem_client->updateUUID(connectInfo_);
       // send buffer
       auto res = chat::ClientConnectRes();
+      res.set_issuccess(true);
       res.set_uuid(connectInfo_.uuid());
       res.set_sessionid(currentNode_->sessionid);
       mountBuffer2Node(buffer::Buffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
-        node_self_);
+    auto res = chat::ClientConnectRes();
+    res.set_issuccess(false);
+    res.set_e_no(sys_error.code().value());
+    res.set_e_msg(sys_error.what());
+    mountBuffer2Node(buffer::Buffer(res), node_self_);
   }
 
 }
@@ -780,13 +791,14 @@ void dispatch(chat::GroupAddMemberRes & addMemberRes) {
 
 }
 
-void dispatch(chat::QueryUserVersion & ) {
+void dispatch(chat::QueryUserVersion & queryVersion) {
   YILOG_TRACE ("func: {}. ", __func__);
   try {
     auto client = yijian::threadCurrent::mongoClient();
-    auto user_sp = client->queryUser(currentNode_->userid);
+    auto user_sp = client->queryUser(queryVersion.userid());
     auto version = chat::QueryUserVersionRes();
     version.set_version(user_sp->version());
+    version.set_userid(queryVersion.userid());
     mountBuffer2Node(buffer::Buffer(version), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),

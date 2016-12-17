@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <thread>
 #include <condition_variable>
+#include "kvdb.h"
 
 #include <boost/coroutine2/all.hpp>
 
