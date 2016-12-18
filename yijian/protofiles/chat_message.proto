@@ -6,6 +6,10 @@ package chat;
 option cc_enable_arenas = false;
 // client
 
+message ErrorNth {
+  int32 maxnth = 1;
+}
+
 message NodeInfo {
   int32 updatetime = 1;
   int32 readedIncrementid = 2;
@@ -40,12 +44,9 @@ message Device {
 
   enum    OperatingSystem {iOS = 0; Android = 1;}
   OperatingSystem OS = 1;
-  string          OSVersion = 2;
-  string          clientVersion = 3;// Dot-decimal notation
-  string          appVersion = 4; // Dot-decimal notaiton
-  string          deviceModel = 5;
-  string          deviceNickname = 6;
-  string          UUID = 7;
+  string          deviceModel = 2;
+  string          deviceNickname = 3;
+  string          UUID = 4;
 }
 
 // mongo scheme
@@ -177,6 +178,9 @@ message ClientConnect {
   string userID = 1;
   string UUID = 2;
   bool   isReciveNoti = 3;
+  string clientVersion = 4;// Dot-decimal notation
+  string OSVersion = 5;
+  string appVersion = 6; // Dot-decimal notaiton
 }
 
 message ClientConnectRes {
@@ -336,6 +340,11 @@ message ConnectInfo {
   int64  nodepointor = 7;
   // userID sessionID
   map<string, int32> users = 8;
+  //
+  string clientVersion = 9;// Dot-decimal notation
+  string OSVersion = 10;
+  string appVersion = 11; // Dot-decimal notaiton
+  string timestamp = 12;
 
 }
 

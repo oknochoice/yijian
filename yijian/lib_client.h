@@ -16,7 +16,7 @@ typedef std::function<void(Buffer_SP)> Read_CB;
 // main thread call, read_cb subthread callback
 void create_client(Read_CB && read_cb);
 // main thread call
-void client_send(Buffer_SP sp_buffer, int16_t * sessionid);
+void client_send(Buffer_SP sp_buffer, uint16_t * sessionid);
 
 
 

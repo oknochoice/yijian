@@ -9,6 +9,7 @@
 #include <queue>
 #include "buffer.h"
 #include "libev_server.h"
+#include <unordered_map>
 
 
 #ifdef __cpluscplus
@@ -279,9 +280,6 @@ void dispatch(chat::Login & login) {
       // setup device
       auto device = std::make_shared<chat::Device>();
       device->set_os(login.device().os());
-      device->set_osversion(login.device().osversion());
-      device->set_clientversion(login.device().clientversion());
-      device->set_appversion(login.device().appversion());
       device->set_devicemodel(login.device().devicemodel());
       device->set_uuid(login.device().uuid());
       // find device from db
@@ -461,10 +459,15 @@ void dispatch(chat::ClientConnect & connect)  {
       currentNode_->deviceid = connect.uuid();
       currentNode_->sessionid = connectInfo_.users().at(connect.userid());
       currentNode_->isConnect = true;
+      currentNode_->clientVersion = connect.clientversion();
+      currentNode_->appVersion = connect.appversion();
       // update in memory db connectinfo
       connectInfo_.set_isconnected(true);
       connectInfo_.set_isrecivenoti(connect.isrecivenoti());
       connectInfo_.set_nodepointor(reinterpret_cast<Pointor_t>(currentNode_));
+      connectInfo_.set_clientversion(connect.clientversion());
+      connectInfo_.set_appversion(connect.appversion());
+      connectInfo_.set_osversion(connect.osversion());
       inmem_client->updateUUID(connectInfo_);
       // send buffer
       auto res = chat::ClientConnectRes();
@@ -822,6 +825,7 @@ void dispatch(chat::QueryUser & queryUser) {
       user_sp->clear_blacklist();
       user_sp->clear_groupnodeids();
       user_sp->clear_devices();
+      user_sp->clear_friendreqs();
     }
     *queryuser = *user_sp;
     mountBuffer2Node(buffer::Buffer(queryUserRes), node_self_);
@@ -1125,8 +1129,32 @@ void dispatch(int type, char * header, std::size_t length) {
         dispatch(chat);
       };
   });
-  (*map_p)[type]();
+  auto it = map_p->find(type);
+  if (it != map_p->end()) {
+    it->second();
+  }else {
+    YILOG_ERROR ("map_p not add type: {}.", type);
+  }
 }
+
+static std::unordered_map<int32_t, bool> 
+check_map_ = {
+  {ChatType::clientdisconnect, true},
+  {ChatType::logout, true},
+  {ChatType::queryuser, true},
+  {ChatType::queryuserversion, true},
+  {ChatType::querynode, true},
+  {ChatType::addfriend, true},
+  {ChatType::addfriendauthorize, true},
+  {ChatType::creategroup, true},
+  {ChatType::groupaddmember, true},
+  {ChatType::nodemessage, true},
+  {ChatType::querymessage, true},
+  {ChatType::media, true},
+  {ChatType::querymedia, true},
+  {ChatType::mediacheck, true},
+};
+
 
 void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp) {
 
@@ -1134,20 +1162,8 @@ void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp) {
 
   currentNode_ = node;
 
-  if (unlikely(currentNode_->sessionid != sp->session_id() && (
-            sp->datatype() == ChatType::queryuser ||
-            sp->datatype() == ChatType::queryuserversion ||
-            sp->datatype() == ChatType::querynode ||
-            sp->datatype() == ChatType::addfriend ||
-            sp->datatype() == ChatType::addfriendauthorize ||
-            sp->datatype() == ChatType::creategroup ||
-            sp->datatype() == ChatType::groupaddmember ||
-            sp->datatype() == ChatType::nodemessage ||
-            sp->datatype() == ChatType::querymessage ||
-            sp->datatype() == ChatType::media ||
-            sp->datatype() == ChatType::querymedia ||
-            sp->datatype() == ChatType::mediacheck
-          )
+  if (unlikely(currentNode_->sessionid != sp->session_id() && 
+              check_map_.find(sp->datatype()) != check_map_.end()
         )) {
     auto error = chat::Error();
     error.set_errnum(11010);

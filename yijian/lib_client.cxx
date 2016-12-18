@@ -8,7 +8,7 @@ struct Read_IO {
   ev_io io;
   // socket buffer
   Buffer_SP buffer_sp = std::make_shared<yijian::buffer>();
-  int16_t sessionid;
+  uint16_t sessionid;
 };
 
 struct Write_IO {
@@ -170,7 +170,7 @@ void create_client(Read_CB && read_cb) {
 }
 
 void client_send(Buffer_SP sp_buffer,
-    int16_t * sessionid) {
+    uint16_t * sessionid) {
   YILOG_TRACE ("func: {}. ", __func__);
   
   auto sid = read_io_->sessionid++;

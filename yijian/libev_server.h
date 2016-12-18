@@ -29,10 +29,12 @@ struct Read_IO {
   // socket buffer
   Buffer_SP buffer_sp = std::make_shared<yijian::buffer>();
   // node info
-  unsigned int16_t sessionid;
+  uint16_t sessionid;
   bool     isConnect = false;
   std::string userid;
   std::string deviceid;
+  std::string appVersion;
+  std::string clientVersion;
   std::shared_ptr<chat::Unread> unread_sp;
   std::vector<chat::Media> media_vec;
   std::pair<std::string, std::shared_ptr<mongocxx::cursor>> id_cursor;

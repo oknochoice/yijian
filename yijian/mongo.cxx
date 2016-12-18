@@ -39,11 +39,6 @@ void deviceDocument(chat::Device & device,
 
   device.set_os(static_cast<chat::Device::OperatingSystem>
       (device_view["OS"].get_int32().value));
-  device.set_osversion(device_view["OSVersion"].get_utf8().value.to_string());
-  device.set_clientversion(device_view["clientVersion"].
-      get_utf8().value.to_string());
-  device.set_appversion(device_view["appVersion"].
-      get_utf8().value.to_string());
   device.set_devicemodel(device_view["deviceModel"].
       get_utf8().value.to_string());
   device.set_devicenickname(device_view["deviceNickname"].
@@ -225,9 +220,6 @@ void mongo_client::updateDevice(
       document{} << "$set" << open_document 
       << "devices.$" << open_document
       << "OS" << device.os()
-      << "OSVersion" << device.osversion()
-      << "clientVersion" << device.clientversion()
-      << "appVersion" << device.appversion()
       << "deviceModel" << device.devicemodel()
       << "UUID" << device.uuid()
       << close_document << close_document
@@ -250,9 +242,6 @@ void mongo_client::insertDevice(
       document{} << "$push" << open_document 
       << "devices" << open_document
       << "OS" << device.os()
-      << "OSVersion" << device.osversion()
-      << "clientVersion" << device.clientversion()
-      << "appVersion" << device.appversion()
       << "deviceModel" << device.devicemodel()
       << "UUID" << device.uuid()
       << close_document << close_document
@@ -751,25 +740,6 @@ inmem_client::inmem_client(std::string serverName)
 inmem_client::~inmem_client () {
 }
 
-/*
-void inmem_client::devices(const chat::NodeSpecifiy& node_specifiy, 
-    std::function<void(chat::ConnectInfoLittle&)> && func) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  auto db = client_["chatdb"];
-  auto connectinfo_col = db["connectInfo"];
-  auto cursor = connectinfo_col.find(
-      document{} << "toNodeID" << node_specifiy.tonodeid()
-      << "serverName" << serverName_
-      << finalize);
-  auto infolittle = chat::ConnectInfoLittle();
-  for (auto doc: cursor) {
-    infolittle.set_uuid(doc["UUID"].get_utf8().value.to_string());
-    infolittle.set_isconnected(doc["isConnected"].get_bool().value);
-    infolittle.set_isrecivenoti(doc["isReciveNoti"].get_bool().value);
-    func(infolittle);
-  }
-}
-*/
 
 void inmem_client::devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func) {
@@ -816,6 +786,10 @@ void inmem_client::insertUUID(
       << "serverName" << serverName_
       << "nodepointor" << connectInfo.nodepointor()
       << "users" << users_array
+      << "clientVersion" << connectInfo.clientversion()
+      << "OSVersion" << connectInfo.osversion()
+      << "appVersion" << connectInfo.appversion()
+      << "timestamp" << 0
       << finalize
       );
   if (unlikely(!maybe_result)) {
@@ -850,7 +824,13 @@ void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
       << "isReciveNoti" << connectInfo.isrecivenoti()
       << "serverName" << serverName_
       << "nodepointor" << connectInfo.nodepointor()
-      << "users" << users_array << close_document
+      << "users" << users_array 
+      << "clientVersion" << connectInfo.clientversion()
+      << "OSVersion" << connectInfo.osversion()
+      << "appVersion" << connectInfo.appversion() << close_document
+      << "currentDate" << open_document 
+      << "timestamp" << open_document 
+      << "$type" << "timestamp" << close_document << close_document
       << finalize
       );
   if (unlikely(!maybe_result)) {

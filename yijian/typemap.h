@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "protofiles/chat_message.pb.h"
+#include <unordered_map>
 
 #ifdef __cpluscplus
 extern "C" {
@@ -48,6 +49,8 @@ enum ChatType : uint8_t {
 
 };
 
+std::unordered_map<int32_t, bool>
+isMustCheckSessionid();
 
 
 constexpr uint8_t dispatchType(chat::Error &) {

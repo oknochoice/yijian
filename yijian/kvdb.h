@@ -3,7 +3,6 @@
 
 #include <leveldb/db.h>
 #include <string>
-#include "protofiles/chat_message.pb.h"
 #include "macro.h"
 #include "lib_client.h"
 #include <functional>
@@ -39,17 +38,34 @@ public:
   // p_$code_$phoneno
   std::string userPhoneKey(const std::string & countrycode,
       const std::string phoneno);
-  // e_$nth
-  std::string errorKey(const std::string & nth);
+  // e_userid_$nth
+  std::string errorKey(const std::string & userid,
+      const std::string & nth);
   // t_&userid
   std::string talklistKey(const std::string & userid);
+
+  
   // signup_kvdb
   std::string signupKey();
   // login_kvdb
   std::string loginKey();
+  // logout_kvdb
+  std::string logoutKey();
   // connect_kvdb
   std::string connectKey();
+  // disconnect_kvdb
+  std::string disconnectKey();
 
+
+  /*
+   * current 
+   *
+   * */
+  // current user key = current_user
+  void set_current_userid(const std::string & userid);
+  std::string get_current_userid();
+  void set_current_error(Buffer_SP sp);
+  int32_t get_current_error_maxth();//[1, maxth)
 
   /*
    * user
@@ -84,7 +100,7 @@ public:
   // 50010
 
   /*
-   * busness
+   * busness regist login connect
    *
    * */ 
   void registUser(const std::string & phoneno,
@@ -97,18 +113,40 @@ public:
   void login(const std::string & phoneno,
              const std::string & countrycode,
              const std::string & password,
-             const int OS,
-             const std::string & OSversion,
-             const std::string & appversion,
+             const int os,
              const std::string & devicemodel,
              const std::string & uuid,
              CB_Func && func);
+  void logout(const std::string & userid,
+              const std::string & uuid,
+              CB_Func && func);
   void connect(const std::string & userid,
                const std::string & uuid,
                const bool isrecivenoti,
+               const std::string & OSversion,
+               const std::string & appversion,
                CB_Func && func);
+  void disconnect(const std::string & userid,
+               const std::string & uuid,
+               CB_Func && func);
+
+  /*
+   * busness add friend
+   *
+   * */
+  void addfriend(const std::string & inviteeid,
+                 const std::string & msg,
+                 CB_Func && func);
+  // agree = 0, refuse = 1, ignore = 2,
+  void addfriendAuthorize(const std::string & inviterid,
+                          const std::string & tonodeid,
+                          int isAgree,
+                          CB_Func && func);
+
 private:
+  // 50020
   void put_map(int32_t sessionid, CB_Func && func);
+  void put_map_send(CB_Func && func, Buffer_SP sp);
   void call_erase_map(int32_t sessionid, std::string & key);
 
   std::mutex sessionid_map_mutex_;
@@ -116,12 +154,18 @@ private:
 
   void dispatch(int type, Buffer_SP sp);
 private:
+  // 50030
   void registerRes(Buffer_SP sp);
   void loginRes(Buffer_SP sp);
+  void logoutRes(Buffer_SP sp);
   void connectRes(Buffer_SP sp);
+  void disconnectRes(Buffer_SP sp);
+  void error(Buffer_SP sp);
+  void addfriendRes(Buffer_SP sp);
+  void addfriendAuthorizeRes(Buffer_SP sp);
 private:
   leveldb::DB * db_;
-  unsigned int16_t sessionid_;
+  uint16_t temp_session_;
 };
 
 
