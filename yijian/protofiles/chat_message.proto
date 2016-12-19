@@ -131,10 +131,12 @@ message QueryNodeRes {
 
 //  mongo scheme
 // index useID;
-message Unread {
-  
+message MessageUnread {
   map<string, int32>  unreadNodes = 1;
+}
 
+message UserUnread {
+  
 }
 
 

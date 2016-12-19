@@ -35,7 +35,7 @@ struct Read_IO {
   std::string deviceid;
   std::string appVersion;
   std::string clientVersion;
-  std::shared_ptr<chat::Unread> unread_sp;
+  std::shared_ptr<chat::MessageUnread> unread_sp;
   std::vector<chat::Media> media_vec;
   std::pair<std::string, std::shared_ptr<mongocxx::cursor>> id_cursor;
 };
