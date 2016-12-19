@@ -501,7 +501,7 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
   }
   auto membersid = arraybuilder << finalize;
   auto updateNode_result = messageNode_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(groupMember.groupnodeid())
+      document{} << "_id" << bsoncxx::oid(groupMember.tonodeid())
       << finalize,
       document{} << "$addToSet" << open_document
       << "membersid" << open_document
@@ -510,13 +510,13 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
 
   if (unlikely(!updateNode_result)) {
     YILOG_ERROR ("add group member failure, groupid: {}", 
-        groupMember.groupnodeid());
+        groupMember.tonodeid());
     throw std::system_error(std::error_code(40022, std::generic_category()),
         "add group member failure");
 
   }
   auto addGroupRes = std::make_shared<chat::GroupAddMemberRes>();
-  addGroupRes->set_groupnodeid(groupMember.groupnodeid());
+  addGroupRes->set_tonodeid(groupMember.tonodeid());
   return addGroupRes;
 }
 
@@ -583,7 +583,8 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
 }
 
 std::shared_ptr<chat::NodeMessage>
-mongo_client::queryMessage(std::string & tonodeid, int32_t incrementid) {
+mongo_client::queryMessage(const std::string & tonodeid, 
+    const int32_t incrementid) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto nodemessage_collection = db["nodeMessage"];
@@ -616,14 +617,14 @@ mongo_client::cursor(chat::QueryMessage & query) {
   builder << "toNodeID" << query.tonodeid();
   if (query.toincrementid() != 0) {
     builder << "incrementID" << open_document
-      << "$gt" << query.fromincrementid() << close_document;
+      << "$gte" << query.fromincrementid() << close_document;
   }else {
     builder << "$and" << open_array << open_document
       << "incrementID" << open_document 
-      << "$gt" << query.fromincrementid() 
+      << "$gte" << query.fromincrementid() 
       << close_document << close_document << open_document
       << "incrementID" << open_document
-      << "$lt" << query.toincrementid()
+      << "$lte" << query.toincrementid()
       << close_document << close_document << close_array;
   }
   auto filter = builder << finalize;

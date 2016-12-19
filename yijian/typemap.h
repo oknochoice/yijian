@@ -38,6 +38,7 @@ enum ChatType : uint8_t {
   nodemessage,
   nodemessageres,
   querymessage,
+  queryonemessage,
   media,
   mediares,
   querymedia,
@@ -136,6 +137,9 @@ constexpr uint8_t dispatchType(chat::NodeMessageRes & ) {
 }
 constexpr uint8_t dispatchType(chat::QueryMessage & ) {
   return ChatType::querymessage;
+}
+constexpr uint8_t dispatchType(chat::QueryOneMessage & ) {
+  return ChatType::queryonemessage;
 }
 constexpr uint8_t dispatchType(chat::Media & ) {
   return ChatType::media;

@@ -67,7 +67,7 @@ public:
     insertMessage(chat::NodeMessage & message);
 
   std::shared_ptr<chat::NodeMessage>
-    queryMessage(std::string & tonodeid, int32_t incrementid);
+    queryMessage(const std::string & tonodeid, const int32_t incrementid);
 
   std::shared_ptr<mongocxx::cursor>
     cursor(chat::QueryMessage & query);

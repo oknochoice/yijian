@@ -920,8 +920,11 @@ void dispatch(chat::QueryMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
   try {
     auto client = yijian::threadCurrent::mongoClient();
-    if (!query.tonodeid().empty() &&
-        currentNode_->id_cursor.first != query.tonodeid()) {
+    if (query.isreset()) {
+      // reset currentnode cursor
+      if (likely(nullptr != currentNode_->id_cursor.second)){
+          // close cursor
+      }
       currentNode_->id_cursor.first = query.tonodeid();
       currentNode_->id_cursor.second = client->cursor(query);
     }
@@ -930,20 +933,21 @@ void dispatch(chat::QueryMessage & query) {
       throw std::system_error(std::error_code(11008, std::generic_category()),
           "query tonodeid is empty");
     }
-    bool isStop = false;
-    int  count = 0;
-    do {
-      auto nodemessage_sp = client->queryMessage(
+    auto nodemessage_sp = client->queryMessage(
           currentNode_->id_cursor.second);
-      if (nodemessage_sp->incrementid() <= query.fromincrementid()) {
-        isStop = true;
-      }
-      if (10 == count) {
-        isStop = true;
-      }
-      ++count;
-      mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);
-    }while(isStop);
+    mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);
+  }catch (std::system_error & sys_error) {
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+        node_self_);
+  }
+}
+void dispatch(chat::QueryOneMessage & query) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    auto nodemessage_sp = 
+      client->queryMessage(query.tonodeid(), query.incrementid());
+    mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
@@ -1125,6 +1129,11 @@ void dispatch(int type, char * header, std::size_t length) {
       };
       (*map_p)[ChatType::querymessage] = [=]() {
         auto chat = chat::QueryMessage();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::queryonemessage] = [=]() {
+        auto chat = chat::QueryOneMessage();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };

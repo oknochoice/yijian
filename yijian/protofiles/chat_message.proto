@@ -251,13 +251,13 @@ message CreateGroupRes {
 }
 
 message GroupAddMember {
-  string groupNodeID = 1;
+  string toNodeID = 1;
   repeated string membersID = 2;
 }
 
 message GroupAddMemberRes {
   string toUserID_outer = 1;
-  string groupNodeID = 2;
+  string toNodeID = 2;
 }
 
 // mongo scheme 
@@ -293,8 +293,14 @@ message NodeMessageRes {
 
 message QueryMessage {
   string toNodeID = 1;
-  int32  fromIncrementID = 2;//[fromIncrementID, toIncrementID)
+  int32  fromIncrementID = 2;
   int32  toIncrementID = 3;
+  bool   isReset = 4;
+}
+
+message QueryOneMessage {
+  string toNodeID = 1;
+  int32  incrementID = 2;
 }
 
 
