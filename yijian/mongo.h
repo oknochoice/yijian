@@ -34,16 +34,67 @@ public:
   std::shared_ptr<chat::User> 
     queryUser(const std::string & phoneNo, const std::string & countryCode);
   
-  
   std::shared_ptr<chat::User> 
     queryUser(const std::string & userID);
+
+  template <class Vec_like> 
+  void loginRecord(const std::string & countryCode, 
+                   const std::string & phoneNo,
+                   const Vec_like & ips,
+                   const bool isPass) {
+    YILOG_TRACE ("func: {}. ", __func__);
+
+    auto db = client_["chatdb"];
+    auto login_col = db["userLogin"];
+    auto arraybuilder = bsoncxx::builder::stream::array{};
+    for (auto & ip: ips) {
+      arraybuilder << ip;
+    }
+    auto ip_array = arraybuilder
+        << bsoncxx::builder::stream::finalize;
+    auto code_phone = countryCode + "_" + phoneNo;
+    auto maybe_result = login_col.insert_one(
+        bsoncxx::builder::stream::document{} 
+        << "code_phone" << code_phone
+        << "ip" << ip_array
+        << "isPass" << isPass
+        << bsoncxx::builder::stream::finalize);
+    if (unlikely(!maybe_result)) {
+      YILOG_ERROR ("login record failure user code phone: {}, isPass: {}",
+          code_phone, isPass);
+    }
+  }
+
+  template <class Vec_like> 
+  void connectRecord(const std::string & userID, 
+                     const std::string & uuid, 
+                     const Vec_like & ips) {
+    YILOG_TRACE ("func: {}. ", __func__);
+    auto db = client_["chatdb"];
+    auto connect_col = db["userConnect"];
+    auto arraybuilder = bsoncxx::builder::stream::array{};
+    for (auto & ip: ips) {
+      arraybuilder << ip;
+    }
+    auto ip_array = arraybuilder
+        << bsoncxx::builder::stream::finalize;
+    auto maybe_result = connect_col.insert_one(
+        bsoncxx::builder::stream::document{} 
+        << "userID" << userID
+        << "UUID" << uuid
+        << "ip" << ip_array
+        << bsoncxx::builder::stream::finalize);
+    if (unlikely(!maybe_result)) {
+      YILOG_ERROR ("login record failure userid: {}, uuid: {}",
+          userID, uuid);
+    }
+  }
 
   std::shared_ptr<chat::AddFriendRes>
     addFriend(const chat::AddFriend & addfrd);
 
   void addFriendAuthorize(const std::string & inviter, 
-      const std::string & invitee,
-      const std::string & tonodeid);
+      const std::string & invitee);
 
   // group  
   // 40020
@@ -86,6 +137,9 @@ public:
 private:
 
   mongocxx::client client_;
+  mongocxx::write_concern journal_concern_;
+  mongocxx::options::insert journal_insert_;
+  mongocxx::options::update journal_update_;
 
 };
 
@@ -141,6 +195,10 @@ private:
 
   std::string serverName_;
   mongocxx::client client_;
+
+  mongocxx::write_concern journal_concern_;
+  mongocxx::options::insert journal_insert_;
+  mongocxx::options::update journal_update_;
 
 };
 

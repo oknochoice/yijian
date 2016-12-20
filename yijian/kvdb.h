@@ -153,7 +153,6 @@ public:
                  CB_Func && func);
   // IsAgree in proto
   void addfriendAuthorize(const std::string & inviterid,
-                          const std::string & tonodeid,
                           int isAgree,
                           CB_Func && func);
   /*

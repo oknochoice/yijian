@@ -332,6 +332,9 @@ void dispatch(chat::Login & login) {
       currentNode_->userid = user_sp->id();
       currentNode_->deviceid = login.device().uuid();
       currentNode_->sessionid = connectInfo_.users().at(user_sp->id());
+      // record login
+      client->loginRecord(login.countrycode(), login.phoneno(), 
+          login.ips(), true);
       // response request device
       auto res = chat::LoginRes();
       res.set_issuccess(true);
@@ -342,6 +345,8 @@ void dispatch(chat::Login & login) {
       node_user_.set_touserid(currentNode_->userid);
       mountBuffer2Node(buffer::Buffer(res), node_user_);
     }else {
+      client->loginRecord(login.countrycode(), login.phoneno(), 
+          login.ips(), false);
       mountBuffer2Node(errorBuffer(11001, "password or account error"),
           node_self_);
     }
@@ -469,6 +474,8 @@ void dispatch(chat::ClientConnect & connect)  {
       connectInfo_.set_appversion(connect.appversion());
       connectInfo_.set_osversion(connect.osversion());
       inmem_client->updateUUID(connectInfo_);
+      // connect record
+      client->connectRecord(connect.userid(), connect.uuid(), connect.ips());
       // send buffer
       auto res = chat::ClientConnectRes();
       res.set_issuccess(true);
@@ -547,44 +554,32 @@ void dispatch(chat::AddFriend & frd) {
           std::error_code(11005, std::generic_category()), 
           "blacklist");
     }
-    // check whether is request already (db maybe insert failure(unlikely))
+    // check whether is invter's friend
     auto user_sp = client->queryUser(frd.inviterid());
-    auto & user_reqs = user_sp->friendreqs();
-    auto user_it = find_if(user_reqs.begin(), user_reqs.end(),
-        [&](const chat::FriendRequest & req) -> bool {
-          return req.userid() == frd.inviteeid();
+    auto & friends_inviter = user_sp->friends();
+    auto user_it = find_if(friends_inviter.begin(), friends_inviter.end(),
+        [&](const chat::UserInfo & info) -> bool {
+          return info.userid() == frd.inviteeid();
         });
-    if (unlikely(user_it != user_reqs.end())) {
-      if (user_it->isinviter()) {
+    if (unlikely(user_it != friends_inviter.end())) {
         throw std::system_error(std::error_code(11020, 
               std::generic_category()),
-              "as inviter add friend already");
-      }else {
-        throw std::system_error(std::error_code(11021, 
-              std::generic_category()),
-              "as invitee add friend already");
-      }
+              "is friend already");
     }
-    // double check is request already (db insert failure)
-    auto & peer_reqs = peerUser->friendreqs();
-    auto peer_it = find_if(peer_reqs.begin(), peer_reqs.end(),
-        [&](const chat::FriendRequest & req) -> bool {
-          return req.userid() == frd.inviterid();
+    // check whether is invtee's friend
+    auto & peer_friends = peerUser->friends();
+    auto peer_it = find_if(peer_friends.begin(), peer_friends.end(),
+        [&](const chat::UserInfo & info) -> bool {
+          return info.userid() == frd.inviterid();
         });
 
-    if (unlikely(peer_it != peer_reqs.end())) {
-      if (peer_it->isinviter()) {
+    if (unlikely(peer_it != peer_friends.end())) {
         throw std::system_error(std::error_code(11022, 
               std::generic_category()),
-              "as inviter add friend already and db insert failure");
-      }else {
-        throw std::system_error(std::error_code(11023, 
-              std::generic_category()),
-              "as invitee add friend already and db insert failure");
-      }
+              "is friend already");
     }
     // insert inviter invitee
-    auto res = std::make_shared<chat::AddFriendRes>();
+    auto res = client->addFriend(frd);
     // send buffer
     auto buf_sp = buffer::Buffer(*res);
     mountBuffer2Node(buf_sp, node_self_);
@@ -627,36 +622,10 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto client = yijian::threadCurrent::mongoClient();
   try {
-    if (unlikely(addAuth.inviteeid() != currentNode_->userid)) {
-      throw std::system_error(std::error_code(11024, std::generic_category()),
-            "no request in inviter");
-    }
-    auto user_sp = client->queryUser(addAuth.inviteeid());
-    auto & user_reqs = user_sp->friendreqs();
-    auto user_it = find_if(user_reqs.begin(), user_reqs.end(),
-        [&](const chat::FriendRequest & req) -> bool {
-          return req.userid() == addAuth.inviterid() &&
-                  req.isinviter() == false;
-        });
-    if (unlikely(user_it == user_reqs.end())) {
-      throw std::system_error(std::error_code(11025, std::generic_category()),
-            "no request in inviter");
-    }
-    auto peer_sp = client->queryUser(addAuth.inviterid());
-    auto & peer_reqs = peer_sp->friendreqs();
-    auto peer_it = find_if(peer_reqs.begin(), peer_reqs.end(),
-        [&](const chat::FriendRequest & req) -> bool {
-          return req.userid() == addAuth.inviteeid() &&
-                  req.isinviter() == true;
-        });
-    if (unlikely(peer_it == peer_reqs.end())) {
-      throw std::system_error(std::error_code(11026, std::generic_category()),
-            "no request in invitee");
-    }
     if (addAuth.isagree() == true) {
       // add friend
       client->addFriendAuthorize(addAuth.inviterid(),
-          addAuth.inviteeid(), addAuth.tonodeid());
+          addAuth.inviteeid());
       // send 
       auto authRes = chat::AddFriendAuthorizeRes();
       authRes.set_isagree(chat::IsAgree::agree);
@@ -825,7 +794,6 @@ void dispatch(chat::QueryUser & queryUser) {
       user_sp->clear_blacklist();
       user_sp->clear_groupnodeids();
       user_sp->clear_devices();
-      user_sp->clear_friendreqs();
     }
     *queryuser = *user_sp;
     mountBuffer2Node(buffer::Buffer(queryUserRes), node_self_);

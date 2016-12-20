@@ -405,7 +405,6 @@ void kvdb::addfriend(const std::string & inviteeid,
 }
 
 void kvdb::addfriendAuthorize(const std::string & inviterid,
-                        const std::string & tonodeid,
                         int isAgree,
                         CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
@@ -413,7 +412,6 @@ void kvdb::addfriendAuthorize(const std::string & inviterid,
   authorize.set_inviterid(inviterid);
   authorize.set_inviteeid(get_current_userid());
   authorize.set_isagree(static_cast<chat::IsAgree>(isAgree));
-  authorize.set_tonodeid(tonodeid);
   put_map_send(std::forward<CB_Func>(func), 
       buffer::Buffer(authorize));
 }
