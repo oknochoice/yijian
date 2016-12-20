@@ -3,6 +3,8 @@ use chatdb
 
 // user 
 db.user.createIndex({"code_phone": 1}, {"unique": true})
+// user unread
+db.userUnread.createIndex({"userID": 1, "toNodeID": 1}, {"unique": true})
 // add firend track
 db.addFriend.createIndex({"littleIDBigID"}, {"unique": true})
 // login track

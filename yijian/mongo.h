@@ -19,7 +19,7 @@
 
 class mongo_client {
 public:
-  mongo_client();
+  mongo_client(std::string serverName);
   ~mongo_client();
 
   // user
@@ -134,20 +134,6 @@ public:
       std::vector<std::shared_ptr<chat::Media>> & media_vec,
       int32_t maxLength);
 
-private:
-
-  mongocxx::client client_;
-  mongocxx::write_concern journal_concern_;
-  mongocxx::options::insert journal_insert_;
-  mongocxx::options::update journal_update_;
-
-};
-
-class inmem_client {
-public:
-  inmem_client(std::string serverName);
-  ~inmem_client();
-
   // query current server device connect info
 //  void devices(const chat::NodeSpecifiy& node_specifiy, 
 //      std::function<void(chat::ConnectInfoLittle&)> && func);
@@ -190,12 +176,25 @@ public:
   bool findUUID(const std::string & uuid, 
       chat::ConnectInfo & connectInfo);
 
+  //  user unread node
+  void insertUnreadNode(const std::string & userid,
+                  const std::string & tonodeid);
+  void updateReadedIncrement(const std::string & userid,
+                             const std::string & tonodeid,
+                             const int32_t readedIncrement);
+  void updateUnreadIncrement(const std::string & userid,
+                             const std::string & tonodeid,
+                             const int32_t unreadIncrement);
+  void unreadNodes(const std::string & userid,
+     std::function<void(const std::string & tonodeid,
+                        const int32_t unreadIncrement,
+                        const int32_t readedIncrement)> && func);
 
 private:
-
   std::string serverName_;
-  mongocxx::client client_;
+private:
 
+  mongocxx::client client_;
   mongocxx::write_concern journal_concern_;
   mongocxx::options::insert journal_insert_;
   mongocxx::options::update journal_update_;
@@ -205,7 +204,6 @@ private:
 namespace yijian {
   namespace threadCurrent {
     mongo_client * mongoClient();
-    inmem_client * inmemClient();
   }
 }
 

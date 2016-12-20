@@ -212,6 +212,7 @@ private:
                 CB_Func && func);
   void querymsgContine(CB_Func && func);
 public:
+  // do not update user's unread info
   void queryonemsg(const std::string & tonodeid,
                    const int32_t incrementid,
                    CB_Func && func);

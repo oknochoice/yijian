@@ -40,16 +40,6 @@ message Error {
   string errmsg = 2;
 }
 
-message MsgUnreadNoti {
-  map<string, int32>  unreadNodes = 1;
-}
-message LoginNoti {
-}
-message AddFriendNoti {
-}
-message AddFriendAuthorizeNoti {
-}
-
 message Device {
 
   enum    OperatingSystem {iOS = 0; Android = 1;}
@@ -66,8 +56,9 @@ message MessageNode {
   Authorize authorize = 2;
   string    creatorID = 3;
   string    nickname = 4;
-  repeated  string managerIDs = 5;
-  repeated  string members = 6;
+  int32     version = 5;
+  repeated  string managerIDs = 6;
+  repeated  string members = 7;
 }
 
 // mongo scheme
@@ -130,6 +121,15 @@ message QueryNodeRes {
   MessageNode node = 2;
 }
 
+message QueryNodeVersion {
+  string toNodeID = 1;
+}
+
+message QueryNodeVersionRes {
+  string toNodeID = 1;
+  int32  version = 2;
+}
+
 
 
 
@@ -179,12 +179,15 @@ message Login {
 
 message LoginRes {
 
-  string UUID = 1;
-  string userID = 2;
-  bool    isSuccess = 3;
-  string  e_msg = 4;
-  int32   e_no = 5;
+  bool    isSuccess = 1;
+  string  e_msg = 2;
+  int32   e_no = 3;
 
+}
+
+message LoginNoti {
+  string toUserID_outer = 1;
+  Device device = 2;
 }
 
 message ClientConnect {
@@ -255,15 +258,25 @@ message AddFriendRes {
   string toNodeID = 3;
 }
 
+message AddFriendNoti {
+  string toUserID_outer = 1;
+  AddFriendRes response = 2;
+}
+
 message AddFriendAuthorize {
   string inviteeID = 1;
   string inviterID = 2;
-  IsAgree isAgree = 4;
+  IsAgree isAgree = 3;
 }
 
 message AddFriendAuthorizeRes {
   IsAgree isAgree = 1;
   string  toUserID_outer = 2;
+}
+
+message AddFriendAuthorizeNoti {
+  string toUserID_outer = 1;
+  AddFriendAuthorize response = 2;
 }
 
 message CreateGroup {
@@ -315,8 +328,24 @@ message NodeMessageRes {
   string toNodeID = 2;
   int32  incrementID = 3;
 
-  string toUserID_outer = 1;
+}
+/*
+db.userUnread
+{
+  userID:
+  toNodeID:
+  readedIncrement:
+  unreadIncrement:
+}
 
+*/
+message NodeMessageNoti {
+  string toNodeID = 1;
+  int32  unreadIncrement = 2;
+  string toUserID_outer = 3;
+}
+message MsgUnreadNoti {
+  map<string, int32>  unreadNodes = 1;
 }
 
 message QueryMessage {

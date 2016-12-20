@@ -57,6 +57,7 @@ void messagenodeDocument(chat::MessageNode & messagenode,
       get_utf8().value.to_string());
   messagenode.set_nickname(messagenode_view["nickname"].
       get_utf8().value.to_string());
+  messagenode.set_version(messagenode_view["version"].get_int32().value);
   auto managerIDs = messagenode_view["managerIDs"].get_array().value;
   for (auto it = managerIDs.begin();
       it != managerIDs.end();
@@ -162,7 +163,8 @@ using bsoncxx::builder::stream::array;
 
 static thread_local unsigned char sha1_result[SHA_DIGEST_LENGTH];
 
-mongo_client::mongo_client() {
+mongo_client::mongo_client(std::string serverName)
+  : serverName_(serverName){
   YILOG_TRACE ("func: {}. ", __func__);
   mongocxx::uri uri("mongodb://localhost:27017");
   client_ = mongocxx::client(uri);
@@ -492,6 +494,7 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
       << close_document << close_document
       << finalize,
       journal_update_);
+  insertUnreadNode(inviter, tonodeid);
   // track
   addfriend_col.update_one(
       document{}
@@ -512,6 +515,7 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
       << close_document << close_document
       << finalize,
       journal_update_);
+  insertUnreadNode(invitee, tonodeid);
   // track
   addfriend_col.update_one(
       document{}
@@ -542,6 +546,7 @@ mongo_client::createGroup(const chat::CreateGroup & cGroup) {
       document{} << "authorize" << chat::MessageNode::peer
       << "creatorID" << cGroup.userid()
       << "nickname" << cGroup.nickname() 
+      << "version" << 1
       << "managerIDs" << open_array << close_array
       << "memebers" << memebers 
       << finalize,
@@ -594,6 +599,7 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
       document{} << "$addToSet" << open_document
       << "membersid" << open_document
       << "$each" << membersid << close_document << close_document
+      << "$inc" << "version"
       << finalize,
       journal_update_);
 
@@ -820,24 +826,8 @@ void mongo_client::queryMedia(const std::string & sha1,
 }
 
 
-inmem_client::inmem_client(std::string serverName)
-  : serverName_(serverName){
-  mongocxx::uri uri("mongodb://localhost:27017");
-  client_ = mongocxx::client(uri);
-  journal_concern_ = mongocxx::write_concern();
-  journal_concern_.journal(true);
-  journal_insert_ = mongocxx::options::insert();
-  journal_insert_.write_concern(journal_concern_);
-  journal_update_ = mongocxx::options::update();
-  journal_update_.write_concern(journal_concern_);
-}
 
-
-inmem_client::~inmem_client () {
-}
-
-
-void inmem_client::devices(const chat::NodeUser & node_user, 
+void mongo_client::devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
@@ -857,7 +847,7 @@ void inmem_client::devices(const chat::NodeUser & node_user,
   
 }
 
-void inmem_client::insertUUID(
+void mongo_client::insertUUID(
     const chat::ConnectInfo & connectInfo) {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -895,7 +885,7 @@ void inmem_client::insertUUID(
   }
 
 }
-void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
+void mongo_client::updateUUID(const chat::ConnectInfo & connectInfo) {
 
   YILOG_TRACE ("func: {}. ", __func__);
   
@@ -936,7 +926,7 @@ void inmem_client::updateUUID(const chat::ConnectInfo & connectInfo) {
   }
 }
 
-bool inmem_client::findUUID(const std::string & uuid,
+bool mongo_client::findUUID(const std::string & uuid,
     chat::ConnectInfo & connectInfo) {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -973,15 +963,76 @@ bool inmem_client::findUUID(const std::string & uuid,
 
 }
 
+//  user unread node
+void mongo_client::insertUnreadNode(const std::string & userid,
+                const std::string & tonodeid) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto userUnread = db["userUnread"];
+  userUnread.insert_one(
+      document{} << "userID" << userid
+      << "toNodeID" << tonodeid
+      << "unreadIncrement" << 1
+      << "readedIncrement" << 1
+      << finalize,
+      journal_insert_);
+}
+void mongo_client::updateReadedIncrement(const std::string & userid,
+                           const std::string & tonodeid,
+                           const int32_t readedIncrement) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto userUnread = db["userUnread"];
+  userUnread.update_one(
+      document{} << "userID" << userid
+      << "toNodeID" << tonodeid
+      << "readedIncrement" << open_document
+      << "$lt" << readedIncrement << close_document
+      << finalize,
+      document{} << "$set" << open_document
+      << "readedIncrement" << readedIncrement
+      << close_document
+      << finalize);
+}
+void mongo_client::updateUnreadIncrement(const std::string & userid,
+                           const std::string & tonodeid,
+                           const int32_t unreadIncrement) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto userUnread = db["userUnread"];
+  userUnread.update_one(
+      document{} << "userID" << userid
+      << "toNodeID" << tonodeid
+      << "unreadIncrement" << open_document
+      << "$lt" << unreadIncrement << close_document
+      << finalize,
+      document{} << "$set" << open_document
+      << "unreadIncrement" << unreadIncrement
+      << close_document
+      << finalize);
+}
+void mongo_client::unreadNodes(const std::string & userid,
+   std::function<void(const std::string & tonodeid,
+                      const int32_t unreadIncrement,
+                      const int32_t readedIncrement)> && func) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto userUnread = db["userUnread"];
+  auto cursor = userUnread.find(
+      document{} << "userID" << userid
+      << finalize);
+  for (auto doc: cursor) {
+    auto tonodeid = doc["toNodeID"].get_utf8().value.to_string();
+    auto unreadIncrement = doc["unreadIncrement"].get_int32().value;
+    auto readedIncrement = doc["readedIncrement"].get_int32().value;
+    func(tonodeid, unreadIncrement, readedIncrement);
+  }
+}
 namespace yijian {
 
   namespace threadCurrent {
     mongo_client * mongoClient() {
-      static thread_local auto client = new mongo_client();
-      return client;
-    }
-    inmem_client * inmemClient() {
-      static thread_local auto client = new inmem_client(SERVER_NAME);
+      static thread_local auto client = new mongo_client(SERVER_NAME);
       return client;
     }
   }
