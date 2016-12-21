@@ -168,64 +168,6 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user) {
       });
 }
 
-/*
-void traverseDevices(chat::ConnectInfoLittle & infolittle,
-    const std::string & tonodeid,
-    const int32_t incrementid) {
-  if (infolittle.isconnected()) {
-    YILOG_TRACE ("online");
-    // get pingnode
-    Pointor_t nodepointor = infolittle.nodepointor();
-    Read_IO * lnode = reinterpret_cast<Read_IO*>(nodepointor);
-    // if node is request pass
-    if (unlikely(currentNode_ == lnode)) return;
-    // mount buffer to pingnode
-    {
-
-      auto unread = (*lnode->unread_sp).mutable_unreadnodes();
-      (*unread)[tonodeid] = incrementid;
-      auto buf_sp = buffer::Buffer(*lnode->unread_sp);
-
-      std::unique_lock<std::mutex> ul(lnode->writeio->buffers_p_mutex);
-      lnode->writeio->buffers_p.push(buf_sp);
-      YILOG_TRACE ("func: {}. , write queue count {}", 
-          __func__, lnode->writeio->buffers_p.size());
-    }
-    // mount pingnode to thread data ,then stop read start write
-    yijian::threadCurrent::pushPingnode(lnode);
-  }else if (infolittle.isrecivenoti()) {
-    YILOG_TRACE ("offline");
-#warning need push server;
-    std::cout << "push to " << infolittle.uuid() 
-      << std::endl;
-  }
-}
-
-void mountUnread2Node(const std::string & tonodeid, 
-    const int32_t incrementid, 
-    chat::NodeSpecifiy & node_specifiy) {
-  YILOG_TRACE ("func: {}. node user", __func__);
-  auto inClient = yijian::threadCurrent::inmemClient();
-  auto client = yijian::threadCurrent::mongoClient();
-  auto node_sp = client->queryNode(node_specifiy.tonodeid());
-  inClient->devices(node_sp->members(), 
-      [&tonodeid, incrementid](chat::ConnectInfoLittle & infolittle) {
-        traverseDevices(infolittle, tonodeid, incrementid);
-      });
-}
-
-void mountUnread2Node(const std::string & tonodeid, 
-    const int32_t incrementid, 
-    chat::NodeUser & node_user) {
-  YILOG_TRACE ("func: {}. node user", __func__);
-  auto inClient = yijian::threadCurrent::inmemClient();
-  inClient->devices(node_user, 
-      [&tonodeid, incrementid](chat::ConnectInfoLittle & infolittle) {
-        traverseDevices(infolittle, tonodeid, incrementid);
-      });
-}
-*/
-
 // dispatch 
 void dispatch(chat::Error& error) {
 

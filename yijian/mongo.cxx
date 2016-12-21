@@ -203,20 +203,22 @@ std::string& mongo_client::insertUser(const chat::Register & enroll) {
     << "groupNodeIDs" << open_array << close_array
     << "devices" << open_array << close_array
     << finalize;
-  auto maybe_result = user_collection.insert_one(doc_value.view(),
-      journal_insert_);
-  if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("insert user failure, countrycode:{}, phone .", 
-        enroll.countrycode(), enroll.phoneno());
+  try {
+    auto maybe_result = user_collection.insert_one(doc_value.view(),
+        journal_insert_);
+    static thread_local std::string id;
+    id.clear();
+    id = maybe_result->inserted_id().get_oid().value.to_string();
+    YILOG_TRACE ("func: {}. id {}", __func__, id);
+    return id;
+  }catch(const std::system_error & e){
+    YILOG_ERROR ("insert user failure, countrycode:{}, phone: {}."
+        "system_error code:{}, what:{}.", 
+        enroll.countrycode(), enroll.phoneno(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40011, std::generic_category()),
         "insert user failure");
   }
 
-  static thread_local std::string id;
-  id.clear();
-  id = maybe_result->inserted_id().get_oid().value.to_string();
-  YILOG_TRACE ("func: {}. id {}", __func__, id);
-  return id;
 }
 
 void mongo_client::updateDevice(
@@ -224,21 +226,24 @@ void mongo_client::updateDevice(
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto user_collection = db["user"];
-  auto maybe_result = user_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(userID)
-      << "devices.UUID" << device.uuid() 
-      << finalize,
-      document{} << "$set" << open_document 
-      << "devices.$" << open_document
-      << "OS" << device.os()
-      << "deviceModel" << device.devicemodel()
-      << "UUID" << device.uuid()
-      << close_document << close_document
-      << finalize,
-      journal_update_
-      );
-  if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("update user device failure, uuid :{} .", device.uuid());
+  try {
+    user_collection.update_one(
+        document{} << "_id" << bsoncxx::oid(userID)
+        << "devices.UUID" << device.uuid() 
+        << finalize,
+        document{} << "$set" << open_document 
+        << "devices.$" << open_document
+        << "OS" << device.os()
+        << "deviceModel" << device.devicemodel()
+        << "UUID" << device.uuid()
+        << close_document << close_document
+        << finalize,
+        journal_update_
+        );
+  }catch(const std::system_error & e){
+    YILOG_ERROR ("update user device failure, uuid :{} ."
+        "system_error code:{}, what:{}.", 
+        device.uuid(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40000, std::generic_category()),
         "update user device failure");
   }
@@ -248,20 +253,23 @@ void mongo_client::insertDevice(
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto user_collection = db["user"];
-  auto maybe_result = user_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(userID)
-      << finalize,
-      document{} << "$push" << open_document 
-      << "devices" << open_document
-      << "OS" << device.os()
-      << "deviceModel" << device.devicemodel()
-      << "UUID" << device.uuid()
-      << close_document << close_document
-      << finalize,
-      journal_update_
-      );
-  if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("insert user device failure, uuid :{} .", device.uuid());
+  try {
+    user_collection.update_one(
+        document{} << "_id" << bsoncxx::oid(userID)
+        << finalize,
+        document{} << "$push" << open_document 
+        << "devices" << open_document
+        << "OS" << device.os()
+        << "deviceModel" << device.devicemodel()
+        << "UUID" << device.uuid()
+        << close_document << close_document
+        << finalize,
+        journal_update_
+        );
+  }catch(const std::system_error & e){
+    YILOG_ERROR ("insert user device failure, uuid :{} ."
+        "system_error code:{}, what:{}.", 
+        device.uuid(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40001, std::generic_category()),
         "insert user device failure");
   }
@@ -319,125 +327,80 @@ mongo_client::addFriend(const chat::AddFriend & addfrd) {
   }else {
     littleIDBigID = addfrd.inviteeid() + "_" + addfrd.inviterid();
   }
-  // track
-  addfriend_col.insert_one(
-      document{}
-      << "littleIDBigID" << littleIDBigID
-      << "inviter" << addfrd.inviterid()
-      << "invitee" << addfrd.inviteeid()
-      << "toNodeID" << ""
-      << "status" << "request"
-      << finalize,
-      journal_insert_);
-  // create new node
-  auto messageNode_collection = db["messageNode"];
-  auto msgNode_maybe_result = messageNode_collection.insert_one(
-      document{} << "authorize" << chat::MessageNode::peer
-      << "creatorID" << addfrd.inviterid()
-      << "nickname" << ""
-      << "managerIDs" << open_array << close_array
-      << "memebers" << open_array 
-      << addfrd.inviterid() << addfrd.inviteeid() << close_array
-      << finalize,
-      journal_insert_);
-  if (unlikely(!msgNode_maybe_result)) {
-    YILOG_ERROR("create message node failure");
-    throw std::system_error(std::error_code(40004, std::generic_category()),
-        "create message node failure");
-  }
-  auto msgNodeid = 
-      msgNode_maybe_result->inserted_id().get_oid().value.to_string();
-  // track
-  addfriend_col.update_one(
-      document{}
-      << "littleIDBigID" << littleIDBigID
-      << finalize,
-      document{} << "$set" << open_document
-      << "toNodeID" << msgNodeid
-      << "status" << "createNode" << close_document
-      << finalize,
-      journal_update_);
-  // create messge node count
-  auto messageNode_count_col = db["messageNodeCount"];
-  auto count_maybe_result = messageNode_collection.insert_one(
-      document{} << "nodeID" << msgNodeid
-      << "count" << 0
-      << finalize,
-      journal_insert_);
-  if (unlikely(!count_maybe_result)) {
-    YILOG_ERROR("create message node count failure, message node id: {}",
-        msgNodeid);
-    throw std::system_error(std::error_code(40005, std::generic_category()),
-        "create message node count failure");
-  }
-  // track
-  addfriend_col.update_one(
-      document{}
-      << "littleIDBigID" << littleIDBigID
-      << finalize,
-      document{} << "$set" << open_document
-      << "status" << "createNodeCount" << close_document
-      << finalize,
-      journal_update_);
-  /*
-  // add message node to inviter
-  auto user_collection = db["user"];
-  auto inviter_maybe_result = user_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(addfrd.inviterid())
-      << finalize,
-      document{} << "$addToSet" << open_document
-      << "friendreqs" << open_document
-      << "toNodeID" << msgNodeid 
-      << "userID" << addfrd.inviteeid()
-      << "isInviter" << true
-      << "isAgree" << chat::IsAgree::ignore
-      << close_document 
-      << "$inc" << "version"
-      << close_document
-      << finalize);
-  if (unlikely(!inviter_maybe_result)) {
-    YILOG_ERROR ("add friendreqs failure, user id {}", addfrd.inviterid());
-    throw std::system_error(std::error_code(40006, std::generic_category()),
-        "add friendreqs failure");
-  }
-  // add message node to invitee
-  auto invitee_maybe_result = user_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(addfrd.inviteeid())
-      << finalize,
-      document{} << "$addToSet" << open_document
-      << "friendreqs" << open_document
-      << "toNodeID" << msgNodeid 
-      << "userID" << addfrd.inviterid()
-      << "isInviter" << false
-      << "isAgree" << chat::IsAgree::ignore
-      << close_document 
-      << "$inc" << "version"
-      << close_document
-      << finalize);
-  if (unlikely(!inviter_maybe_result)) {
-    YILOG_ERROR ("add friendreqs failure, user id {}", addfrd.inviteeid());
-    throw std::system_error(std::error_code(40007, std::generic_category()),
-        "add friendreqs failure");
-  }
-  */
+  try {
+    // track
+    addfriend_col.insert_one(
+        document{}
+        << "littleIDBigID" << littleIDBigID
+        << "inviter" << addfrd.inviterid()
+        << "invitee" << addfrd.inviteeid()
+        << "toNodeID" << ""
+        << "status" << "request"
+        << finalize,
+        journal_insert_);
+    // create new node
+    auto messageNode_collection = db["messageNode"];
+    auto msgNode_result = messageNode_collection.insert_one(
+        document{} << "authorize" << chat::MessageNode::peer
+        << "creatorID" << addfrd.inviterid()
+        << "nickname" << ""
+        << "managerIDs" << open_array << close_array
+        << "memebers" << open_array 
+        << addfrd.inviterid() << addfrd.inviteeid() << close_array
+        << finalize,
+        journal_insert_);
+    auto msgNodeid = 
+        msgNode_result->inserted_id().get_oid().value.to_string();
+    // track
+    addfriend_col.update_one(
+        document{}
+        << "littleIDBigID" << littleIDBigID
+        << finalize,
+        document{} << "$set" << open_document
+        << "toNodeID" << msgNodeid
+        << "status" << "createNode" << close_document
+        << finalize,
+        journal_update_);
+    // create messge node count
+    auto messageNode_count_col = db["messageNodeCount"];
+    auto count_result = messageNode_collection.insert_one(
+        document{} << "nodeID" << msgNodeid
+        << "count" << 0
+        << finalize,
+        journal_insert_);
+    // track
+    addfriend_col.update_one(
+        document{}
+        << "littleIDBigID" << littleIDBigID
+        << finalize,
+        document{} << "$set" << open_document
+        << "status" << "createNodeCount" << close_document
+        << finalize,
+        journal_update_);
+    // insert request message
+    auto requestmsg = chat::NodeMessage();
+    requestmsg.set_fromuserid(addfrd.inviterid());
+    requestmsg.set_tonodeid(msgNodeid);
+    requestmsg.set_touserid_outer(addfrd.inviteeid());
+    requestmsg.set_type(chat::MediaType::TEXT);
+    requestmsg.set_content(addfrd.msg());
+    
+    insertMessage(requestmsg);
 
-  // insert request message
-  auto requestmsg = chat::NodeMessage();
-  requestmsg.set_fromuserid(addfrd.inviterid());
-  requestmsg.set_tonodeid(msgNodeid);
-  requestmsg.set_touserid_outer(addfrd.inviteeid());
-  requestmsg.set_type(chat::MediaType::TEXT);
-  requestmsg.set_content(addfrd.msg());
-  
-  insertMessage(requestmsg);
-
-  // return message
-  auto res = std::make_shared<chat::AddFriendRes>();
-  res->set_tonodeid(msgNodeid);
-  res->set_inviterid(addfrd.inviterid());
-  res->set_inviteeid(addfrd.inviteeid());
-  
-  return res;
+    // return message
+    auto res = std::make_shared<chat::AddFriendRes>();
+    res->set_tonodeid(msgNodeid);
+    res->set_inviterid(addfrd.inviterid());
+    res->set_inviteeid(addfrd.inviteeid());
+    
+    return res;
+  }catch (std::system_error & e ) {
+    YILOG_ERROR ("add friend failure, inviter:{}, invitee{} \n"
+        "system_error code:{}, what:{}.", 
+        addfrd.inviterid(), addfrd.inviteeid(), e.code().value(), e.what());
+    throw std::system_error(std::error_code(40000, std::generic_category()),
+        "update user device failure");
+  }
 
 }
 
@@ -474,57 +437,86 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
   }
   auto tonodeid = maybe_result->view()["toNodeID"].
     get_utf8().value.to_string();
-  // track
-  addfriend_col.update_one(
-      document{}
-      << "littleIDBigID" << littleIDBigID
-      << finalize,
-      document{} << "$set" << open_document
-      << "status" << "agree" << close_document
-      << finalize,
-      journal_update_);
-  // inviter add
-  user_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(inviter)
-      << finalize,
-      document{} << "$addToSet" << open_document
-      << "friends" << open_document
-      << "toNodeID" << tonodeid
-      << "userID" << invitee
-      << close_document << close_document
-      << finalize,
-      journal_update_);
-  insertUnreadNode(inviter, tonodeid);
-  // track
-  addfriend_col.update_one(
-      document{}
-      << "littleIDBigID" << littleIDBigID
-      << finalize,
-      document{} << "$set" << open_document
-      << "status" << "inviter" << close_document
-      << finalize,
-      journal_update_);
-  // invitee add
-  user_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(invitee)
-      << finalize,
-      document{} << "$addToSet" << open_document
-      << "friends" << open_document
-      << "toNodeID" << tonodeid
-      << "userID" << inviter
-      << close_document << close_document
-      << finalize,
-      journal_update_);
-  insertUnreadNode(invitee, tonodeid);
-  // track
-  addfriend_col.update_one(
-      document{}
-      << "littleIDBigID" << littleIDBigID
-      << finalize,
-      document{} << "$set" << open_document
-      << "status" << "invitee" << close_document
-      << finalize,
-      journal_update_);
+  try {
+    // track
+    addfriend_col.update_one(
+        document{}
+        << "littleIDBigID" << littleIDBigID
+        << finalize,
+        document{} << "$set" << open_document
+        << "status" << "agree" << close_document
+        << finalize,
+        journal_update_);
+    // inviter add
+    user_collection.update_one(
+        document{} << "_id" << bsoncxx::oid(inviter)
+        << finalize,
+        document{} << "$addToSet" << open_document
+        << "friends" << open_document
+        << "toNodeID" << tonodeid
+        << "userID" << invitee
+        << close_document << close_document
+        << finalize,
+        journal_update_);
+    // track
+    addfriend_col.update_one(
+        document{}
+        << "littleIDBigID" << littleIDBigID
+        << finalize,
+        document{} << "$set" << open_document
+        << "status" << "inviter" << close_document
+        << finalize,
+        journal_update_);
+    // insert unread node
+    insertUnreadNode(inviter, tonodeid);
+    // track 
+    addfriend_col.update_one(
+        document{}
+        << "littleIDBigID" << littleIDBigID
+        << finalize,
+        document{} << "$set" << open_document
+        << "status" << "userUnreadInviter" << close_document
+        << finalize,
+        journal_update_);
+    // invitee add
+    user_collection.update_one(
+        document{} << "_id" << bsoncxx::oid(invitee)
+        << finalize,
+        document{} << "$addToSet" << open_document
+        << "friends" << open_document
+        << "toNodeID" << tonodeid
+        << "userID" << inviter
+        << close_document << close_document
+        << finalize,
+        journal_update_);
+    // track
+    addfriend_col.update_one(
+        document{}
+        << "littleIDBigID" << littleIDBigID
+        << finalize,
+        document{} << "$set" << open_document
+        << "status" << "invitee" << close_document
+        << finalize,
+        journal_update_);
+    // insert unread node
+    insertUnreadNode(invitee, tonodeid);
+    // track 
+    addfriend_col.update_one(
+        document{}
+        << "littleIDBigID" << littleIDBigID
+        << finalize,
+        document{} << "$set" << open_document
+        << "status" << "userUnreadInviter" << close_document
+        << finalize,
+        journal_update_);
+  }catch(std::system_error & e) {
+    YILOG_ERROR ("add friend authorize failre in (id insert to friends).\n"
+        " inviter:{}, invitee{} \n"
+        "system_error code:{}, what:{}.", 
+        inviter, invitee, e.code().value(), e.what());
+    throw std::system_error(std::error_code(40005, std::generic_category()),
+        "add friend authorize failre");
+  }
 
 
 }
@@ -541,38 +533,55 @@ mongo_client::createGroup(const chat::CreateGroup & cGroup) {
     memebersBuild << memberid;
   }
   auto memebers = memebersBuild << finalize;
-  // create message node
-  auto maybe_result = messageNode_collection.insert_one(
-      document{} << "authorize" << chat::MessageNode::peer
-      << "creatorID" << cGroup.userid()
-      << "nickname" << cGroup.nickname() 
-      << "version" << 1
-      << "managerIDs" << open_array << close_array
-      << "memebers" << memebers 
-      << finalize,
-      journal_insert_);
-  if (likely(maybe_result)) {
-    auto obj_id = maybe_result->inserted_id().get_oid().value.to_string();
+  try {
+    // create message node
+    auto result = messageNode_collection.insert_one(
+        document{} << "authorize" << chat::MessageNode::peer
+        << "creatorID" << cGroup.userid()
+        << "nickname" << cGroup.nickname() 
+        << "version" << 1
+        << "managerIDs" << open_array << close_array
+        << "memebers" << memebers 
+        << finalize,
+        journal_insert_);
+
+    auto obj_id = result->inserted_id().get_oid().value.to_string();
     // add message node count
     auto messageNode_count_col = db["messageNodeCount"];
-    auto maybe_result_count = messageNode_collection.insert_one(
+    messageNode_collection.insert_one(
         document{} << "nodeID" << obj_id
         << "count" << 0
         << finalize,
         journal_insert_);
 
-    if (unlikely(!maybe_result_count)) {
-      YILOG_ERROR("insert messageNodeCount failure, nodeID {}"
-          , obj_id);
-      throw std::system_error(std::error_code(40020, std::generic_category()),
-          "insert message node count failure");
+    // insert user unread
+    std::vector<mongocxx::model::write> writes;
+    for (auto & memberid: cGroup.membersid()) {
+      auto doc =  document{} << "insertOne" << open_document
+          << "userID" << memberid
+          << "toNodeID" << obj_id
+          << "unreadIncrement" << 1
+          << "readedIncrement" << 1
+          << close_document << finalize;
+      auto write = mongocxx::model::write(
+          mongocxx::model::insert_one(doc.view()));
+      writes.push_back(std::move(write));
     }
+    auto userUnread = db["userUnread"];
+    mongocxx::options::bulk_write write_c;
+    write_c.ordered(false);
+    write_c.write_concern(journal_concern_);
+#warning may be need check who insered failure
+    userUnread.bulk_write(writes, write_c);
+    // return
     auto re = std::make_shared<chat::CreateGroupRes>();
     re->set_tonodeid(obj_id);
     re->set_nickname(cGroup.nickname());
     return re;
-  }else {
-    YILOG_ERROR("create message node failure, creater id", cGroup.userid());
+  }catch(std::system_error & e) {
+    YILOG_ERROR("create message node failure, creater id\n"
+        "system_error code:{}, what:{}.", 
+        cGroup.userid(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40021, std::generic_category()),
         "create message node for group error");
   }
@@ -593,26 +602,47 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
     arraybuilder << memberid;
   }
   auto membersid = arraybuilder << finalize;
-  auto updateNode_result = messageNode_collection.update_one(
-      document{} << "_id" << bsoncxx::oid(groupMember.tonodeid())
-      << finalize,
-      document{} << "$addToSet" << open_document
-      << "membersid" << open_document
-      << "$each" << membersid << close_document << close_document
-      << "$inc" << "version"
-      << finalize,
-      journal_update_);
+  try {
+    messageNode_collection.update_one(
+        document{} << "_id" << bsoncxx::oid(groupMember.tonodeid())
+        << finalize,
+        document{} << "$addToSet" << open_document
+        << "membersid" << open_document
+        << "$each" << membersid << close_document << close_document
+        << "$inc" << "version"
+        << finalize,
+        journal_update_);
 
-  if (unlikely(!updateNode_result)) {
-    YILOG_ERROR ("add group member failure, groupid: {}", 
-        groupMember.tonodeid());
+    // insert user unread
+    std::vector<mongocxx::model::write> writes;
+    for (auto & memberid: groupMember.membersid()) {
+      auto doc =  document{} << "insertOne" << open_document
+          << "userID" << memberid
+          << "toNodeID" << memberid
+          << "unreadIncrement" << 1
+          << "readedIncrement" << 1
+          << close_document << finalize;
+      auto write = mongocxx::model::write(
+          mongocxx::model::insert_one(doc.view()));
+      writes.push_back(std::move(write));
+    }
+    auto userUnread = db["userUnread"];
+    mongocxx::options::bulk_write write_c;
+    write_c.ordered(false);
+    write_c.write_concern(journal_concern_);
+#warning may be need check who insered failure
+    userUnread.bulk_write(writes, write_c);
+    // return
+    auto addGroupRes = std::make_shared<chat::GroupAddMemberRes>();
+    addGroupRes->set_tonodeid(groupMember.tonodeid());
+    return addGroupRes;
+  }catch(std::system_error & e) {
+    YILOG_ERROR("create message node failure, creater id\n"
+        "system_error code:{}, what:{}.", 
+        groupMember.tonodeid(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40022, std::generic_category()),
         "add group member failure");
-
   }
-  auto addGroupRes = std::make_shared<chat::GroupAddMemberRes>();
-  addGroupRes->set_tonodeid(groupMember.tonodeid());
-  return addGroupRes;
 }
 
 
@@ -644,36 +674,31 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
   auto db = client_["chatdb"];
   auto nodemessage_collection = db["nodeMessage"];
   auto messageNode_count_col = db["messageNodeCount"];
-  auto node_count = messageNode_count_col.find_one_and_update(
-      document{} << "nodeID" << message.tonodeid()
-      << finalize,
-      document{} << "$inc" << open_document
-      << "count" << 1 << close_document
-      << finalize);
-  if (likely(node_count)) {
+  try {
+    auto node_count = messageNode_count_col.find_one_and_update(
+        document{} << "nodeID" << message.tonodeid()
+        << finalize,
+        document{} << "$inc" << open_document
+        << "count" << 1 << close_document
+        << finalize);
     int32_t incrementid = node_count->view()["count"].get_int32().value;
-    auto maybe_result = nodemessage_collection.insert_one(
+    nodemessage_collection.insert_one(
         document{} << "fromUserID" << message.fromuserid()
         << "toNodeID" << message.tonodeid()
         << "incrementID" << incrementid
         << "type" << message.type()
         << "content" << message.content()
         << finalize);
-    if (unlikely(!maybe_result)) {
-      YILOG_ERROR("inc nodeID count success nodeid:{}" 
-          "insert nodeid message failure, message's incrementid:{}", 
-          message.tonodeid(), incrementid);
-      throw std::system_error(std::error_code(40050, std::generic_category()),
-          "insert message failure");
-    }
     auto msgRes = std::make_shared<chat::NodeMessageRes>();
     msgRes->set_tonodeid(message.tonodeid());
     msgRes->set_incrementid(incrementid);
     return msgRes;
-  }else {
-    YILOG_ERROR("inc nodeID {} count failure", message.tonodeid());
+  }catch(std::system_error & e) {
+    YILOG_ERROR("insert message failure\n"
+        "system_error code:{}, what:{}.", 
+         e.code().value(), e.what());
     throw std::system_error(std::error_code(40051, std::generic_category()),
-        "inc nodeID count failure");
+        "insert message failure");
   }
 }
 
@@ -775,13 +800,16 @@ void mongo_client::insertMedia(
 
   auto db = client_["chatdb"];
   auto media_col = db["media"];
+  try {
   auto maybe_result = media_col.insert_one(
       document{} << "sha1" << sha1
       << "type" << media_vec.front().type()
       << "content" << content
       << finalize);
-  if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("media insert failure, sha1: {}", sha1);
+  }catch (std::system_error & e) {
+    YILOG_ERROR ("media insert failure, sha1: {}"
+        "system_error code:{}, what:{}.", 
+        sha1, e.code().value(), e.what());
     throw std::system_error(std::error_code(40061, std::generic_category()),
         "media insert failure");
   }
@@ -863,6 +891,7 @@ void mongo_client::insertUUID(
   }
   auto users_array = sessionbuilder << finalize;
   // insert
+  try {
   auto maybe_result = connectinfo_col.insert_one(
       document{} << "UUID" << connectInfo.uuid()
       << "userID" << connectInfo.userid()
@@ -878,8 +907,10 @@ void mongo_client::insertUUID(
       << "timestamp" << 0
       << finalize
       );
-  if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("connection insert error, uuid :{} .", connectInfo.uuid());
+  }catch (std::system_error & e) {
+    YILOG_ERROR ("connection insert error, uuid :{} ."
+        "system_error code:{}, what:{}.", 
+        connectInfo.uuid(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40030, std::generic_category()),
         "connection insert failure");
   }
@@ -900,7 +931,8 @@ void mongo_client::updateUUID(const chat::ConnectInfo & connectInfo) {
   }
   auto users_array = sessionbuilder << finalize;
   // insert
-  auto maybe_result = connectinfo_col.update_one(
+  try {
+  connectinfo_col.update_one(
       document{} << "UUID" << connectInfo.uuid()
       << finalize,
       document{} << "$set" << open_document
@@ -919,8 +951,10 @@ void mongo_client::updateUUID(const chat::ConnectInfo & connectInfo) {
       << "$type" << "timestamp" << close_document << close_document
       << finalize
       );
-  if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("update error, uuid :{} .", connectInfo.uuid());
+  }catch (std::system_error & e) {
+    YILOG_ERROR ("update error, uuid :{} ."
+        "system_error code:{}, what:{}.", 
+        connectInfo.uuid(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40031, std::generic_category()),
         "connection update failure");
   }
@@ -969,13 +1003,19 @@ void mongo_client::insertUnreadNode(const std::string & userid,
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto userUnread = db["userUnread"];
-  userUnread.insert_one(
-      document{} << "userID" << userid
-      << "toNodeID" << tonodeid
-      << "unreadIncrement" << 1
-      << "readedIncrement" << 1
-      << finalize,
-      journal_insert_);
+  try {
+    userUnread.insert_one(
+        document{} << "userID" << userid
+        << "toNodeID" << tonodeid
+        << "unreadIncrement" << 1
+        << "readedIncrement" << 1
+        << finalize,
+        journal_insert_);
+  }catch(std::system_error & e) {
+    YILOG_ERROR ("insert unread node failure.\n"
+        "system_error code:{}, what{}.",
+        e.code().value(), e.what());
+  }
 }
 void mongo_client::updateReadedIncrement(const std::string & userid,
                            const std::string & tonodeid,
@@ -983,6 +1023,7 @@ void mongo_client::updateReadedIncrement(const std::string & userid,
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto userUnread = db["userUnread"];
+  try {
   userUnread.update_one(
       document{} << "userID" << userid
       << "toNodeID" << tonodeid
@@ -993,6 +1034,11 @@ void mongo_client::updateReadedIncrement(const std::string & userid,
       << "readedIncrement" << readedIncrement
       << close_document
       << finalize);
+  }catch(std::system_error & e) {
+    YILOG_ERROR ("update readed node failure.\n"
+        "system_error code:{}, what{}.",
+        e.code().value(), e.what());
+  }
 }
 void mongo_client::updateUnreadIncrement(const std::string & userid,
                            const std::string & tonodeid,
@@ -1000,6 +1046,7 @@ void mongo_client::updateUnreadIncrement(const std::string & userid,
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto userUnread = db["userUnread"];
+  try {
   userUnread.update_one(
       document{} << "userID" << userid
       << "toNodeID" << tonodeid
@@ -1010,6 +1057,11 @@ void mongo_client::updateUnreadIncrement(const std::string & userid,
       << "unreadIncrement" << unreadIncrement
       << close_document
       << finalize);
+  }catch(std::system_error & e) {
+    YILOG_ERROR ("update unread node failure.\n"
+        "system_error code:{}, what{}.",
+        e.code().value(), e.what());
+  }
 }
 void mongo_client::unreadNodes(const std::string & userid,
    std::function<void(const std::string & tonodeid,
