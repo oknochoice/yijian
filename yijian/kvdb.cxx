@@ -7,7 +7,8 @@ using yijian::buffer;
 
 enum Session_ID : int32_t {
   regist_login_connect = -1,
-  logout_disconnect = -2
+  logout_disconnect = -2,
+  query_message = -3,
 };
 
 kvdb::kvdb(std::string & path) {
@@ -484,6 +485,14 @@ void kvdb::queryuser(CB_Func && func) {
  * failure error key
  *
  * */
+void kvdb::querynodeversion(const std::string & nodeid,
+                        CB_Func && func) {
+  YILOG_TRACE ("func: {}", __func__);
+  chat::QueryNodeVersion query;
+  query.set_tonodeid(nodeid);
+  put_map_send(std::forward<CB_Func>(func),
+      buffer::Buffer(query));
+}
 void kvdb::querynode(const std::string & nodeid, 
     CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
@@ -519,26 +528,21 @@ void kvdb::sendmessage2group(const std::string & tonodeid,
   put_map_send_cache(std::forward<CB_Func>(func), 
       buffer::Buffer(msg));
 }
+void kvdb::msgResponse(CB_Func && func) {
+  YILOG_TRACE ("func: {}", __func__);
+  put_map(Session_ID::query_message, 
+      std::forward<CB_Func>(func));
+}
 void kvdb::querymsg(const std::string & tonodeid,
               const int32_t fromincrementid,
-              const int32_t toincrementid,
-              CB_Func && func) {
+              const int32_t toincrementid) {
   YILOG_TRACE ("func: {}", __func__);
   chat::QueryMessage query;
   query.set_tonodeid(tonodeid);
   query.set_fromincrementid(fromincrementid);
   query.set_toincrementid(toincrementid);
-  query.set_isreset(true);
-  put_map_send(std::forward<CB_Func>(func),
-      buffer::Buffer(query));
 }
-void kvdb::querymsgContine(CB_Func && func) {
-  YILOG_TRACE ("func: {}", __func__);
-  chat::QueryMessage query;
-  query.set_isreset(false);
-  put_map_send(std::forward<CB_Func>(func),
-      buffer::Buffer(query));
-}
+
 void kvdb::queryonemsg(const std::string & tonodeid,
                    const int32_t incrementid,
                    CB_Func && func) {
@@ -560,6 +564,15 @@ void kvdb::put_map(const int32_t sessionid, CB_Func && func) {
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   sessionid_cbfunc_map_[sessionid] = func;
 }
+void kvdb::call_map(const int32_t sessionid, 
+    const std::string & key) {
+  YILOG_TRACE ("func: {}", __func__);
+  std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
+  auto it = sessionid_cbfunc_map_.find(sessionid);
+  if (likely(it != sessionid_cbfunc_map_.end())) {
+    it->second(key);
+  }
+}
 void kvdb::put_map_send(CB_Func && func, Buffer_SP sp) {
   YILOG_TRACE ("func: {}", __func__);
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
@@ -579,6 +592,21 @@ void kvdb::call_erase_map(const int32_t sessionid,
           std::generic_category()),
         "sessionid_cbfunc_map_ not find type"); 
   }
+}
+bool kvdb::maycall_erase_map(
+    const int32_t sessionid, const std::string & key) {
+  YILOG_TRACE ("func: {}", __func__);
+  bool isCalled = false;
+  std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
+  auto it = sessionid_cbfunc_map_.find(sessionid);
+  if (likely(it != sessionid_cbfunc_map_.end())) {
+    it->second(key);
+    sessionid_cbfunc_map_.erase(sessionid);
+    isCalled = true;
+  }else {
+    isCalled = false;
+  }
+  return isCalled;
 }
 
 void kvdb::put_map_send_cache(CB_Func && func, Buffer_SP sp) {
@@ -637,6 +665,9 @@ void kvdb::dispatch(int type, Buffer_SP sp) {
         queryuserRes(sp);
       };
       // node and message
+      (*map_p)[ChatType::querynodeversionres] = [=]() {
+        querynodeversionRes(sp);
+      };
       (*map_p)[ChatType::querynoderes] = [=]() {
         querynodeRes(sp);
       };
@@ -748,6 +779,13 @@ void kvdb::queryuserRes(Buffer_SP sp) {
   put(key, value);
   call_erase_map(sp->session_id(), key);
 }
+void kvdb::querynodeversionRes(Buffer_SP sp) {
+  YILOG_TRACE ("func: {}", __func__);
+  auto res = chat::QueryNodeVersionRes();
+  res.ParseFromArray(sp->data(), sp->data_size());
+  auto version = std::to_string(res.version());
+  call_erase_map(sp->session_id(), version);
+}
 void kvdb::querynodeRes(Buffer_SP sp) {
   YILOG_TRACE ("func: {}", __func__);
   auto res = chat::QueryNodeRes();
@@ -795,6 +833,9 @@ void kvdb::nodemessage(Buffer_SP sp) {
   msg.ParseFromArray(sp->data(), sp->data_size());
   putMsg(msg.tonodeid(), msg.incrementid(), msg.SerializeAsString());
   auto key = msgKey(msg.tonodeid(), msg.incrementid());
-  call_erase_map(sp->session_id(), key);
+  auto isCalled = maycall_erase_map(sp->session_id(), key);
+  if (!isCalled) {
+    call_map(Session_ID::query_message, key);
+  }
 }
 

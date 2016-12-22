@@ -122,11 +122,8 @@ public:
   std::shared_ptr<chat::NodeMessage>
     queryMessage(const std::string & tonodeid, const int32_t incrementid);
 
-  std::shared_ptr<mongocxx::cursor>
-    cursor(chat::QueryMessage & query);
-
-  std::shared_ptr<chat::NodeMessage>
-    queryMessage(std::shared_ptr<mongocxx::cursor> cursor_sp);
+  void queryMessage(chat::QueryMessage & query, 
+      std::function<void(std::shared_ptr<chat::NodeMessage>)> && func);
 
 
   // media

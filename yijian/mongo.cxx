@@ -726,9 +726,8 @@ mongo_client::queryMessage(const std::string & tonodeid,
   }
 }
 
-std::shared_ptr<mongocxx::cursor>
-mongo_client::cursor(chat::QueryMessage & query) {
-
+void mongo_client::queryMessage(chat::QueryMessage & query, 
+      std::function<void(std::shared_ptr<chat::NodeMessage>)> && func) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   auto db = client_["chatdb"];
@@ -750,23 +749,13 @@ mongo_client::cursor(chat::QueryMessage & query) {
   auto filter = builder << finalize;
   auto opt = mongocxx::options::find{};
   opt.sort(document{} << "incrementID" << -1 << finalize);
-  auto maybe_result = nodemessage_collection.find(filter.view(), opt);
+  auto cursor = nodemessage_collection.find(filter.view(), opt);
   
-  return std::make_shared<mongocxx::cursor>(
-      std::forward<mongocxx::cursor>(maybe_result));
-}
-
-
-std::shared_ptr<chat::NodeMessage>
-mongo_client::queryMessage(std::shared_ptr<mongocxx::cursor> cursor_sp) {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-
-  auto message_sp = std::make_shared<chat::NodeMessage>();
-  auto view = *cursor_sp->begin();
-  nodemessageDocument(*message_sp, view);
-  return message_sp;
-  
+  for (auto doc: cursor) {
+    auto message_sp = std::make_shared<chat::NodeMessage>();
+    nodemessageDocument(*message_sp, doc);
+    func(message_sp);
+  }
 }
 
 

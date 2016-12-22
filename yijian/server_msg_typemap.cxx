@@ -95,11 +95,12 @@ using yijian::threadCurrent::node_peer_;
 using yijian::threadCurrent::node_user_;
 using yijian::threadCurrent::node_specifiy_;
 using yijian::threadCurrent::infolittle_;
+using yijian::threadCurrent::session_id_;
 
 // user require device
 void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSelfDevice & ) {
   YILOG_TRACE ("func: {}. self device", __func__);
-  buf_sp->set_sessionid(currentNode_->sessionid - 1);
+  buf_sp->set_sessionid(session_id_);
   std::unique_lock<std::mutex> ul(currentNode_->writeio->buffers_p_mutex);
   currentNode_->writeio->buffers_p.push(buf_sp);
   YILOG_TRACE ("func: {}. self device, write queue count {}", 
@@ -268,10 +269,6 @@ void dispatch(chat::Login & login) {
         // insert connect info
         client->insertUUID(connectInfo_);
       }
-      // set current node
-      currentNode_->userid = user_sp->id();
-      currentNode_->deviceid = login.device().uuid();
-      currentNode_->sessionid = connectInfo_.users().at(user_sp->id());
       // record login
       client->loginRecord(login.countrycode(), login.phoneno(), 
           login.ips(), true);
@@ -346,10 +343,9 @@ void dispatch(chat::Logout & logout) {
       connectInfo_.set_islogin(false);
       connectInfo_.set_nodepointor(0);
       auto users_inconnectinfo = connectInfo_.mutable_users();
-      (*users_inconnectinfo)[logout.uuid()] = currentNode_->sessionid;
+      (*users_inconnectinfo)[logout.uuid()] = session_id_;
       client->updateUUID(connectInfo_);
 
-      currentNode_->isConnect = false;
       // send buffer
       auto res = chat::LogoutRes();
       res.set_uuid(it->uuid());
@@ -392,7 +388,6 @@ void dispatch(chat::ClientConnect & connect)  {
       currentNode_->userid = connect.userid();
       currentNode_->deviceid = connect.uuid();
       currentNode_->sessionid = connectInfo_.users().at(connect.userid());
-      currentNode_->isConnect = true;
       currentNode_->clientVersion = connect.clientversion();
       currentNode_->appVersion = connect.appversion();
       // update in memory db connectinfo
@@ -448,7 +443,7 @@ void dispatch(chat::ClientDisConnect & disconnect)  {
       connectInfo_.set_isconnected(false);
       connectInfo_.set_nodepointor(0);
       auto users_inconnectinfo = connectInfo_.mutable_users();
-      (*users_inconnectinfo)[disconnect.userid()] = currentNode_->sessionid;
+      (*users_inconnectinfo)[disconnect.userid()] = session_id_;
       client->updateUUID(connectInfo_);
       // send buffer
       auto res = chat::ClientDisConnectRes();
@@ -802,28 +797,18 @@ void dispatch(chat::NodeMessageNoti & noti) {
 void dispatch(chat::QueryMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
   try {
-    auto client = yijian::threadCurrent::mongoClient();
-    if (query.isreset()) {
-      // reset currentnode cursor
-      if (likely(nullptr != currentNode_->id_cursor.second)){
-          // close cursor
-      }
-      currentNode_->id_cursor.first = query.tonodeid();
-      currentNode_->id_cursor.second = client->cursor(query);
-    }
-    if (unlikely(currentNode_->id_cursor.first.empty() ||
-          currentNode_->id_cursor.second == nullptr)) {
+    if (query.toincrementid() < query.fromincrementid()
+        || (query.toincrementid() - query.fromincrementid()) > 50) {
       throw std::system_error(std::error_code(11008, std::generic_category()),
-          "query tonodeid is empty");
+          "query is invalid");
     }
-    auto nodemessage_sp = client->queryMessage(
-          currentNode_->id_cursor.second);
+    auto client = yijian::threadCurrent::mongoClient();
     // update user's readed  
-    if (query.isreset()) {
-      client->updateReadedIncrement(currentNode_->userid, 
-          query.tonodeid(), nodemessage_sp->incrementid());
-    }
-    mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);
+    client->updateReadedIncrement(currentNode_->userid, 
+        query.tonodeid(), query.toincrementid());
+    client->queryMessage(query, [](std::shared_ptr<chat::NodeMessage> sp){
+          mountBuffer2Node(buffer::Buffer(*sp), node_self_);
+        });
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
@@ -848,7 +833,10 @@ void dispatch(chat::Media & media) {
     auto mediares = chat::MediaRes();
     mediares.set_sha1(media.sha1());
     mediares.set_nth(media.nth());
-    currentNode_->media_vec.push_back(std::move(media));
+    {
+      std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
+      currentNode_->media_vec.push_back(std::move(media));
+    }
     mountBuffer2Node(buffer::Buffer(mediares), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -861,13 +849,25 @@ void dispatch(chat::MediaCheck & mediacheck) {
   try {
     auto client = yijian::threadCurrent::mongoClient();
     client->insertMedia(currentNode_->media_vec);
-    currentNode_->media_vec.clear();
+    {
+      std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
+      std::sort(std::begin(currentNode_->media_vec),
+                std::end(currentNode_->media_vec),
+                [](const chat::Media &a, 
+                  const  chat::Media &b) -> bool{
+                    return a.nth() < b.nth();
+                });
+      currentNode_->media_vec.clear();
+    }
     auto mediares = chat::MediaCheckRes();
     mediares.set_sha1(mediacheck.sha1());
     mediares.set_isintact(true);
     mountBuffer2Node(buffer::Buffer(mediares), node_self_);
   }catch (std::system_error & sys_error) {
-    currentNode_->media_vec.clear();
+    {
+      std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
+      currentNode_->media_vec.clear();
+    }
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -1027,20 +1027,21 @@ check_map_ = {
   {ChatType::mediacheck, true},
 };
 
-
-void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp) {
+// write node in multiple thread
+void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp, uint16_t session_id) {
 
   YILOG_TRACE ("func: {}. argc node sp", __func__);
 
   currentNode_ = node;
+  session_id_ = session_id;
 
-  if (unlikely(currentNode_->sessionid != sp->session_id() && 
+  if (unlikely(session_id_ != sp->session_id() && 
               check_map_.find(sp->datatype()) != check_map_.end()
         )) {
     auto error = chat::Error();
     error.set_errnum(11010);
     auto err_msg = "session id error, right id is " + 
-      std::to_string(currentNode_->sessionid) + " .";
+      std::to_string(session_id_) + " .";
     error.set_errmsg(err_msg);
     mountBuffer2Node(buffer::Buffer(error), node_peer_);
   }else {
@@ -1050,7 +1051,6 @@ void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp) {
       if (likely(sp->datatype() == ChatType::registor ||
               sp->datatype() == ChatType::login ||
               sp->datatype() == ChatType::clientconnect)) {
-        ++currentNode_->sessionid;
         dispatch(sp->datatype(), sp->data(), sp->data_size());
       }else {
         auto error = chat::Error();
@@ -1059,7 +1059,6 @@ void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp) {
         mountBuffer2Node(buffer::Buffer(error), node_peer_);
       }
     }else {
-      ++currentNode_->sessionid;
       dispatch(sp->datatype(), sp->data(), sp->data_size());
     }
   }

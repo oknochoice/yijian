@@ -193,26 +193,32 @@ public:
    * failure error key
    *
    * */
+  // version
+  void querynodeversion(const std::string & nodeid,
+                        CB_Func && func);
+  // node key
   void querynode(const std::string & nodeid,
                  CB_Func && func);
   // type MediaType in proto
+  // message key
   void sendmessage2user(const std::string & userid,
                         const std::string & tonodeid,
                         const int type,
                         const std::string & contenct,
                         CB_Func && func);
+  // message key
   void sendmessage2group(const std::string & tonodeid,
                         const int type,
                         const std::string & contenct,
                         CB_Func && func);
-private:
+  // clear unread info
+  // mulitple message key
+  void msgResponse(CB_Func && func);
   void querymsg(const std::string & tonodeid,
                 const int32_t fromincrementid,
-                const int32_t toincrementid,
-                CB_Func && func);
-  void querymsgContine(CB_Func && func);
-public:
-  // do not update user's unread info
+                const int32_t toincrementid);
+  // do not clear unread info
+  // message key
   void queryonemsg(const std::string & tonodeid,
                    const int32_t incrementid,
                    CB_Func && func);
@@ -221,8 +227,11 @@ public:
 private:
   // 50020
   void put_map(const int32_t sessionid, CB_Func && func);
+  void call_map(const int32_t sessionid, const std::string & key);
   void put_map_send(CB_Func && func, Buffer_SP sp);
   void call_erase_map(const int32_t sessionid, const std::string & key);
+  // call return true
+  bool maycall_erase_map(const int32_t sessionid, const std::string & key);
 
   // need delete sessionid as key
   void put_map_send_cache(CB_Func && func, Buffer_SP sp);
@@ -245,6 +254,7 @@ private:
   void groupaddmemberRes(Buffer_SP sp);
   void queryuserversionRes(Buffer_SP sp);
   void queryuserRes(Buffer_SP sp);
+  void querynodeversionRes(Buffer_SP sp);
   void querynodeRes(Buffer_SP sp);
   void messageRes(Buffer_SP sp);
   void nodemessage(Buffer_SP sp);

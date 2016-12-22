@@ -241,7 +241,8 @@ db.addFriend
   inviter:
   invitee:
   toNodeID:
-  status: request createNode createNodeCount (agree refuse) addInviter addInvitee
+  status: request createNode createNodeCount (agree refuse) 
+  addInviter userUnreadInviter addInvitee userUnreadInvitee
 }
 
 */
@@ -352,7 +353,6 @@ message QueryMessage {
   string toNodeID = 1;
   int32  fromIncrementID = 2;
   int32  toIncrementID = 3;
-  bool   isReset = 4;
 }
 
 message QueryOneMessage {

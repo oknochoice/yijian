@@ -26,17 +26,20 @@ struct Write_IO;
 struct Read_IO {
   struct PingNode pingnode;
   struct Write_IO * writeio;
-  // socket buffer
+  // socket buffer subthread must not change
   Buffer_SP buffer_sp = std::make_shared<yijian::buffer>();
   // node info
+  // connect info subthread must not change
+  bool isConnect = false;
+  // set value where connectStatus is login_in connect_in
   uint16_t sessionid;
-  bool     isConnect = false;
   std::string userid;
   std::string deviceid;
   std::string appVersion;
   std::string clientVersion;
+  // media need 
+  std::mutex media_vec_mutex_;
   std::vector<chat::Media> media_vec;
-  std::pair<std::string, std::shared_ptr<mongocxx::cursor>> id_cursor;
 };
 
 struct Write_IO {

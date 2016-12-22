@@ -306,6 +306,7 @@ connection_read_callback (struct ev_loop * loop,
     YILOG_TRACE ("func: {}. update ping time", __func__);
     time(&io->pingnode.ping_time);
     ping_move2back(pinglist(), pingnode);
+    // server connect
     if (unlikely(io->buffer_sp->datatype() == 
           ChatType::serverconnect)) {
       // remove peer server's pingnode from pinglist
@@ -314,6 +315,7 @@ connection_read_callback (struct ev_loop * loop,
       ping_erase(pinglist(), pingnode);
       auto p = peer_servers_write();
       p->push_back(io);
+    // server disconnect
     }else if (unlikely(io->buffer_sp->datatype() == 
           ChatType::serverdisconnect)) {
       // remove peer server list;
@@ -325,10 +327,11 @@ connection_read_callback (struct ev_loop * loop,
       YILOG_TRACE ("func: {}. subthread do work", __func__);
       auto sp = io->buffer_sp;
       auto watcher = &write_asyn_watcher()->as;
+      uint16_t sessionid = io->sessionid++;
       noti_threads()->sentWork(
-          [&io, &loop, watcher, sp](){
+          [&io, &loop, watcher, sp, sessionid](){
             YILOG_TRACE ("dispatch message");
-            dispatch(io, sp);
+            dispatch(io, sp, sessionid);
             ev_async_send(loop, watcher);
           });
     }
@@ -351,12 +354,18 @@ connection_write_callback (struct ev_loop * loop,
   // converse to usable io
   Write_IO * io = reinterpret_cast<Write_IO*>(ww);
 
+
   // write to socket
   // if write finish stop write, start read.
   std::unique_lock<std::mutex> ul(io->buffers_p_mutex);
   if (!io->buffers_p.empty()) {
     auto p = io->buffers_p.front();
     ul.unlock();
+    // change read io's isConnect
+    if (unlikely(p->datatype() == ChatType::clientconnectres)) {
+      io->readio->isConnect = true;
+    }
+    // send
     if (p->socket_write(io->io.fd)) {
       ul.lock();
       io->buffers_p.pop();
