@@ -161,7 +161,6 @@ using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
 using bsoncxx::builder::stream::array;
 
-static thread_local unsigned char sha1_result[SHA_DIGEST_LENGTH];
 
 mongo_client::mongo_client(std::string serverName)
   : serverName_(serverName){
@@ -772,6 +771,7 @@ void mongo_client::insertMedia(
     SHA1_Update(&ctx, content.data(), content.size());
   }
 
+  unsigned char sha1_result[SHA_DIGEST_LENGTH];
   SHA1_Final(sha1_result, &ctx);
 
   std::string sha1(reinterpret_cast<char *>(sha1_result), SHA_DIGEST_LENGTH);

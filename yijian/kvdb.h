@@ -19,6 +19,9 @@ public:
 
   // alias type
   typedef std::function<void(const std::string&)> CB_Func;
+  // call will stop if isStop not set false
+  typedef std::function<void(const std::string&, bool * isStop)> 
+    CB_Func_Mutiple;
 
   // 50000 50040
   
@@ -213,32 +216,73 @@ public:
                         CB_Func && func);
   // clear unread info
   // mulitple message key
-  void msgResponse(CB_Func && func);
   void querymsg(const std::string & tonodeid,
                 const int32_t fromincrementid,
-                const int32_t toincrementid);
+                const int32_t toincrementid,
+                CB_Func_Mutiple && mfunc);
   // do not clear unread info
   // message key
   void queryonemsg(const std::string & tonodeid,
                    const int32_t incrementid,
-                   CB_Func && func);
-
-
+                   CB_Func_Mutiple && mfunc);
+  // type MediaType in proto
+  // func(key) key:nth_length
+  void sendmedia(const int type,
+                 const std::string & content,
+                 CB_Func && process);
+  // func(key) key:sha1
+  void querymedia(const std::string & sha1,
+                  CB_Func && mfunc);
+private:
+  void sendmedia(chat::Media & media,
+                 CB_Func && func);
 private:
   // 50020
+  /*
+   *
+   * sessionid CB_Func map
+   *
+   * */
   void put_map(const int32_t sessionid, CB_Func && func);
   void call_map(const int32_t sessionid, const std::string & key);
+  // session as map key
   void put_map_send(CB_Func && func, Buffer_SP sp);
   void call_erase_map(const int32_t sessionid, const std::string & key);
   // call return true
   bool maycall_erase_map(const int32_t sessionid, const std::string & key);
 
-  // need delete sessionid as key
-  void put_map_send_cache(CB_Func && func, Buffer_SP sp);
+  // db need delete sessionid as key
+  void put_map_send_dbcache(CB_Func && func, Buffer_SP sp);
 
   std::mutex sessionid_map_mutex_;
   std::map<int32_t, CB_Func> sessionid_cbfunc_map_;
+  /*
+   * 
+   * media sha1 map
+   *
+   * */
+  void put_media_map(const std::string & sha1, CB_Func && func);
+  void call_media_map(const std::string & sha1, 
+                      const std::string & key);
+  void callerase_media_map(const std::string & sha1, 
+                           const std::string & key);
+  std::mutex media_map_mutex_;
+  std::map<std::string, CB_Func> media_cbfunc_map_;
 
+  /*
+   * query message 
+   * sessionid CB_Func_Mutiple_Func map
+   *
+   * */
+  void put_mmap_send(Buffer_SP sp, CB_Func_Mutiple && mfunc);
+  void call_mmap(const int32_t sessionid, 
+                 const std::string & key);
+  std::mutex sessionid_mmap_mutex_;
+  std::map<int32_t, CB_Func_Mutiple> sessionid_mmap_;
+  /*
+   * dispatch
+   *
+   * */
   void dispatch(int type, Buffer_SP sp);
 private:
   // 50030
@@ -258,9 +302,10 @@ private:
   void querynodeRes(Buffer_SP sp);
   void messageRes(Buffer_SP sp);
   void nodemessage(Buffer_SP sp);
+  void mediaRes(Buffer_SP sp);
+  void media(Buffer_SP sp);
 private:
   leveldb::DB * db_;
-  uint16_t temp_session_;
   int32_t  temp_tonodeid_ = -1;
 };
 
