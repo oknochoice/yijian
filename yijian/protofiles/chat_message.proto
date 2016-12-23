@@ -444,6 +444,14 @@ message QueryMedia {
   string sha1 = 1;
 }
 
+message MediaIsExist {
+  string sha1 = 1;
+}
+
+message MediaIsExistRes {
+  bool isExist = 1;
+}
+
 message MediaCheck {
   string sha1 = 1;
 }

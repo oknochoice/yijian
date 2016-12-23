@@ -402,7 +402,7 @@ void kvdb::addfriend(const std::string & inviteeid,
   add.set_inviterid(get_current_userid());
   add.set_inviteeid(inviteeid);
   add.set_msg(msg);
-  put_map_send(std::forward<CB_Func>(func), buffer::Buffer(add));
+  put_map_send(buffer::Buffer(add), std::forward<CB_Func>(func));
 }
 
 void kvdb::addfriendAuthorize(const std::string & inviterid,
@@ -413,8 +413,8 @@ void kvdb::addfriendAuthorize(const std::string & inviterid,
   authorize.set_inviterid(inviterid);
   authorize.set_inviteeid(get_current_userid());
   authorize.set_isagree(static_cast<chat::IsAgree>(isAgree));
-  put_map_send(std::forward<CB_Func>(func), 
-      buffer::Buffer(authorize));
+  put_map_send(buffer::Buffer(authorize), 
+      std::forward<CB_Func>(func));
 }
 
 /*
@@ -431,8 +431,8 @@ void kvdb::creategroup(const std::string & groupname,
   for (auto & memberid: membersid) {
     group.add_membersid(memberid);
   }
-  put_map_send(std::forward<CB_Func>(func), 
-      buffer::Buffer(group));
+  put_map_send(buffer::Buffer(group), 
+      std::forward<CB_Func>(func));
 }
 void kvdb::addmembers2group(const std::string & groupid,
     const std::vector<std::string> membersid,
@@ -443,8 +443,8 @@ void kvdb::addmembers2group(const std::string & groupid,
   for (auto & memberid: membersid) {
     add.add_membersid(memberid);
   }
-  put_map_send(std::forward<CB_Func>(func), 
-      buffer::Buffer(add));
+  put_map_send(buffer::Buffer(add), 
+      std::forward<CB_Func>(func));
 }
 
 /*
@@ -456,8 +456,8 @@ void kvdb::queryuserVersion(const std::string & userid,
   YILOG_TRACE ("func: {}", __func__);
   chat::QueryUserVersion query;
   query.set_userid(userid);
-  put_map_send(std::forward<CB_Func>(func), 
-      buffer::Buffer(query));
+  put_map_send(buffer::Buffer(query), 
+      std::forward<CB_Func>(func));
 }
 void kvdb::queryuserVersion(CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
@@ -469,8 +469,8 @@ void kvdb::queryuser(const std::string && userid,
   YILOG_TRACE ("func: {}", __func__);
   chat::QueryUser query;
   query.set_userid(userid);
-  put_map_send(std::forward<CB_Func>(func), 
-      buffer::Buffer(query));
+  put_map_send(buffer::Buffer(query), 
+      std::forward<CB_Func>(func));
 }
 void kvdb::queryuser(CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
@@ -490,16 +490,16 @@ void kvdb::querynodeversion(const std::string & nodeid,
   YILOG_TRACE ("func: {}", __func__);
   chat::QueryNodeVersion query;
   query.set_tonodeid(nodeid);
-  put_map_send(std::forward<CB_Func>(func),
-      buffer::Buffer(query));
+  put_map_send(buffer::Buffer(query), 
+      std::forward<CB_Func>(func));
 }
 void kvdb::querynode(const std::string & nodeid, 
     CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
   chat::QueryNode query;
   query.set_tonodeid(nodeid);
-  put_map_send(std::forward<CB_Func>(func), 
-      buffer::Buffer(query));
+  put_map_send(buffer::Buffer(query), 
+      std::forward<CB_Func>(func));
 }
 void kvdb::sendmessage2user(const std::string & userid,
                         const std::string & tonodeid,
@@ -512,8 +512,8 @@ void kvdb::sendmessage2user(const std::string & userid,
   msg.set_tonodeid(tonodeid);
   msg.set_type(static_cast<chat::MediaType>(type));
   msg.set_content(contenct);
-  put_map_send_dbcache(std::forward<CB_Func>(func), 
-      buffer::Buffer(msg));
+  put_map_send_dbcache(buffer::Buffer(msg), 
+      std::forward<CB_Func>(func));
 
 }
 void kvdb::sendmessage2group(const std::string & tonodeid,
@@ -525,8 +525,8 @@ void kvdb::sendmessage2group(const std::string & tonodeid,
   msg.set_tonodeid(tonodeid);
   msg.set_type(static_cast<chat::MediaType>(type));
   msg.set_content(contenct);
-  put_map_send_dbcache(std::forward<CB_Func>(func), 
-      buffer::Buffer(msg));
+  put_map_send_dbcache(buffer::Buffer(msg), 
+      std::forward<CB_Func>(func));
 }
 void kvdb::querymsg(const std::string & tonodeid,
               const int32_t fromincrementid,
@@ -601,8 +601,8 @@ void kvdb::sendmedia(const int type,
 void kvdb::sendmedia(chat::Media & media,
                CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
-  put_map_send(std::forward<CB_Func>(func),
-      buffer::Buffer(media));
+  put_map_send(buffer::Buffer(media),
+      std::forward<CB_Func>(func));
 }
 
 void kvdb::querymedia(const std::string & sha1,
@@ -613,6 +613,41 @@ void kvdb::querymedia(const std::string & sha1,
   put_media_map(sha1, std::forward<CB_Func>(func));
   client_send(buffer::Buffer(query), nullptr);
 }
+
+void kvdb::sendmediaIsexist(const std::string & content,
+                        CB_Func && func) {
+  YILOG_TRACE ("func: {}", __func__);
+  chat::MediaIsExist query;
+
+  unsigned char sha1_result[SHA_DIGEST_LENGTH];
+  SHA_CTX ctx;
+  SHA1_Init(&ctx);
+  SHA1_Update(&ctx, content.data(), content.size());
+  SHA1_Final(sha1_result, &ctx);
+  std::string sha1(reinterpret_cast<char *>(sha1_result), 
+      SHA_DIGEST_LENGTH);
+  query.set_sha1(sha1);
+  put_map_send(buffer::Buffer(query), 
+      std::forward<CB_Func>(func));
+}
+
+void kvdb::sendmediacheck(const std::string & content,
+                      CB_Func && func) {
+  YILOG_TRACE ("func: {}", __func__);
+  unsigned char sha1_result[SHA_DIGEST_LENGTH];
+  SHA_CTX ctx;
+  SHA1_Init(&ctx);
+  SHA1_Update(&ctx, content.data(), content.size());
+  SHA1_Final(sha1_result, &ctx);
+  std::string sha1(reinterpret_cast<char *>(sha1_result), 
+      SHA_DIGEST_LENGTH);
+  chat::MediaCheck check;
+  check.set_sha1(sha1);
+  put_map_send(buffer::Buffer(check), 
+      std::forward<CB_Func>(func));
+}
+
+
 
 /*
  *
@@ -633,7 +668,7 @@ void kvdb::call_map(const int32_t sessionid,
     it->second(key);
   }
 }
-void kvdb::put_map_send(CB_Func && func, Buffer_SP sp) {
+void kvdb::put_map_send(Buffer_SP sp, CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   uint16_t temp_session;
@@ -671,7 +706,7 @@ bool kvdb::maycall_erase_map(
   return isCalled;
 }
 
-void kvdb::put_map_send_dbcache(CB_Func && func, Buffer_SP sp) {
+void kvdb::put_map_send_dbcache(Buffer_SP sp, CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   uint16_t temp_session;
@@ -801,6 +836,12 @@ void kvdb::dispatch(int type, Buffer_SP sp) {
       };
       (*map_p)[ChatType::media] = [=]() {
         media(sp);
+      };
+      (*map_p)[ChatType::mediaisexistres] = [=]() {
+        mediaisexistRes(sp);
+      };
+      (*map_p)[ChatType::mediacheckres] = [=]() {
+        mediacheckRes(sp);
       };
   });
   auto it = map_p->find(type);
@@ -1003,3 +1044,27 @@ void kvdb::media(Buffer_SP sp) {
     }
   }
 }
+
+void kvdb::mediaisexistRes(Buffer_SP sp) {
+  YILOG_TRACE ("func: {}", __func__);
+  chat::MediaIsExistRes res;
+  res.ParseFromArray(sp->data(), sp->data_size());
+  if (res.isexist()) {
+    call_erase_map(sp->session_id(), "1");
+  }else {
+    call_erase_map(sp->session_id(), "0");
+  }
+}
+
+void kvdb::mediacheckRes(Buffer_SP sp) {
+  YILOG_TRACE ("func: {}", __func__);
+  chat::MediaCheckRes res;
+  res.ParseFromArray(sp->data(), sp->data_size());
+  if (res.isintact()){
+    call_erase_map(sp->session_id(), "1");
+  }else {
+    call_erase_map(sp->session_id(), "0");
+  }
+}
+
+

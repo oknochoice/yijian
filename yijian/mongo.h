@@ -132,6 +132,7 @@ public:
   void queryMedia(const std::string & sha1, 
       std::vector<std::shared_ptr<chat::Media>> & media_vec,
       int32_t maxLength);
+  bool mediaIsExist(const std::string & sha1);
 
   // query current server device connect info
 //  void devices(const chat::NodeSpecifiy& node_specifiy, 

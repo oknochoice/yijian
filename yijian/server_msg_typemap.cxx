@@ -844,6 +844,20 @@ void dispatch(chat::Media & media) {
   }
 }
 
+void dispatch(chat::MediaIsExist & isExist) {
+  YILOG_TRACE ("func: {}. media", __func__);
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    auto isE = client->mediaIsExist(isExist.sha1());
+    chat::MediaIsExistRes res;
+    res.set_isexist(isE);
+    mountBuffer2Node(buffer::Buffer(res), node_self_);
+  }catch (std::system_error & sys_error) {
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+        node_self_);
+  }
+}
+
 void dispatch(chat::MediaCheck & mediacheck) {
   YILOG_TRACE ("func: {}. media", __func__);
   try {
@@ -997,6 +1011,26 @@ void dispatch(int type, char * header, std::size_t length) {
       };
       (*map_p)[ChatType::nodemessagenoti] = [=]() {
         auto chat = chat::NodeMessageNoti();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::media] = [=]() {
+        auto chat = chat::Media();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::querymedia] = [=]() {
+        auto chat = chat::QueryMedia();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::mediaisexist] = [=]() {
+        auto chat = chat::MediaIsExist();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::mediacheck] = [=]() {
+        auto chat = chat::MediaCheck();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };

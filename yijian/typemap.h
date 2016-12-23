@@ -48,6 +48,8 @@ enum ChatType : uint8_t {
   media,
   mediares,
   querymedia,
+  mediaisexist,
+  mediaisexistres,
   mediacheck,
   mediacheckres,
   serverconnect,// outer
@@ -172,6 +174,12 @@ constexpr uint8_t dispatchType(chat::MediaRes & ) {
 }
 constexpr uint8_t dispatchType(chat::QueryMedia & ) {
   return ChatType::querymedia;
+}
+constexpr uint8_t dispatchType(chat::MediaIsExist & ) {
+  return ChatType::mediaisexist;
+}
+constexpr uint8_t dispatchType(chat::MediaIsExistRes & ) {
+  return ChatType::mediaisexistres;
 }
 constexpr uint8_t dispatchType(chat::MediaCheck & ) {
   return ChatType::mediacheck;

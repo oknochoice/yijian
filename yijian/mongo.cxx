@@ -843,6 +843,20 @@ void mongo_client::queryMedia(const std::string & sha1,
 }
 
 
+bool mongo_client::mediaIsExist(const std::string & sha1) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto media_col = db["media"];
+  auto maybe_result = media_col.find_one(
+      document{} << "sha1" << sha1
+      << finalize);
+  bool isExist = false;
+  if (maybe_result) {
+    isExist = true;
+  }
+  return isExist;
+}
+
 
 void mongo_client::devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func) {
