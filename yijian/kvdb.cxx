@@ -11,7 +11,7 @@ enum Session_ID : int32_t {
   logout_disconnect = -2,
 };
 
-kvdb::kvdb(std::string & path) {
+kvdb::kvdb(std::string && path) {
   YILOG_TRACE ("func: {}", __func__);
   leveldb::Options options;
   options.create_if_missing = true;
@@ -270,11 +270,11 @@ void kvdb::getMsg(const std::string & msgNode,
  * network regist login connect
  *
  * */ 
-void kvdb::registUser(const std::string & phoneno,
-                  const std::string & countrycode,
-                  const std::string & password,
-                  const std::string & verifycode,
-                  const std::string & nickname,
+void kvdb::registUser(const std::string && phoneno,
+                  const std::string && countrycode,
+                  const std::string && password,
+                  const std::string && verifycode,
+                  const std::string && nickname,
                   CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
   // check

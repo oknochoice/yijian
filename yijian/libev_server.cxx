@@ -222,7 +222,7 @@ start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
 
   noti_threads()->foreachio([=](struct Read_IO * io) {
         YILOG_TRACE ("func: noti_threads foreachio. ");
-        //ev_io_stop(loop, &io->io);
+        ev_io_start(loop, &io->pingnode.io);
         ev_io_start(loop, &io->writeio->io);
       });
 

@@ -14,7 +14,7 @@
 class kvdb {
 public:
   // construct...
-  kvdb(std::string & path);
+  kvdb(std::string && path);
   ~kvdb();
 
   // alias type
@@ -117,11 +117,11 @@ public:
    * success or failure
    * func correspond response model
    * */ 
-  void registUser(const std::string & phoneno,
-                  const std::string & countrycode,
-                  const std::string & password,
-                  const std::string & verifycode,
-                  const std::string & nickname,
+  void registUser(const std::string && phoneno,
+                  const std::string && countrycode,
+                  const std::string && password,
+                  const std::string && verifycode,
+                  const std::string && nickname,
                   CB_Func && func);
   // OS, iOS = 0, Android = 1;
   void login(const std::string & phoneno,

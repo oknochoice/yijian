@@ -1,6 +1,4 @@
-#define CATCH_CONFIG_MAIN
 #include "macro.h"
-#include "catch.hpp"
 #include "spdlog/spdlog.h"
 #include "yijian/lib_client.h"
 #include "yijian/mongo.h"
@@ -14,28 +12,6 @@
 #include "kvdb.h"
 
 #include <boost/coroutine2/all.hpp>
-
-#ifdef __cpluscplus
-extern "C" {
-#endif
-
-
-  /*
-TEST_CASE("buffer", "[buffer]") {
-  initConsoleLog();
-  SECTION("encoding | decoing var length") {
-    for (unsigned int i = 0; i < 2097152; ++i) {
-      uint32_t length = i;
-      char data[1024];
-      auto buffer_sp = new yijian::buffer();
-      buffer_sp->encoding_var_length(data, i);
-      auto pair = buffer_sp->decoding_var_length(data);
-      REQUIRE( i == pair.first);
-    }
-  }
-}
-  */
-
 std::mutex mutex_;
 std::condition_variable cvar_;
 bool iswait_ = true;
@@ -57,8 +33,7 @@ void notimain() {
   cvar_.notify_one();
 }
 
-
-TEST_CASE("IM business","[business]") {
+int main() {
   initConsoleLog();
   using yijian::Buffer_SP;
 
@@ -70,46 +45,44 @@ TEST_CASE("IM business","[business]") {
       [](coro_t::push_type & sink){
         auto msg = chat::NodeMessage();
         for (int i = 0; i < 1000; ++i) {
-          
+          msg.set_type(chat::MediaType::TEXT);
+          msg.set_content(std::to_string(i));
+          sink(msg);
         }
       });
+  for (int i = 0; i < 10; ++i) {
+    auto item = getOneMsg.get();
+    getOneMsg();
+    YILOG_TRACE("content:{}.", item.content());
+  }
+  kvdb db("user_yijian");
 
-  create_client([](Buffer_SP buffer_sp) {
-        // register login logout connect disconnect
-        YILOG_TRACE("client callback regist");
-        YILOG_TRACE("client callback duregist");
-        YILOG_TRACE("client callback login");
-        YILOG_TRACE("client callback logout");
-        YILOG_TRACE("client callback login");
-        YILOG_TRACE("client callback connect");
-        YILOG_TRACE("client callback logout");
-        YILOG_TRACE("client callback login");
-        YILOG_TRACE("client callback connect");
-        YILOG_TRACE("client callback disconnect");
-        YILOG_TRACE("client callback logout");
+  db.registUser("18514029918", "86", "123456",
+      "213465", "yijian", [&db](const std::string & key){
+        std::string value;
+        db.get(key, value);
+        YILOG_INFO("key:{}, value:{}.", key, value);
+        chat::RegisterRes res;
+        res.ParseFromString(value);
+        assert(res.issuccess() == true);
         notimain();
       });
 
-  SECTION("register") {
-    auto regst = chat::Register();
-    regst.set_phoneno("18514029918");
-    regst.set_countrycode("86");
-    regst.set_password("123456");
-    regst.set_nickname("yijian");
-    auto sp = yijian::buffer::Buffer(regst);
-    sleep(1);
-    client_send(sp, nullptr);
-    mainwait();
-    client_send(sp, nullptr);
-    mainwait();
-    auto msgTest = chat::NodeMessage();
-    client_send(yijian::buffer::Buffer(msgTest), nullptr);
-  }
+  mainwait();
+  db.registUser("18514029918", "86", "123456",
+      "213465", "yijian", [&db](const std::string & key){
+        YILOG_INFO("key:{}.", key);
+        std::string value;
+        db.get(key, value);
+        chat::RegisterRes res;
+        res.ParseFromString(value);
+        assert(res.issuccess() == false);
+        YILOG_INFO("errno:{}, msg:{}.", 
+            res.e_no(), res.e_msg());
+        notimain();
+      });
 
+  mainwait();
+  return 0;
 }
-
-
-#ifdef __cpluscplus
-}
-#endif
 

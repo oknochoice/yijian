@@ -2,6 +2,7 @@
 #include <ev.h>
 #include <utility>
 #include <queue>
+#include <condition_variable>
 
 struct Read_IO {
   // watcher
@@ -22,6 +23,9 @@ struct Write_IO {
 static std::shared_ptr<Read_CB> sp_read_cb_;
 static Read_IO * read_io_;
 static Write_IO * write_io_;
+static std::mutex ev_c_mutex_;
+static bool ev_c_isWait_ = true;
+static std::condition_variable ev_c_var_;
 
 struct ev_loop * loop() {
 
@@ -66,7 +70,7 @@ void connection_read_callback (struct ev_loop * loop,
 
   YILOG_TRACE ("func: {}. ", __func__);
 
-  ev_io_stop(loop, rw);
+  //ev_io_stop(loop, rw);
   // converse to usable io
   Read_IO * io = reinterpret_cast<Read_IO*>(rw);
 
@@ -163,10 +167,19 @@ void create_client(Read_CB && read_cb) {
     YILOG_TRACE ("func: {}, thread start.", __func__);
     init_io("127.0.0.1", 5555);
     sp_read_cb_.reset(new Read_CB(std::forward<Read_CB>(read_cb)));
+    std::unique_lock<std::mutex> ul(ev_c_mutex_);
+    ev_c_isWait_ = false;
+    ev_c_var_.notify_one();
+    ul.unlock();
     ev_run(loop(), 0);
     YILOG_TRACE("exit thread");
   });
   t.detach();
+  std::unique_lock<std::mutex> cul(ev_c_mutex_);
+  ev_c_var_.wait(cul, [&](){
+        return !ev_c_isWait_;
+      });
+
 }
 
 void client_send(Buffer_SP sp_buffer,
