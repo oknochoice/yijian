@@ -279,8 +279,7 @@ void dispatch(chat::Login & login) {
       node_user_.set_touserid(currentNode_->userid);
 
       auto noti = chat::LoginNoti();
-      auto dev = noti.mutable_device();
-      *dev = login.device();
+      noti.set_uuid(login.device().uuid());
       mountBuffer2Node(buffer::Buffer(noti), node_user_);
 
       noti.set_touserid_outer(currentNode_->userid);
@@ -818,6 +817,9 @@ void dispatch(chat::QueryOneMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
   try {
     auto client = yijian::threadCurrent::mongoClient();
+    // update user's readed  
+    client->updateReadedIncrement(currentNode_->userid, 
+        query.tonodeid(), query.incrementid());
     auto nodemessage_sp = 
       client->queryMessage(query.tonodeid(), query.incrementid());
     mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);

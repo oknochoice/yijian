@@ -57,6 +57,7 @@ int main() {
   }
   kvdb db("user_yijian");
 
+
   db.registUser("18514029918", "86", "123456",
       "213465", "yijian", [&db](const std::string & key){
         std::string value;
@@ -67,8 +68,8 @@ int main() {
         assert(res.issuccess() == true);
         notimain();
       });
-
   mainwait();
+
   db.registUser("18514029918", "86", "123456",
       "213465", "yijian", [&db](const std::string & key){
         YILOG_INFO("key:{}.", key);
@@ -81,8 +82,8 @@ int main() {
             res.e_no(), res.e_msg());
         notimain();
       });
-
   mainwait();
+
   return 0;
 }
 

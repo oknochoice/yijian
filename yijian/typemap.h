@@ -54,7 +54,6 @@ enum ChatType : uint8_t {
   mediacheckres,
   serverconnect,// outer
   serverdisconnect,// outer
-  msgunreadnoti,
 };
 
 std::unordered_map<int32_t, bool>
@@ -186,9 +185,6 @@ constexpr uint8_t dispatchType(chat::MediaCheck & ) {
 }
 constexpr uint8_t dispatchType(chat::MediaCheckRes & ) {
   return ChatType::mediacheckres;
-}
-constexpr uint8_t dispatchType(chat::MsgUnreadNoti & ) {
-  return ChatType::msgunreadnoti;
 }
 
 

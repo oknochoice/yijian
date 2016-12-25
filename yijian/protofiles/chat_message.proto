@@ -187,7 +187,7 @@ message LoginRes {
 
 message LoginNoti {
   string toUserID_outer = 1;
-  Device device = 2;
+  string UUID = 2;
 }
 
 message ClientConnect {
@@ -198,9 +198,6 @@ message ClientConnect {
   string OSVersion = 5;
   string appVersion = 6; // Dot-decimal notaiton
   repeated string ips = 7;
-}
-
-message ClientConnectNoti {
 }
 
 message ClientConnectRes {
@@ -344,9 +341,6 @@ message NodeMessageNoti {
   string toNodeID = 1;
   int32  unreadIncrement = 2;
   string toUserID_outer = 3;
-}
-message MsgUnreadNoti {
-  map<string, int32>  unreadNodes = 1;
 }
 
 message QueryMessage {

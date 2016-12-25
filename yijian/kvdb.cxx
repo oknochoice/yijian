@@ -9,6 +9,8 @@ using yijian::buffer;
 enum Session_ID : int32_t {
   regist_login_connect = -1,
   logout_disconnect = -2,
+  accept_unread_msg = -3,
+  user_noti = -4
 };
 
 kvdb::kvdb(std::string && path) {
@@ -99,7 +101,18 @@ std::string kvdb::disconnectKey() {
   YILOG_TRACE ("func: {}", __func__);
   return "disconnect_kvdb";
 }
-
+std::string kvdb::loginNotiKey() {
+  YILOG_TRACE ("func: {}", __func__);
+  return "loginnoti_kvdb";
+}
+std::string kvdb::addFriendNotiKey() {
+  YILOG_TRACE ("func: {}", __func__);
+  return "addfriendnoti_kvdb";
+}
+std::string kvdb::addFriendAuthorizeNotiKey() {
+  YILOG_TRACE ("func: {}", __func__);
+  return "addfriendauthorizenoti_kvdb";
+}
 
 /*
  * current 
@@ -586,9 +599,9 @@ void kvdb::sendmedia(const int type,
     sendmedia(media, [sha1, length, this](const std::string & key){
           std::string key_length = key + "_" + std::to_string(length);
           if (key < std::to_string(length)) {
-            this->call_media_map(sha1, key_length);
+            call_media_map(sha1, key_length);
           }else if (key == std::to_string(length)) {
-            this->callerase_media_map(sha1, key_length);
+            callerase_media_map(sha1, key_length);
           }else {
             throw std::system_error(std::error_code(50015,
                   std::generic_category()),
@@ -647,7 +660,17 @@ void kvdb::sendmediacheck(const std::string & content,
       std::forward<CB_Func>(func));
 }
 
+void kvdb::acceptUnreadMsg(CB_Func && func) {
+  YILOG_TRACE ("func: {}", __func__);
+  put_map(Session_ID::accept_unread_msg, 
+      std::forward<CB_Func>(func));
+}
 
+void kvdb::userInfoNoti(CB_Func && func) {
+  YILOG_TRACE ("func: {}", __func__);
+  put_map(Session_ID::user_noti, 
+      std::forward<CB_Func>(func));
+}
 
 /*
  *
@@ -797,6 +820,19 @@ void kvdb::dispatch(int type, Buffer_SP sp) {
       (*map_p)[ChatType::error] = [=]() {
         error(sp);
       };
+      // noti
+      (*map_p)[ChatType::nodemessagenoti] = [=]() {
+        msgunreadnoti(sp);
+      };
+      (*map_p)[ChatType::loginnoti] = [=]() {
+        usernoti(sp);
+      };
+      (*map_p)[ChatType::addfriendnoti] = [=]() {
+        usernoti(sp);
+      };
+      (*map_p)[ChatType::addfriendauthorizenoti] = [=]() {
+        usernoti(sp);
+      };
       // friend group
       (*map_p)[ChatType::addfriendres] = [=]() {
         addfriendRes(sp);
@@ -904,7 +940,6 @@ void kvdb::error(Buffer_SP sp) {
   put(key, value);
   call_erase_map(sp->session_id(), key);
 }
-
 void kvdb::addfriendRes(Buffer_SP sp) {
   YILOG_TRACE ("func: {}", __func__);
   auto key = userKey(get_current_userid());
@@ -1066,5 +1101,33 @@ void kvdb::mediacheckRes(Buffer_SP sp) {
     call_erase_map(sp->session_id(), "0");
   }
 }
+void kvdb::msgunreadnoti(Buffer_SP sp) {
+  YILOG_TRACE ("func: {}", __func__);
+  chat::NodeMessageNoti noti;
+  noti.ParseFromArray(sp->data(), sp->data_size());
+  queryonemsg(noti.tonodeid(), noti.unreadincrement(),
+      [this](const std::string & key, bool * isStop){
+        call_map(Session_ID::accept_unread_msg, key);
+        *isStop = true;
+      });
+}
 
+void kvdb::usernoti(Buffer_SP sp) {
+  YILOG_TRACE ("func: {}", __func__);
+  if (sp->datatype() == ChatType::loginnoti) {
+    put(loginNotiKey(), 
+        leveldb::Slice(sp->data(), sp->data_size()));
+    call_map(Session_ID::user_noti, loginNotiKey());
+  }else if( sp->datatype() == ChatType::addfriendnoti) {
+    put(addFriendNotiKey(), 
+        leveldb::Slice(sp->data(), sp->data_size()));
+    call_map(Session_ID::user_noti, addFriendNotiKey());
+  }else if( sp->datatype() == ChatType::addfriendauthorizenoti) {
+    put(addFriendAuthorizeNotiKey(), 
+        leveldb::Slice(sp->data(), sp->data_size()));
+    call_map(Session_ID::user_noti, addFriendAuthorizeNotiKey());
+  }else{
+    YILOG_ERROR ("usernoti func not accept this type");
+  }
+}
 

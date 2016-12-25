@@ -67,6 +67,12 @@ public:
   std::string connectKey();
   // disconnect_kvdb
   std::string disconnectKey();
+  // loginnoti_kvdb
+  std::string loginNotiKey();
+  // addfriendnoti_kvdb
+  std::string addFriendNotiKey();
+  // addfriendauthorizenoti_kvdb
+  std::string addFriendAuthorizeNotiKey();
 
 
   /*
@@ -214,13 +220,11 @@ public:
                         const int type,
                         const std::string & contenct,
                         CB_Func && func);
-  // clear unread info
   // mulitple message key
   void querymsg(const std::string & tonodeid,
                 const int32_t fromincrementid,
                 const int32_t toincrementid,
                 CB_Func_Mutiple && mfunc);
-  // do not clear unread info
   // message key
   void queryonemsg(const std::string & tonodeid,
                    const int32_t incrementid,
@@ -242,10 +246,18 @@ public:
 private:
   void sendmedia(chat::Media & media,
                  CB_Func && func);
+public:
+  /*
+   * noti
+   *
+   * */
+  // unread msg noti
+  void acceptUnreadMsg(CB_Func && func);
+  // other device loginNoti addFriendNoti addFriendAuthorizeNoti
+  void userInfoNoti(CB_Func && func);
 private:
   // 50020
   /*
-   *
    * sessionid CB_Func map
    *
    * */
@@ -312,6 +324,8 @@ private:
   void media(Buffer_SP sp);
   void mediaisexistRes(Buffer_SP sp);
   void mediacheckRes(Buffer_SP sp);
+  void msgunreadnoti(Buffer_SP sp);
+  void usernoti(Buffer_SP sp);
 private:
   leveldb::DB * db_;
   int32_t  temp_tonodeid_ = -1;
