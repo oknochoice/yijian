@@ -78,9 +78,15 @@ void connection_read_callback (struct ev_loop * loop,
   // if read complete stop watch && update ping
   
   if (io->buffer_sp->socket_read(io->io.fd)) {
+    YILOG_TRACE ("func: {}. receive datatype {}.", 
+        __func__, io->buffer_sp->datatype());
     if (unlikely(io->buffer_sp->datatype() == 
           ChatType::clientconnectres)) {
-      read_io_->sessionid =  io->buffer_sp->session_id();
+      YILOG_INFO ("func: {}. set sessionid", __func__);
+      chat::ClientConnectRes res;
+      res.ParseFromArray(io->buffer_sp->data(), 
+          io->buffer_sp->data_size());
+      read_io_->sessionid = res.sessionid();
     }
     (*sp_read_cb_)(io->buffer_sp);
     io->buffer_sp.reset(new yijian::buffer());
@@ -187,6 +193,7 @@ void client_send(Buffer_SP sp_buffer,
   YILOG_TRACE ("func: {}. ", __func__);
   
   auto sid = read_io_->sessionid++;
+  YILOG_INFO("send sessionid {}", sid);
   if (nullptr != sessionid) {
     *sessionid = sid;
   }

@@ -10,7 +10,7 @@
 #include "buffer.h"
 #include "libev_server.h"
 #include <unordered_map>
-
+#include <google/protobuf/util/json_util.h>
 
 #ifdef __cpluscplus
 extern "C" {
@@ -169,6 +169,13 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user) {
       });
 }
 
+template <typename Proto>
+std::string pro2string(Proto & any) {
+  std::string value;
+  google::protobuf::util::MessageToJsonString(any, &value);
+  return value;
+}
+
 // dispatch 
 void dispatch(chat::Error& error) {
 
@@ -185,7 +192,7 @@ void dispatch(chat::Register & enroll) {
   
   YILOG_TRACE ("func: {}. register", __func__);
 
-
+  YILOG_INFO ("register {}", pro2string(enroll));
   try {
 
     auto client = yijian::threadCurrent::mongoClient();
@@ -197,6 +204,7 @@ void dispatch(chat::Register & enroll) {
     auto res = chat::RegisterRes();
     res.set_userid(id);
     res.set_issuccess(true);
+    YILOG_INFO ("register success {}", pro2string(res));
     mountBuffer2Node(buffer::Buffer(res), node_self_);
 
   }catch (std::system_error & sys_error) {
@@ -204,6 +212,7 @@ void dispatch(chat::Register & enroll) {
     res.set_issuccess(false);
     res.set_e_no(sys_error.code().value());
     res.set_e_msg(sys_error.what());
+    YILOG_INFO ("register failure {}", pro2string(res));
     mountBuffer2Node(buffer::Buffer(res), node_self_);
   }
 
@@ -212,6 +221,7 @@ void dispatch(chat::Register & enroll) {
 void dispatch(chat::Login & login) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("login {}", pro2string(login));
 
   auto client = yijian::threadCurrent::mongoClient();
 
@@ -223,6 +233,7 @@ void dispatch(chat::Login & login) {
       device->set_os(login.device().os());
       device->set_devicemodel(login.device().devicemodel());
       device->set_uuid(login.device().uuid());
+      device->set_devicenickname(login.device().devicenickname());
       // find device from db
       auto devices = user_sp->mutable_devices();
       auto it = find_if(devices->begin(), devices->end(),
@@ -275,6 +286,8 @@ void dispatch(chat::Login & login) {
       // response request device
       auto res = chat::LoginRes();
       res.set_issuccess(true);
+      res.set_userid(user_sp->id());
+      YILOG_INFO ("login success {}", pro2string(res));
       mountBuffer2Node(buffer::Buffer(res), node_self_);
       node_user_.set_touserid(currentNode_->userid);
 
@@ -283,12 +296,13 @@ void dispatch(chat::Login & login) {
       mountBuffer2Node(buffer::Buffer(noti), node_user_);
 
       noti.set_touserid_outer(currentNode_->userid);
+      YILOG_INFO ("send login noti {}", pro2string(noti));
       mountBuffer2Node(buffer::Buffer(noti), node_peer_);
     }else {
       client->loginRecord(login.countrycode(), login.phoneno(), 
           login.ips(), false);
-      mountBuffer2Node(errorBuffer(11001, "password or account error"),
-          node_self_);
+      throw std::system_error(std::error_code(11001, std::generic_category()),
+          "password or account error");
     }
 
   }catch (std::system_error & sys_error) {
@@ -296,6 +310,7 @@ void dispatch(chat::Login & login) {
     res.set_issuccess(false);
     res.set_e_no(sys_error.code().value());
     res.set_e_msg(sys_error.what());
+    YILOG_INFO ("login failure {}", pro2string(res));
     mountBuffer2Node(buffer::Buffer(res), node_self_);
   }
 
@@ -304,6 +319,7 @@ void dispatch(chat::Login & login) {
 void dispatch(chat::LoginNoti & noti) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("receive login noti {}", pro2string(noti));
   try {
     node_user_.set_touserid(noti.touserid_outer());
     noti.clear_touserid_outer();
@@ -319,6 +335,7 @@ void dispatch(chat::Logout & logout) {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
+  YILOG_INFO ("logout {}", pro2string(logout));
   auto client = yijian::threadCurrent::mongoClient();
 
   try {
@@ -348,11 +365,13 @@ void dispatch(chat::Logout & logout) {
       // send buffer
       auto res = chat::LogoutRes();
       res.set_uuid(it->uuid());
+      YILOG_INFO ("logout success {}", pro2string(res));
       mountBuffer2Node(buffer::Buffer(res), node_self_);
       node_user_.set_touserid(currentNode_->userid);
     }
 
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("logout failure");
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -365,6 +384,7 @@ void dispatch(chat::ClientConnect & connect)  {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
+  YILOG_INFO ("connect {}", pro2string(connect));
   auto client = yijian::threadCurrent::mongoClient();
 
   try {
@@ -387,6 +407,7 @@ void dispatch(chat::ClientConnect & connect)  {
       currentNode_->userid = connect.userid();
       currentNode_->deviceid = connect.uuid();
       currentNode_->sessionid = connectInfo_.users().at(connect.userid());
+      ++currentNode_->sessionid;
       currentNode_->clientVersion = connect.clientversion();
       currentNode_->appVersion = connect.appversion();
       // update in memory db connectinfo
@@ -404,6 +425,7 @@ void dispatch(chat::ClientConnect & connect)  {
       res.set_issuccess(true);
       res.set_uuid(connectInfo_.uuid());
       res.set_sessionid(currentNode_->sessionid);
+      YILOG_INFO ("connect success {}", pro2string(res));
       mountBuffer2Node(buffer::Buffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
@@ -411,6 +433,7 @@ void dispatch(chat::ClientConnect & connect)  {
     res.set_issuccess(false);
     res.set_e_no(sys_error.code().value());
     res.set_e_msg(sys_error.what());
+    YILOG_INFO ("connect failure {}", pro2string(res));
     mountBuffer2Node(buffer::Buffer(res), node_self_);
   }
 
@@ -420,6 +443,7 @@ void dispatch(chat::ClientDisConnect & disconnect)  {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
+  YILOG_INFO ("disconnect {}", pro2string(disconnect));
   auto client = yijian::threadCurrent::mongoClient();
 
   try {
@@ -447,9 +471,11 @@ void dispatch(chat::ClientDisConnect & disconnect)  {
       // send buffer
       auto res = chat::ClientDisConnectRes();
       res.set_uuid(connectInfo_.uuid());
+      YILOG_INFO ("disconnect success {}", pro2string(res));
       mountBuffer2Node(buffer::Buffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("disconnect failure");
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -460,6 +486,7 @@ void dispatch(chat::AddFriend & frd) {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
+  YILOG_INFO ("add friend {}", pro2string(frd));
   auto client = yijian::threadCurrent::mongoClient();
 
   try {
@@ -500,6 +527,7 @@ void dispatch(chat::AddFriend & frd) {
     }
     // insert inviter invitee
     auto res = client->addFriend(frd);
+    YILOG_INFO ("add friend success {}", pro2string(*res));
     // send buffer
     auto buf_sp = buffer::Buffer(*res);
     mountBuffer2Node(buf_sp, node_self_);
@@ -525,6 +553,7 @@ void dispatch(chat::AddFriend & frd) {
 void dispatch(chat::AddFriendNoti & noti) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("add friend noti {}", pro2string(noti));
 
   try {
     auto buf_sp = buffer::Buffer(noti);
@@ -541,6 +570,7 @@ void dispatch(chat::AddFriendNoti & noti) {
 
 void dispatch(chat::AddFriendAuthorize & addAuth) {
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("add friend authorize {}", pro2string(addAuth));
   auto client = yijian::threadCurrent::mongoClient();
   try {
     auto authRes = chat::AddFriendAuthorizeRes();
@@ -554,6 +584,8 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
       auto response = noti.mutable_response();
       (*response) = addAuth;
       // self
+      YILOG_INFO ("add friend authorize success {}", 
+          pro2string(authRes));
       mountBuffer2Node(buffer::Buffer(authRes), node_self_);
       // inviter
       noti.set_touserid_outer(addAuth.inviterid());
@@ -577,6 +609,7 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
 void dispatch(chat::AddFriendAuthorizeNoti & noti) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("add friend authorize noti {}", pro2string(noti));
 
   try {
     node_user_.set_touserid(noti.touserid_outer());
@@ -590,6 +623,7 @@ void dispatch(chat::AddFriendAuthorizeNoti & noti) {
 
 void dispatch(chat::CreateGroup & group) {
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("create group {}", pro2string(group));
   try {
     auto client = yijian::threadCurrent::mongoClient();
     // filtrate black name 
@@ -613,6 +647,7 @@ void dispatch(chat::CreateGroup & group) {
     }
     // mongo insert group info
     auto groupRes = client->createGroup(group);
+    YILOG_INFO ("create group success {}", pro2string(*groupRes));
     // send to self
     mountBuffer2Node(buffer::Buffer(*groupRes), node_self_);
   }catch (std::system_error & sys_error) {
@@ -623,6 +658,7 @@ void dispatch(chat::CreateGroup & group) {
 
 void dispatch(chat::GroupAddMember & groupMember) {
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("add group members {}", pro2string(groupMember));
   try {
     auto client = yijian::threadCurrent::mongoClient();
     // filtrate black name 
@@ -642,6 +678,8 @@ void dispatch(chat::GroupAddMember & groupMember) {
     }
     // mongo insert group info
     auto addRes = client->addMembers2Group(groupMember);
+    YILOG_INFO ("add group members success {}", 
+        pro2string(*addRes));
     // send to self
     mountBuffer2Node(buffer::Buffer(*addRes), node_self_);
   }catch (std::system_error & sys_error) {
@@ -653,12 +691,15 @@ void dispatch(chat::GroupAddMember & groupMember) {
 
 void dispatch(chat::QueryUserVersion & queryVersion) {
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("query user version {}", pro2string(queryVersion));
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto user_sp = client->queryUser(queryVersion.userid());
     auto version = chat::QueryUserVersionRes();
     version.set_version(user_sp->version());
     version.set_userid(queryVersion.userid());
+    YILOG_INFO ("query user version success {}", 
+        pro2string(version));
     mountBuffer2Node(buffer::Buffer(version), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
@@ -670,6 +711,7 @@ void dispatch(chat::QueryUserVersion & queryVersion) {
 
 void dispatch(chat::QueryUser & queryUser) {
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("query user {}", pro2string(queryUser));
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto user_sp = client->queryUser(queryUser.userid());
@@ -684,6 +726,7 @@ void dispatch(chat::QueryUser & queryUser) {
       user_sp->clear_devices();
     }
     *queryuser = *user_sp;
+    YILOG_INFO ("query success {}", pro2string(queryUserRes));
     mountBuffer2Node(buffer::Buffer(queryUserRes), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
@@ -695,12 +738,15 @@ void dispatch(chat::QueryUser & queryUser) {
 void dispatch(chat::QueryNodeVersion & querynodev) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("query node version {}", pro2string(querynodev));
 
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto node_sp = client->queryNode(querynodev.tonodeid());
     auto version = chat::QueryNodeVersionRes();
     version.set_version(node_sp->version());
+    YILOG_INFO ("query node version success {}", 
+        pro2string(version));
     mountBuffer2Node(buffer::Buffer(version), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
@@ -712,6 +758,7 @@ void dispatch(chat::QueryNodeVersion & querynodev) {
 void dispatch(chat::QueryNode & querynode) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("query node {}", pro2string(querynode));
 
   try {
     auto client = yijian::threadCurrent::mongoClient();
@@ -719,6 +766,7 @@ void dispatch(chat::QueryNode & querynode) {
     auto querynoderes = chat::QueryNodeRes();
     auto node = querynoderes.mutable_node();
     *node = *node_sp;
+    YILOG_INFO ("query node success {}", pro2string(querynoderes));
     mountBuffer2Node(buffer::Buffer(querynoderes), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
@@ -730,6 +778,7 @@ void dispatch(chat::QueryNode & querynode) {
 void dispatch(chat::NodeMessage & message) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("message {}", pro2string(message));
 
 
   try {
@@ -739,6 +788,8 @@ void dispatch(chat::NodeMessage & message) {
     client->updateUnreadIncrement(currentNode_->userid, 
         res->tonodeid(), res->incrementid());
     // send self
+    YILOG_INFO ("message success {}", 
+        pro2string(*res));
     mountBuffer2Node(buffer::Buffer(*res), node_self_);
     auto noti = chat::NodeMessageNoti();
     noti.set_tonodeid(res->tonodeid());
@@ -773,6 +824,7 @@ void dispatch(chat::NodeMessage & message) {
 void dispatch(chat::NodeMessageNoti & noti) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("message noti {}", pro2string(noti));
 
   try {
     
@@ -795,6 +847,7 @@ void dispatch(chat::NodeMessageNoti & noti) {
 
 void dispatch(chat::QueryMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("query message {}", pro2string(query));
   try {
     if (query.toincrementid() < query.fromincrementid()
         || (query.toincrementid() - query.fromincrementid()) > 50) {
@@ -806,6 +859,7 @@ void dispatch(chat::QueryMessage & query) {
     client->updateReadedIncrement(currentNode_->userid, 
         query.tonodeid(), query.toincrementid());
     client->queryMessage(query, [](std::shared_ptr<chat::NodeMessage> sp){
+          YILOG_INFO ("query message success {}", pro2string(*sp));
           mountBuffer2Node(buffer::Buffer(*sp), node_self_);
         });
   }catch (std::system_error & sys_error) {
@@ -815,6 +869,7 @@ void dispatch(chat::QueryMessage & query) {
 }
 void dispatch(chat::QueryOneMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
+  YILOG_INFO ("query one message {}", pro2string(query));
   try {
     auto client = yijian::threadCurrent::mongoClient();
     // update user's readed  
@@ -822,6 +877,7 @@ void dispatch(chat::QueryOneMessage & query) {
         query.tonodeid(), query.incrementid());
     auto nodemessage_sp = 
       client->queryMessage(query.tonodeid(), query.incrementid());
+    YILOG_INFO ("query one message success {}", pro2string(*nodemessage_sp));
     mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -831,6 +887,7 @@ void dispatch(chat::QueryOneMessage & query) {
 
 void dispatch(chat::Media & media) {
   YILOG_TRACE ("func: {}. media", __func__);
+  YILOG_INFO ("media {}", pro2string(media));
   try {
     auto mediares = chat::MediaRes();
     mediares.set_sha1(media.sha1());
@@ -839,6 +896,7 @@ void dispatch(chat::Media & media) {
       std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
       currentNode_->media_vec.push_back(std::move(media));
     }
+    YILOG_INFO ("media {}", pro2string(mediares));
     mountBuffer2Node(buffer::Buffer(mediares), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -848,11 +906,13 @@ void dispatch(chat::Media & media) {
 
 void dispatch(chat::MediaIsExist & isExist) {
   YILOG_TRACE ("func: {}. media", __func__);
+  YILOG_INFO ("media is exist {}", pro2string(isExist));
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto isE = client->mediaIsExist(isExist.sha1());
     chat::MediaIsExistRes res;
     res.set_isexist(isE);
+    YILOG_INFO ("media is exist success {}", pro2string(res));
     mountBuffer2Node(buffer::Buffer(res), node_self_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -862,6 +922,7 @@ void dispatch(chat::MediaIsExist & isExist) {
 
 void dispatch(chat::MediaCheck & mediacheck) {
   YILOG_TRACE ("func: {}. media", __func__);
+  YILOG_INFO ("media check {}", pro2string(mediacheck));
   try {
     auto client = yijian::threadCurrent::mongoClient();
     client->insertMedia(currentNode_->media_vec);
@@ -878,6 +939,7 @@ void dispatch(chat::MediaCheck & mediacheck) {
     auto mediares = chat::MediaCheckRes();
     mediares.set_sha1(mediacheck.sha1());
     mediares.set_isintact(true);
+    YILOG_INFO ("media check success {}", pro2string(mediares));
     mountBuffer2Node(buffer::Buffer(mediares), node_self_);
   }catch (std::system_error & sys_error) {
     {
@@ -891,6 +953,7 @@ void dispatch(chat::MediaCheck & mediacheck) {
 
 void dispatch(chat::QueryMedia & querymedia) {
   YILOG_TRACE ("func: {}. media", __func__);
+  YILOG_INFO ("query media {}", pro2string(querymedia));
   try {
     auto client = yijian::threadCurrent::mongoClient();
     int32_t maxlength = static_cast<int32_t>(Message_Type::message)
@@ -898,6 +961,7 @@ void dispatch(chat::QueryMedia & querymedia) {
     std::vector<std::shared_ptr<chat::Media>> medias;
     client->queryMedia(querymedia.sha1(), medias, maxlength);
     for (auto media_sp: medias) {
+      YILOG_INFO ("query media success {}", pro2string(*media_sp));
       mountBuffer2Node(buffer::Buffer(*media_sp), node_self_);
     }
   }catch (std::system_error & sys_error) {
@@ -1079,7 +1143,7 @@ void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp, uint16_t sessio
     auto err_msg = "session id error, right id is " + 
       std::to_string(session_id_) + " .";
     error.set_errmsg(err_msg);
-    mountBuffer2Node(buffer::Buffer(error), node_peer_);
+    mountBuffer2Node(buffer::Buffer(error), node_self_);
   }else {
     YILOG_TRACE("func: {}, sp {} {} {}", __func__,
         sp->datatype(), sp->data(), sp->data_size());
@@ -1092,9 +1156,12 @@ void dispatch(Read_IO* node, std::shared_ptr<yijian::buffer> sp, uint16_t sessio
         auto error = chat::Error();
         error.set_errnum(11011);
         error.set_errmsg("need connect first");
-        mountBuffer2Node(buffer::Buffer(error), node_peer_);
+        mountBuffer2Node(buffer::Buffer(error), node_self_);
       }
     }else {
+      auto client = yijian::threadCurrent::mongoClient();
+      client->updateSessionID(currentNode_->deviceid, currentNode_->userid,
+          session_id_);
       dispatch(sp->datatype(), sp->data(), sp->data_size());
     }
   }

@@ -175,6 +175,9 @@ public:
   void updateUUID(const chat::ConnectInfo & connectInfo);
   bool findUUID(const std::string & uuid, 
       chat::ConnectInfo & connectInfo);
+  void updateSessionID(const std::string & uuid,
+      const std::string & userid,
+      const uint16_t sessionid);
 
   //  user unread node
   void insertUnreadNode(const std::string & userid,

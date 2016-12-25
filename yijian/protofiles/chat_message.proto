@@ -180,8 +180,9 @@ message Login {
 message LoginRes {
 
   bool    isSuccess = 1;
-  string  e_msg = 2;
+  string  userID = 2;
   int32   e_no = 3;
+  string  e_msg = 4;
 
 }
 

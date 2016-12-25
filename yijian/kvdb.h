@@ -14,7 +14,7 @@
 class kvdb {
 public:
   // construct...
-  kvdb(std::string && path);
+  kvdb(std::string & path);
   ~kvdb();
 
   // alias type
@@ -52,7 +52,7 @@ public:
       const std::string phoneno);
   // e_userid_$nth
   std::string errorKey(const std::string & userid,
-      const std::string & nth);
+      const int32_t nth);
   // t_&userid
   std::string talklistKey(const std::string & userid);
 
@@ -80,10 +80,11 @@ public:
    *
    * */
   // current user key = current_user
-  void set_current_userid(const std::string & userid);
   std::string get_current_userid();
-  void set_current_error(Buffer_SP sp);
-  int32_t get_current_error_maxth();//[1, maxth)
+private:
+  void set_current_userid(const std::string & userid);
+  int32_t get_errorno();//[1, maxth)
+public:
 
   /*
    * common user
@@ -93,9 +94,9 @@ public:
       const std::string & countrycode,
       const std::string & phoneno,
       const leveldb::Slice & user);
-  void getUser(const std::string & id, 
+  bool getUser(const std::string & id, 
       std::string & user);
-  void getUser(const std::string & countrycode,
+  bool getUser(const std::string & countrycode,
       const std::string & phoneno,
       std::string & user);
 
@@ -104,14 +105,15 @@ public:
    * common message
    *
    * */ 
+  // chat::TalkList
   void putTalklist(const std::string & userid, 
       const leveldb::Slice & talklist);
-  void getTalklist(const std::string & userid, 
+  bool getTalklist(const std::string & userid, 
       std::string & talklist);
   void putMsg(const std::string & msgNode,
       const int32_t & incrementid,
       const leveldb::Slice & msg);
-  void getMsg(const std::string & msgNode,
+  bool getMsg(const std::string & msgNode,
       const int32_t & incrementid,
       std::string & msg);
 
@@ -123,11 +125,11 @@ public:
    * success or failure
    * func correspond response model
    * */ 
-  void registUser(const std::string && phoneno,
-                  const std::string && countrycode,
-                  const std::string && password,
-                  const std::string && verifycode,
-                  const std::string && nickname,
+  void registUser(const std::string & phoneno,
+                  const std::string & countrycode,
+                  const std::string & password,
+                  const std::string & verifycode,
+                  const std::string & nickname,
                   CB_Func && func);
   // OS, iOS = 0, Android = 1;
   void login(const std::string & phoneno,

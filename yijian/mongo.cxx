@@ -2,6 +2,7 @@
 
 void userNodocNoarr(chat::User & user, bsoncxx::document::view & view) {
 
+  YILOG_TRACE ("func: {}. ", __func__);
     user.set_id(view["_id"].get_oid().value.to_string());
     user.set_realname(view["realname"].
         get_utf8().value.to_string());
@@ -12,11 +13,8 @@ void userNodocNoarr(chat::User & user, bsoncxx::document::view & view) {
     user.set_description(view["description"].
         get_utf8().value.to_string());
     user.set_ismale(view["isMale"].get_bool().value);
-    auto code_phone = view["code_phone"].
-      get_utf8().value.to_string();
-    auto under_line_pos = code_phone.find('_');
-    user.set_phoneno(code_phone.substr(0, under_line_pos));
-    user.set_countrycode(code_phone.substr(under_line_pos + 1));
+    user.set_countrycode(view["countryCode"].get_utf8().value.to_string());
+    user.set_phoneno(view["phoneNo"].get_utf8().value.to_string());
     user.set_password(view["password"].
         get_utf8().value.to_string());
     user.set_birthday(view["birthday"].get_int32().value);
@@ -27,6 +25,7 @@ void userNodocNoarr(chat::User & user, bsoncxx::document::view & view) {
 void userinfoDocument(chat::UserInfo & userinfo,
     bsoncxx::document::view & userinfo_view) {
 
+  YILOG_TRACE ("func: {}. ", __func__);
   userinfo.set_tonodeid(userinfo_view["toNodeID"].
       get_utf8().value.to_string());
   userinfo.set_userid(userinfo_view["userID"].
@@ -37,18 +36,24 @@ void userinfoDocument(chat::UserInfo & userinfo,
 void deviceDocument(chat::Device & device,
     bsoncxx::document::view & device_view) {
 
+  YILOG_TRACE ("func: {}. ", __func__);
   device.set_os(static_cast<chat::Device::OperatingSystem>
       (device_view["OS"].get_int32().value));
   device.set_devicemodel(device_view["deviceModel"].
       get_utf8().value.to_string());
-  device.set_devicenickname(device_view["deviceNickname"].
-      get_utf8().value.to_string());
+  auto it = device_view["deviceNickname"];
+  if (it) {
+    device.set_devicenickname(it.get_utf8().value.to_string());
+  }else {
+    device.set_devicenickname("");
+  }
   device.set_uuid(device_view["UUID"].get_utf8().value.to_string());
 
 }
 
 void messagenodeDocument(chat::MessageNode & messagenode,
     bsoncxx::document::view & messagenode_view) {
+  YILOG_TRACE ("func: {}. ", __func__);
   messagenode.set_id(messagenode_view["_id"].get_oid().value.to_string());
   messagenode.set_authorize(
       static_cast<chat::MessageNode::Authorize>(
@@ -74,6 +79,7 @@ void messagenodeDocument(chat::MessageNode & messagenode,
 
 void nodemessageDocument(chat::NodeMessage & nodemessage,
     bsoncxx::document::view & nodemessage_view) {
+  YILOG_TRACE ("func: {}. ", __func__);
   nodemessage.set_id(nodemessage_view["_id"].get_oid().value.to_string());
   nodemessage.set_fromuserid(nodemessage_view["fromUserID"].
       get_utf8().value.to_string());
@@ -139,17 +145,6 @@ std::shared_ptr<chat::User> userDocoument(bsoncxx::document::view & user_view) {
       auto device = user_sp->mutable_devices()->Add();
       deviceDocument(*device, doc_view);
     }
-    /*
-    auto friendreqs = 
-      user_view["friendreqs"].get_array().value;
-    for (auto it = friendreqs.begin();
-        it != friendreqs.end();
-        ++it) {
-      auto doc_view = it->get_document().view();
-      auto friendreq = user_sp->mutable_friendreqs()->Add();
-      friendreqDocument(*friendreq, doc_view);
-    }
-    */
     return user_sp;
 }
 
@@ -192,11 +187,12 @@ std::string& mongo_client::insertUser(const chat::Register & enroll) {
     << "nickname" << enroll.nickname()
     << "icon" << ""
     << "description" << ""
-    << "isMale" << ""
-    << "code_phone" << enroll.countrycode() + "_" + enroll.phoneno()
+    << "isMale" << true
+    << "countryCode" << enroll.countrycode() 
+    << "phoneNo" << enroll.phoneno()
     << "password" << enroll.password()
     << "birthday" << 0
-    << "version" << "1"
+    << "version" << 1
     << "friends" << open_array << close_array
     << "blacklist" << open_array << close_array
     << "groupNodeIDs" << open_array << close_array
@@ -234,6 +230,7 @@ void mongo_client::updateDevice(
         << "devices.$" << open_document
         << "OS" << device.os()
         << "deviceModel" << device.devicemodel()
+        << "deviceNickname" << device.devicenickname()
         << "UUID" << device.uuid()
         << close_document << close_document
         << finalize,
@@ -282,7 +279,8 @@ mongo_client::queryUser(const std::string & phoneNo,
   auto db = client_["chatdb"];
   auto user_collection = db["user"];
   auto maybe_result = user_collection.find_one(
-      document{} << "code_phone" << countryCode + "_" + phoneNo
+      document{} << "countryCode" << countryCode 
+      << "phoneNo" << phoneNo
       << finalize);
   if (unlikely(!maybe_result)) {
     YILOG_ERROR ("query user failure, countrycode:{}, phone:{} .", 
@@ -455,6 +453,7 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
         << "toNodeID" << tonodeid
         << "userID" << invitee
         << close_document << close_document
+        << "$inc" << "version"
         << finalize,
         journal_update_);
     // track
@@ -486,6 +485,7 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
         << "toNodeID" << tonodeid
         << "userID" << inviter
         << close_document << close_document
+        << "$inc" << "version"
         << finalize,
         journal_update_);
     // track
@@ -960,6 +960,28 @@ void mongo_client::updateUUID(const chat::ConnectInfo & connectInfo) {
         connectInfo.uuid(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40031, std::generic_category()),
         "connection update failure");
+  }
+}
+void mongo_client::updateSessionID(const std::string & uuid,
+      const std::string & userid,
+      const uint16_t sessionid) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto connectinfo_col = db["connectInfo"];
+  try {
+  connectinfo_col.update_one(
+      document{} << "UUID" << uuid
+      << "users.userID" << userid
+      << finalize,
+      document{} << "$set" << open_document
+      << "users.$.sessionID" << sessionid
+      << close_document
+      << finalize
+      );
+  }catch (std::system_error & e) {
+    YILOG_ERROR ("update sessionid error, uuid :{} ."
+        "system_error code:{}, what:{}.", 
+        uuid, e.code().value(), e.what());
   }
 }
 

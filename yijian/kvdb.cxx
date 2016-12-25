@@ -13,7 +13,7 @@ enum Session_ID : int32_t {
   user_noti = -4
 };
 
-kvdb::kvdb(std::string && path) {
+kvdb::kvdb(std::string & path) {
   YILOG_TRACE ("func: {}", __func__);
   leveldb::Options options;
   options.create_if_missing = true;
@@ -71,9 +71,9 @@ std::string kvdb::userPhoneKey(const std::string & countrycode,
   return "p_" + countrycode + "_" + phoneno;
 }
 std::string kvdb::errorKey(const std::string & userid,
-    const std::string & nth) {
+    const int32_t  nth) {
   YILOG_TRACE ("func: {}", __func__);
-  return "e_" + userid + "_" + nth;
+  return "e_" + userid + "_" + std::to_string(nth);
 }
 std::string kvdb::talklistKey(const std::string & userid) {
   YILOG_TRACE ("func: {}", __func__);
@@ -136,34 +136,23 @@ std::string kvdb::get_current_userid() {
   }
   return userid;
 }
-int32_t kvdb::get_current_error_maxth() {
+int32_t kvdb::get_errorno() {
   YILOG_TRACE ("func: {}", __func__);
   auto key = errorKey(get_current_userid(), 0);
   std::string error_data;
   if (get(key, error_data).ok()) {
     chat::ErrorNth nth;
     nth.ParseFromString(error_data);
-    return nth.maxnth();
+    int32_t re;
+    re = nth.maxnth();
+    nth.set_maxnth(re + 1);
+    put(key, nth.SerializeAsString());
+    return re;
   }else {
+    chat::ErrorNth nth;
+    nth.set_maxnth(2);
+    put(key, nth.SerializeAsString());
     return 1;
-  }
-}
-void kvdb::set_current_error(Buffer_SP sp) {
-  YILOG_TRACE ("func: {}", __func__);
-  chat::ErrorNth nth;
-  nth.set_maxnth(get_current_error_maxth() + 1);
-  std::string key = errorKey(get_current_userid(),
-      std::to_string(get_current_error_maxth()));
-  leveldb::WriteBatch batch;
-  leveldb::Slice error(sp->data(), sp->data_size());
-  batch.Put(key, error);
-  batch.Put(errorKey(get_current_userid(), 0), 
-      nth.SerializeAsString());
-  auto status = db_->Write(leveldb::WriteOptions(), &batch);
-  if (!status.ok()) {
-    throw std::system_error(std::error_code(50005,
-          std::generic_category()),
-        "set error msg failure");
   }
 }
 
@@ -194,26 +183,30 @@ void kvdb::putUser(const std::string & userid,
   }
 }
 
-void kvdb::getUser(const std::string & id, 
+bool kvdb::getUser(const std::string & id, 
     std::string & user) {
   YILOG_TRACE ("func: {}", __func__);
   auto key = userKey(id);
   auto status = get(key, user);
   if (unlikely(!status.ok())) {
+    /*
     throw std::system_error(std::error_code(50007,
           std::generic_category()),
         "get user failure");
+        */
+    return false;
   }
+  return true;
 }
 
-void kvdb::getUser(const std::string & countrycode,
+bool kvdb::getUser(const std::string & countrycode,
     const std::string & phoneno,
     std::string & user) {
   YILOG_TRACE ("func: {}", __func__);
   auto key = userPhoneKey(countrycode, phoneno);
   std::string userid;
   get(key, userid);
-  getUser(userid, user);
+  return getUser(userid, user);
 }
 
 // message
@@ -228,16 +221,20 @@ void kvdb::putTalklist(const std::string & userid,
         "put talklist failure");
   }
 }
-void kvdb::getTalklist(const std::string & userid, 
+bool kvdb::getTalklist(const std::string & userid, 
     std::string & talklist) {
   YILOG_TRACE ("func: {}", __func__);
   auto key = talklistKey(userid);
   auto status = get(key, talklist);
   if (unlikely(!status.ok())) {
+    /*
     throw std::system_error(std::error_code(50009,
           std::generic_category()),
         "get talklist failure");
+        */
+    return false;
   }
+  return true;
 }
 void kvdb::putMsg(const std::string & msgNode,
     const int32_t & incrementid,
@@ -256,7 +253,7 @@ void kvdb::putMsg(const std::string & msgNode,
         "put message failure");
   }
 }
-void kvdb::getMsg(const std::string & msgNode,
+bool kvdb::getMsg(const std::string & msgNode,
     const int32_t & incrementid,
     std::string & msg) {
   YILOG_TRACE ("func: {}", __func__);
@@ -271,10 +268,14 @@ void kvdb::getMsg(const std::string & msgNode,
   auto key = msgKey(msgNode, incrementid);
   auto status = get(key, msg);
   if (unlikely(!status.ok())) {
+    /*
     throw std::system_error(std::error_code(50041,
           std::generic_category()),
         "get message failure");
+        */
+    return false;
   }
+  return true;
 
 }
 
@@ -283,11 +284,11 @@ void kvdb::getMsg(const std::string & msgNode,
  * network regist login connect
  *
  * */ 
-void kvdb::registUser(const std::string && phoneno,
-                  const std::string && countrycode,
-                  const std::string && password,
-                  const std::string && verifycode,
-                  const std::string && nickname,
+void kvdb::registUser(const std::string & phoneno,
+                  const std::string & countrycode,
+                  const std::string & password,
+                  const std::string & verifycode,
+                  const std::string & nickname,
                   CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
   // check
@@ -354,6 +355,7 @@ void kvdb::login(const std::string & phoneno,
   device->set_os(static_cast<chat::Device::OperatingSystem>(os));
   device->set_devicemodel(devicemodel);
   device->set_uuid(uuid);
+  device->set_devicenickname("");
   client_send(buffer::Buffer(login), nullptr);
 }
 void kvdb::logout(const std::string & userid,
@@ -696,6 +698,7 @@ void kvdb::put_map_send(Buffer_SP sp, CB_Func && func) {
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   uint16_t temp_session;
   client_send(sp, &temp_session);
+  YILOG_TRACE ("func: {}, sessionid: {}", __func__, temp_session);
   sessionid_cbfunc_map_[temp_session] = func;
 }
 void kvdb::call_erase_map(const int32_t sessionid, 
@@ -707,9 +710,13 @@ void kvdb::call_erase_map(const int32_t sessionid,
     it->second(key);
     sessionid_cbfunc_map_.erase(sessionid);
   }else {
+    YILOG_CRITICAL ("errno:50020, sessionid {} not find in"
+        " sessionid_cbfunc_map_ .", sessionid);
+    /*
     throw std::system_error(std::error_code(50020, 
           std::generic_category()),
         "sessionid_cbfunc_map_ not find type"); 
+        */
   }
 }
 
@@ -734,6 +741,7 @@ void kvdb::put_map_send_dbcache(Buffer_SP sp, CB_Func && func) {
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   uint16_t temp_session;
   client_send(sp, &temp_session);
+  YILOG_TRACE ("func: {}, sessionid: {}", __func__, temp_session);
   sessionid_cbfunc_map_[temp_session] = func;
   auto key = std::to_string(temp_session);
   auto value = leveldb::Slice(sp->data(), sp->data_size());
@@ -748,27 +756,37 @@ void kvdb::put_media_map(const std::string & sha1, CB_Func && func) {
 void kvdb::call_media_map(const std::string & sha1, 
                       const std::string & key) {
   YILOG_TRACE ("func: {}. ", __func__);
+  std::unique_lock<std::mutex> ul(media_map_mutex_);
   auto it = media_cbfunc_map_.find(sha1);
   if (likely( it != media_cbfunc_map_.end())) {
     it->second(key);
   }else {
+    YILOG_CRITICAL ("error no: 500021, sha1 {} "
+        "not find in media_cbfunc_map_", sha1);
+    /*
     throw std::system_error(std::error_code(50021, 
           std::generic_category()),
         "media_cbfunc_map_ not find type"); 
+        */
   }
 }
 
 void kvdb::callerase_media_map(const std::string & sha1,
     const std::string & key) {
   YILOG_TRACE ("func: {}. ", __func__);
+  std::unique_lock<std::mutex> ul(media_map_mutex_);
   auto it = media_cbfunc_map_.find(sha1);
   if (likely( it != media_cbfunc_map_.end())) {
     it->second(key);
     media_cbfunc_map_.erase(it);
   }else {
+    YILOG_CRITICAL ("error no: 500022, sha1 {} "
+        "not find in media_cbfunc_map_", sha1);
+    /*
     throw std::system_error(std::error_code(50022, 
           std::generic_category()),
         "media_cbfunc_map_ not find type"); 
+        */
   }
 }
 
@@ -778,11 +796,13 @@ void kvdb::put_mmap_send(Buffer_SP sp, CB_Func_Mutiple && mfunc) {
   std::unique_lock<std::mutex> ul(sessionid_mmap_mutex_);
   uint16_t temp_session;
   client_send(sp, &temp_session);
+  YILOG_TRACE ("func: {}, sessionid: {}", __func__, temp_session);
   sessionid_mmap_[temp_session] = mfunc;
 }
 void kvdb::call_mmap(const int32_t sessionid, 
     const std::string & key) {
   YILOG_TRACE ("func: {}", __func__);
+  std::unique_lock<std::mutex> ul(sessionid_mmap_mutex_);
   auto it = sessionid_mmap_.find(sessionid);
   if (likely(it != sessionid_mmap_.end())) {
     bool isStop = true;
@@ -848,10 +868,10 @@ void kvdb::dispatch(int type, Buffer_SP sp) {
       };
       // user
       (*map_p)[ChatType::queryuserres] = [=]() {
-        queryuserversionRes(sp);
+        queryuserRes(sp);
       };
       (*map_p)[ChatType::queryuserversionres] = [=]() {
-        queryuserRes(sp);
+        queryuserversionRes(sp);
       };
       // node and message
       (*map_p)[ChatType::querynodeversionres] = [=]() {
@@ -904,6 +924,11 @@ void kvdb::loginRes(Buffer_SP sp) {
   auto value = leveldb::Slice(sp->data(), sp->data_size());
   auto key = loginKey();
   put(key, value);
+  chat::LoginRes res;
+  res.ParseFromArray(sp->data(), sp->data_size());
+  if (res.issuccess()) {
+    set_current_userid(res.userid());
+  }
   call_erase_map(Session_ID::regist_login_connect, key);
 }
 
@@ -933,10 +958,12 @@ void kvdb::disconnectRes(Buffer_SP sp) {
 
 void kvdb::error(Buffer_SP sp) {
   YILOG_TRACE ("func: {}", __func__);
-  set_current_error(sp);
   std::string key = errorKey(get_current_userid(),
-      std::to_string(get_current_error_maxth() - 1));
+      get_errorno());
   auto value = leveldb::Slice(sp->data(), sp->data_size());
+  chat::Error err;
+  err.ParseFromArray(sp->data(), sp->data_size());
+  YILOG_TRACE ("errno: {}, errmsg {}.", err.errnum(), err.errmsg());
   put(key, value);
   call_erase_map(sp->session_id(), key);
 }
@@ -975,9 +1002,10 @@ void kvdb::queryuserRes(Buffer_SP sp) {
   YILOG_TRACE ("func: {}", __func__);
   auto res = chat::QueryUserRes();
   res.ParseFromArray(sp->data(), sp->data_size());
-  auto key = userKey(res.user().id());
-  auto value = leveldb::Slice(sp->data(), sp->data_size());
-  put(key, value);
+  auto user = chat::User();
+  user = res.user();
+  auto key = userKey(user.id());
+  put(key, user.SerializeAsString());
   call_erase_map(sp->session_id(), key);
 }
 void kvdb::querynodeversionRes(Buffer_SP sp) {

@@ -55,13 +55,14 @@ int main() {
     getOneMsg();
     YILOG_TRACE("content:{}.", item.content());
   }
-  kvdb db("user_yijian");
 
+  std::string name = "user1_yijian";
+  auto db = new kvdb(name);
 
-  db.registUser("18514029918", "86", "123456",
-      "213465", "yijian", [&db](const std::string & key){
+  db->registUser("18514029918", "86", "123456",
+      "213465", name, [&db](const std::string & key){
         std::string value;
-        db.get(key, value);
+        db->get(key, value);
         YILOG_INFO("key:{}, value:{}.", key, value);
         chat::RegisterRes res;
         res.ParseFromString(value);
@@ -70,11 +71,11 @@ int main() {
       });
   mainwait();
 
-  db.registUser("18514029918", "86", "123456",
+  db->registUser("18514029918", "86", "123456",
       "213465", "yijian", [&db](const std::string & key){
         YILOG_INFO("key:{}.", key);
         std::string value;
-        db.get(key, value);
+        db->get(key, value);
         chat::RegisterRes res;
         res.ParseFromString(value);
         assert(res.issuccess() == false);

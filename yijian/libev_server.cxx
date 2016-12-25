@@ -362,7 +362,9 @@ connection_write_callback (struct ev_loop * loop,
     auto p = io->buffers_p.front();
     ul.unlock();
     // change read io's isConnect
+    YILOG_TRACE ("send data type {}", p->datatype());
     if (unlikely(p->datatype() == ChatType::clientconnectres)) {
+      YILOG_TRACE ("set isConnect true");
       io->readio->isConnect = true;
     }
     // send

@@ -174,6 +174,7 @@ uint16_t buffer::session_id() {
 }
 void buffer::set_sessionid(uint16_t sessionid) {
   memcpy(header_pos_, &sessionid, 2);
+  session_id_ = sessionid;
 }
 
 std::pair<uint32_t, char *>
