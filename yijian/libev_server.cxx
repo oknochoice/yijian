@@ -95,11 +95,14 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
     for (auto io: pinglist_) {
       ev_io_stop(loop, &io->io);
     }
+    ev_timer_set (w, 1., 0.);
     if (noti_threads()->taskCount()) {
+      ev_async_stop(loop, &write_asyn_watcher()->as);
       delete noti_threads();
       free   (timer_watcher());
       free   (accept_watcher());
       delete write_asyn_watcher();
+      ev_loop_destroy(loop);
       exit(0);
     }
   }

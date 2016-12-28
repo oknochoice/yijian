@@ -985,7 +985,7 @@ void dispatch(chat::QueryMedia & querymedia) {
 
 void dispatch(int type, char * header, std::size_t length) {
   YILOG_TRACE ("func: {}. ", __func__);
-  auto static map_p = new std::map<int, std::function<void(void)>>();
+  auto static map_p = std::make_shared<std::map<int, std::function<void(void)>>>();
   std::once_flag flag;
   std::call_once(flag, [&]() {
       (*map_p)[ChatType::error] = [=]() {

@@ -34,6 +34,7 @@ kvdb::kvdb(std::string & path) {
 kvdb::~kvdb() {
   YILOG_TRACE ("func: {}", __func__);
   delete db_;
+  clear_client();
 }
 
 // common
@@ -829,7 +830,7 @@ void kvdb::call_mmap(const int32_t sessionid,
 
 void kvdb::dispatch(int type, Buffer_SP sp) {
   YILOG_TRACE ("func: {}. ", __func__);
-  auto static map_p = new std::map<int, std::function<void(void)>>();
+  auto static map_p = std::make_shared<std::map<int, std::function<void(void)>>>();
   std::once_flag flag;
   std::call_once(flag, [=]() {
       // regist login logout connect disconnet
