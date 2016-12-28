@@ -7,5 +7,10 @@ int main(int argc, char * argv[]) {
   initConsoleLog();
   YILOG_TRACE ("func: {}. ", __func__);
   auto ips = std::vector<std::pair<std::string, int>>();
-  return start_server_libev();
+  int re = 0;
+  try{
+  }catch(...) {
+  }
+   re = start_server_libev();
+  return re;
 }

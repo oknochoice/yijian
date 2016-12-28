@@ -11,12 +11,13 @@ struct Read_IO;
 #include <atomic>
 #include <string>
 #include <queue>
+#include <atomic>
 
 namespace yijian {
 
 
 struct Thread_Data {
-  typedef std::vector<Read_IO*> Vector_Node;
+  typedef std::vector<std::shared_ptr<Read_IO>> Vector_Node;
   typedef std::shared_ptr<Vector_Node>  Vector_Node_SP;
   typedef std::function<void(void)> Thread_Function;
 
@@ -46,11 +47,12 @@ public:
 
   // push to vec_threads_
   void sentWork(Thread_Data::Thread_Function && func);
-  void foreachio(std::function<void(struct Read_IO *)> && func);
+  void foreachio(std::function<void(std::shared_ptr<Read_IO>)> && func);
+  int  taskCount();
 private:
-  void thread_func(Thread_Data * thread_data);
+  void thread_func(std::shared_ptr<Thread_Data> thread_data);
   uint_fast16_t thread_count_;
-  std::vector<Thread_Data*> vec_threads_;
+  std::vector<std::shared_ptr<Thread_Data>> vec_threads_;
   // wait subthread noti
   std::mutex c_mutex_;
   bool c_isWait_;
@@ -58,10 +60,14 @@ private:
 };
 
 namespace threadCurrent {
-  Thread_Data * threadData(Thread_Data* currentData);
-  Thread_Data * threadData();
-  void pushPingnode(Read_IO * node);
+  std::shared_ptr<Thread_Data> 
+  threadData(std::shared_ptr<Thread_Data> currentData);
+
+  std::shared_ptr<Thread_Data> threadData();
+
+  void pushPingnode(std::shared_ptr<Read_IO> node);
 }
+
 
 }
 

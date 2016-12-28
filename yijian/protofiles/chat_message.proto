@@ -20,6 +20,10 @@ message TalkList {
   map<string, NodeInfo> nodemap  = 1;
 }
 
+message AddFriendInfo {
+  repeated QueryAddfriendInfoRes info = 1;
+}
+
 // server & client
 message NodeSelfDevice {
 }
@@ -278,6 +282,17 @@ message AddFriendAuthorizeNoti {
   AddFriendAuthorize response = 2;
 }
 
+message QueryAddfriendInfo {
+  int32 count = 1;
+}
+
+message QueryAddfriendInfoRes {
+  string inviter = 1;
+  string invitee = 2;
+  string toNodeID = 3;
+  bool   isEnd = 4;
+}
+
 message CreateGroup {
   string userID = 1;
   string nickname = 2;
@@ -395,7 +410,6 @@ message ConnectInfo {
   bool   isConnected = 4;
   bool   isReciveNoti = 5;
   string serverName = 6;
-  int64  nodepointor = 7;
   // userID sessionID
   map<string, int32> users = 8;
   //

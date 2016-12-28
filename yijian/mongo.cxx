@@ -1,4 +1,5 @@
 #include "mongo.h"
+#include <chrono>
 
 void userNodocNoarr(chat::User & user, bsoncxx::document::view & view) {
 
@@ -326,6 +327,8 @@ mongo_client::addFriend(const chat::AddFriend & addfrd) {
   }
   try {
     // track
+    auto now = std::chrono::high_resolution_clock::now();
+    auto ts = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
     addfriend_col.insert_one(
         document{}
         << "littleIDBigID" << littleIDBigID
@@ -333,6 +336,7 @@ mongo_client::addFriend(const chat::AddFriend & addfrd) {
         << "invitee" << addfrd.inviteeid()
         << "toNodeID" << ""
         << "status" << "request"
+        << "timestamp" << ts.count() 
         << finalize,
         journal_insert_);
     // create new node
@@ -360,7 +364,7 @@ mongo_client::addFriend(const chat::AddFriend & addfrd) {
         journal_update_);
     // create messge node count
     auto messageNode_count_col = db["messageNodeCount"];
-    auto count_result = messageNode_collection.insert_one(
+    auto count_result = messageNode_count_col.insert_one(
         document{} << "nodeID" << msgNodeid
         << "count" << 0
         << finalize,
@@ -392,11 +396,11 @@ mongo_client::addFriend(const chat::AddFriend & addfrd) {
     
     return res;
   }catch (std::system_error & e ) {
-    YILOG_ERROR ("add friend failure, inviter:{}, invitee{} \n"
+    YILOG_ERROR ("add friend failure, inviter:{}, invitee:{} \n"
         "system_error code:{}, what:{}.", 
         addfrd.inviterid(), addfrd.inviteeid(), e.code().value(), e.what());
-    throw std::system_error(std::error_code(40000, std::generic_category()),
-        "update user device failure");
+    throw std::system_error(std::error_code(40004, std::generic_category()),
+        "add friend failure");
   }
 
 }
@@ -508,6 +512,10 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
         << "status" << "userUnreadInviter" << close_document
         << finalize,
         journal_update_);
+    // track delete
+    addfriend_col.delete_one(
+        document{} << "littleIDBigID" << littleIDBigID
+        << finalize);
   }catch(std::system_error & e) {
     YILOG_ERROR ("add friend authorize failre in (id insert to friends).\n"
         " inviter:{}, invitee{} \n"
@@ -517,7 +525,44 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
         "add friend authorize failre");
   }
 
-
+}
+void mongo_client::queryAddfriendInfo(
+      std::function<void(std::shared_ptr<chat::QueryAddfriendInfoRes>)> && func,
+      const std::string & userid,
+      const int limit) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto addfriend_col = db["addFriend"];
+  auto find = mongocxx::options::find{};
+  auto hint = mongocxx::hint(
+      document{} 
+      << "timestamp" << 1
+      << finalize);
+  find.sort(document{} << "timestamp" << -1 << finalize);
+  find.limit(limit);
+  find.hint(hint);
+  /*
+  std::string regexPre;
+  regexPre = "/""^" + userid + "/";
+  std::string regexEnd;
+  regexEnd = "/" + userid + "$""/";
+  */
+  auto cursor = addfriend_col.find(
+      document{} << "$and" << open_array << open_document
+      << "$or" << open_array
+      << open_document << "inviter" << userid << close_document
+      << open_document << "invitee" << userid << close_document
+      << close_array << close_document << open_document
+      << "$not" << open_document << "status" << "userUnreadInvitee"
+      << close_document << close_document << close_array
+      << finalize);
+  for (auto doc: cursor) {
+    auto re = std::make_shared<chat::QueryAddfriendInfoRes>();
+    re->set_inviter(doc["inviter"].get_utf8().value.to_string());
+    re->set_invitee(doc["invitee"].get_utf8().value.to_string());
+    re->set_tonodeid(doc["toNodeID"].get_utf8().value.to_string());
+    func(re);
+  }
 }
 
 // group
@@ -547,7 +592,7 @@ mongo_client::createGroup(const chat::CreateGroup & cGroup) {
     auto obj_id = result->inserted_id().get_oid().value.to_string();
     // add message node count
     auto messageNode_count_col = db["messageNodeCount"];
-    messageNode_collection.insert_one(
+    messageNode_count_col.insert_one(
         document{} << "nodeID" << obj_id
         << "count" << 0
         << finalize,
@@ -680,7 +725,16 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
         document{} << "$inc" << open_document
         << "count" << 1 << close_document
         << finalize);
-    int32_t incrementid = node_count->view()["count"].get_int32().value;
+    int32_t incrementid = 0;
+    if (node_count) {
+      incrementid =  node_count->view()["count"].get_int32().value;
+    }else {
+      YILOG_ERROR("not find tonodeid {}, in message node count"
+          , message.tonodeid());
+      throw std::system_error(std::error_code(40050, std::generic_category()),
+          "not find tonodeid");
+    }
+
     nodemessage_collection.insert_one(
         document{} << "fromUserID" << message.fromuserid()
         << "toNodeID" << message.tonodeid()
@@ -895,6 +949,8 @@ void mongo_client::insertUUID(
   auto users_array = sessionbuilder << finalize;
   // insert
   try {
+    auto now = std::chrono::high_resolution_clock::now();
+    auto ts = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
   auto maybe_result = connectinfo_col.insert_one(
       document{} << "UUID" << connectInfo.uuid()
       << "userID" << connectInfo.userid()
@@ -902,12 +958,11 @@ void mongo_client::insertUUID(
       << "isConnected" << connectInfo.isconnected()
       << "isReciveNoti" << connectInfo.isrecivenoti()
       << "serverName" << serverName_
-      << "nodepointor" << connectInfo.nodepointor()
       << "users" << users_array
       << "clientVersion" << connectInfo.clientversion()
       << "OSVersion" << connectInfo.osversion()
       << "appVersion" << connectInfo.appversion()
-      << "timestamp" << 0
+      << "timestamp" << ts.count()
       << finalize
       );
   }catch (std::system_error & e) {
@@ -935,6 +990,8 @@ void mongo_client::updateUUID(const chat::ConnectInfo & connectInfo) {
   auto users_array = sessionbuilder << finalize;
   // insert
   try {
+    auto now = std::chrono::high_resolution_clock::now();
+    auto ts = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
   connectinfo_col.update_one(
       document{} << "UUID" << connectInfo.uuid()
       << finalize,
@@ -944,14 +1001,11 @@ void mongo_client::updateUUID(const chat::ConnectInfo & connectInfo) {
       << "isConnected" << connectInfo.isconnected()
       << "isReciveNoti" << connectInfo.isrecivenoti()
       << "serverName" << serverName_
-      << "nodepointor" << connectInfo.nodepointor()
       << "users" << users_array 
       << "clientVersion" << connectInfo.clientversion()
       << "OSVersion" << connectInfo.osversion()
-      << "appVersion" << connectInfo.appversion() << close_document
-      << "$currentDate" << open_document 
-      << "timestamp" << open_document 
-      << "$type" << "timestamp" << close_document << close_document
+      << "appVersion" << connectInfo.appversion() 
+      << "timestamp" << ts.count() << close_document
       << finalize
       );
   }catch (std::system_error & e) {
@@ -1007,9 +1061,8 @@ bool mongo_client::findUUID(const std::string & uuid,
   connectInfo.set_isrecivenoti(connectinfo["isReciveNoti"].
       get_bool().value);
   connectInfo.set_servername(serverName_);
-  connectInfo.set_nodepointor(connectinfo["nodepointor"].
-      get_int64().value);
   auto users = connectinfo["users"].get_array().value;
+  connectInfo.clear_users();
   auto musers = connectInfo.mutable_users();
   for (auto it = users.begin();
       it != users.end();
@@ -1105,13 +1158,13 @@ void mongo_client::unreadNodes(const std::string & userid,
     func(tonodeid, unreadIncrement, readedIncrement);
   }
 }
-namespace yijian {
 
+namespace yijian{
   namespace threadCurrent {
-    mongo_client * mongoClient() {
-      static thread_local auto client = new mongo_client(SERVER_NAME);
+    std::shared_ptr<mongo_client> mongoClient() {
+      static thread_local auto client = 
+        std::make_shared<mongo_client>(SERVER_NAME);
       return client;
     }
   }
 }
-

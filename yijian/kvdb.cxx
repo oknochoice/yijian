@@ -113,7 +113,10 @@ std::string kvdb::addFriendAuthorizeNotiKey() {
   YILOG_TRACE ("func: {}", __func__);
   return "addfriendauthorizenoti_kvdb";
 }
-
+std::string kvdb::addFriendInfoKey() {
+  YILOG_TRACE ("func: {}", __func__);
+  return "addfriendinfo_kvdb";
+}
 /*
  * current 
  *
@@ -429,6 +432,15 @@ void kvdb::addfriendAuthorize(const std::string & inviterid,
   authorize.set_inviteeid(get_current_userid());
   authorize.set_isagree(static_cast<chat::IsAgree>(isAgree));
   put_map_send(buffer::Buffer(authorize), 
+      std::forward<CB_Func>(func));
+}
+
+void kvdb::queryaddfriendinfo(CB_Func && func) {
+  YILOG_TRACE ("func: {}", __func__);
+  db_->Delete(leveldb::WriteOptions(), addFriendInfoKey());
+  chat::QueryAddfriendInfo query;
+  query.set_count(10);
+  put_map_send(buffer::Buffer(query),
       std::forward<CB_Func>(func));
 }
 
@@ -860,6 +872,9 @@ void kvdb::dispatch(int type, Buffer_SP sp) {
       (*map_p)[ChatType::addfriendauthorizeres] = [=]() {
         addfriendAuthorizeRes(sp);
       };
+      (*map_p)[ChatType::queryaddfriendinfores] = [=]() {
+        queryaddfriendinfoRes(sp);
+      };
       (*map_p)[ChatType::creategroupres] = [=]() {
         creategroupRes(sp);
       };
@@ -976,6 +991,32 @@ void kvdb::addfriendAuthorizeRes(Buffer_SP sp) {
   YILOG_TRACE ("func: {}", __func__);
   auto key = userKey(get_current_userid());
   call_erase_map(sp->session_id(), key);
+}
+void kvdb::queryaddfriendinfoRes(Buffer_SP sp) {
+  YILOG_TRACE ("func: {}", __func__);
+  // res
+  chat::QueryAddfriendInfoRes res;
+  res.ParseFromArray(sp->data(), sp->data_size());
+  if (res.isend() == false) {
+    // info
+    std::string value;
+    chat::AddFriendInfo info;
+    if (get(addFriendInfoKey(), value).ok()) {
+      info.ParseFromString(value);
+    }
+    auto it = std::find_if(info.info().begin(), info.info().end(),
+        [&res](const chat::QueryAddfriendInfoRes & a){
+          return a.inviter() == res.inviter() &&
+                 a.invitee() == res.invitee();
+        });
+    if (it != info.info().end()) {
+      auto newInfo = info.mutable_info()->Add();
+      *newInfo = res;
+    }
+    put(addFriendInfoKey(), info.SerializeAsString());
+  }else {
+    call_erase_map(sp->session_id(), addFriendInfoKey());
+  }
 }
 void kvdb::creategroupRes(Buffer_SP sp) {
   YILOG_TRACE ("func: {}", __func__);

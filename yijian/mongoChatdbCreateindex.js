@@ -7,7 +7,8 @@ db.user.createIndex({"nickname": 1})
 // user unread
 db.userUnread.createIndex({"userID": 1, "toNodeID": 1}, {"unique": true})
 // add firend track
-db.addFriend.createIndex({"littleIDBigID"}, {"unique": true})
+db.addFriend.createIndex({"littleIDBigID": 1}, {"unique": true})
+db.addFriend.createIndex({"timestamp": 1})
 // login track
 db.userLogin.createIndex({"userID": 1})
 // connect track
@@ -18,7 +19,7 @@ db.nodeMessage.createIndex({"toNodeID": 1, "incrementID": 1}, {"unique": true})
 db.messageNodeCount.createIndex({"nodeID": 1}, {"unique": true})
 // connectInfo
 db.connectInfo.createIndex({"UUID": 1}, {"unique": true})
-db.connectInfo.createIndex({"toNodeIDs": 1, "serverName": 1})
+//db.connectInfo.createIndex({"toNodeIDs": 1, "serverName": 1})
 db.connectInfo.createIndex({"userID": 1, "serverName": 1, "toNodeIDs": 1})
 // media
 db.media.createIndex({"sha1": 1}, {"unique": true})

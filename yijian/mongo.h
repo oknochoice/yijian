@@ -98,6 +98,11 @@ public:
   void addFriendAuthorize(const std::string & inviter, 
       const std::string & invitee);
 
+  void queryAddfriendInfo(
+      std::function<void(std::shared_ptr<chat::QueryAddfriendInfoRes>)> && func,
+      const std::string & userid,
+      const int limit = 10);
+
   // group  
   // 40020
   // insert all memeber group id
@@ -206,7 +211,7 @@ private:
 
 namespace yijian {
   namespace threadCurrent {
-    mongo_client * mongoClient();
+    std::shared_ptr<mongo_client> mongoClient();
   }
 }
 

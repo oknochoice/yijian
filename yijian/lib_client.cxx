@@ -60,7 +60,7 @@ struct ev_async * readcb_asyn_watcher() {
 void start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
   
   YILOG_TRACE ("func: {}. ", __func__);
-  //ev_io_stop(loop, &read_io_->io);
+  ev_io_start(loop, &read_io_->io);
   ev_io_start(loop, &write_io_->io);
 
 }
@@ -70,7 +70,7 @@ void connection_read_callback (struct ev_loop * loop,
 
   YILOG_TRACE ("func: {}. ", __func__);
 
-  //ev_io_stop(loop, rw);
+  ev_io_stop(loop, rw);
   // converse to usable io
   Read_IO * io = reinterpret_cast<Read_IO*>(rw);
 

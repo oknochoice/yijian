@@ -34,6 +34,13 @@ void notimain() {
   cvar_.notify_one();
 }
 
+template <typename Proto>
+std::string pro2string(Proto & any) {
+  std::string value;
+  google::protobuf::util::MessageToJsonString(any, &value);
+  return value;
+}
+
 int main() {
   initConsoleLog();
   using yijian::Buffer_SP;
@@ -148,6 +155,87 @@ int main() {
         assert(res.issuccess() == true);
         notimain();
       });
+  mainwait();
+
+  std::string user_data;
+  auto isHasUser = db->getUser(db->get_current_userid(), user_data);
+  auto queryuser = [&db, &user_data](){
+    db->queryuser(db->get_current_userid(), 
+        [&db, &user_data](const std::string & key){
+          YILOG_INFO ("query user {}", key);
+          assert(key == db->userKey(db->get_current_userid()));
+          db->get(key, user_data);
+          chat::User user;
+          user.ParseFromString(user_data);
+          YILOG_INFO ("{}", pro2string(user));
+          notimain();
+        });
+  };
+  if (isHasUser) {
+    YILOG_TRACE ("has user");
+    chat::User user;
+    user.ParseFromString(user_data);
+    YILOG_INFO ("{}", pro2string(user));
+    db->queryuserVersion(db->get_current_userid(),
+        [&user, &queryuser](const std::string & version){
+          YILOG_INFO ("query user version {}", version);
+          YILOG_INFO ("user version {}", user.version());
+          auto v = std::stoi(version);
+          if (v > user.version()) {
+            queryuser();
+          }else{
+            notimain();
+          }
+        });
+  }else {
+    YILOG_TRACE ("has not user");
+    queryuser();
+  }
+  mainwait();
+
+  db->userInfoNoti([&db](const std::string & key) {
+        std::string value;
+        db->get(key, value);
+        if (key == db->addFriendNotiKey()) {
+          chat::AddFriendNoti noti;
+          noti.ParseFromString(value);
+          YILOG_INFO ("add friend authorize {}", pro2string(noti));
+        }else {
+          YILOG_ERROR ("noti type error");
+        }
+        notimain();
+      });
+  mainwait();
+
+  std::string frd;
+  auto qaddfrdinfo = [&db, &frd](){
+    db->queryaddfriendinfo([&db, &frd](const std::string & key){
+        YILOG_INFO ("query addfriend info key {}", key);
+        std::string value;
+        db->get(key, value);
+        chat::AddFriendInfo info;
+        info.ParseFromString(value);
+        if (info.info().size() < 0)
+          frd = info.info(0).inviter();
+        YILOG_INFO ("info {}", pro2string(info));
+        notimain();
+      });
+  };
+  qaddfrdinfo();
+  mainwait();
+
+  db->addfriendAuthorize(frd, chat::IsAgree::agree, 
+      [&db, &frd](const std::string & key){
+        YILOG_INFO ("query addfriendauthorize key {}", key);
+        std::string value;
+        db->get(key, value);
+        chat::AddFriendAuthorizeRes res;
+        res.ParseFromString(value);
+        YILOG_INFO ("info {}", pro2string(res));
+        notimain();
+      });
+
+  qaddfrdinfo();
   mainwait();
 
 

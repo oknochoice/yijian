@@ -8,7 +8,7 @@ noti_threads::noti_threads(uint_fast16_t thread_num)
   : thread_count_(thread_num){
   YILOG_TRACE("func: {}. thread num {}. ", __func__, thread_num);
     for (uint_fast16_t i = 0; i < thread_num; ++i) {
-      auto thread_data = new Thread_Data();
+      auto thread_data = std::make_shared<Thread_Data>();
       thread_data->isContine_ = true;
       thread_data->c_isWait_ = true;
       thread_data->v_pingnode_sp_.reset(new Thread_Data::Vector_Node);
@@ -26,7 +26,6 @@ noti_threads::~noti_threads() {
   YILOG_TRACE("func: {}", __func__);
   for(auto thread_data: vec_threads_) {
     thread_data->thread_.join();
-    free(thread_data);
   }
 }
 
@@ -38,7 +37,7 @@ void noti_threads::sentWork(Thread_Data::Thread_Function && func) {
 
   while(isContine) {
 
-    Thread_Data * thread_local_data = nullptr;
+    std::shared_ptr<Thread_Data> thread_local_data = nullptr;
     for (auto thread_data: vec_threads_) {
       std::unique_lock<std::mutex> ul(thread_data->q_workfun_mutex_);
       if (thread_local_data == nullptr) {
@@ -80,7 +79,7 @@ void noti_threads::sentWork(Thread_Data::Thread_Function && func) {
 }
 
 void noti_threads::foreachio(
-    std::function<void(struct Read_IO *)> && func) {
+    std::function<void(std::shared_ptr<Read_IO>)> && func) {
 
   YILOG_TRACE("func: {}", __func__);
   for (auto thread_data: vec_threads_) {
@@ -98,20 +97,38 @@ void noti_threads::foreachio(
 
 }
 
+int noti_threads::taskCount() {
+  YILOG_TRACE("func: {}", __func__);
+  int count = 0;
+  for (auto thread_data: vec_threads_) {
+    Thread_Data::Vector_Node_SP data_sp;
+    {
+      std::unique_lock<std::mutex> ul(thread_data->v_pingnode_mutex_);
+      data_sp = thread_data->v_pingnode_sp_;
+    }
+    YILOG_TRACE("func: {}, node count {}", __func__, data_sp->size());
+    for (auto node: *data_sp) {
+      ++count;
+    }
+  }
+  return count;
+}
+
 namespace threadCurrent {
 
-Thread_Data * threadData(Thread_Data* currentData) {
+std::shared_ptr<Thread_Data> 
+threadData(std::shared_ptr<Thread_Data> currentData) {
   YILOG_TRACE("func: {}", __func__);
   static thread_local auto threaddata = currentData;
   return threaddata;
 }
 
-Thread_Data * threadData() {
+std::shared_ptr<Thread_Data> threadData() {
   YILOG_TRACE("func: {}", __func__);
   return threadData(nullptr);
 }
 
-void pushPingnode(Read_IO * node) {
+void pushPingnode(std::shared_ptr<Read_IO> node) {
   YILOG_TRACE("func: {}", __func__);
 
   auto thread_data = threadData();
@@ -120,9 +137,10 @@ void pushPingnode(Read_IO * node) {
 
 }
 
+
 }
 
-void noti_threads::thread_func(Thread_Data* thread_data) {
+void noti_threads::thread_func(std::shared_ptr<Thread_Data> thread_data) {
 
   YILOG_TRACE("func: {}", __func__);
   threadCurrent::threadData(thread_data);

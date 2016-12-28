@@ -52,6 +52,8 @@ enum ChatType : uint8_t {
   mediaisexistres = 39,
   mediacheck = 40,
   mediacheckres = 41,
+  queryaddfriendinfo = 44,
+  queryaddfriendinfores = 45,
   serverconnect = 42,// outer
   serverdisconnect = 43,// outer
 };
@@ -185,6 +187,12 @@ constexpr uint8_t dispatchType(chat::MediaCheck & ) {
 }
 constexpr uint8_t dispatchType(chat::MediaCheckRes & ) {
   return ChatType::mediacheckres;
+}
+constexpr uint8_t dispatchType(chat::QueryAddfriendInfo & ) {
+  return ChatType::queryaddfriendinfo;
+}
+constexpr uint8_t dispatchType(chat::QueryAddfriendInfoRes & ) {
+  return ChatType::queryaddfriendinfores;
 }
 
 

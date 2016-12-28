@@ -73,6 +73,8 @@ public:
   std::string addFriendNotiKey();
   // addfriendauthorizenoti_kvdb
   std::string addFriendAuthorizeNotiKey();
+  // addfriendinfo_kvdb 
+  std::string addFriendInfoKey();
 
 
   /*
@@ -166,6 +168,7 @@ public:
   void addfriendAuthorize(const std::string & inviterid,
                           int isAgree,
                           CB_Func && func);
+  void queryaddfriendinfo(CB_Func && func);
   /*
    * network group
    *
@@ -314,6 +317,7 @@ private:
   void error(Buffer_SP sp);
   void addfriendRes(Buffer_SP sp);
   void addfriendAuthorizeRes(Buffer_SP sp);
+  void queryaddfriendinfoRes(Buffer_SP sp);
   void creategroupRes(Buffer_SP sp);
   void groupaddmemberRes(Buffer_SP sp);
   void queryuserversionRes(Buffer_SP sp);

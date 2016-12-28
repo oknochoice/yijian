@@ -172,12 +172,14 @@ int main() {
         });
   };
   if (isHasUser) {
+    YILOG_TRACE ("has user");
     chat::User user;
     user.ParseFromString(user_data);
     YILOG_INFO ("{}", pro2string(user));
     db->queryuserVersion(db->get_current_userid(),
         [&user, &queryuser](const std::string & version){
           YILOG_INFO ("query user version {}", version);
+          YILOG_INFO ("user version {}", user.version());
           auto v = std::stoi(version);
           if (v > user.version()) {
             queryuser();
@@ -186,16 +188,55 @@ int main() {
           }
         });
   }else {
+    YILOG_TRACE ("has not user");
     queryuser();
   }
-
   mainwait();
-  /*
-  db->addfriend("585fcf1b4b99d9260b5e9186", "ni hao",
-      [](const std::string & key){
-      });
-      */
 
+  db->addfriend("585fcf1b4b99d9260b5e9186", "ni hao",
+      [&db](const std::string & key){
+        std::string value;
+        db->get(key, value);
+        chat::AddFriendRes res;
+        res.ParseFromString(value);
+        YILOG_INFO ("addfriend {}", pro2string(res));
+        notimain();
+      });
+  mainwait();
+
+  std::string frd;
+  auto qaddfrdinfo = [&db, &frd](){
+    db->queryaddfriendinfo([&db, &frd](const std::string & key){
+        YILOG_INFO ("query addfriend info key {}", key);
+        std::string value;
+        db->get(key, value);
+        chat::AddFriendInfo info;
+        info.ParseFromString(value);
+        if (info.info().size() < 0)
+          frd = info.info(0).inviter();
+        YILOG_INFO ("info {}", pro2string(info));
+        notimain();
+      });
+  };
+  qaddfrdinfo();
+  mainwait();
+
+  db->userInfoNoti([&db](const std::string & key){
+        std::string value;
+        db->get(key, value);
+        if (key == db->addFriendAuthorizeNotiKey()) {
+          chat::AddFriendAuthorizeNoti noti;
+          noti.ParseFromString(value);
+          YILOG_INFO ("add friend authorize {}", pro2string(noti));
+        }else {
+          YILOG_ERROR ("noti type error");
+        }
+        notimain();
+      });
+  mainwait();
+
+  qaddfrdinfo();
+  mainwait();
 
   return 0;
 }

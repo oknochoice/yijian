@@ -4,7 +4,7 @@ add_executable(user1.out user1.cxx ./yijian/kvdb.cxx ./yijian/macro.cxx ./yijian
 add_executable(user2.out user2.cxx ./yijian/kvdb.cxx ./yijian/macro.cxx ./yijian/mongo.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/lib_client.cxx ./yijian/buffer.cxx)
 #add_executable(server.out server.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/server_msg_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/lib_client.cxx ./yijian/pinglist.cxx ./yijian/buffer.cxx)
 #add_executable(client.out client.cxx)
-add_executable(im_server.out im_server.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/server_msg_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/pinglist.cxx ./yijian/buffer.cxx)
+add_executable(im_server.out im_server.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/server_msg_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/buffer.cxx)
 
 set(CMAKE_BUILD_TYPE "Debug")
 #c++ --std=c++11 test.cpp -o test $(pkg-config --cflags --libs libmongocxx)

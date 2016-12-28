@@ -21,7 +21,7 @@ struct Read_IO;
 
 namespace yijian {
   namespace threadCurrent {
-    static thread_local Read_IO * currentNode_;
+    static thread_local std::shared_ptr<Read_IO> currentNode_;
     static thread_local chat::ConnectInfo connectInfo_;
     static thread_local chat::ConnectInfoLittle infolittle_;
     static thread_local chat::NodeSelfDevice node_self_;
@@ -35,7 +35,7 @@ namespace yijian {
   }
 }
 
-void dispatch(Read_IO* node, 
+void dispatch(std::shared_ptr<Read_IO> node, 
     std::shared_ptr<yijian::buffer> sp,
     uint16_t session_id);
 

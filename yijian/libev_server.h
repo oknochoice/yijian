@@ -4,13 +4,15 @@
 #include "catch.hpp"
 #include "spdlog/spdlog.h"
 #include "time.h"
-#include "pinglist.h"
 #include "threads_work.h"
 
 #include <signal.h>
 #include <ev.h>
 #include <netinet/in.h>
+#include <list>
 #include <string>
+#include <chrono>
+#include <buffer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,13 +21,22 @@ extern "C" {
 #define PORT 5555
 #define MAX_CONNECTIONS 100
 
+using yijian::Buffer_SP;
+
 typedef std::vector<std::pair<std::string, int>> IPS;
 
-struct Write_IO;
+typedef std::shared_ptr<Read_IO> Read_IO_SP;
+typedef void* List;
+typedef std::list<Read_IO_SP> Imp_list;
+typedef Imp_list::iterator Iter;
 
+struct Write_IO;
 struct Read_IO {
-  struct PingNode pingnode;
-  struct Write_IO * writeio;
+  struct ev_io io;
+  uint64_t ping_time;// seconds
+  Iter iter;
+  std::shared_ptr<Write_IO> writeio_sp;
+  std::weak_ptr<Read_IO> self;
   // socket buffer subthread must not change
   Buffer_SP buffer_sp = std::make_shared<yijian::buffer>();
   // node info
@@ -34,7 +45,7 @@ struct Read_IO {
   // set value where connectStatus is login_in connect_in
   uint16_t sessionid;
   std::string userid;
-  std::string deviceid;
+  std::string uuid;
   std::string appVersion;
   std::string clientVersion;
   // media need 
@@ -44,7 +55,8 @@ struct Read_IO {
 
 struct Write_IO {
   struct ev_io io;
-  struct Read_IO * readio;
+  std::weak_ptr<Read_IO> readio_sp;
+  std::weak_ptr<Write_IO> self;
   // socket buffer
   std::mutex buffers_p_mutex;
   std::queue<Buffer_SP> buffers_p;
@@ -54,16 +66,13 @@ struct Write_Asyn {
   ev_async as;
 };
 
-struct Peer_Servers {
-  IPS ips_;
-  std::mutex mutex_;
-  std::shared_ptr<std::list<Read_IO*> > peer_servers_;
-};
-
-std::shared_ptr<std::list<Read_IO*> > peer_servers();
+void mountBuffer2Device(Buffer_SP sp, const std::string & uuid);
 
 
-Read_IO * connect_peer(std::string ip, int port);
+void peer_server_foreach(
+    std::function<void(std::shared_ptr<Read_IO>)> && func);
+
+std::shared_ptr<Read_IO> connect_peer(std::string ip, int port);
 
 int start_server_libev(std::vector<std::pair<std::string, int>> ips = 
     std::vector<std::pair<std::string, int>>());
