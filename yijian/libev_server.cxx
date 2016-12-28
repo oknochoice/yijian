@@ -89,6 +89,7 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
       });
   ev_timer_set (w, 120., 0.);
 
+  // stop server
   if (unlikely(isStopThreadFunc_ == true)) {
     auto accept_io = accept_watcher();
     ev_io_stop(loop, accept_io);
@@ -114,30 +115,25 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
  *
  *
  * */ 
-std::mutex uuidnode_map_mutex_;
 std::unordered_map<std::string, std::shared_ptr<Read_IO>> uuidnode_map_;
 
 void uuidnode_put(const std::string & uuid, std::shared_ptr<Read_IO> io) {
   YILOG_TRACE ("func: {}. ", __func__);
-  std::unique_lock<std::mutex> ul(uuidnode_map_mutex_);
   uuidnode_map_[uuid] = io;
 }
 
 void uuidnode_delete(const std::string & uuid) {
   YILOG_TRACE ("func: {}. ", __func__);
-  std::unique_lock<std::mutex> ul(uuidnode_map_mutex_);
   uuidnode_map_.erase(uuid);
 }
 
 std::shared_ptr<Read_IO> uuidnode_get(const std::string & uuid) {
   YILOG_TRACE ("func: {}. ", __func__);
-  std::unique_lock<std::mutex> ul(uuidnode_map_mutex_);
   uuidnode_map_.at(uuid);
 }
 
 void mountBuffer2Device(Buffer_SP sp, const std::string & uuid) {
   YILOG_TRACE ("func: {}. ", __func__);
-  std::unique_lock<std::mutex> ul(uuidnode_map_mutex_);
   auto it = uuidnode_map_.find(uuid);
   if (it != uuidnode_map_.end()) {
     {
@@ -553,8 +549,8 @@ connection_write_callback (struct ev_loop * loop,
 
   // converse to usable io
   Write_IO * io = reinterpret_cast<Write_IO*>(ww);
-  auto io_sp = io->readio_sp.lock();
-  if (io_sp) {
+  auto read_io_sp = io->readio_sp.lock();
+  if (read_io_sp) {
     // write to socket
     // if write finish stop write, start read.
     std::unique_lock<std::mutex> ul(io->buffers_p_mutex);
@@ -565,28 +561,33 @@ connection_write_callback (struct ev_loop * loop,
       YILOG_TRACE ("send data type {}", p->datatype());
       if (unlikely(p->datatype() == ChatType::clientconnectres)) {
         YILOG_TRACE ("set isConnect true");
-        io_sp->isConnect = true;
-        if (likely(!io_sp->uuid.empty())) {
+        read_io_sp->isConnect = true;
+        if (likely(!read_io_sp->uuid.empty())) {
           // remove old node from pinglist;
           try {
-            auto lsp = uuidnode_get(io_sp->uuid);
-            ping_erase(lsp->iter);
+            auto lsp = uuidnode_get(read_io_sp->uuid);
+            if (lsp != read_io_sp) {
+              ping_erase(lsp);
+            }
           }catch(std::out_of_range & e) {
             YILOG_TRACE ("node not in pinglist");
           }
           // uuid node map
-          uuidnode_put(io_sp->uuid, io_sp);
+          uuidnode_put(read_io_sp->uuid, read_io_sp);
         }else {
           YILOG_ERROR ("uuid not find in client connect res, connect write callback");
         }
       }
       if (unlikely(p->datatype() == ChatType::clientdisconnectres)) {
-        if (likely(!io_sp->uuid.empty())) {
-          uuidnode_delete(io_sp->uuid);
+        if (likely(!read_io_sp->uuid.empty())) {
+          uuidnode_delete(read_io_sp->uuid);
+          ping_erase(read_io_sp);
         }else {
           YILOG_ERROR ("uuid not find in client disconnect res, connect write callback");
         }
       }
+      YILOG_TRACE ("pinglist count: {}.", pinglist_.size());
+      YILOG_TRACE ("uuidnode map count: {}.", uuidnode_map_.size());
       // send
       if (p->socket_write(io->io.fd)) {
         ul.lock();
