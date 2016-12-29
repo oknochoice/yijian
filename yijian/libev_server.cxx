@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <buffer.h>
 #include <list>
+#include <tuple>
 
 #include "server_msg_typemap.h"
 /*
@@ -35,6 +36,7 @@ connection_write_callback (struct ev_loop * loop, ev_io * ww, int revents);
 
 static bool isStopThreadFunc_ = false;
 
+void uuidnode_delete(const std::string & uuid);
 /*
  * ping list
  *
@@ -66,7 +68,7 @@ void ping_erase(Read_IO_SP sp) {
 void ping_foreach(std::function<void(Read_IO_SP, bool * )> && func) {
   YILOG_TRACE ("func: {}. ", __func__);
   bool isStop = false;
-  for (auto & io: pinglist_) {
+  for (auto io: pinglist_) {
     if (true == isStop) {
       break;
     }
@@ -81,7 +83,9 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
   uint64_t now = ping_time();
   ping_foreach([now](Read_IO_SP sp, bool * isStop){
         if (now - sp->ping_time > 120) {
+          YILOG_INFO ("uuid:{}", sp->uuid);
           ping_erase(sp);
+          uuidnode_delete(sp->uuid);
           *isStop = false;
         }else {
           *isStop = true;
@@ -129,7 +133,7 @@ void uuidnode_delete(const std::string & uuid) {
 
 std::shared_ptr<Read_IO> uuidnode_get(const std::string & uuid) {
   YILOG_TRACE ("func: {}. ", __func__);
-  uuidnode_map_.at(uuid);
+  return uuidnode_map_.at(uuid);
 }
 
 void mountBuffer2Device(Buffer_SP sp, const std::string & uuid) {
@@ -304,13 +308,10 @@ sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
-#warning fixed me
   // manager thread
   if (0 > open_thread_manager()) {
-    perror("thread manager open file");
-    return;
+    perror("thread manager open Failed");
   }
-
   // connect to peer server
   for (auto & pair: peer_servers_.ips_) {
     peer_servers_push(connect_peer(pair.first, pair.second));
@@ -521,10 +522,20 @@ connection_read_callback (struct ev_loop * loop,
         auto sp = io->buffer_sp;
         auto watcher = &write_asyn_watcher()->as;
         uint16_t sessionid = io->sessionid++;
+        YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
+            "userid:{}, uuid:{}", 
+            io_sp->ping_time, 
+            io_sp->isConnect, 
+            io_sp->sessionid, 
+            io_sp->userid, 
+            io_sp->uuid);
+        std::tuple<std::shared_ptr<Read_IO>, 
+          std::shared_ptr<yijian::buffer>,
+          uint16_t> tuple(io_sp, sp, sessionid);
         noti_threads()->sentWork(
-            [io_sp, &loop, watcher, sp, sessionid](){
+            [loop, watcher, ltuple = std::move(tuple)](){
               YILOG_TRACE ("dispatch message");
-              dispatch(io_sp, sp, sessionid);
+              dispatch(std::move(ltuple));
               ev_async_send(loop, watcher);
             });
       }
@@ -534,9 +545,12 @@ connection_read_callback (struct ev_loop * loop,
       io->buffer_sp.reset(new yijian::buffer());
     }else{
       YILOG_TRACE ("read is not complete message");
+      // continue read
+      ev_io_start(loop, rw);
     }
   }else {
     YILOG_TRACE ("node is released");
+    ev_io_start(loop, rw);
   }
 
 }

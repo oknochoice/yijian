@@ -1145,14 +1145,22 @@ check_map_ = {
   {ChatType::mediacheck, true},
 };
 
+
 // write node in multiple thread
 void dispatch(std::shared_ptr<Read_IO> node, std::shared_ptr<yijian::buffer> sp, uint16_t session_id) {
 
   YILOG_TRACE ("func: {}. argc node sp", __func__);
 
   currentNode_ = node;
-  session_id_ = session_id;
+  YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
+      "userid:{}, uuid:{}", 
+      currentNode_->ping_time, 
+      currentNode_->isConnect, 
+      currentNode_->sessionid, 
+      currentNode_->userid, 
+      currentNode_->uuid);
 
+  session_id_ = session_id;
   if (unlikely(session_id_ != sp->session_id() && 
               check_map_.find(sp->datatype()) != check_map_.end()
         )) {
@@ -1186,6 +1194,14 @@ void dispatch(std::shared_ptr<Read_IO> node, std::shared_ptr<yijian::buffer> sp,
 
 }
 
+void dispatch(const std::tuple<std::shared_ptr<Read_IO>, 
+    std::shared_ptr<yijian::buffer>,
+    uint16_t> && tuple) {
+
+  YILOG_TRACE ("func: {}. argc node sp", __func__);
+
+  dispatch(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
+}
 
 #ifdef __cpluscplus
 }

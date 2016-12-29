@@ -13,6 +13,7 @@
 #include <string>
 #include <chrono>
 #include <buffer.h>
+#include "libev_server.h"
 
 #ifdef __cplusplus
 extern "C" {

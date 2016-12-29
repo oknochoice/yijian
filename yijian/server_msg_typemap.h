@@ -5,6 +5,7 @@
 #include <typeindex>
 #include <boost/hana.hpp>
 #include <boost/any.hpp>
+#include <tuple>
 
 #include <functional>
 #include "protofiles/chat_message.pb.h"
@@ -35,9 +36,15 @@ namespace yijian {
   }
 }
 
+/*
+// gcc6.2 bug
 void dispatch(std::shared_ptr<Read_IO> node, 
     std::shared_ptr<yijian::buffer> sp,
     uint16_t session_id);
+    */
+void dispatch(const std::tuple<std::shared_ptr<Read_IO>, 
+    std::shared_ptr<yijian::buffer>,
+    uint16_t> && tuple);
 
 
 template <typename Any>
@@ -47,12 +54,14 @@ void mountBuffer2Node(Any &) {
       "unkonw node type");
 }
 
+/*
 template <typename Any>
 void dispatch(Any & ) {
   YILOG_TRACE ("func: {}. ", __func__);
   throw std::system_error(std::error_code(11000, std::generic_category()), 
       "unkonw dispatch type");
 }
+*/
 
 #ifdef __cpluscplus
 }

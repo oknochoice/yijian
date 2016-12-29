@@ -14,7 +14,7 @@ noti_threads::noti_threads(uint_fast16_t thread_num)
       thread_data->v_pingnode_sp_.reset(new Thread_Data::Vector_Node);
       thread_data->thread_ = 
 //        std::thread(&noti_threads::thread_func, thread_data);
-          std::thread([&]() {
+          std::thread([this, thread_data]() {
                 YILOG_TRACE("start thread");
                 this->thread_func(thread_data);
               });
@@ -37,6 +37,7 @@ void noti_threads::sentWork(Thread_Data::Thread_Function && func) {
 
   while(isContine) {
 
+    // select min work size
     std::shared_ptr<Thread_Data> thread_local_data = nullptr;
     for (auto thread_data: vec_threads_) {
       std::unique_lock<std::mutex> ul(thread_data->q_workfun_mutex_);
@@ -64,7 +65,7 @@ void noti_threads::sentWork(Thread_Data::Thread_Function && func) {
       
     if (isContine) {
       std::unique_lock<std::mutex> ul(c_mutex_);
-      c_var_.wait(ul, [&](){
+      c_var_.wait(ul, [this](){
           return !c_isWait_;
           });
       c_isWait_ = true;
@@ -150,7 +151,7 @@ void noti_threads::thread_func(std::shared_ptr<Thread_Data> thread_data) {
     {
       YILOG_TRACE("func: {}, wait...", __func__);
       std::unique_lock<std::mutex> ul(thread_data->c_mutex_);
-      thread_data->c_var_.wait(ul, [&](){
+      thread_data->c_var_.wait(ul, [thread_data](){
            return !thread_data->c_isWait_;
         });
       thread_data->c_isWait_ = true;
@@ -159,7 +160,7 @@ void noti_threads::thread_func(std::shared_ptr<Thread_Data> thread_data) {
     while (!thread_data->q_workfun_.empty()){
       YILOG_TRACE("func: {}, do work", __func__);
       std::unique_lock<std::mutex> ul(thread_data->q_workfun_mutex_);
-      auto func = thread_data->q_workfun_.front();
+      auto && func = thread_data->q_workfun_.front();
       thread_data->q_workfun_.pop();
       ul.unlock();
       func();

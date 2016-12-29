@@ -45,6 +45,16 @@ int main() {
   initConsoleLog();
   using yijian::Buffer_SP;
 
+  auto p = std::make_shared<chat::Error>();
+  p->set_errmsg("error");
+  p->set_errnum(0);
+
+  YILOG_INFO ("p count: {}.", p.use_count());
+  std::weak_ptr<chat::Error> weak_p = p;
+  YILOG_INFO ("p count: {}.", p.use_count());
+  auto pp = weak_p.lock();
+  YILOG_INFO ("p count: {}.", p.use_count());
+
   auto thread_id = std::this_thread::get_id();
   std::cout << "main thread id " << thread_id << std::endl;
 

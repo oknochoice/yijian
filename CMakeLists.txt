@@ -15,7 +15,7 @@ set(CXX_MONGO_FLAGS "-I/usr/include/mongocxx/v_noabi -I/usr/include/libmongoc-1.
 set(CXX_PROTO_FLAGS "-pthread -lprotobuf -pthread -lpthread")
 set(CXX_FLAGS "-std=c++14 -D_GLIBCXX_USE_CXX11_ABI=1 -DYILOG_ON=1 -lev -pthread -lboost_system -lssl -lcrypto -lboost_coroutine -lboost_context -lleveldb ${CXX_MONGO_FLAGS} ${CXX_PROTO_FLAGS}")
 message(STATUS ${CXX_FLAGS})
-#set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_FLAGS} -O0 -Wall -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "${CXX_FLAGS} -O3 -Wall")
 
