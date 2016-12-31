@@ -17,8 +17,6 @@ enum class Message_Type : std::size_t {
 
 namespace yijian {
 
-class buffer;
-typedef std::shared_ptr<buffer> Buffer_SP;
 class buffer 
   : public yijian::noncopyable{
 public:
@@ -96,7 +94,7 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
     }
 
     template <typename Proto>
-    static Buffer_SP Buffer(Proto && any);
+    static std::shared_ptr<buffer> Buffer(Proto && any);
 
     // session id
     uint16_t session_id();
@@ -133,7 +131,7 @@ private:
 };
 
 template <typename Proto>
-Buffer_SP buffer::Buffer(Proto && any) {
+std::shared_ptr<buffer> buffer::Buffer(Proto && any) {
 
   auto buf = std::make_shared<yijian::buffer>();
   buf->encoding(std::forward<Proto>(any));

@@ -39,15 +39,15 @@ void noti_threads::sentWork(Thread_Data::Thread_Function && func) {
 
     // select min work size
     std::shared_ptr<Thread_Data> thread_local_data = nullptr;
-    for (auto thread_data: vec_threads_) {
+    for (auto & thread_data: vec_threads_) {
       std::unique_lock<std::mutex> ul(thread_data->q_workfun_mutex_);
       if (thread_local_data == nullptr) {
-        thread_local_data = thread_data;
+        std::atomic_store(&thread_local_data, thread_data);
         continue;
       }
       if (thread_local_data->q_workfun_.size() > 
           thread_data->q_workfun_.size()) {
-        thread_local_data = thread_data;
+        std::atomic_store(&thread_local_data, thread_data);
       }
     }
 
@@ -83,7 +83,7 @@ void noti_threads::foreachio(
     std::function<void(std::shared_ptr<Read_IO>)> && func) {
 
   YILOG_TRACE("func: {}", __func__);
-  for (auto thread_data: vec_threads_) {
+  for (auto & thread_data: vec_threads_) {
     Thread_Data::Vector_Node_SP data_sp;
     {
       std::unique_lock<std::mutex> ul(thread_data->v_pingnode_mutex_);
@@ -101,7 +101,7 @@ void noti_threads::foreachio(
 int noti_threads::taskCount() {
   YILOG_TRACE("func: {}", __func__);
   int count = 0;
-  for (auto thread_data: vec_threads_) {
+  for (auto & thread_data: vec_threads_) {
     Thread_Data::Vector_Node_SP data_sp;
     {
       std::unique_lock<std::mutex> ul(thread_data->v_pingnode_mutex_);
@@ -160,7 +160,8 @@ void noti_threads::thread_func(std::shared_ptr<Thread_Data> thread_data) {
     while (!thread_data->q_workfun_.empty()){
       YILOG_TRACE("func: {}, do work", __func__);
       std::unique_lock<std::mutex> ul(thread_data->q_workfun_mutex_);
-      auto && func = thread_data->q_workfun_.front();
+      auto func = std::forward<Thread_Data::Thread_Function>(
+          thread_data->q_workfun_.front());
       thread_data->q_workfun_.pop();
       ul.unlock();
       func();

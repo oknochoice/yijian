@@ -22,12 +22,12 @@ extern "C" {
 #define PORT 5555
 #define MAX_CONNECTIONS 100
 
-using yijian::Buffer_SP;
+
+typedef std::shared_ptr<yijian::buffer> Buffer_SP;
 
 typedef std::vector<std::pair<std::string, int>> IPS;
 
 typedef std::shared_ptr<Read_IO> Read_IO_SP;
-typedef void* List;
 typedef std::list<Read_IO_SP> Imp_list;
 typedef Imp_list::iterator Iter;
 

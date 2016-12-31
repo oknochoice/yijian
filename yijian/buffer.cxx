@@ -36,6 +36,7 @@ void buffer::reset() {
 buffer::~buffer() {
 
   YILOG_TRACE("func: {}", __func__);
+  YILOG_DEBUG("func: {}", __func__);
 
   free(header_pos_);
 

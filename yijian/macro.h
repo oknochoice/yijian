@@ -37,10 +37,10 @@ void initConsoleLog();
 #define YILOG_STR_H(x) #x
 #define YILOG_STR_HELPER(x) YILOG_STR_H(x)
 #define YILOG_TRACE(...)      spdlog::get("console")->trace("[" __FILE__ " line #" YILOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
-#define YILOG_DEBUG(...)      spdlog::get("console")->debug(__VA_ARGS__)
-#define YILOG_INFO(...)       spdlog::get("console")->info(__VA_ARGS__)
-#define YILOG_WARN(...)       spdlog::get("console")->warn(__VA_ARGS__)
-#define YILOG_ERROR(...)      spdlog::get("console")->error(__VA_ARGS__)
+#define YILOG_DEBUG(...)      spdlog::get("console")->debug("[" __FILE__ " line #" YILOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
+#define YILOG_INFO(...)       spdlog::get("console")->info("[" __FILE__ " line #" YILOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
+#define YILOG_WARN(...)       spdlog::get("console")->warn("[" __FILE__ " line #" YILOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
+#define YILOG_ERROR(...)      spdlog::get("console")->error("[" __FILE__ " line #" YILOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
 #define YILOG_CRITICAL(...)   spdlog::get("console")->critical(__VA_ARGS__)
 #else
 #define YILOG_TRACE(...)

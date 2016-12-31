@@ -19,6 +19,7 @@ extern "C" {
 
 struct Read_IO;
 
+typedef std::shared_ptr<yijian::buffer> Buffer_SP;
 
 namespace yijian {
   namespace threadCurrent {
@@ -36,15 +37,15 @@ namespace yijian {
   }
 }
 
-/*
 // gcc6.2 bug
 void dispatch(std::shared_ptr<Read_IO> node, 
     std::shared_ptr<yijian::buffer> sp,
     uint16_t session_id);
-    */
+/*
 void dispatch(const std::tuple<std::shared_ptr<Read_IO>, 
     std::shared_ptr<yijian::buffer>,
-    uint16_t> && tuple);
+    uint16_t> & t);
+    */
 
 
 template <typename Any>

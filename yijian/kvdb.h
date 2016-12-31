@@ -334,7 +334,6 @@ private:
   void usernoti(Buffer_SP sp);
 private:
   leveldb::DB * db_;
-  int32_t  temp_tonodeid_ = -1;
 };
 
 

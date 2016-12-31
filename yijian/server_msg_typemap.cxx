@@ -11,6 +11,8 @@
 #include "libev_server.h"
 #include <unordered_map>
 #include <google/protobuf/util/json_util.h>
+#include <memory>
+#include <atomic>
 
 #ifdef __cpluscplus
 extern "C" {
@@ -215,9 +217,9 @@ void dispatch(chat::Login & login) {
   YILOG_TRACE ("func: {}. ", __func__);
   YILOG_INFO ("login {}", pro2string(login));
 
-  auto client = yijian::threadCurrent::mongoClient();
 
   try {
+    auto client = yijian::threadCurrent::mongoClient();
     auto user_sp = client->queryUser(login.phoneno(), login.countrycode());
     if (user_sp->password() == login.password()) {
       // find device from db
@@ -327,9 +329,9 @@ void dispatch(chat::Logout & logout) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   YILOG_INFO ("logout {}", pro2string(logout));
-  auto client = yijian::threadCurrent::mongoClient();
 
   try {
+    auto client = yijian::threadCurrent::mongoClient();
     auto user_sp = client->queryUser(logout.userid());
     // find device from db
     auto devices = user_sp->mutable_devices();
@@ -376,9 +378,9 @@ void dispatch(chat::ClientConnect & connect)  {
   YILOG_TRACE ("func: {}. ", __func__);
 
   YILOG_INFO ("connect {}", pro2string(connect));
-  auto client = yijian::threadCurrent::mongoClient();
 
   try {
+    auto client = yijian::threadCurrent::mongoClient();
     auto user_sp = client->queryUser(connect.userid());
     // find device from db
     auto devices = user_sp->mutable_devices();
@@ -435,9 +437,9 @@ void dispatch(chat::ClientDisConnect & disconnect)  {
   YILOG_TRACE ("func: {}. ", __func__);
 
   YILOG_INFO ("disconnect {}", pro2string(disconnect));
-  auto client = yijian::threadCurrent::mongoClient();
 
   try {
+    auto client = yijian::threadCurrent::mongoClient();
     auto user_sp = client->queryUser(disconnect.userid());
     // find device from db
     auto devices = user_sp->mutable_devices();
@@ -478,9 +480,9 @@ void dispatch(chat::AddFriend & frd) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   YILOG_INFO ("add friend {}", pro2string(frd));
-  auto client = yijian::threadCurrent::mongoClient();
 
   try {
+    auto client = yijian::threadCurrent::mongoClient();
     // check blacklist
     auto peerUser = client->queryUser(frd.inviteeid());
     auto it = find_if(peerUser->blacklist().begin(), peerUser->blacklist().end(),
@@ -562,8 +564,8 @@ void dispatch(chat::AddFriendNoti & noti) {
 void dispatch(chat::AddFriendAuthorize & addAuth) {
   YILOG_TRACE ("func: {}. ", __func__);
   YILOG_INFO ("add friend authorize {}", pro2string(addAuth));
-  auto client = yijian::threadCurrent::mongoClient();
   try {
+    auto client = yijian::threadCurrent::mongoClient();
     auto authRes = chat::AddFriendAuthorizeRes();
     auto noti = chat::AddFriendAuthorizeNoti();
     if (addAuth.isagree() == chat::IsAgree::agree) {
@@ -1146,12 +1148,14 @@ check_map_ = {
 };
 
 
-// write node in multiple thread
-void dispatch(std::shared_ptr<Read_IO> node, std::shared_ptr<yijian::buffer> sp, uint16_t session_id) {
-
-  YILOG_TRACE ("func: {}. argc node sp", __func__);
-
+void dispatch(std::shared_ptr<Read_IO> node, 
+    std::shared_ptr<yijian::buffer> sp,
+    uint16_t session_id) {
+  YILOG_TRACE ("func: dispatch tuple");
   currentNode_ = node;
+  session_id_ = session_id;
+  
+  YILOG_DEBUG ("buffer sp use count: {}", sp.use_count());
   YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
       "userid:{}, uuid:{}", 
       currentNode_->ping_time, 
@@ -1160,7 +1164,6 @@ void dispatch(std::shared_ptr<Read_IO> node, std::shared_ptr<yijian::buffer> sp,
       currentNode_->userid, 
       currentNode_->uuid);
 
-  session_id_ = session_id;
   if (unlikely(session_id_ != sp->session_id() && 
               check_map_.find(sp->datatype()) != check_map_.end()
         )) {
@@ -1191,16 +1194,6 @@ void dispatch(std::shared_ptr<Read_IO> node, std::shared_ptr<yijian::buffer> sp,
       dispatch(sp->datatype(), sp->data(), sp->data_size());
     }
   }
-
-}
-
-void dispatch(const std::tuple<std::shared_ptr<Read_IO>, 
-    std::shared_ptr<yijian::buffer>,
-    uint16_t> && tuple) {
-
-  YILOG_TRACE ("func: {}. argc node sp", __func__);
-
-  dispatch(std::get<0>(tuple), std::get<1>(tuple), std::get<2>(tuple));
 }
 
 #ifdef __cpluscplus

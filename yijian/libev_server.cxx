@@ -10,6 +10,9 @@
 #include <tuple>
 
 #include "server_msg_typemap.h"
+
+#define PINGPONGTIME 1200
+#define PINGPONGTIMEOUT 1200
 /*
  *
  * priate declare
@@ -82,7 +85,7 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
   ev_timer_stop(loop, w);
   uint64_t now = ping_time();
   ping_foreach([now](Read_IO_SP sp, bool * isStop){
-        if (now - sp->ping_time > 120) {
+        if (now - sp->ping_time > PINGPONGTIMEOUT) {
           YILOG_INFO ("uuid:{}", sp->uuid);
           ping_erase(sp);
           uuidnode_delete(sp->uuid);
@@ -91,7 +94,7 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
           *isStop = true;
         }
       });
-  ev_timer_set (w, 120., 0.);
+  ev_timer_set (w, PINGPONGTIME, 0.);
 
   // stop server
   if (unlikely(isStopThreadFunc_ == true)) {
@@ -136,7 +139,7 @@ std::shared_ptr<Read_IO> uuidnode_get(const std::string & uuid) {
   return uuidnode_map_.at(uuid);
 }
 
-void mountBuffer2Device(Buffer_SP sp, const std::string & uuid) {
+void mountBuffer2Device(std::shared_ptr<yijian::buffer> sp, const std::string & uuid) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto it = uuidnode_map_.find(uuid);
   if (it != uuidnode_map_.end()) {
@@ -396,7 +399,7 @@ int start_server_libev(IPS ips ) {
 
   //timer ping
   struct ev_timer * timer = timer_watcher();
-  ev_timer_init (timer, pingtime_callback, 120., 0.);
+  ev_timer_init (timer, pingtime_callback, PINGPONGTIME, 0.);
   ev_timer_start (loop(), timer);
 
   ev_run (loop(), 0);
@@ -529,24 +532,28 @@ connection_read_callback (struct ev_loop * loop,
             io_sp->sessionid, 
             io_sp->userid, 
             io_sp->uuid);
+        /*
         std::tuple<std::shared_ptr<Read_IO>, 
           std::shared_ptr<yijian::buffer>,
-          uint16_t> tuple(io_sp, sp, sessionid);
+          uint16_t> t(io_sp, sp, sessionid);
+          */
+        YILOG_DEBUG("buffer sp reference count {}",
+            sp.use_count());
         noti_threads()->sentWork(
-            [loop, watcher, ltuple = std::move(tuple)](){
+            [loop, watcher, io_sp, sp, sessionid](){
               YILOG_TRACE ("dispatch message");
-              dispatch(std::move(ltuple));
+              YILOG_DEBUG("buffer sp reference count {}",
+                  sp.use_count());
+              dispatch(io_sp, sp, sessionid);
               ev_async_send(loop, watcher);
             });
       }
       
-      YILOG_TRACE("buffer sp reference count {}", 
+      YILOG_DEBUG("buffer sp reference count {}", 
           io->buffer_sp.use_count());
       io->buffer_sp.reset(new yijian::buffer());
     }else{
       YILOG_TRACE ("read is not complete message");
-      // continue read
-      ev_io_start(loop, rw);
     }
   }else {
     YILOG_TRACE ("node is released");

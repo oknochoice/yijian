@@ -4,9 +4,9 @@ add_executable(user1.out user1.cxx ./yijian/kvdb.cxx ./yijian/macro.cxx ./yijian
 add_executable(user2.out user2.cxx ./yijian/kvdb.cxx ./yijian/macro.cxx ./yijian/mongo.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/lib_client.cxx ./yijian/buffer.cxx)
 #add_executable(server.out server.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/server_msg_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/lib_client.cxx ./yijian/pinglist.cxx ./yijian/buffer.cxx)
 #add_executable(client.out client.cxx)
-add_executable(im_server.out im_server.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/server_msg_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/buffer.cxx)
+add_executable(imserver.out imserver.cxx ./yijian/macro.cxx ./yijian/threads_work.cxx ./yijian/libev_server.cxx ./yijian/mongo.cxx ./yijian/server_msg_typemap.cxx ./yijian/protofiles/chat_message.pb.cc ./yijian/buffer.cxx)
 
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "DEBUG")
 #c++ --std=c++11 test.cpp -o test $(pkg-config --cflags --libs libmongocxx)
 #-I/usr/include/mongocxx/v_noabi -I/usr/include/libmongoc-1.0 -I/usr/include/bsoncxx/v_noabi -I/usr/include/libbson-1.0 -lmongocxx -lbsoncxx
 set(CXX_MONGO_FLAGS "-I/usr/include/mongocxx/v_noabi -I/usr/include/libmongoc-1.0 -I/usr/include/bsoncxx/v_noabi -I/usr/include/libbson-1.0 -lmongocxx -lbsoncxx") 
@@ -15,7 +15,7 @@ set(CXX_MONGO_FLAGS "-I/usr/include/mongocxx/v_noabi -I/usr/include/libmongoc-1.
 set(CXX_PROTO_FLAGS "-pthread -lprotobuf -pthread -lpthread")
 set(CXX_FLAGS "-std=c++14 -D_GLIBCXX_USE_CXX11_ABI=1 -DYILOG_ON=1 -lev -pthread -lboost_system -lssl -lcrypto -lboost_coroutine -lboost_context -lleveldb ${CXX_MONGO_FLAGS} ${CXX_PROTO_FLAGS}")
 message(STATUS ${CXX_FLAGS})
-set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 set(CMAKE_CXX_FLAGS_DEBUG "${CXX_FLAGS} -O0 -Wall -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "${CXX_FLAGS} -O3 -Wall")
 

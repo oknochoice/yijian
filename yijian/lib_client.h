@@ -10,7 +10,7 @@
 #include "buffer.h"
 
 
-using yijian::Buffer_SP;
+typedef std::shared_ptr<yijian::buffer> Buffer_SP;
 typedef std::function<void(Buffer_SP)> Read_CB;
 
 // main thread call, read_cb subthread callback

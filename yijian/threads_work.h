@@ -60,8 +60,6 @@ private:
 };
 
 namespace threadCurrent {
-  std::shared_ptr<Thread_Data> 
-  threadData(std::shared_ptr<Thread_Data> currentData);
 
   std::shared_ptr<Thread_Data> threadData();
 

@@ -43,7 +43,7 @@ std::string pro2string(Proto & any) {
 
 int main() {
   initConsoleLog();
-  using yijian::Buffer_SP;
+  typedef std::shared_ptr<yijian::buffer> Buffer_SP;
 
   auto p = std::make_shared<chat::Error>();
   p->set_errmsg("error");

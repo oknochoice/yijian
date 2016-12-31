@@ -43,7 +43,7 @@ std::string pro2string(Proto & any) {
 
 int main() {
   initConsoleLog();
-  using yijian::Buffer_SP;
+  typedef std::shared_ptr<yijian::buffer> Buffer_SP;
 
   auto thread_id = std::this_thread::get_id();
   std::cout << "main thread id " << thread_id << std::endl;
@@ -126,6 +126,7 @@ int main() {
       });
   mainwait();
 
+  /*
   db->login(phoneno, countrycode, password, os, devicemodel, uuid,
       [&db](const std::string & key){
         YILOG_INFO("key:{}.", key);
@@ -237,6 +238,7 @@ int main() {
 
   qaddfrdinfo();
   mainwait();
+  */
 
 
   return 0;
