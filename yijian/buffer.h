@@ -128,6 +128,7 @@ private:
     // socket read or write buffer
     std::size_t remain_data_length_; 
 
+    int_fast16_t noread_count_ = 0;
 };
 
 template <typename Proto>

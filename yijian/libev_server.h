@@ -34,8 +34,10 @@ typedef Imp_list::iterator Iter;
 struct Write_IO;
 struct Read_IO {
   struct ev_io io;
+  //
   uint64_t ping_time;// seconds
-  Iter iter;
+  std::shared_ptr<Iter> iter_sp;
+  //
   std::shared_ptr<Write_IO> writeio_sp;
   std::weak_ptr<Read_IO> self;
   // socket buffer subthread must not change
@@ -67,7 +69,8 @@ struct Write_Asyn {
   ev_async as;
 };
 
-void mountBuffer2Device(Buffer_SP sp, const std::string & uuid);
+void mountBuffer2Device(const std::string & uuid, 
+    std::function<void(std::shared_ptr<Read_IO>)> && func);
 
 
 void peer_server_foreach(

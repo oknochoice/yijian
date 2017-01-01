@@ -132,14 +132,24 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodePeerServer & ) {
 }
 
 void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
+  YILOG_TRACE ("func: {}. ", __func__);
   if (infolittle.isconnected()) {
-    YILOG_TRACE ("online");
+    YILOG_TRACE ("func: {}. online", __func__);
     // get uuid
     std::string luuid = infolittle.uuid();
     // if node is request pass
     if (unlikely(currentNode_->uuid == luuid)) return;
     // mount buffer to pingnode
-    mountBuffer2Device(buf_sp, luuid);
+    YILOG_INFO ("luuid: {}", luuid);
+    mountBuffer2Device(luuid, [buf_sp](std::shared_ptr<Read_IO> io_sp){
+          YILOG_INFO ("uuid: {}", io_sp->uuid);
+          {
+            std::unique_lock<std::mutex> uiol(
+                io_sp->writeio_sp->buffers_p_mutex);
+            io_sp->writeio_sp->buffers_p.push(buf_sp);
+          }
+          yijian::threadCurrent::pushPingnode(io_sp);
+        });
   }
 }
 
@@ -530,10 +540,13 @@ void dispatch(chat::AddFriend & frd) {
     auto addres = noti.mutable_response();
     *addres = *res;
     node_user_.set_touserid(res->inviteeid());
+    YILOG_INFO ("add friend send noti to friend {}", pro2string(*res));
     mountBuffer2Node(buffer::Buffer(noti), node_user_);
     mountBuffer2Node(buffer::Buffer(noti), node_peer_);
+    // send buffer
     // send to other self
     node_user_.set_touserid(res->inviterid());
+    YILOG_INFO ("add friend send noti to self {}", pro2string(*res));
     mountBuffer2Node(buffer::Buffer(noti), node_user_);
     mountBuffer2Node(buffer::Buffer(noti), node_peer_);
   }catch (std::system_error & sys_error) {
@@ -1194,6 +1207,7 @@ void dispatch(std::shared_ptr<Read_IO> node,
       dispatch(sp->datatype(), sp->data(), sp->data_size());
     }
   }
+  currentNode_.reset();
 }
 
 #ifdef __cpluscplus

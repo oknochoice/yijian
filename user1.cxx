@@ -11,6 +11,7 @@
 #include <condition_variable>
 #include "kvdb.h"
 #include <google/protobuf/util/json_util.h>
+#include <list>
 
 #include <boost/coroutine2/all.hpp>
 std::mutex mutex_;
@@ -44,6 +45,14 @@ std::string pro2string(Proto & any) {
 int main() {
   initConsoleLog();
   typedef std::shared_ptr<yijian::buffer> Buffer_SP;
+
+  std::list<int> list;
+  list.push_back(1);
+  list.push_back(2);
+  list.push_back(3);
+  for (auto i: list) {
+    std::cout << i << std::endl;
+  }
 
   auto p = std::make_shared<chat::Error>();
   p->set_errmsg("error");
@@ -205,6 +214,7 @@ int main() {
 
   db->addfriend("585fcf1b4b99d9260b5e9186", "ni hao",
       [&db](const std::string & key){
+        YILOG_INFO ("addfriend key {}", key);
         std::string value;
         db->get(key, value);
         chat::AddFriendRes res;

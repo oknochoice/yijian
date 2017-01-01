@@ -66,7 +66,6 @@ Message_Type buffer::buffer_type() {
 bool buffer::socket_read(int sfd) {
   YILOG_TRACE("func: {}", __func__);
   // parse length and data type
-  do {
   YILOG_TRACE("func: {}, isParseFinish_: {}, isFinish_: {}", 
       __func__, isParseFinish_, isFinish_);
   if (!isParseFinish_) {
@@ -76,7 +75,6 @@ bool buffer::socket_read(int sfd) {
       current_pos_ += readed;
       parse_length_ -= readed;
       YILOG_TRACE ("func: {}, parse_length_ : {}", __func__, parse_length_);
-      if (unlikely(0 == readed)) break;
     }else {
       YILOG_TRACE ("func: {}, parse header", __func__);
       // session id
@@ -112,10 +110,8 @@ bool buffer::socket_read(int sfd) {
     if (0 == remain_data_length_)
       isFinish_ = true;
 
-    if (unlikely(isFinish_ || 0 == readed)) break;
   }
 
-  } while (!isFinish_);
   YILOG_TRACE("func: {} read finish {}", __func__, isFinish_);
   return isFinish_;
 }
@@ -220,16 +216,24 @@ std::size_t buffer::socket_read(int sfd, char * pos, std::size_t count) {
   int readed = read(sfd, pos, count);
   if (0 < readed) {
     YILOG_TRACE("func: {}, readed: {}", __func__, readed);
+    noread_count_ = 0;
   }else if (0 == readed) {
     YILOG_TRACE("func: {}, read end", __func__);
+    ++noread_count_;
   }else {
     if (EAGAIN == errno) {
       readed = 0;
+      noread_count_ = 0;
       YILOG_TRACE("func: {}, errno EAGAIN", __func__);
     }else {
-      throw std::system_error(std::error_code(errno, std::system_category()),
+      YILOG_ERROR("func: {}, errno: {}", __func__, errno);
+      throw std::system_error(std::error_code(20002, std::system_category()),
         "read buffer");
     }
+  }
+  if (unlikely(noread_count_ > 3)) {
+    throw std::system_error(std::error_code(20003, std::system_category()),
+      "too much read on noread");
   }
   return readed;
 }

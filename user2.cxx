@@ -111,6 +111,7 @@ int main() {
   mainwait();
   */
 
+  YILOG_INFO("login failure");
   db->login(phoneno, countrycode, "000000", os, devicemodel, uuid,
       [&db](const std::string & key){
         YILOG_INFO("key:{}.", key);
@@ -126,7 +127,7 @@ int main() {
       });
   mainwait();
 
-  /*
+  YILOG_INFO("login success");
   db->login(phoneno, countrycode, password, os, devicemodel, uuid,
       [&db](const std::string & key){
         YILOG_INFO("key:{}.", key);
@@ -142,6 +143,7 @@ int main() {
       });
   mainwait();
 
+  YILOG_INFO("connect");
   std::string userid = db->get_current_userid();
   db->connect(userid, uuid, true, osversion, appversion,
       [&db](const std::string & key){
@@ -161,9 +163,10 @@ int main() {
   std::string user_data;
   auto isHasUser = db->getUser(db->get_current_userid(), user_data);
   auto queryuser = [&db, &user_data](){
+    YILOG_INFO("query user");
     db->queryuser(db->get_current_userid(), 
         [&db, &user_data](const std::string & key){
-          YILOG_INFO ("query user {}", key);
+          YILOG_INFO ("query user key {}", key);
           assert(key == db->userKey(db->get_current_userid()));
           db->get(key, user_data);
           chat::User user;
@@ -177,9 +180,10 @@ int main() {
     chat::User user;
     user.ParseFromString(user_data);
     YILOG_INFO ("{}", pro2string(user));
+    YILOG_INFO("query user version");
     db->queryuserVersion(db->get_current_userid(),
         [&user, &queryuser](const std::string & version){
-          YILOG_INFO ("query user version {}", version);
+          YILOG_INFO ("query user version key {}", version);
           YILOG_INFO ("user version {}", user.version());
           auto v = std::stoi(version);
           if (v > user.version()) {
@@ -194,7 +198,9 @@ int main() {
   }
   mainwait();
 
+  YILOG_INFO("wait add friend noti");
   db->userInfoNoti([&db](const std::string & key) {
+        YILOG_INFO("wait add friend noti key {}.", key);
         std::string value;
         db->get(key, value);
         if (key == db->addFriendNotiKey()) {
@@ -210,6 +216,7 @@ int main() {
 
   std::string frd;
   auto qaddfrdinfo = [&db, &frd](){
+    YILOG_INFO ("query addfriend info ");
     db->queryaddfriendinfo([&db, &frd](const std::string & key){
         YILOG_INFO ("query addfriend info key {}", key);
         std::string value;
@@ -225,6 +232,7 @@ int main() {
   qaddfrdinfo();
   mainwait();
 
+  YILOG_INFO ("query addfriendauthorize key");
   db->addfriendAuthorize(frd, chat::IsAgree::agree, 
       [&db, &frd](const std::string & key){
         YILOG_INFO ("query addfriendauthorize key {}", key);
@@ -238,9 +246,9 @@ int main() {
 
   qaddfrdinfo();
   mainwait();
-  */
 
 
+  delete db;
   return 0;
 }
 
