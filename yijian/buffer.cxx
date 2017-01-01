@@ -186,8 +186,8 @@ buffer::decoding_var_length(char * pos) {
     ++pos;
     multiplier *= 128;
     YILOG_TRACE("func: {} value {}", __func__, value);
-#warning limit:2,097,151 max:268,435,455 i.e multiplier > 128 * 128 * 128 * 128
-    if (multiplier > 128 * 128 * 128)
+#warning limit:16,384 max:268,435,455 i.e multiplier > 128 * 128 * 128 * 128
+    if (multiplier > 128 * 128)
       throw std::system_error(std::error_code(20001, std::generic_category()),
           "Malformed Remaining Length");
   }while((encodeByte & 128) != 0);

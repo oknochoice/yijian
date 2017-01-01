@@ -7,8 +7,9 @@
 #include "typemap.h"
 
 // 4 max var_length length 1 type length 2 sessionid length
+#define VAR_LENGTH 2
 #define SESSIONID_LENGTH 2
-#define PADDING_LENGTH (1 + 4 + SESSIONID_LENGTH)
+#define PADDING_LENGTH (1 + VAR_LENGTH + SESSIONID_LENGTH)
 
 enum class Message_Type : std::size_t {
   message = 1024,
@@ -72,6 +73,11 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
 
     template <typename Proto> 
     void encoding(Proto && any) {
+
+      if (unlikely(any.ByteSize() > 1024 - PADDING_LENGTH)) {
+        throw std::system_error(std::error_code(20010, std::generic_category()),
+            "Malformed Length");
+      }
 
       uint8_t type = dispatchType(any);
       current_pos_ += SESSIONID_LENGTH;

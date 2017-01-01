@@ -34,7 +34,7 @@ kvdb::kvdb(std::string & path) {
 kvdb::~kvdb() {
   YILOG_TRACE ("func: {}", __func__);
   delete db_;
-//  clear_client();
+  clear_client();
 }
 
 // common

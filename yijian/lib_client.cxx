@@ -61,6 +61,7 @@ void connection_read_callback (struct ev_loop * loop,
 
   YILOG_TRACE ("func: {}. ", __func__);
 
+  try {
   //ev_io_stop(loop, rw);
   // converse to usable io
   Read_IO * io = reinterpret_cast<Read_IO*>(rw);
@@ -81,6 +82,15 @@ void connection_read_callback (struct ev_loop * loop,
     }
     (*sp_read_cb_)(io->buffer_sp);
     io->buffer_sp.reset(new yijian::buffer());
+  }
+
+  }catch (std::system_error & e) {
+    YILOG_ERROR ("errno: {}, errmsg: {}.",
+        e.code().value(), e.what());
+    if (e.code().value() == 20002 ||
+        e.code().value() == 20003) {
+      // close node
+    }
   }
 
 }

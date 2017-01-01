@@ -14,8 +14,8 @@
 #define PINGPONGTIME 1200
 #define PINGPONGTIMEOUT 1200
 
-#define QUICKREMOVETIME 10
-#define QUICKREMOVETIMEOUT 10
+#define QUICKREMOVETIME 1000
+#define QUICKREMOVETIMEOUT 1000
 /*
  *
  * priate declare
@@ -65,6 +65,7 @@ bool ping_erase(Read_IO_SP sp) {
   YILOG_TRACE ("func: {}. ", __func__);
   if(likely(sp->iter_sp != nullptr)) {
     pinglist_.erase(*sp->iter_sp);
+    sp->iter_sp = nullptr;
     YILOG_TRACE ("func: {}. pinglist count: {}.", 
         __func__, pinglist_.size());
     return true;
@@ -90,32 +91,27 @@ void ping_move2back(Read_IO_SP sp) {
         __func__, pinglist_.size());
   }
 }
-void ping_foreach(std::function<void(Read_IO_SP, bool * )> && func) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  bool isStop = false;
-  for (auto io: pinglist_) {
-    if (true == isStop) {
-      break;
-    }
-    func(io, &isStop);
-  }
-}
 
 static void 
 pingtime_callback(EV_P_ ev_timer *w, int revents) {
   YILOG_TRACE ("func: {}. ", __func__);
   ev_timer_stop(loop, w);
   uint64_t now = ping_time();
-  ping_foreach([now](Read_IO_SP sp, bool * isStop){
-        if (now - sp->ping_time > PINGPONGTIMEOUT) {
-          YILOG_INFO ("erase uuid:{} from pingtime.", sp->uuid);
-          uuidnode_delete(sp->uuid);
-          ping_erase(sp);
-          *isStop = false;
-        }else {
-          *isStop = true;
-        }
-      });
+  auto it = pinglist_.begin();
+  while(it != pinglist_.end()) {
+
+    YILOG_TRACE ("func: {}. forloop", __func__);
+
+    if (now - (*it)->ping_time > PINGPONGTIMEOUT) {
+      uuidnode_delete((*it)->uuid);
+      auto sp = (*it);
+      it = pinglist_.erase(it);
+      sp->iter_sp = nullptr;
+    }else {
+      break;
+    }
+
+  }
   ev_timer_set (w, PINGPONGTIME, 0.);
 
   // stop server
