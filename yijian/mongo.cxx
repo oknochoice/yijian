@@ -457,7 +457,8 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
         << "toNodeID" << tonodeid
         << "userID" << invitee
         << close_document << close_document
-        << "$inc" << "version"
+        << "$inc" << open_document 
+        << "version" << 1 << close_document
         << finalize,
         journal_update_);
     // track
@@ -489,7 +490,8 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
         << "toNodeID" << tonodeid
         << "userID" << inviter
         << close_document << close_document
-        << "$inc" << "version"
+        << "$inc" << open_document 
+        << "version" << 1 << close_document
         << finalize,
         journal_update_);
     // track
@@ -509,13 +511,9 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
         << "littleIDBigID" << littleIDBigID
         << finalize,
         document{} << "$set" << open_document
-        << "status" << "userUnreadInviter" << close_document
+        << "status" << "finish" << close_document
         << finalize,
         journal_update_);
-    // track delete
-    addfriend_col.delete_one(
-        document{} << "littleIDBigID" << littleIDBigID
-        << finalize);
   }catch(std::system_error & e) {
     YILOG_ERROR ("add friend authorize failre in (id insert to friends).\n"
         " inviter:{}, invitee{} \n"
@@ -533,35 +531,45 @@ void mongo_client::queryAddfriendInfo(
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto addfriend_col = db["addFriend"];
-  auto find = mongocxx::options::find{};
-  auto hint = mongocxx::hint(
-      document{} 
-      << "timestamp" << 1
-      << finalize);
-  find.sort(document{} << "timestamp" << -1 << finalize);
-  find.limit(limit);
-  find.hint(hint);
-  /*
-  std::string regexPre;
-  regexPre = "/""^" + userid + "/";
-  std::string regexEnd;
-  regexEnd = "/" + userid + "$""/";
-  */
-  auto cursor = addfriend_col.find(
-      document{} << "$and" << open_array << open_document
-      << "$or" << open_array
-      << open_document << "inviter" << userid << close_document
-      << open_document << "invitee" << userid << close_document
-      << close_array << close_document << open_document
-      << "$not" << open_document << "status" << "userUnreadInvitee"
-      << close_document << close_document << close_array
-      << finalize);
-  for (auto doc: cursor) {
-    auto re = std::make_shared<chat::QueryAddfriendInfoRes>();
-    re->set_inviter(doc["inviter"].get_utf8().value.to_string());
-    re->set_invitee(doc["invitee"].get_utf8().value.to_string());
-    re->set_tonodeid(doc["toNodeID"].get_utf8().value.to_string());
-    func(re);
+  try {
+    auto find = mongocxx::options::find{};
+    auto hint = mongocxx::hint(
+        document{} 
+        << "timestamp" << 1
+        << finalize);
+    find.sort(document{} << "timestamp" << -1 << finalize);
+    find.limit(limit);
+    find.hint(hint);
+    /*
+    std::string regexPre;
+    regexPre = "/""^" + userid + "/";
+    std::string regexEnd;
+    regexEnd = "/" + userid + "$""/";
+    */
+    auto cursor = addfriend_col.find(
+        document{} << "$and" << open_array << open_document
+        << "$or" << open_array
+        << open_document << "inviter" << userid << close_document
+        << open_document << "invitee" << userid << close_document
+        << close_array << close_document << open_document
+        << "status" << open_document 
+        << "$not"  << open_document 
+        << "$eq" << "finish" << close_document
+        << close_document << close_document << close_array
+        << finalize);
+    for (auto doc: cursor) {
+      auto re = std::make_shared<chat::QueryAddfriendInfoRes>();
+      re->set_inviter(doc["inviter"].get_utf8().value.to_string());
+      re->set_invitee(doc["invitee"].get_utf8().value.to_string());
+      re->set_tonodeid(doc["toNodeID"].get_utf8().value.to_string());
+      func(re);
+    }
+  }catch(std::system_error & e) {
+    YILOG_ERROR ("query addfriend authorize info failre.\n"
+        "system_error code:{}, what:{}.", 
+        e.code().value(), e.what());
+    throw std::system_error(std::error_code(40010, std::generic_category()),
+        "query addfriend authorize info failre");
   }
 }
 
@@ -653,7 +661,8 @@ mongo_client::addMembers2Group(chat::GroupAddMember & groupMember) {
         document{} << "$addToSet" << open_document
         << "membersid" << open_document
         << "$each" << membersid << close_document << close_document
-        << "$inc" << "version"
+        << "$inc" << open_document 
+        << "version" << 1 << close_document
         << finalize,
         journal_update_);
 

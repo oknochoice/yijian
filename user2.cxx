@@ -109,7 +109,6 @@ int main() {
         notimain();
       });
   mainwait();
-  */
 
   YILOG_INFO("login failure");
   db->login(phoneno, countrycode, "000000", os, devicemodel, uuid,
@@ -126,6 +125,7 @@ int main() {
         notimain();
       });
   mainwait();
+  */
 
   YILOG_INFO("login success");
   db->login(phoneno, countrycode, password, os, devicemodel, uuid,
@@ -223,7 +223,7 @@ int main() {
         db->get(key, value);
         chat::AddFriendInfo info;
         info.ParseFromString(value);
-        if (info.info().size() < 0)
+        if (info.info().size() > 0)
           frd = info.info(0).inviter();
         YILOG_INFO ("info {}", pro2string(info));
         notimain();
@@ -232,10 +232,10 @@ int main() {
   qaddfrdinfo();
   mainwait();
 
-  YILOG_INFO ("query addfriendauthorize key");
+  YILOG_INFO ("addfriendauthorize");
   db->addfriendAuthorize(frd, chat::IsAgree::agree, 
       [&db, &frd](const std::string & key){
-        YILOG_INFO ("query addfriendauthorize key {}", key);
+        YILOG_INFO ("addfriendauthorize key {}", key);
         std::string value;
         db->get(key, value);
         chat::AddFriendAuthorizeRes res;
@@ -243,6 +243,7 @@ int main() {
         YILOG_INFO ("info {}", pro2string(res));
         notimain();
       });
+  mainwait();
 
   qaddfrdinfo();
   mainwait();

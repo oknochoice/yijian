@@ -91,6 +91,8 @@ void connection_read_callback (struct ev_loop * loop,
         e.code().value() == 20003) {
       // close node
     }
+    throw std::system_error(std::error_code(60000, std::generic_category()),
+        "need close client and restart");
   }
 
 }

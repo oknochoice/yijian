@@ -332,7 +332,7 @@ static struct ev_loop * loop() {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
-  static struct ev_loop * loop = ev_default_loop(0);
+  static struct ev_loop * loop = ev_default_loop(EVFLAG_NOSIGMASK);
   return loop;
 
 }
@@ -397,7 +397,19 @@ int open_thread_manager () {
 
   YILOG_TRACE ("func: {}. ", __func__);
 
+  sigset_t fillmask;
+  if (sigfillset(&fillmask) == -1 ||
+      sigprocmask(SIG_BLOCK, &fillmask, NULL) == -1) {
+    YILOG_ERROR("signal block failure, errno:{}", errno);
+  }
   noti_threads();
+
+  sigset_t emptymask;
+  if (sigemptyset(&emptymask) == -1 ||
+      sigaddset(&emptymask, SIGUSR1) == -1 ||
+      sigprocmask(SIG_UNBLOCK, &emptymask, NULL) == -1) {
+    YILOG_ERROR("signal unblock failure, errno:{}", errno);
+  }
   
   return 0;
 
@@ -676,12 +688,10 @@ connection_read_callback (struct ev_loop * loop,
         io->buffer_sp.reset(new yijian::buffer());
       }else{
         YILOG_TRACE ("read is not complete message");
-        YILOG_ERROR ("read is not complete message");
         //ev_io_start(loop, rw);
       }
     }else {
       YILOG_TRACE ("node is released");
-      YILOG_ERROR ("node is released");
     }
 
   }catch (std::system_error & e) {
@@ -693,9 +703,7 @@ connection_read_callback (struct ev_loop * loop,
       ev_io_stop(loop, rw);
       Read_IO * io = reinterpret_cast<Read_IO*>(rw);
       auto io_sp = io->self.lock();
-      YILOG_INFO ("read io use count:{}", io_sp.use_count());
       ping_erase(io_sp);
-      YILOG_INFO ("read io use count:{}", io_sp.use_count());
       uuidnode_delete(io_sp->uuid);
       YILOG_INFO ("read io use count:{}", io_sp.use_count());
     }
@@ -712,6 +720,7 @@ connection_write_callback (struct ev_loop * loop,
   Write_IO * io = reinterpret_cast<Write_IO*>(ww);
   auto read_io_sp = io->readio_sp.lock();
   if (read_io_sp) {
+    YILOG_TRACE ("read_io_sp lock Success");
     // write to socket
     // if write finish stop write, start read.
     std::unique_lock<std::mutex> ul(io->buffers_p_mutex);
@@ -724,7 +733,17 @@ connection_write_callback (struct ev_loop * loop,
           p->session_id(), p->datatype(), 
           read_io_sp->userid, read_io_sp->uuid,
           io->buffers_p.size());
-      
+
+      // delete read io lambda
+      auto deleteReadio = [read_io_sp]() {
+        YILOG_TRACE("write callback delete read io");
+        if (likely(!read_io_sp->uuid.empty())) {
+          uuidnode_delete(read_io_sp->uuid);
+          ping_erase(read_io_sp);
+        }else {
+          YILOG_ERROR ("uuid not find in client disconnect res, connect write callback");
+        }
+      };
       
       // update pingnode
       ping_move2back(read_io_sp);
@@ -751,24 +770,25 @@ connection_write_callback (struct ev_loop * loop,
           YILOG_ERROR ("uuid not find in client connect res, connect write callback");
         }
       }
+      // delete read io when in
       if (unlikely(p->datatype() == ChatType::clientdisconnectres)) {
         YILOG_INFO ("clientdisconnectres delete io map & ping list");
-        if (likely(!read_io_sp->uuid.empty())) {
-          uuidnode_delete(read_io_sp->uuid);
-          ping_erase(read_io_sp);
-        }else {
-          YILOG_ERROR ("uuid not find in client disconnect res, connect write callback");
-        }
+        deleteReadio();
       }
-      YILOG_INFO ("pinglist count: {}.", pinglist_.size());
-      YILOG_INFO ("uuidnode map count: {}.", uuidnode_map_.size());
+      YILOG_DEBUG ("pinglist count: {}.", pinglist_.size());
+      YILOG_DEBUG ("uuidnode map count: {}.", uuidnode_map_.size());
       // send
-      if (p->socket_write(io->io.fd)) {
-        ul.lock();
-        io->buffers_p.pop();
-        ul.unlock();
+      try {
+        if (p->socket_write(io->io.fd)) {
+          ul.lock();
+          io->buffers_p.pop();
+          ul.unlock();
+        }
+      }catch (std::system_error & e) {
+        deleteReadio();
       }
     }else {
+      YILOG_TRACE ("node write buffer empty");
       ev_io_stop(loop, ww);
     }
   }else {

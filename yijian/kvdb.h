@@ -294,7 +294,7 @@ private:
 
   /*
    * query message 
-   * sessionid CB_Func_Mutiple_Func map
+   * sessionid CB_Func_Mutiple map
    *
    * */
   void put_mmap_send(Buffer_SP sp, CB_Func_Mutiple && mfunc);

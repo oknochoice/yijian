@@ -700,27 +700,33 @@ void kvdb::put_map(const int32_t sessionid, CB_Func && func) {
 void kvdb::call_map(const int32_t sessionid, 
     const std::string & key) {
   YILOG_TRACE ("func: {}", __func__);
+  auto lfunc = CB_Func();
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   auto it = sessionid_cbfunc_map_.find(sessionid);
   if (likely(it != sessionid_cbfunc_map_.end())) {
-    it->second(key);
+    lfunc = it->second;
+  }
+  ul.unlock();
+  if (lfunc) {
+    lfunc(key);
   }
 }
 void kvdb::put_map_send(Buffer_SP sp, CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
-  std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   uint16_t temp_session;
   client_send(sp, &temp_session);
   YILOG_TRACE ("func: {}, sessionid: {}", __func__, temp_session);
+  std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   sessionid_cbfunc_map_[temp_session] = func;
 }
 void kvdb::call_erase_map(const int32_t sessionid, 
     const std::string & key) {
   YILOG_TRACE ("func: {}", __func__);
+  auto lfunc = CB_Func();
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   auto it = sessionid_cbfunc_map_.find(sessionid);
   if (likely(it != sessionid_cbfunc_map_.end())) {
-    it->second(key);
+    lfunc = it->second;
     sessionid_cbfunc_map_.erase(sessionid);
   }else {
     YILOG_CRITICAL ("errno:50020, sessionid {} not find in"
@@ -731,31 +737,41 @@ void kvdb::call_erase_map(const int32_t sessionid,
         "sessionid_cbfunc_map_ not find type"); 
         */
   }
+  ul.unlock();
+  if(lfunc) {
+    lfunc(key);
+  }
 }
 
 bool kvdb::maycall_erase_map(
     const int32_t sessionid, const std::string & key) {
   YILOG_TRACE ("func: {}", __func__);
+  auto lfunc = CB_Func();
   bool isCalled = false;
   std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   auto it = sessionid_cbfunc_map_.find(sessionid);
   if (likely(it != sessionid_cbfunc_map_.end())) {
-    it->second(key);
+    lfunc = it->second;
     sessionid_cbfunc_map_.erase(sessionid);
     isCalled = true;
   }else {
     isCalled = false;
+  }
+  ul.unlock();
+  if (lfunc) {
+    lfunc(key);
   }
   return isCalled;
 }
 
 void kvdb::put_map_send_dbcache(Buffer_SP sp, CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
-  std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   uint16_t temp_session;
   client_send(sp, &temp_session);
   YILOG_TRACE ("func: {}, sessionid: {}", __func__, temp_session);
+  std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
   sessionid_cbfunc_map_[temp_session] = func;
+  ul.unlock();
   auto key = std::to_string(temp_session);
   auto value = leveldb::Slice(sp->data(), sp->data_size());
   put(key, value);
@@ -769,10 +785,11 @@ void kvdb::put_media_map(const std::string & sha1, CB_Func && func) {
 void kvdb::call_media_map(const std::string & sha1, 
                       const std::string & key) {
   YILOG_TRACE ("func: {}. ", __func__);
+  auto lfunc = CB_Func();
   std::unique_lock<std::mutex> ul(media_map_mutex_);
   auto it = media_cbfunc_map_.find(sha1);
   if (likely( it != media_cbfunc_map_.end())) {
-    it->second(key);
+    lfunc = it->second;
   }else {
     YILOG_CRITICAL ("error no: 500021, sha1 {} "
         "not find in media_cbfunc_map_", sha1);
@@ -782,15 +799,20 @@ void kvdb::call_media_map(const std::string & sha1,
         "media_cbfunc_map_ not find type"); 
         */
   }
+  ul.unlock();
+  if (lfunc) {
+    lfunc(key);
+  }
 }
 
 void kvdb::callerase_media_map(const std::string & sha1,
     const std::string & key) {
   YILOG_TRACE ("func: {}. ", __func__);
+  auto lfunc = CB_Func();
   std::unique_lock<std::mutex> ul(media_map_mutex_);
   auto it = media_cbfunc_map_.find(sha1);
   if (likely( it != media_cbfunc_map_.end())) {
-    it->second(key);
+    lfunc = it->second;
     media_cbfunc_map_.erase(it);
   }else {
     YILOG_CRITICAL ("error no: 500022, sha1 {} "
@@ -801,30 +823,40 @@ void kvdb::callerase_media_map(const std::string & sha1,
         "media_cbfunc_map_ not find type"); 
         */
   }
+  ul.unlock();
+  if (lfunc) {
+    lfunc(key);
+  }
 }
 
 
 void kvdb::put_mmap_send(Buffer_SP sp, CB_Func_Mutiple && mfunc) {
   YILOG_TRACE ("func: {}", __func__);
-  std::unique_lock<std::mutex> ul(sessionid_mmap_mutex_);
   uint16_t temp_session;
   client_send(sp, &temp_session);
   YILOG_TRACE ("func: {}, sessionid: {}", __func__, temp_session);
+  std::unique_lock<std::mutex> ul(sessionid_mmap_mutex_);
   sessionid_mmap_[temp_session] = mfunc;
 }
 void kvdb::call_mmap(const int32_t sessionid, 
     const std::string & key) {
   YILOG_TRACE ("func: {}", __func__);
+  auto lfunc = CB_Func_Mutiple();
   std::unique_lock<std::mutex> ul(sessionid_mmap_mutex_);
   auto it = sessionid_mmap_.find(sessionid);
   if (likely(it != sessionid_mmap_.end())) {
-    bool isStop = true;
-    it->second(key, &isStop);
-    if (isStop) {
-      sessionid_mmap_.erase(it);
-    }
+    lfunc = it->second;
   }else {
     YILOG_DEBUG ("user stop call back");
+  }
+  ul.unlock();
+  if (lfunc) {
+    bool isStop = true;
+    lfunc(key, &isStop);
+    if (isStop) {
+      std::unique_lock<std::mutex> ul(sessionid_mmap_mutex_);
+      sessionid_mmap_.erase(it);
+    }
   }
 }
 
@@ -999,6 +1031,7 @@ void kvdb::queryaddfriendinfoRes(Buffer_SP sp) {
   chat::QueryAddfriendInfoRes res;
   res.ParseFromArray(sp->data(), sp->data_size());
   if (res.isend() == false) {
+    YILOG_TRACE ("func: {}, not end", __func__);
     // info
     std::string value;
     chat::AddFriendInfo info;
@@ -1011,11 +1044,13 @@ void kvdb::queryaddfriendinfoRes(Buffer_SP sp) {
                  a.invitee() == res.invitee();
         });
     if (it != info.info().end()) {
-      auto newInfo = info.mutable_info()->Add();
-      *newInfo = res;
+      info.mutable_info()->erase(it);
     }
+    auto newInfo = info.mutable_info()->Add();
+    *newInfo = res;
     put(addFriendInfoKey(), info.SerializeAsString());
   }else {
+    YILOG_TRACE ("func: {}, end", __func__);
     call_erase_map(sp->session_id(), addFriendInfoKey());
   }
 }

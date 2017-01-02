@@ -7,9 +7,10 @@
 #include "typemap.h"
 
 // 4 max var_length length 1 type length 2 sessionid length
+#define MSG_TYPE_LENGTH 1
 #define VAR_LENGTH 2
 #define SESSIONID_LENGTH 2
-#define PADDING_LENGTH (1 + VAR_LENGTH + SESSIONID_LENGTH)
+#define PADDING_LENGTH (MSG_TYPE_LENGTH + VAR_LENGTH + SESSIONID_LENGTH)
 
 enum class Message_Type : std::size_t {
   message = 1024,
@@ -74,7 +75,7 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
     template <typename Proto> 
     void encoding(Proto && any) {
 
-      if (unlikely(any.ByteSize() > 1024 - PADDING_LENGTH)) {
+      if (unlikely(any.ByteSize() > 1024 - PADDING_LENGTH || any.ByteSize() == 0)) {
         throw std::system_error(std::error_code(20010, std::generic_category()),
             "Malformed Length");
       }
@@ -115,6 +116,7 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
     std::size_t socket_read(int sfd, char * pos, std::size_t count);
     std::size_t socket_write(int sfd, char * pos, std::size_t count);
 private:
+    bool isParseMsgReaded_ = false;
     bool isParseFinish_ = false;
     bool isFinish_ = false;
 

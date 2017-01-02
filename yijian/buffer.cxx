@@ -69,20 +69,35 @@ bool buffer::socket_read(int sfd) {
   YILOG_TRACE("func: {}, isParseFinish_: {}, isFinish_: {}", 
       __func__, isParseFinish_, isFinish_);
   if (!isParseFinish_) {
-    if (0 != parse_length_) {
+    if (false == isParseMsgReaded_) {
       YILOG_TRACE ("func: {}, read header", __func__);
       int readed = socket_read(sfd, current_pos_, parse_length_);
       current_pos_ += readed;
       parse_length_ -= readed;
-      YILOG_TRACE ("func: {}, parse_length_ : {}", __func__, parse_length_);
-    }else {
+      int loopCount = current_pos_ - header_pos_ - SESSIONID_LENGTH - MSG_TYPE_LENGTH;
+      YILOG_DEBUG ("loopCount:{}", loopCount);
+      if (loopCount > 0) {
+        for (int i = 0; i < loopCount; ++i) {
+          uint8_t checkbit = *(header_pos_ + SESSIONID_LENGTH + VAR_LENGTH + i);
+          YILOG_DEBUG ("checkbit:{}", checkbit);
+          if (checkbit >> 7 == 0) {
+            isParseMsgReaded_ = true;
+            break;
+          }
+        }
+      }
+      YILOG_TRACE ("func: {}, parse_length_ : {}"
+          "isParseMsgReaded_: {}", 
+          __func__, parse_length_, isParseMsgReaded_);
+    }
+    if (true == isParseMsgReaded_) {
       YILOG_TRACE ("func: {}, parse header", __func__);
       // session id
       session_id_ = *header_pos_;
       // type
       data_type_ =  *(header_pos_ + SESSIONID_LENGTH);
       // var_length
-      auto pair = decoding_var_length(header_pos_ + SESSIONID_LENGTH + 1);
+      auto pair = decoding_var_length(header_pos_ + SESSIONID_LENGTH + MSG_TYPE_LENGTH);
       data_pos_ = pair.second;
 
       YILOG_TRACE ("func: {}, type: {}, length: {}", 
@@ -234,6 +249,7 @@ std::size_t buffer::socket_read(int sfd, char * pos, std::size_t count) {
   if (unlikely(noread_count_ > 3)) {
     throw std::system_error(std::error_code(20003, std::system_category()),
       "too much read on noread");
+      YILOG_ERROR("func: {} too much read on noread", __func__);
   }
   return readed;
 }
@@ -244,8 +260,14 @@ std::size_t buffer::socket_write(int sfd, char * pos, std::size_t count) {
   YILOG_TRACE("func: 3 argm{}, writed {}", __func__, writed);
   if (-1 != writed) {
   }else {
-    throw std::system_error(std::error_code(errno, std::system_category()), 
-        "write buffer");
+    if (EAGAIN == errno) {
+      writed = 0;
+      YILOG_TRACE("func: {}, errno EAGAIN", __func__);
+    }else {
+      YILOG_ERROR("func: {}, errno: {}", __func__, errno);
+      throw std::system_error(std::error_code(20004, std::system_category()),
+          "socket write error");
+    }
   }
   return writed;
 }

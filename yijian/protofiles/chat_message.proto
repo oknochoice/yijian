@@ -55,7 +55,7 @@ message Device {
 
 // mongo scheme
 message MessageNode {
-  enum      Authorize {creator = 0; manager = 1; member = 2; peer = 3;}
+  enum      Authorize { creator = 0; manager = 1; member = 2; peer = 3;}
   string    id = 1;// to node 
   Authorize authorize = 2;
   string    creatorID = 3;
@@ -75,9 +75,10 @@ message UserInfo {
 }
 
 enum IsAgree {
-  agree = 0;
-  refuse = 1;
-  ignore = 2;
+  unknow = 0;
+  agree = 1;
+  refuse = 2;
+  ignore = 3;
 }
 
 message User {
@@ -243,11 +244,11 @@ db.addFriend
   inviter:
   invitee:
   toNodeID:
-  status: request createNode createNodeCount (agree refuse) 
-  addInviter userUnreadInviter addInvitee userUnreadInvitee
+  status: request createNode createNodeCount agree(refuse) 
+  addInviter userUnreadInviter addInvitee finish(userUnreadInvitee)
 }
-
 */
+
 
 message AddFriend {
   string inviteeID = 1;
@@ -267,8 +268,8 @@ message AddFriendNoti {
 }
 
 message AddFriendAuthorize {
-  string inviteeID = 1;
-  string inviterID = 2;
+  string inviterID = 1;
+  string inviteeID = 2; 
   IsAgree isAgree = 3;
 }
 

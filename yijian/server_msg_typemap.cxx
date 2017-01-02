@@ -550,6 +550,8 @@ void dispatch(chat::AddFriend & frd) {
     mountBuffer2Node(buffer::Buffer(noti), node_user_);
     mountBuffer2Node(buffer::Buffer(noti), node_peer_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -568,6 +570,8 @@ void dispatch(chat::AddFriendNoti & noti) {
     noti.clear_touserid_outer();
     mountBuffer2Node(buf_sp, node_user_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -578,6 +582,11 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
   YILOG_TRACE ("func: {}. ", __func__);
   YILOG_INFO ("add friend authorize {}", pro2string(addAuth));
   try {
+    if (unlikely(addAuth.inviteeid() != currentNode_->userid)) {
+      throw std::system_error(std::error_code(11023, 
+            std::generic_category()),
+            "authorize permission error");
+    }
     auto client = yijian::threadCurrent::mongoClient();
     auto authRes = chat::AddFriendAuthorizeRes();
     auto noti = chat::AddFriendAuthorizeNoti();
@@ -607,6 +616,8 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
       mountBuffer2Node(invitee_buf, node_peer_);
     }
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -622,6 +633,8 @@ void dispatch(chat::AddFriendAuthorizeNoti & noti) {
     noti.clear_touserid_outer();
     mountBuffer2Node(buffer::Buffer(noti), node_user_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -643,7 +656,10 @@ void dispatch(chat::QueryAddfriendInfo & info) {
         }, currentNode_->userid, limit);
     chat::QueryAddfriendInfoRes end;
     end.set_isend(true);
+    mountBuffer2Node(buffer::Buffer(end), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -679,6 +695,8 @@ void dispatch(chat::CreateGroup & group) {
     // send to self
     mountBuffer2Node(buffer::Buffer(*groupRes), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -711,6 +729,8 @@ void dispatch(chat::GroupAddMember & groupMember) {
     // send to self
     mountBuffer2Node(buffer::Buffer(*addRes), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -730,6 +750,8 @@ void dispatch(chat::QueryUserVersion & queryVersion) {
         pro2string(version));
     mountBuffer2Node(buffer::Buffer(version), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -757,6 +779,8 @@ void dispatch(chat::QueryUser & queryUser) {
     YILOG_INFO ("query success {}", pro2string(queryUserRes));
     mountBuffer2Node(buffer::Buffer(queryUserRes), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -777,6 +801,8 @@ void dispatch(chat::QueryNodeVersion & querynodev) {
         pro2string(version));
     mountBuffer2Node(buffer::Buffer(version), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -797,6 +823,8 @@ void dispatch(chat::QueryNode & querynode) {
     YILOG_INFO ("query node success {}", pro2string(querynoderes));
     mountBuffer2Node(buffer::Buffer(querynoderes), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
   }
@@ -843,6 +871,8 @@ void dispatch(chat::NodeMessage & message) {
       mountBuffer2Node(buf_friend, node_peer_);
     }
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -867,6 +897,8 @@ void dispatch(chat::NodeMessageNoti & noti) {
       mountBuffer2Node(buffer::Buffer(noti), node_user_);
     }
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -891,6 +923,8 @@ void dispatch(chat::QueryMessage & query) {
           mountBuffer2Node(buffer::Buffer(*sp), node_self_);
         });
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -908,6 +942,8 @@ void dispatch(chat::QueryOneMessage & query) {
     YILOG_INFO ("query one message success {}", pro2string(*nodemessage_sp));
     mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -927,6 +963,8 @@ void dispatch(chat::Media & media) {
     YILOG_INFO ("media {}", pro2string(mediares));
     mountBuffer2Node(buffer::Buffer(mediares), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -943,6 +981,8 @@ void dispatch(chat::MediaIsExist & isExist) {
     YILOG_INFO ("media is exist success {}", pro2string(res));
     mountBuffer2Node(buffer::Buffer(res), node_self_);
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -974,6 +1014,8 @@ void dispatch(chat::MediaCheck & mediacheck) {
       std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
       currentNode_->media_vec.clear();
     }
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }
@@ -993,6 +1035,8 @@ void dispatch(chat::QueryMedia & querymedia) {
       mountBuffer2Node(buffer::Buffer(*media_sp), node_self_);
     }
   }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
         node_self_);
   }

@@ -135,7 +135,7 @@ constexpr uint8_t dispatchType(chat::AddFriendAuthorize & ) {
   return ChatType::addfriendauthorize;
 }
 constexpr uint8_t dispatchType(chat::AddFriendAuthorizeRes & ) {
-  return ChatType::addfriendres;
+  return ChatType::addfriendauthorizeres;
 }
 constexpr uint8_t dispatchType(chat::AddFriendAuthorizeNoti & ) {
   return ChatType::addfriendauthorizenoti;
