@@ -154,9 +154,7 @@ int main() {
         db->get(key, value);
         chat::LoginRes res;
         res.ParseFromString(value);
-        std::string json;
-        MessageToJsonString(res, &json);
-        std::cout << json << std::endl;
+        YILOG_INFO ("login res:{}", pro2string(res));
         assert(res.issuccess() == true);
         notimain();
       });
@@ -171,9 +169,7 @@ int main() {
         db->get(key, value);
         chat::ClientConnectRes res;
         res.ParseFromString(value);
-        std::string json;
-        MessageToJsonString(res, &json);
-        std::cout << json << std::endl;
+        YILOG_INFO ("connect res:{}", pro2string(res));
         assert(res.issuccess() == true);
         notimain();
       });
@@ -190,7 +186,7 @@ int main() {
           db->get(key, user_data);
           chat::User user;
           user.ParseFromString(user_data);
-          YILOG_INFO ("{}", pro2string(user));
+          YILOG_INFO ("user : {}", pro2string(user));
           notimain();
         });
   };
@@ -198,7 +194,6 @@ int main() {
     YILOG_TRACE ("has user");
     chat::User user;
     user.ParseFromString(user_data);
-    YILOG_INFO ("{}", pro2string(user));
     YILOG_INFO("query user version");
     db->queryuserVersion(db->get_current_userid(),
         [&user, &queryuser](const std::string & version){
@@ -241,7 +236,7 @@ int main() {
         info.ParseFromString(value);
         if (info.info().size() < 0)
           frd = info.info(0).inviter();
-        YILOG_INFO ("info {}", pro2string(info));
+        YILOG_INFO ("add friend info {}", pro2string(info));
         notimain();
       });
   };
@@ -256,7 +251,7 @@ int main() {
         if (key == db->addFriendAuthorizeNotiKey()) {
           chat::AddFriendAuthorizeNoti noti;
           noti.ParseFromString(value);
-          YILOG_INFO ("add friend authorize {}", pro2string(noti));
+          YILOG_INFO ("add friend authorize noit {}", pro2string(noti));
         }else {
           YILOG_ERROR ("noti type error");
         }

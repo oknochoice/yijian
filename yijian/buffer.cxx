@@ -247,9 +247,9 @@ std::size_t buffer::socket_read(int sfd, char * pos, std::size_t count) {
     }
   }
   if (unlikely(noread_count_ > 3)) {
+    YILOG_ERROR("func: {} too much read on noread", __func__);
     throw std::system_error(std::error_code(20003, std::system_category()),
       "too much read on noread");
-      YILOG_ERROR("func: {} too much read on noread", __func__);
   }
   return readed;
 }

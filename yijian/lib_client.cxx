@@ -138,8 +138,8 @@ static void init_io(std::string ip, int port) {
   addr.sin_addr.s_addr = inet_addr(ip.data());
 
   if (connect(sfd, (struct sockaddr*) &addr, sizeof(addr)) < 0) {
-    perror("Failed to connect server");
-    return ;
+    throw std::system_error(std::error_code(60001, std::generic_category()),
+        "Failed to connect server");
   }
 
   YILOG_TRACE("Connected Success {}:{}.", ip.data(), port);
@@ -157,7 +157,8 @@ static void init_io(std::string ip, int port) {
 
   if (NULL == read_io_ || 
       NULL == write_io_) {
-    perror ("new client watcher error");
+    throw std::system_error(std::error_code(60002, std::generic_category()),
+        "new client watcher error");
   }
 
   ev_io_init (&read_io_->io, 
@@ -204,12 +205,14 @@ void client_send(Buffer_SP sp_buffer,
   std::unique_lock<std::mutex> ul(write_io_->buffers_p_mutex);
   write_io_->buffers_p.push(sp_buffer);
   auto watcher = write_asyn_watcher();
+  
   ev_async_send(loop(), watcher);
 
 }
 
 void clear_client() {
   YILOG_TRACE ("func: {}. ", __func__);
+  close(read_io_->io.fd);
   ev_io_stop(loop(), &read_io_->io);
   ev_io_stop(loop(), &write_io_->io);
   ev_async_stop(loop(), write_asyn_watcher());

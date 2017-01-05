@@ -695,8 +695,6 @@ connection_read_callback (struct ev_loop * loop,
     }
 
   }catch (std::system_error & e) {
-    YILOG_ERROR ("errno: {}, errmsg: {}.",
-        e.code().value(), e.what());
     if (e.code().value() == 20002 ||
         e.code().value() == 20003) {
       // close node
@@ -706,6 +704,9 @@ connection_read_callback (struct ev_loop * loop,
       ping_erase(io_sp);
       uuidnode_delete(io_sp->uuid);
       YILOG_INFO ("read io use count:{}", io_sp.use_count());
+    }else {
+      YILOG_ERROR ("errno: {}, errmsg: {}.",
+          e.code().value(), e.what());
     }
   }
 }
