@@ -16,22 +16,20 @@
 
 #include <boost/coroutine2/all.hpp>
 
-
-std::string phoneno = "18514029918";
+std::string phoneno = "18514029910";
 std::string countrycode = "86";
 std::string password = "123456";
 std::string verifycode = "654321";
-std::string name = "user1_yijian";
+std::string name = "user3_yijian";
 int os = 0;
-std::string osversion = "9.0.3";
+std::string osversion = "11.0.0";
 std::string appversion = "1.0.0";
-std::string devicemodel = "iphone 5s";
+std::string devicemodel = "iphone 8s";
 std::string uuid = phoneno + "_uuid";
 
-std::string addfriendphone = "18514029910";
-kvdb * db = nullptr;
-
 #include "user.h"
+
+kvdb * db = nullptr;
 
 int main(int argc, char* const argv[]) {
   initConsoleLog();
@@ -157,42 +155,11 @@ TEST_CASE("wait for add friends & authorize", "[waitaddfriend]") {
     noti.ParseFromString(value);
     REQUIRE(noti.response().inviteeid() == db->get_current_userid());
     SECTION("query AddFriendInfo") {
-      qaddfrdinfo(db, noti.response().inviteeid());
+      qaddfrdinfo(db, noti.response().inviterid());
+      SECTION("authorize addfriend") {
+        addfriendauthorizeblock(db, noti.response().inviterid());
+      }
     }
-  }
-  SECTION("disconnet") {
-    disconnectblock(db);
-  }
-}
-
-TEST_CASE("add friend & wait for authorize", "[addfriend]") {
-  SECTION("login") {
-    loginblock(db);
-  }
-  SECTION("connect") {
-    connectblock(db);
-  }
-  SECTION("han user") {
-    dbHasUserblock(db, db->get_current_userid());
-  }
-  SECTION("query user") {
-    queryuserblock(db, db->get_current_userid());
-  }
-  SECTION("han user") {
-    dbHasUserblock(db, db->get_current_userid());
-  }
-  SECTION("queryuser version") {
-    queryuserversionblock(db, db->get_current_userid());
-  }
-  SECTION("query add friend info") {
-    queryuserWithphoneblock(db, addfriendphone);
-  }
-  SECTION("add friend") {
-    std::string user_data;
-    db->getUser("86", addfriendphone, user_data);
-    chat::User user;
-    user.ParseFromString(user_data);
-    addfriendblock(db, user.id());
   }
   SECTION("disconnet") {
     disconnectblock(db);

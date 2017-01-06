@@ -500,6 +500,16 @@ void kvdb::queryuser(const std::string && userid,
   put_map_send(buffer::Buffer(query), 
       std::forward<CB_Func>(func));
 }
+void kvdb::queryuser(const std::string && phoneno, 
+      const std::string && countrycode,
+      CB_Func && func) {
+  YILOG_TRACE ("func: {}", __func__);
+  chat::QueryUser query;
+  query.set_phoneno(phoneno);
+  query.set_countrycode(countrycode);
+  put_map_send(buffer::Buffer(query), 
+      std::forward<CB_Func>(func));
+}
 void kvdb::queryuser(CB_Func && func) {
   YILOG_TRACE ("func: {}", __func__);
   queryuser(get_current_userid(), 
@@ -1011,7 +1021,7 @@ void kvdb::error(Buffer_SP sp) {
   auto value = leveldb::Slice(sp->data(), sp->data_size());
   chat::Error err;
   err.ParseFromArray(sp->data(), sp->data_size());
-  YILOG_TRACE ("errno: {}, errmsg {}.", err.errnum(), err.errmsg());
+  YILOG_ERROR ("errno: {}, errmsg {}.", err.errnum(), err.errmsg());
   put(key, value);
   call_erase_map(sp->session_id(), key);
 }
@@ -1082,7 +1092,8 @@ void kvdb::queryuserRes(Buffer_SP sp) {
   auto user = chat::User();
   user = res.user();
   auto key = userKey(user.id());
-  put(key, user.SerializeAsString());
+  putUser(user.id(), user.countrycode(), user.phoneno(),
+      user.SerializeAsString());
   call_erase_map(sp->session_id(), key);
 }
 void kvdb::querynodeversionRes(Buffer_SP sp) {

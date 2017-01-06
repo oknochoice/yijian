@@ -589,9 +589,9 @@ socket_accept_callback (struct ev_loop * loop,
       [loop](Read_IO * io){
         try {
           YILOG_INFO("close read io");
+          close(io->io.fd);
           ev_io_stop(loop, &io->io);
           ev_io_stop(loop, &io->writeio_sp->io);
-          close(io->io.fd);
           delete io;
         }catch(...) {
           YILOG_ERROR("close read io error");

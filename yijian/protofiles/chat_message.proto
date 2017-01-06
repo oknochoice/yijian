@@ -101,6 +101,8 @@ message User {
 
 message QueryUser {
   string userID = 1;
+  string countryCode = 2;
+  string phoneNo = 3;
 }
 
 message QueryUserRes {

@@ -5,6 +5,7 @@
 #include <deque>
 #include <unistd.h>
 #include "typemap.h"
+#include <google/protobuf/util/json_util.h>
 
 // 4 max var_length length 1 type length 2 sessionid length
 #define MSG_TYPE_LENGTH 1
@@ -142,6 +143,9 @@ private:
 template <typename Proto>
 std::shared_ptr<buffer> buffer::Buffer(Proto && any) {
 
+  std::string value;
+  google::protobuf::util::MessageToJsonString(any, &value);
+  YILOG_TRACE("func: {}, any: {}", __func__, value);
   auto buf = std::make_shared<yijian::buffer>();
   buf->encoding(std::forward<Proto>(any));
   return buf;

@@ -197,6 +197,9 @@ public:
   void queryuserVersion(CB_Func && func);
   // func success user key
   void queryuser(const std::string && userid, CB_Func && func);
+  void queryuser(const std::string && phoneno, 
+      const std::string && countrycode,
+      CB_Func && func);
   // func success user key
   void queryuser(CB_Func && func);
 

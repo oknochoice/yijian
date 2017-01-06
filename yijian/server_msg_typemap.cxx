@@ -492,6 +492,10 @@ void dispatch(chat::AddFriend & frd) {
   YILOG_INFO ("add friend {}", pro2string(frd));
 
   try {
+    if (frd.inviteeid().empty()) {
+      throw std::system_error(std::error_code(11012, std::generic_category()),
+          "invitee id is empty");
+    }
     auto client = yijian::threadCurrent::mongoClient();
     // check blacklist
     auto peerUser = client->queryUser(frd.inviteeid());
@@ -764,7 +768,13 @@ void dispatch(chat::QueryUser & queryUser) {
   YILOG_INFO ("query user {}", pro2string(queryUser));
   try {
     auto client = yijian::threadCurrent::mongoClient();
-    auto user_sp = client->queryUser(queryUser.userid());
+    std::shared_ptr<chat::User> user_sp = nullptr;
+    if (!queryUser.userid().empty()) {
+      user_sp = client->queryUser(queryUser.userid());
+    }else {
+      user_sp = client->queryUser(queryUser.phoneno(),
+          queryUser.countrycode());
+    }
     user_sp->clear_password();
     auto queryUserRes = chat::QueryUserRes();
     auto queryuser = queryUserRes.mutable_user();
