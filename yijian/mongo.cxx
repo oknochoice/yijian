@@ -805,7 +805,7 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
       << "$gte" << query.fromincrementid() 
       << close_document << close_document << open_document
       << "incrementID" << open_document
-      << "$lte" << query.toincrementid()
+      << "$lt" << query.toincrementid()
       << close_document << close_document << close_array;
   }
   auto filter = builder << finalize;

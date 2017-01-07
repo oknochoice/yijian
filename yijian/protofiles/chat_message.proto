@@ -362,6 +362,11 @@ message NodeMessageNoti {
   string toUserID_outer = 3;
 }
 
+message setReadMessage {
+  string toNodeID = 1;
+  int32  readedIncrement = 2;
+}
+
 message QueryMessage {
   string toNodeID = 1;
   int32  fromIncrementID = 2;

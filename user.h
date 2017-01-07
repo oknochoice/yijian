@@ -193,4 +193,8 @@ auto addfriendauthorizeblock = [](kvdb * db, std::string friend_id){
   mainwait();
 };
 
+auto messagereceiveblock = [](kvdb * db) {
+  db->
+};
+
 #endif

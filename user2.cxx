@@ -26,7 +26,7 @@ std::string appversion = "1.0.0";
 std::string devicemodel = "iphone 8";
 std::string uuid = phoneno + "_uuid";
 
-std::string addfriendphone = "18514029910";
+std::string addfriendphone = "18514029911";
 
 #include "user.h"
 

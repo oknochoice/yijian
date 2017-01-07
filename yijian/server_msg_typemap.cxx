@@ -919,8 +919,8 @@ void dispatch(chat::QueryMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
   YILOG_INFO ("query message {}", pro2string(query));
   try {
-    if (query.toincrementid() < query.fromincrementid()
-        || (query.toincrementid() - query.fromincrementid()) > 50) {
+    if (unlikely(query.toincrementid() < query.fromincrementid()
+        || (query.toincrementid() - query.fromincrementid()) > 50)) {
       throw std::system_error(std::error_code(11008, std::generic_category()),
           "query is invalid");
     }
@@ -928,10 +928,15 @@ void dispatch(chat::QueryMessage & query) {
     // update user's readed  
     client->updateReadedIncrement(currentNode_->userid, 
         query.tonodeid(), query.toincrementid());
-    client->queryMessage(query, [](std::shared_ptr<chat::NodeMessage> sp){
-          YILOG_INFO ("query message success {}", pro2string(*sp));
-          mountBuffer2Node(buffer::Buffer(*sp), node_self_);
-        });
+    if (query.toincrementid() == query.fromincrementid()) {
+      throw std::system_error(std::error_code(0, std::generic_category()),
+          "just update node's readed");
+    } else {
+      client->queryMessage(query, [](std::shared_ptr<chat::NodeMessage> sp){
+            YILOG_INFO ("query message success {}", pro2string(*sp));
+            mountBuffer2Node(buffer::Buffer(*sp), node_self_);
+          });
+    }
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -945,8 +950,9 @@ void dispatch(chat::QueryOneMessage & query) {
   try {
     auto client = yijian::threadCurrent::mongoClient();
     // update user's readed  
-    client->updateReadedIncrement(currentNode_->userid, 
-        query.tonodeid(), query.incrementid());
+    //client->updateReadedIncrement(currentNode_->userid, 
+    //    query.tonodeid(), query.incrementid());
+    // query message
     auto nodemessage_sp = 
       client->queryMessage(query.tonodeid(), query.incrementid());
     YILOG_INFO ("query one message success {}", pro2string(*nodemessage_sp));

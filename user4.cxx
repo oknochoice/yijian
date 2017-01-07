@@ -16,22 +16,22 @@
 
 #include <boost/coroutine2/all.hpp>
 
-std::string phoneno = "18514029910";
+
+std::string phoneno = "18514029911";
 std::string countrycode = "86";
 std::string password = "123456";
 std::string verifycode = "654321";
-std::string name = "user3_yijian";
+std::string name = "user4_yijian";
 int os = 0;
-std::string osversion = "11.0.0";
+std::string osversion = "9.0.3";
 std::string appversion = "1.0.0";
-std::string devicemodel = "iphone 8s";
+std::string devicemodel = "iphone 5";
 std::string uuid = phoneno + "_uuid";
 
-std::string addfriendphone = "18514029911";
+std::string addfriendphone = "18514029910";
+kvdb * db = nullptr;
 
 #include "user.h"
-
-kvdb * db = nullptr;
 
 int main(int argc, char* const argv[]) {
   initConsoleLog();

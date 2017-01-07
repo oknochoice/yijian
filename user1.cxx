@@ -28,7 +28,7 @@ std::string appversion = "1.0.0";
 std::string devicemodel = "iphone 5s";
 std::string uuid = phoneno + "_uuid";
 
-std::string addfriendphone = "18514029910";
+std::string addfriendphone = "18514029911";
 kvdb * db = nullptr;
 
 #include "user.h"
@@ -157,7 +157,10 @@ TEST_CASE("wait for add friends & authorize", "[waitaddfriend]") {
     noti.ParseFromString(value);
     REQUIRE(noti.response().inviteeid() == db->get_current_userid());
     SECTION("query AddFriendInfo") {
-      qaddfrdinfo(db, noti.response().inviteeid());
+      qaddfrdinfo(db, noti.response().inviterid());
+      SECTION("authorize addfriend") {
+        addfriendauthorizeblock(db, noti.response().inviterid());
+      }
     }
   }
   SECTION("disconnet") {
