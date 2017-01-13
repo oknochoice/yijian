@@ -18,7 +18,7 @@
 #define QUICKREMOVETIMEOUT 1000
 /*
  *
- * priate declare
+ * declare
  *
  * */
 
@@ -35,8 +35,6 @@ sigint_cb (struct ev_loop * loop, ev_signal * w, int revents);
 // ev_async watcher priority si EV_MAXPRI
 static void
 start_write_callback (struct ev_loop * loop, ev_async * w, int revents);
-static void
-reread_callback (struct ev_loop * loop, ev_async * w, int revents);
 static void
 socket_accept_callback (struct ev_loop * loop, ev_io * rw, int revents);
 static void
@@ -214,11 +212,6 @@ void mountBuffer2Device(const std::string & uuid,
   }
 }
 /*
- * need re start read vector
- *
- * */
-static std::vector<std::shared_ptr<Read_IO>> reStartRead_vec_;
-/*
  * peer server manage
  *
  *
@@ -326,7 +319,18 @@ std::shared_ptr<Read_IO> connect_peer(std::string ip, int port) {
   return client_read_watcher;
 }
 
+void initSetup(IPS & ips) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  // set peer server list
+  peer_servers_.io_list_.reset(new std::list<std::shared_ptr<Read_IO>>());
+  peer_servers_.ips_ = ips;
+}
 
+/*
+ * loop & watcher
+ *
+ *
+ * */
 
 static struct ev_loop * loop() {
 
@@ -381,6 +385,10 @@ static struct ev_async * reread_asyn_watcher() {
   return watcher;
 }
 
+/*
+ * thread manager
+ *
+ */
 
 static yijian::noti_threads * noti_threads() {
 
@@ -414,6 +422,14 @@ int open_thread_manager () {
   return 0;
 
 }
+/*
+ *
+ * events callback
+ *
+ *
+ *
+ * */
+
 static void
 sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
 
@@ -441,95 +457,6 @@ sigusr1_cb (struct ev_loop * loop, ev_signal * w, int revents) {
   YILOG_TRACE ("func: {}. ", __func__);
   
 }
-void initSetup(IPS & ips) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  // set peer server list
-  peer_servers_.io_list_.reset(new std::list<std::shared_ptr<Read_IO>>());
-  peer_servers_.ips_ = ips;
-}
-
-int start_server_libev(IPS ips ) {
-
-  YILOG_TRACE ("func: {}. ", __func__);
-  initSetup(ips);
-  auto lloop = loop();
-  // signal
-  ev_signal signal_int_watcher;
-  ev_signal_init (&signal_int_watcher, sigint_cb, SIGINT);
-  ev_signal_start (lloop, &signal_int_watcher);
-
-  ev_signal signal_user1_watcher;
-  ev_signal_init(&signal_user1_watcher, sigusr1_cb, SIGUSR1);
-  ev_signal_start(lloop, &signal_user1_watcher);
-
-  // ev_async
-  struct ev_async * async_io = &write_asyn_watcher()->as;
-  ev_async_init(async_io, start_write_callback);
-  ev_set_priority(async_io, EV_MAXPRI);
-  ev_async_start(lloop, async_io);
-
-  // ev_async re read
-  struct ev_async * reread_io = reread_asyn_watcher();
-  ev_async_init(reread_io, reread_callback);
-  ev_set_priority(reread_io, EV_MAXPRI);
-  ev_async_start(lloop, reread_io);
-  
-  // socket 
-  int sd;
-  struct sockaddr_in addr;
-  int addr_len = sizeof(addr);
-
-  sd = socket(PF_INET, SOCK_STREAM, 0);
-  int flags = fcntl(sd, F_GETFL, 0);
-  fcntl(sd, F_SETFL, flags | O_NONBLOCK);
-  if (sd < 0) {
-    perror("socket error");
-    return -1;
-  }
-  bzero(&addr, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(PORT);
-  addr.sin_addr.s_addr = INADDR_ANY;
-  // set sd reuse
-  int reuseaddr = 1;
-  if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, 
-        (const char*) &reuseaddr, sizeof(reuseaddr)) != 0) {
-    perror("set socket reuse addr error");
-    return -1;
-  }
-  // bind
-  if (0 != bind(sd, (struct sockaddr*) &addr, sizeof(addr))) {
-    perror("bind error");
-    return -1;
-  }
-  // listen
-  if (listen(sd, SOMAXCONN) < 0) {
-    perror("listen error");
-  }
-
-  struct ev_io * accept_io = accept_watcher();
-  ev_io_init(accept_io, socket_accept_callback, sd, EV_READ);
-  ev_io_start(lloop, accept_io);
-
-
-  //timer ping
-  struct ev_timer * timer = timer_watcher();
-  ev_timer_init (timer, pingtime_callback, PINGPONGTIME, 0.);
-  ev_timer_start (lloop, timer);
-
-  //timer quick remove
-  struct ev_timer * quick_timer = quicktimer_watcher();
-  ev_timer_init (quick_timer, quickremove_callback, QUICKREMOVETIME, 0.);
-  ev_timer_start (lloop, quick_timer);
-
-  ev_run (lloop, 0);
-
-  YILOG_TRACE ("exit main");
-  return 0;
-
-}
-
-
 
 static void 
 start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
@@ -545,10 +472,6 @@ start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
         ev_io_start(loop, &io->writeio_sp->io);
       });
 
-}
-
-static void
-reread_callback (struct ev_loop * loop,  ev_async * r, int revents) {
 }
 
 static void 
@@ -797,6 +720,87 @@ connection_write_callback (struct ev_loop * loop,
     ev_io_stop(loop, ww);
   }
 }
+
+/*
+ *
+ * start sever
+ *
+ * */
+int start_server_libev(IPS ips ) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
+  initSetup(ips);
+  auto lloop = loop();
+  // signal
+  ev_signal signal_int_watcher;
+  ev_signal_init (&signal_int_watcher, sigint_cb, SIGINT);
+  ev_signal_start (lloop, &signal_int_watcher);
+
+  ev_signal signal_user1_watcher;
+  ev_signal_init(&signal_user1_watcher, sigusr1_cb, SIGUSR1);
+  ev_signal_start(lloop, &signal_user1_watcher);
+
+  // ev_async
+  struct ev_async * async_io = &write_asyn_watcher()->as;
+  ev_async_init(async_io, start_write_callback);
+  ev_set_priority(async_io, EV_MAXPRI);
+  ev_async_start(lloop, async_io);
+
+  // socket 
+  int sd;
+  struct sockaddr_in addr;
+  int addr_len = sizeof(addr);
+
+  sd = socket(PF_INET, SOCK_STREAM, 0);
+  int flags = fcntl(sd, F_GETFL, 0);
+  fcntl(sd, F_SETFL, flags | O_NONBLOCK);
+  if (sd < 0) {
+    perror("socket error");
+    return -1;
+  }
+  bzero(&addr, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(PORT);
+  addr.sin_addr.s_addr = INADDR_ANY;
+  // set sd reuse
+  int reuseaddr = 1;
+  if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, 
+        (const char*) &reuseaddr, sizeof(reuseaddr)) != 0) {
+    perror("set socket reuse addr error");
+    return -1;
+  }
+  // bind
+  if (0 != bind(sd, (struct sockaddr*) &addr, sizeof(addr))) {
+    perror("bind error");
+    return -1;
+  }
+  // listen
+  if (listen(sd, SOMAXCONN) < 0) {
+    perror("listen error");
+  }
+
+  struct ev_io * accept_io = accept_watcher();
+  ev_io_init(accept_io, socket_accept_callback, sd, EV_READ);
+  ev_io_start(lloop, accept_io);
+
+
+  //timer ping
+  struct ev_timer * timer = timer_watcher();
+  ev_timer_init (timer, pingtime_callback, PINGPONGTIME, 0.);
+  ev_timer_start (lloop, timer);
+
+  //timer quick remove
+  struct ev_timer * quick_timer = quicktimer_watcher();
+  ev_timer_init (quick_timer, quickremove_callback, QUICKREMOVETIME, 0.);
+  ev_timer_start (lloop, quick_timer);
+
+  ev_run (lloop, 0);
+
+  YILOG_TRACE ("exit main");
+  return 0;
+
+}
+
 
 
 
