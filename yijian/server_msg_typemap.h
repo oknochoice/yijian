@@ -10,7 +10,7 @@
 #include <functional>
 #include "protofiles/chat_message.pb.h"
 #include "typemap.h"
-#include "buffer.h"
+#include "buffer_yi.h"
 #include "threads_work.h"
 
 #ifdef __cpluscplus

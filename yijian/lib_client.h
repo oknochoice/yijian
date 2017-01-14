@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <ev.h>
-#include "buffer.h"
+#include "buffer_yi.h"
 
 
 typedef std::shared_ptr<yijian::buffer> Buffer_SP;

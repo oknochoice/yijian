@@ -1,7 +1,7 @@
 #ifndef USER_H
 #define USER_H
 #include <google/protobuf/util/json_util.h>
-#include "buffer.h"
+#include "buffer_yi.h"
 #include "spdlog/spdlog.h"
 #include "yijian/lib_client.h"
 #include "yijian/mongo.h"

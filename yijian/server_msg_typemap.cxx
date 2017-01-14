@@ -7,7 +7,7 @@
 #include "protofiles/chat_message.pb.h"
 #include <string>
 #include <queue>
-#include "buffer.h"
+#include "buffer_yi.h"
 #include "libev_server.h"
 #include <unordered_map>
 #include <google/protobuf/util/json_util.h>

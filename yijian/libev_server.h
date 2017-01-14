@@ -12,7 +12,7 @@
 #include <list>
 #include <string>
 #include <chrono>
-#include <buffer.h>
+#include "buffer_yi.h"
 #include "libev_server.h"
 
 #ifdef __cplusplus

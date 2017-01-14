@@ -6,7 +6,7 @@
 #include "yijian/mongo.h"
 #include "yijian/protofiles/chat_message.pb.h"
 #include <google/protobuf/util/json_util.h>
-#include "buffer.h"
+#include "buffer_yi.h"
 #include <iostream>
 #include <unistd.h>
 #include <thread>
