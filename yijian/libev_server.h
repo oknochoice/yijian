@@ -15,6 +15,8 @@
 #include "buffer_yi.h"
 #include "libev_server.h"
 
+#include <openssl/ssl.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,6 +56,8 @@ struct Read_IO {
   // media need 
   std::mutex media_vec_mutex_;
   std::vector<chat::Media> media_vec;
+  // ssl
+  SSL * ssl = nullptr;  
 };
 
 struct Write_IO {
@@ -63,6 +67,7 @@ struct Write_IO {
   // socket buffer
   std::mutex buffers_p_mutex;
   std::queue<Buffer_SP> buffers_p;
+  SSL * ssl = nullptr;  
 };
 
 struct Write_Asyn {

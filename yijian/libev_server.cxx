@@ -8,6 +8,11 @@
 #include "buffer_yi.h"
 #include <list>
 #include <tuple>
+#include <stdio.h>
+
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/x509.h>
 
 #include "server_msg_typemap.h"
 
@@ -210,6 +215,81 @@ void mountBuffer2Device(const std::string & uuid,
   }else{
     YILOG_INFO ("func: {}. find", __func__);
   }
+}
+/*
+ *
+ * openssl
+ *
+ *
+ * */
+void init_openssl() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  SSL_load_error_strings();
+  OpenSSL_add_ssl_algorithms();
+}
+void cleanup_openssl() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  EVP_cleanup();
+}
+SSL_CTX * create_sslctx() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  const SSL_METHOD * method;
+  SSL_CTX * ctx;
+
+  method = TLSv1_2_server_method();
+
+  ctx = SSL_CTX_new(method);
+  if (!ctx) {
+    perror("Unable to create SSL context");
+    ERR_print_errors_fp(stderr);
+    exit(EXIT_FAILURE);
+  }
+  return ctx;
+}
+SSL_CTX * sslctx() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  static SSL_CTX * ctx = create_sslctx();
+  return ctx;
+}
+void configure_sslctx(SSL_CTX * ctx) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  SSL_CTX_set_ecdh_auto(ctx,1);
+
+  if (SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) < 0 ) {
+    ERR_print_errors_fp(stderr);
+    exit(EXIT_FAILURE);
+  }
+
+  FILE * psubf = fopen("./sub-ca.crt", "r");
+  if (!psubf) {
+    YILOG_ERROR ("can not open sub-ca.crt");
+    exit(EXIT_FAILURE);
+  }
+  X509 * x509 = PEM_read_X509(psubf, NULL, 0, NULL);
+  if (0 == SSL_CTX_add_extra_chain_cert(ctx, x509)) {
+    YILOG_ERROR ("can not add extra chain sub-ca");
+    exit(EXIT_FAILURE);
+  }
+
+  FILE * prootf = fopen("./root-ca.crt", "r");
+  if (!prootf) {
+    YILOG_ERROR ("can not open root-ca.crt");
+    exit(EXIT_FAILURE);
+  }
+  X509 * x509_r = PEM_read_X509(prootf, NULL, 0, NULL);
+  if (0 == SSL_CTX_add_extra_chain_cert(ctx, x509_r)) {
+    YILOG_ERROR ("can not add extra chain root-ca");
+    exit(EXIT_FAILURE);
+  }
+
+  if (SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM) < 0 ) {
+    ERR_print_errors_fp(stderr);
+    exit(EXIT_FAILURE);
+  }
+  //SSL_CTX_set_mode(ctx, SSL_MODE_ENABLE_PARTIAL_WRITE);
+  //SSL_CTX_set_mode(ctx, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
+  SSL_CTX_set_mode(ctx, SSL_MODE_AUTO_RETRY);
+  SSL_CTX_set_timeout(ctx, 30);
 }
 /*
  * peer server manage
@@ -512,6 +592,7 @@ socket_accept_callback (struct ev_loop * loop,
       [loop](Read_IO * io){
         try {
           YILOG_INFO("close read io");
+          SSL_free(io->ssl);
           close(io->io.fd);
           ev_io_stop(loop, &io->io);
           ev_io_stop(loop, &io->writeio_sp->io);
@@ -531,6 +612,14 @@ socket_accept_callback (struct ev_loop * loop,
     perror ("new client watcher error");
     return;
   }
+
+  // ssl
+  SSL * ssl = SSL_new(sslctx());
+  client_read_watcher->ssl = ssl;
+  client_write_watcher->ssl = ssl;
+  BIO * sbio = BIO_new_socket(client_sd, 0);
+  SSL_set_bio(ssl, sbio, sbio);
+  SSL_set_accept_state(ssl);
 
   ev_io_init (&client_read_watcher->io, 
       connection_read_callback, client_sd, EV_READ);
@@ -559,7 +648,7 @@ connection_read_callback (struct ev_loop * loop,
 
       // read to buffer 
       // if read complete stop watch 
-      if (io->buffer_sp->socket_read(io->io.fd)) {
+      if (io->buffer_sp->socket_read(io->ssl)) {
         // update ping time
         YILOG_TRACE ("func: {}. update ping time", __func__);
         // server connect
@@ -619,7 +708,11 @@ connection_read_callback (struct ev_loop * loop,
 
   }catch (std::system_error & e) {
     if (e.code().value() == 20002 ||
-        e.code().value() == 20003) {
+        e.code().value() == 20003 ||
+        e.code().value() == 20005 ||
+        e.code().value() == 20006 ||
+        e.code().value() == 20007 ||
+        e.code().value() == 20008) {
       // close node
       ev_io_stop(loop, rw);
       Read_IO * io = reinterpret_cast<Read_IO*>(rw);
@@ -703,7 +796,7 @@ connection_write_callback (struct ev_loop * loop,
       YILOG_DEBUG ("uuidnode map count: {}.", uuidnode_map_.size());
       // send
       try {
-        if (p->socket_write(io->io.fd)) {
+        if (p->socket_write(io->ssl)) {
           ul.lock();
           io->buffers_p.pop();
           ul.unlock();
@@ -729,6 +822,12 @@ connection_write_callback (struct ev_loop * loop,
 int start_server_libev(IPS ips ) {
 
   YILOG_TRACE ("func: {}. ", __func__);
+  // ssl
+  init_openssl();
+  SSL_CTX * ctx = sslctx();
+  configure_sslctx(ctx);
+
+  // peer server 
   initSetup(ips);
   auto lloop = loop();
   // signal
@@ -795,6 +894,11 @@ int start_server_libev(IPS ips ) {
   ev_timer_start (lloop, quick_timer);
 
   ev_run (lloop, 0);
+
+  // release 
+  close(sd);
+  SSL_CTX_free(ctx);
+  cleanup_openssl();
 
   YILOG_TRACE ("exit main");
   return 0;

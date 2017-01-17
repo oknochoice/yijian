@@ -9,6 +9,7 @@
 #include <ev.h>
 #include "buffer_yi.h"
 
+#include <openssl/ssl.h>
 
 typedef std::shared_ptr<yijian::buffer> Buffer_SP;
 typedef std::function<void(Buffer_SP)> Read_CB;

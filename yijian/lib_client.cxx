@@ -4,12 +4,20 @@
 #include <queue>
 #include <condition_variable>
 
+#include <openssl/err.h>
+#include <netinet/tcp.h>
+
+#define HOST_NAME "www.yijian.com"
+#define HOST_PORT "5555"
+
 struct Read_IO {
   // watcher
   ev_io io;
   // socket buffer
   Buffer_SP buffer_sp = std::make_shared<yijian::buffer>();
   uint16_t sessionid;
+  // ssl
+  SSL * ssl;
 };
 
 struct Write_IO {
@@ -18,6 +26,8 @@ struct Write_IO {
   // socket buffer
   std::mutex buffers_p_mutex;
   std::queue<Buffer_SP> buffers_p;
+  // ssl
+  SSL * ssl;
 };
 
 static std::shared_ptr<Read_CB> sp_read_cb_;
@@ -48,6 +58,115 @@ struct ev_async * write_asyn_watcher() {
 
 }
 
+/*
+ *
+ * openssl
+ *
+ *
+ * */
+void init_openssl() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  SSL_load_error_strings();
+  OpenSSL_add_ssl_algorithms();
+}
+void cleanup_openssl() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  EVP_cleanup();
+}
+SSL_CTX * create_sslctx() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  const SSL_METHOD * method;
+  SSL_CTX * ctx;
+
+  method = TLSv1_2_client_method();
+
+  ctx = SSL_CTX_new(method);
+  if (!ctx) {
+    ERR_print_errors_fp(stderr);
+    YILOG_ERROR("Unable to create SSL context");
+    throw std::system_error(std::error_code(60004, std::generic_category()),
+        "Unable to create SSL context");
+  }
+  return ctx;
+}
+SSL_CTX * sslctx() {
+  YILOG_TRACE ("func: {}. ", __func__);
+  static SSL_CTX * ctx = create_sslctx();
+  return ctx;
+}
+int verify_callback(int preverify, X509_STORE_CTX * x509_ctx) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  int depth = X509_STORE_CTX_get_error_depth(x509_ctx);
+  int err = X509_STORE_CTX_get_error(x509_ctx);
+
+  X509 * cert = X509_STORE_CTX_get_current_cert(x509_ctx);
+
+  if (0 == depth) {
+
+  }
+  return preverify;
+}
+void configure_sslctx(SSL_CTX * ctx, SSL ** ssl) {
+  YILOG_TRACE ("func: {}. ", __func__);
+
+  //SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, verify_callback);
+  SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, 0);
+  SSL_CTX_set_verify_depth(ctx, 4);
+
+  const long flags = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION;
+  SSL_CTX_set_options(ctx, flags);
+
+  if ( 1 != SSL_CTX_load_verify_locations(ctx, "root-ca.crt", NULL)) {
+    ERR_print_errors_fp(stderr);
+    throw std::system_error(std::error_code(60005, std::generic_category()),
+        "could load location ca failure");
+  }
+
+  BIO * web = BIO_new_ssl_connect(ctx);
+  if ( 1 != BIO_set_conn_hostname(web, HOST_NAME ":" HOST_PORT)) {
+    ERR_print_errors_fp(stderr);
+    throw std::system_error(std::error_code(60006, std::generic_category()),
+        "new web failure");
+  }
+
+  BIO_get_ssl(web, ssl);
+  if (!(NULL != *ssl)) {
+    ERR_print_errors_fp(stderr);
+    throw std::system_error(std::error_code(60007, std::generic_category()),
+        "init ssl failure");
+  }
+  const char* const PREFERRED_CIPHERS = "HIGH:!aNULL:!kRSA:!PSK:!SRP:!MD5:!RC4";
+  if (SSL_CTX_set_cipher_list(ctx, PREFERRED_CIPHERS) != 1) {
+    ERR_print_errors_fp(stderr);
+    throw std::system_error(std::error_code(60003, std::generic_category()),
+        "could not set cipher list");
+  }
+
+  if (1 != SSL_set_tlsext_host_name(*ssl, HOST_NAME)) {
+    ERR_print_errors_fp(stderr);
+  }
+
+  BIO * out = BIO_new_fp(stdout, BIO_NOCLOSE);
+
+  if (1 != BIO_do_connect(web)) {
+    ERR_print_errors_fp(stderr);
+    throw std::system_error(std::error_code(60008, std::generic_category()),
+        "BIO_do_connect failure");
+  }
+
+  if (1 != BIO_do_handshake(web)) {
+    ERR_print_errors_fp(stderr);
+    throw std::system_error(std::error_code(60009, std::generic_category()),
+        "BIO_do_handshake failure");
+  }
+
+
+
+  SSL_CTX_set_mode(ctx, SSL_MODE_ENABLE_PARTIAL_WRITE);
+  SSL_CTX_set_mode(ctx, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
+  SSL_CTX_set_mode(ctx, SSL_MODE_AUTO_RETRY);
+}
+
 void start_write_callback (struct ev_loop * loop,  ev_async * r, int revents) {
   
   YILOG_TRACE ("func: {}. ", __func__);
@@ -69,7 +188,7 @@ void connection_read_callback (struct ev_loop * loop,
   // read to buffer 
   // if read complete stop watch && update ping
   
-  if (io->buffer_sp->socket_read(io->io.fd)) {
+  if (io->buffer_sp->socket_read(io->ssl)) {
     YILOG_TRACE ("func: {}. receive datatype {}.", 
         __func__, io->buffer_sp->datatype());
     if (unlikely(io->buffer_sp->datatype() == 
@@ -88,7 +207,11 @@ void connection_read_callback (struct ev_loop * loop,
     YILOG_ERROR ("errno: {}, errmsg: {}.",
         e.code().value(), e.what());
     if (e.code().value() == 20002 ||
-        e.code().value() == 20003) {
+        e.code().value() == 20003 ||
+        e.code().value() == 20005 ||
+        e.code().value() == 20006 ||
+        e.code().value() == 20007 ||
+        e.code().value() == 20008) {
       // close node
     }
     throw std::system_error(std::error_code(60000, std::generic_category()),
@@ -111,7 +234,7 @@ void connection_write_callback (struct ev_loop * loop,
   if (!io->buffers_p.empty()) {
     auto p = io->buffers_p.front();
     ul.unlock();
-    if (p->socket_write(io->io.fd)) {
+    if (p->socket_write(io->ssl)) {
       ul.lock();
       io->buffers_p.pop();
       ul.unlock();
@@ -123,26 +246,8 @@ void connection_write_callback (struct ev_loop * loop,
   YILOG_TRACE ("func: {}. write finish", __func__);
 }
 
-static void init_io(std::string ip, int port) {
+static void init_io() {
   YILOG_TRACE ("func: {}. ", __func__);
-  int sfd;
-  struct sockaddr_in addr;
-  sfd = socket(PF_INET, SOCK_STREAM, 0);
-  if (sfd < 0) {
-    perror("socket error");
-  }
-
-  bzero(&addr, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = inet_addr(ip.data());
-
-  if (connect(sfd, (struct sockaddr*) &addr, sizeof(addr)) < 0) {
-    throw std::system_error(std::error_code(60001, std::generic_category()),
-        "Failed to connect server");
-  }
-
-  YILOG_TRACE("Connected Success {}:{}.", ip.data(), port);
 
   // ev_async
   struct ev_async * async_io = write_asyn_watcher();
@@ -161,6 +266,23 @@ static void init_io(std::string ip, int port) {
         "new client watcher error");
   }
 
+  // ssl connect
+  init_openssl();
+  SSL_CTX * ctx = sslctx();
+  SSL * ssl = NULL;
+  configure_sslctx(ctx, &ssl);
+  read_io_->ssl = ssl;
+  write_io_->ssl = ssl;
+
+  int sfd = SSL_get_fd(ssl);
+
+  //int flag = 1;
+  //if ( 0 > setsockopt(sfd, IPPROTO_TCP, 
+        //TCP_NODELAY, (char*)&flag, sizeof(int))) {
+    //YILOG_ERROR ("set TCP_NODELAY failure");
+  //}
+
+  YILOG_TRACE("Connected Success.");
   ev_io_init (&read_io_->io, 
       connection_read_callback, sfd, EV_READ);
   ev_io_init (&write_io_->io,
@@ -175,7 +297,7 @@ void create_client(Read_CB && read_cb) {
   YILOG_TRACE ("func: {}. ", __func__);
   std::thread t([&](){
     YILOG_TRACE ("func: {}, thread start.", __func__);
-    init_io("127.0.0.1", 5555);
+    init_io();
     sp_read_cb_.reset(new Read_CB(std::forward<Read_CB>(read_cb)));
     std::unique_lock<std::mutex> ul(ev_c_mutex_);
     ev_c_isWait_ = false;
@@ -212,6 +334,9 @@ void client_send(Buffer_SP sp_buffer,
 
 void clear_client() {
   YILOG_TRACE ("func: {}. ", __func__);
+  SSL_free(read_io_->ssl);
+  SSL_CTX_free(sslctx());
+  cleanup_openssl();
   close(read_io_->io.fd);
   ev_io_stop(loop(), &read_io_->io);
   ev_io_stop(loop(), &write_io_->io);

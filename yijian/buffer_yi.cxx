@@ -4,6 +4,8 @@
 #include <arpa/inet.h>
 #include <string.h>
 
+#include <openssl/err.h>
+
 namespace yijian {
 
 // buffer 
@@ -63,7 +65,7 @@ Message_Type buffer::buffer_type() {
 }
 
 
-bool buffer::socket_read(int sfd) {
+bool buffer::socket_read(SSL * sfd) {
   YILOG_TRACE("func: {}", __func__);
   // parse length and data type
   YILOG_TRACE("func: {}, isParseFinish_: {}, isFinish_: {}", 
@@ -131,13 +133,15 @@ bool buffer::socket_read(int sfd) {
   return isFinish_;
 }
 
-bool buffer::socket_write(int sfd) {
+bool buffer::socket_write(SSL * sfd) {
   YILOG_TRACE("func: 1 argm {}", __func__);
   YILOG_TRACE("func: 1 argm {}, remain length{}", __func__, remain_data_length_);
   remain_data_length_ -= socket_write(sfd, current_pos_, remain_data_length_);
   YILOG_TRACE("func: 1 argm {}, remain length{}", __func__, remain_data_length_);
   if (0 == remain_data_length_) {
     isFinish_ = true;
+    //BIO * wbio = SSL_get_wbio(sfd);
+    //BIO_flush(wbio);
     YILOG_TRACE("func: 1 argm {} set finish true", __func__);
   }
   return isFinish_;
@@ -272,5 +276,90 @@ std::size_t buffer::socket_write(int sfd, char * pos, std::size_t count) {
   return writed;
 }
 
+std::size_t buffer::socket_read(SSL * ssl, char * pos, std::size_t count) {
+  YILOG_TRACE("func: {}", __func__);
+  int readed = SSL_read(ssl, pos, count);
+  if (0 < readed) {
+    YILOG_TRACE("func: {}, readed: {}", __func__, readed);
+    noread_count_ = 0;
+  }else {
+    int error_l = SSL_get_error(ssl, readed);
+    if ( error_l == SSL_ERROR_ZERO_RETURN) {
+      YILOG_ERROR("func: {}, SSL_ERROR_ZERO_RETURN:"
+          "connection has been closed", __func__);
+      throw std::system_error(std::error_code(
+            20005, std::system_category()),
+          "connection has been closed");
+    }else if (error_l == SSL_ERROR_WANT_READ) {
+      YILOG_TRACE("func: {}, SSL_ERROR_WANT_READ:", __func__);
+      readed = 0;
+    }else if (error_l == SSL_ERROR_WANT_CONNECT || 
+        error_l == SSL_ERROR_WANT_ACCEPT) {
+      YILOG_TRACE("func: {}, SSL_ERROR_WANT_CONNECT"
+          " SSL_ERROR_WANT_ACCEPT:", __func__);
+      readed = 0;
+    }else if (error_l == SSL_ERROR_WANT_X509_LOOKUP ){
+      YILOG_ERROR("func: {}, SSL_ERROR_WANT_X509_LOOKUP"
+          , __func__);
+      throw std::system_error(std::error_code(
+            20006, std::system_category()),
+          "SSL_ERROR_WANT_X509_LOOKUP");
+    }else if (error_l == SSL_ERROR_SYSCALL ){
+      YILOG_ERROR("func: {}, errno: {}", __func__, errno);
+      throw std::system_error(std::error_code(
+            20007, std::system_category()),
+          "SSL_ERROR_SYSCALL");
+    }else {
+      YILOG_ERROR("func: {}, unknow error", __func__);
+      throw std::system_error(std::error_code(
+            20008, std::system_category()),
+          "SSL_ERROR_SYSCALL");
+    }
+  }
+  return readed;
+}
+
+std::size_t buffer::socket_write(SSL * ssl, char * pos, std::size_t count) {
+  YILOG_TRACE("func: 3 argm{}", __func__);
+  int writed = SSL_write(ssl, pos, count);
+  if (0 < writed) {
+    YILOG_TRACE("func: {}, writed {}", __func__, writed);
+  }else {
+    int error_l = SSL_get_error(ssl, writed);
+    if ( error_l == SSL_ERROR_ZERO_RETURN) {
+      YILOG_ERROR("func: {}, SSL_ERROR_ZERO_RETURN:"
+          "connection has been closed", __func__);
+      throw std::system_error(std::error_code(
+            20009, std::system_category()),
+          "connection has been closed");
+    }else if (error_l == SSL_ERROR_WANT_WRITE) {
+      YILOG_TRACE("func: {}, SSL_ERROR_WANT_READ:", __func__);
+      writed = 0;
+    }else if (error_l == SSL_ERROR_WANT_CONNECT || 
+        error_l == SSL_ERROR_WANT_ACCEPT) {
+      YILOG_TRACE("func: {}, SSL_ERROR_WANT_CONNECT"
+          " SSL_ERROR_WANT_ACCEPT:", __func__);
+      writed = 0;
+    }else if (error_l == SSL_ERROR_WANT_X509_LOOKUP ){
+      YILOG_ERROR("func: {}, SSL_ERROR_WANT_X509_LOOKUP"
+          , __func__);
+      throw std::system_error(std::error_code(
+            20020, std::system_category()),
+          "SSL_ERROR_WANT_X509_LOOKUP");
+    }else if (error_l == SSL_ERROR_SYSCALL ){
+      YILOG_ERROR("func: {}, errno: {}", __func__, errno);
+      throw std::system_error(std::error_code(
+            20022, std::system_category()),
+          "SSL_ERROR_SYSCALL no: " + std::to_string(errno));
+    }else {
+      YILOG_ERROR("func: {}, unknow error", __func__);
+      ERR_print_errors_fp(stderr);
+      throw std::system_error(std::error_code(
+            20023, std::system_category()),
+          "other error no: " + std::to_string(error_l));
+    }
+  }
+  return writed;
+}
 }
 

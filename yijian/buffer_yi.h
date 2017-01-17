@@ -7,6 +7,8 @@
 #include "typemap.h"
 #include <google/protobuf/util/json_util.h>
 
+#include <openssl/ssl.h>
+
 // 4 max var_length length 1 type length 2 sessionid length
 #define MSG_TYPE_LENGTH 1
 #define VAR_LENGTH 2
@@ -44,8 +46,10 @@ public:
 
     // member func
     // socket read write if finish return ture
-    bool socket_read(int sfd);
-    bool socket_write(int sfd);
+    //bool socket_read(int sfd);
+    //bool socket_write(int sfd);
+    bool socket_read(SSL * ssl);
+    bool socket_write(SSL * ssl);
 
     // socket read fixed length 
     // first set length second read
@@ -115,7 +119,11 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
     encoding_var_length(char * pos, uint32_t length);
 
     std::size_t socket_read(int sfd, char * pos, std::size_t count);
+    std::size_t socket_read(
+        SSL * ssl, char * pos, std::size_t count);
     std::size_t socket_write(int sfd, char * pos, std::size_t count);
+    std::size_t socket_write(
+        SSL * ssl, char * pos, std::size_t count);
 private:
     bool isParseMsgReaded_ = false;
     bool isParseFinish_ = false;
