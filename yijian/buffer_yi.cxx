@@ -70,6 +70,12 @@ bool buffer::socket_read(SSL * sfd) {
   // parse length and data type
   YILOG_TRACE("func: {}, isParseFinish_: {}, isFinish_: {}", 
       __func__, isParseFinish_, isFinish_);
+  bool isContine = false;
+  do {
+  isContine = false;
+
+  try {
+
   if (!isParseFinish_) {
     if (false == isParseMsgReaded_) {
       YILOG_TRACE ("func: {}, read header", __func__);
@@ -115,6 +121,7 @@ bool buffer::socket_read(SSL * sfd) {
         throw std::system_error(std::error_code(20000, std::generic_category()),
             "transfer data over buffer size");
       }
+      isContine = true;
     }
   }else if(!isFinish_){// read remain data;
     YILOG_TRACE ("func: {}, read reamin date remain_data_length_: {}", 
@@ -128,6 +135,12 @@ bool buffer::socket_read(SSL * sfd) {
       isFinish_ = true;
 
   }
+
+  }catch (std::system_error & e) {
+    throw;
+  }
+
+  }while(isContine && !isFinish_);
 
   YILOG_TRACE("func: {} read finish {}", __func__, isFinish_);
   return isFinish_;
@@ -306,6 +319,7 @@ std::size_t buffer::socket_read(SSL * ssl, char * pos, std::size_t count) {
           "SSL_ERROR_WANT_X509_LOOKUP");
     }else if (error_l == SSL_ERROR_SYSCALL ){
       YILOG_ERROR("func: {}, errno: {}", __func__, errno);
+      perror("ssl_read SSL_ERROR_SYSCALL");
       throw std::system_error(std::error_code(
             20007, std::system_category()),
           "SSL_ERROR_SYSCALL");
@@ -313,7 +327,7 @@ std::size_t buffer::socket_read(SSL * ssl, char * pos, std::size_t count) {
       YILOG_ERROR("func: {}, unknow error", __func__);
       throw std::system_error(std::error_code(
             20008, std::system_category()),
-          "SSL_ERROR_SYSCALL");
+          "unknow error");
     }
   }
   return readed;
@@ -334,6 +348,9 @@ std::size_t buffer::socket_write(SSL * ssl, char * pos, std::size_t count) {
           "connection has been closed");
     }else if (error_l == SSL_ERROR_WANT_WRITE) {
       YILOG_TRACE("func: {}, SSL_ERROR_WANT_READ:", __func__);
+      throw std::system_error(std::error_code(
+            20024, std::system_category()),
+          "read again now");
       writed = 0;
     }else if (error_l == SSL_ERROR_WANT_CONNECT || 
         error_l == SSL_ERROR_WANT_ACCEPT) {
