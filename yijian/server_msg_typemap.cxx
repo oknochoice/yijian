@@ -414,6 +414,8 @@ void dispatch(chat::ClientConnect & connect)  {
       ++currentNode_->sessionid;
       currentNode_->clientVersion = connect.clientversion();
       currentNode_->appVersion = connect.appversion();
+      // set current thread session id
+      session_id_ = currentNode_->sessionid;
       // update in memory db connectinfo
       connectInfo_.set_isconnected(true);
       connectInfo_.set_isrecivenoti(connect.isrecivenoti());
