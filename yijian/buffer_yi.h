@@ -5,6 +5,7 @@
 #include <deque>
 #include <unistd.h>
 #include "typemap.h"
+#include "typemapre.h"
 #include <google/protobuf/util/json_util.h>
 
 #include <openssl/ssl.h>
@@ -77,6 +78,11 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
 }
     */
 
+    // session id
+    uint16_t session_id();
+    void set_sessionid(uint16_t sessionid);
+
+    // c++ protobuf 
     template <typename Proto> 
     void encoding(Proto && any) {
 
@@ -104,13 +110,9 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
       YILOG_TRACE ("func: {}, type: {}, length: {}",
           __func__, type, any.ByteSize());
     }
-
+    // c++ protobuf 
     template <typename Proto>
     static std::shared_ptr<buffer> Buffer(Proto && any);
-
-    // session id
-    uint16_t session_id();
-    void set_sessionid(uint16_t sessionid);
 
 //private:
     std::pair<uint32_t, char *>
@@ -148,6 +150,7 @@ private:
     int_fast16_t noread_count_ = 0;
 };
 
+// c++ protobuf 
 template <typename Proto>
 std::shared_ptr<buffer> buffer::Buffer(Proto && any) {
 

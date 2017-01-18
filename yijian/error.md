@@ -6,4 +6,5 @@ libev_server        300 00+
 pinglist            310 00+
 mongo               400 00+
 leveldb             500 00+
+netyi               550 00+
 lib_client          600 00+

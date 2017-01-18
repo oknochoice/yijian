@@ -8,6 +8,7 @@
 #include <functional>
 #include <map>
 #include <mutex>
+#include "typemapre.h"
 
 #define KVDBVersion "1.0.0"
 

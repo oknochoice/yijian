@@ -191,13 +191,9 @@ void connection_read_callback (struct ev_loop * loop,
   if (io->buffer_sp->socket_read(io->ssl)) {
     YILOG_TRACE ("func: {}. receive datatype {}.", 
         __func__, io->buffer_sp->datatype());
-    if (unlikely(io->buffer_sp->datatype() == 
-          ChatType::clientconnectres)) {
+    if (unlikely(io->buffer_sp->datatype() == 7)) {
       YILOG_INFO ("func: {}. set sessionid", __func__);
-      chat::ClientConnectRes res;
-      res.ParseFromArray(io->buffer_sp->data(), 
-          io->buffer_sp->data_size());
-      read_io_->sessionid = res.sessionid();
+      read_io_->sessionid = io->buffer_sp->session_id();
     }
     (*sp_read_cb_)(io->buffer_sp);
     io->buffer_sp.reset(new yijian::buffer());

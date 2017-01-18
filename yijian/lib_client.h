@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <ev.h>
 #include "buffer_yi.h"
+#include <functional>
 
 #include <openssl/ssl.h>
 
