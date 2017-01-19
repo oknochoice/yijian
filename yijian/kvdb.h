@@ -57,7 +57,6 @@ public:
   // t_&userid
   std::string talklistKey(const std::string & userid);
 
-  
   // signup_kvdb
   std::string signupKey();
   // login_kvdb
@@ -76,7 +75,6 @@ public:
   std::string addFriendAuthorizeNotiKey();
   // addfriendinfo_kvdb 
   std::string addFriendInfoKey();
-
 
   /*
    * common current 
