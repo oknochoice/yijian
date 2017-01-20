@@ -9,7 +9,7 @@
 
 #include "typemap.h"
 
-#define HOST_NAME "www.yijian.com"
+#define HOST_NAME "www.iching.com"
 #define HOST_PORT "5555"
 
 struct Read_IO {
@@ -193,7 +193,7 @@ void connection_read_callback (struct ev_loop * loop,
   if (io->buffer_sp->socket_read(io->ssl)) {
     YILOG_TRACE ("func: {}. receive datatype {}.", 
         __func__, io->buffer_sp->datatype());
-    if (unlikely(io->buffer_sp->datatype() == chatType::clientconnectres)) {
+    if (unlikely(io->buffer_sp->datatype() == ChatType::clientconnectres)) {
       YILOG_INFO ("func: {}. set sessionid", __func__);
       read_io_->sessionid = io->buffer_sp->session_id();
     }

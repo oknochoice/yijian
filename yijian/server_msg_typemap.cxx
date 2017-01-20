@@ -1230,7 +1230,8 @@ void dispatch(std::shared_ptr<Read_IO> node,
   currentNode_ = node;
   session_id_ = session_id;
   
-  YILOG_DEBUG ("buffer sp use count: {}", sp.use_count());
+  YILOG_DEBUG ("session id {}. sp session di: {}", 
+      session_id_ ,  sp->session_id());
   YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
       "userid:{}, uuid:{}", 
       currentNode_->ping_time, 

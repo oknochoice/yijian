@@ -122,7 +122,7 @@ TEST_CASE("normal disconnet", "[connect]") {
   }
 }
 
-TEST_CASE("abnormal disconnet", "[connect]") {
+TEST_CASE("abnormal disconnet", "[econnect]") {
   SECTION("login") {
     loginblock(db);
   }

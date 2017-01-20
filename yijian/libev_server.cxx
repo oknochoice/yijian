@@ -744,10 +744,11 @@ connection_write_callback (struct ev_loop * loop,
     if (!io->buffers_p.empty()) {
       auto p = io->buffers_p.front();
       ul.unlock();
-      YILOG_INFO ("send sessionid: {}, data type: {}, "
+      auto bp = reinterpret_cast<uint16_t*>(p->header());
+      YILOG_INFO ("send sessionid: {}, self sessionid: {}, data type: {}, "
           "userid:{}, uuid:{}. \n"
           "write buffers count {}.", 
-          p->session_id(), p->datatype(), 
+          (uint16_t)*bp, p->session_id(), p->datatype(), 
           read_io_sp->userid, read_io_sp->uuid,
           io->buffers_p.size());
 

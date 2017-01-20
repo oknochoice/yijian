@@ -101,7 +101,9 @@ bool buffer::socket_read(SSL * sfd) {
     if (true == isParseMsgReaded_) {
       YILOG_TRACE ("func: {}, parse header", __func__);
       // session id
-      session_id_ = *header_pos_;
+      uint16_t session_net = *reinterpret_cast<uint16_t*>(header_pos_);
+      YILOG_DEBUG ("session id : {}", session_net);
+      session_id_ = ntohs(session_net);
       // type
       data_type_ =  *(header_pos_ + SESSIONID_LENGTH);
       // var_length
@@ -202,7 +204,9 @@ uint16_t buffer::session_id() {
   return session_id_;
 }
 void buffer::set_sessionid(uint16_t sessionid) {
-  memcpy(header_pos_, &sessionid, 2);
+  uint16_t sessionid_l= htons(sessionid);
+  memcpy(header_pos_, &sessionid_l, 2);
+  YILOG_DEBUG ("session id : {}", *reinterpret_cast<uint16_t*>(header_pos_));
   session_id_ = sessionid;
 }
 
