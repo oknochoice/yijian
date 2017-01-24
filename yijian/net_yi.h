@@ -48,13 +48,6 @@ public:
   void userInfoNoti(CB_Func_Mutiple && func);
 
 private:
-  // e_userid_sessionid_$nth [1, maxth]
-  std::string session_key(const int32_t sessionid, 
-      const int32_t nth);
-  int32_t get_sessionid_no(const int32_t sessionid);
-
-  int32_t get_next_sessionid_no_add(const int32_t sessionid);
-  void    clean_sessionid_keys(const int32_t sessionid);
   void put_map(const int32_t sessionid, CB_Func_Mutiple && func);
   void put_map_send(Buffer_SP sp, CB_Func_Mutiple && func);
   void put_map_send(const int32_t sessionid, 
