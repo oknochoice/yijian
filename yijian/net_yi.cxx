@@ -138,7 +138,6 @@ bool netyi::call_map(const int32_t sessionid, Buffer_SP sp) {
     if (isStop) {
       std::unique_lock<std::mutex> ul(sessionid_map_mutex_);
       sessionid_cbfunc_map_.erase(it);
-      clean_sessionid_keys(sessionid);
     }
   }
   return isCalled;
