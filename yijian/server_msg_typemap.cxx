@@ -1063,6 +1063,7 @@ void dispatch(chat::QueryMedia & querymedia) {
 void dispatch(chat::Ping & ping) {
   YILOG_TRACE ("func: {}. media", __func__);
   auto pong = chat::Pong();
+  pong.set_msg("pong");
   mountBuffer2Node(buffer::Buffer(pong), node_self_);
 }
 
