@@ -50,6 +50,8 @@ enum ChatType : uint8_t {
   queryaddfriendinfores = 45,
   serverconnect = 42,// outer
   serverdisconnect = 43,// outer
+  ping = 46,
+  pong = 47,
 };
 
 #endif

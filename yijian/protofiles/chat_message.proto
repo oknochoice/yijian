@@ -24,6 +24,14 @@ message AddFriendInfo {
   repeated QueryAddfriendInfoRes info = 1;
 }
 
+message Ping {
+  string msg = 1;
+}
+
+message Pong {
+  string msg = 1;
+}
+
 // server & client
 message NodeSelfDevice {
 }

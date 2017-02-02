@@ -342,6 +342,70 @@ struct Chat_AddFriendInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
   }
 }
 
+struct Chat_Ping: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_Ping"}
+  public var protoMessageName: String {return "Ping"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "msg", swift: "msg"),
+  ]
+
+
+  var msg: String = ""
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &msg)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if msg != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: msg, protoFieldNumber: 1)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_Ping) -> Bool {
+    if msg != other.msg {return false}
+    return true
+  }
+}
+
+struct Chat_Pong: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_Pong"}
+  public var protoMessageName: String {return "Pong"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "msg", swift: "msg"),
+  ]
+
+
+  var msg: String = ""
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &msg)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if msg != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: msg, protoFieldNumber: 1)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_Pong) -> Bool {
+    if msg != other.msg {return false}
+    return true
+  }
+}
+
 ///   server & client
 struct Chat_NodeSelfDevice: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
   public var swiftClassName: String {return "Chat_NodeSelfDevice"}

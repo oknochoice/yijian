@@ -140,7 +140,12 @@ constexpr uint8_t dispatchType(chat::QueryAddfriendInfo & ) {
 constexpr uint8_t dispatchType(chat::QueryAddfriendInfoRes & ) {
   return ChatType::queryaddfriendinfores;
 }
-
+constexpr uint8_t dispatchType(chat::Ping & ) {
+  return ChatType::ping;
+}
+constexpr uint8_t dispatchType(chat::Pong & ) {
+  return ChatType::pong;
+}
 
 #ifdef __cpluscplus
 }

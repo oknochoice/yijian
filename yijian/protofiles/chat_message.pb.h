@@ -80,6 +80,8 @@ class NodePeerServer;
 class NodeSelfDevice;
 class NodeSpecifiy;
 class NodeUser;
+class Ping;
+class Pong;
 class QueryAddfriendInfo;
 class QueryAddfriendInfoRes;
 class QueryMedia;
@@ -100,6 +102,7 @@ class ServerDisconnect;
 class TalkList;
 class User;
 class UserInfo;
+class setReadMessage;
 
 enum Device_OperatingSystem {
   Device_OperatingSystem_iOS = 0,
@@ -568,6 +571,188 @@ class AddFriendInfo : public ::google::protobuf::Message /* @@protoc_insertion_p
   void InitAsDefaultInstance();
 };
 extern ::google::protobuf::internal::ExplicitlyConstructed<AddFriendInfo> AddFriendInfo_default_instance_;
+
+// -------------------------------------------------------------------
+
+class Ping : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.Ping) */ {
+ public:
+  Ping();
+  virtual ~Ping();
+
+  Ping(const Ping& from);
+
+  inline Ping& operator=(const Ping& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Ping& default_instance();
+
+  static const Ping* internal_default_instance();
+
+  void Swap(Ping* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Ping* New() const { return New(NULL); }
+
+  Ping* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Ping& from);
+  void MergeFrom(const Ping& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  size_t ByteSizeLong() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Ping* other);
+  void UnsafeMergeFrom(const Ping& from);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string msg = 1;
+  void clear_msg();
+  static const int kMsgFieldNumber = 1;
+  const ::std::string& msg() const;
+  void set_msg(const ::std::string& value);
+  void set_msg(const char* value);
+  void set_msg(const char* value, size_t size);
+  ::std::string* mutable_msg();
+  ::std::string* release_msg();
+  void set_allocated_msg(::std::string* msg);
+
+  // @@protoc_insertion_point(class_scope:chat.Ping)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr msg_;
+  mutable int _cached_size_;
+  friend void  protobuf_InitDefaults_chat_5fmessage_2eproto_impl();
+  friend void  protobuf_AddDesc_chat_5fmessage_2eproto_impl();
+  friend void protobuf_AssignDesc_chat_5fmessage_2eproto();
+  friend void protobuf_ShutdownFile_chat_5fmessage_2eproto();
+
+  void InitAsDefaultInstance();
+};
+extern ::google::protobuf::internal::ExplicitlyConstructed<Ping> Ping_default_instance_;
+
+// -------------------------------------------------------------------
+
+class Pong : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.Pong) */ {
+ public:
+  Pong();
+  virtual ~Pong();
+
+  Pong(const Pong& from);
+
+  inline Pong& operator=(const Pong& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Pong& default_instance();
+
+  static const Pong* internal_default_instance();
+
+  void Swap(Pong* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Pong* New() const { return New(NULL); }
+
+  Pong* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Pong& from);
+  void MergeFrom(const Pong& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  size_t ByteSizeLong() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Pong* other);
+  void UnsafeMergeFrom(const Pong& from);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string msg = 1;
+  void clear_msg();
+  static const int kMsgFieldNumber = 1;
+  const ::std::string& msg() const;
+  void set_msg(const ::std::string& value);
+  void set_msg(const char* value);
+  void set_msg(const char* value, size_t size);
+  ::std::string* mutable_msg();
+  ::std::string* release_msg();
+  void set_allocated_msg(::std::string* msg);
+
+  // @@protoc_insertion_point(class_scope:chat.Pong)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr msg_;
+  mutable int _cached_size_;
+  friend void  protobuf_InitDefaults_chat_5fmessage_2eproto_impl();
+  friend void  protobuf_AddDesc_chat_5fmessage_2eproto_impl();
+  friend void protobuf_AssignDesc_chat_5fmessage_2eproto();
+  friend void protobuf_ShutdownFile_chat_5fmessage_2eproto();
+
+  void InitAsDefaultInstance();
+};
+extern ::google::protobuf::internal::ExplicitlyConstructed<Pong> Pong_default_instance_;
 
 // -------------------------------------------------------------------
 
@@ -5479,6 +5664,104 @@ extern ::google::protobuf::internal::ExplicitlyConstructed<NodeMessageNoti> Node
 
 // -------------------------------------------------------------------
 
+class setReadMessage : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.setReadMessage) */ {
+ public:
+  setReadMessage();
+  virtual ~setReadMessage();
+
+  setReadMessage(const setReadMessage& from);
+
+  inline setReadMessage& operator=(const setReadMessage& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const setReadMessage& default_instance();
+
+  static const setReadMessage* internal_default_instance();
+
+  void Swap(setReadMessage* other);
+
+  // implements Message ----------------------------------------------
+
+  inline setReadMessage* New() const { return New(NULL); }
+
+  setReadMessage* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const setReadMessage& from);
+  void MergeFrom(const setReadMessage& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  size_t ByteSizeLong() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(setReadMessage* other);
+  void UnsafeMergeFrom(const setReadMessage& from);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string toNodeID = 1;
+  void clear_tonodeid();
+  static const int kToNodeIDFieldNumber = 1;
+  const ::std::string& tonodeid() const;
+  void set_tonodeid(const ::std::string& value);
+  void set_tonodeid(const char* value);
+  void set_tonodeid(const char* value, size_t size);
+  ::std::string* mutable_tonodeid();
+  ::std::string* release_tonodeid();
+  void set_allocated_tonodeid(::std::string* tonodeid);
+
+  // optional int32 readedIncrement = 2;
+  void clear_readedincrement();
+  static const int kReadedIncrementFieldNumber = 2;
+  ::google::protobuf::int32 readedincrement() const;
+  void set_readedincrement(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:chat.setReadMessage)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr tonodeid_;
+  ::google::protobuf::int32 readedincrement_;
+  mutable int _cached_size_;
+  friend void  protobuf_InitDefaults_chat_5fmessage_2eproto_impl();
+  friend void  protobuf_AddDesc_chat_5fmessage_2eproto_impl();
+  friend void protobuf_AssignDesc_chat_5fmessage_2eproto();
+  friend void protobuf_ShutdownFile_chat_5fmessage_2eproto();
+
+  void InitAsDefaultInstance();
+};
+extern ::google::protobuf::internal::ExplicitlyConstructed<setReadMessage> setReadMessage_default_instance_;
+
+// -------------------------------------------------------------------
+
 class QueryMessage : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.QueryMessage) */ {
  public:
   QueryMessage();
@@ -7024,6 +7307,108 @@ AddFriendInfo::info() const {
 
 inline const AddFriendInfo* AddFriendInfo::internal_default_instance() {
   return &AddFriendInfo_default_instance_.get();
+}
+// -------------------------------------------------------------------
+
+// Ping
+
+// optional string msg = 1;
+inline void Ping::clear_msg() {
+  msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Ping::msg() const {
+  // @@protoc_insertion_point(field_get:chat.Ping.msg)
+  return msg_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Ping::set_msg(const ::std::string& value) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.Ping.msg)
+}
+inline void Ping::set_msg(const char* value) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.Ping.msg)
+}
+inline void Ping::set_msg(const char* value, size_t size) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.Ping.msg)
+}
+inline ::std::string* Ping::mutable_msg() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.Ping.msg)
+  return msg_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Ping::release_msg() {
+  // @@protoc_insertion_point(field_release:chat.Ping.msg)
+  
+  return msg_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Ping::set_allocated_msg(::std::string* msg) {
+  if (msg != NULL) {
+    
+  } else {
+    
+  }
+  msg_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), msg);
+  // @@protoc_insertion_point(field_set_allocated:chat.Ping.msg)
+}
+
+inline const Ping* Ping::internal_default_instance() {
+  return &Ping_default_instance_.get();
+}
+// -------------------------------------------------------------------
+
+// Pong
+
+// optional string msg = 1;
+inline void Pong::clear_msg() {
+  msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Pong::msg() const {
+  // @@protoc_insertion_point(field_get:chat.Pong.msg)
+  return msg_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Pong::set_msg(const ::std::string& value) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.Pong.msg)
+}
+inline void Pong::set_msg(const char* value) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.Pong.msg)
+}
+inline void Pong::set_msg(const char* value, size_t size) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.Pong.msg)
+}
+inline ::std::string* Pong::mutable_msg() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.Pong.msg)
+  return msg_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Pong::release_msg() {
+  // @@protoc_insertion_point(field_release:chat.Pong.msg)
+  
+  return msg_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Pong::set_allocated_msg(::std::string* msg) {
+  if (msg != NULL) {
+    
+  } else {
+    
+  }
+  msg_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), msg);
+  // @@protoc_insertion_point(field_set_allocated:chat.Pong.msg)
+}
+
+inline const Pong* Pong::internal_default_instance() {
+  return &Pong_default_instance_.get();
 }
 // -------------------------------------------------------------------
 
@@ -12289,6 +12674,71 @@ inline const NodeMessageNoti* NodeMessageNoti::internal_default_instance() {
 }
 // -------------------------------------------------------------------
 
+// setReadMessage
+
+// optional string toNodeID = 1;
+inline void setReadMessage::clear_tonodeid() {
+  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& setReadMessage::tonodeid() const {
+  // @@protoc_insertion_point(field_get:chat.setReadMessage.toNodeID)
+  return tonodeid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void setReadMessage::set_tonodeid(const ::std::string& value) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.setReadMessage.toNodeID)
+}
+inline void setReadMessage::set_tonodeid(const char* value) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.setReadMessage.toNodeID)
+}
+inline void setReadMessage::set_tonodeid(const char* value, size_t size) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.setReadMessage.toNodeID)
+}
+inline ::std::string* setReadMessage::mutable_tonodeid() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.setReadMessage.toNodeID)
+  return tonodeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* setReadMessage::release_tonodeid() {
+  // @@protoc_insertion_point(field_release:chat.setReadMessage.toNodeID)
+  
+  return tonodeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void setReadMessage::set_allocated_tonodeid(::std::string* tonodeid) {
+  if (tonodeid != NULL) {
+    
+  } else {
+    
+  }
+  tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
+  // @@protoc_insertion_point(field_set_allocated:chat.setReadMessage.toNodeID)
+}
+
+// optional int32 readedIncrement = 2;
+inline void setReadMessage::clear_readedincrement() {
+  readedincrement_ = 0;
+}
+inline ::google::protobuf::int32 setReadMessage::readedincrement() const {
+  // @@protoc_insertion_point(field_get:chat.setReadMessage.readedIncrement)
+  return readedincrement_;
+}
+inline void setReadMessage::set_readedincrement(::google::protobuf::int32 value) {
+  
+  readedincrement_ = value;
+  // @@protoc_insertion_point(field_set:chat.setReadMessage.readedIncrement)
+}
+
+inline const setReadMessage* setReadMessage::internal_default_instance() {
+  return &setReadMessage_default_instance_.get();
+}
+// -------------------------------------------------------------------
+
 // QueryMessage
 
 // optional string toNodeID = 1;
@@ -13545,6 +13995,12 @@ inline const MediaCheckRes* MediaCheckRes::internal_default_instance() {
   return &MediaCheckRes_default_instance_.get();
 }
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -34,6 +34,12 @@ const ::google::protobuf::Descriptor* TalkList_NodemapEntry_descriptor_ = NULL;
 const ::google::protobuf::Descriptor* AddFriendInfo_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   AddFriendInfo_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Ping_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Ping_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Pong_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Pong_reflection_ = NULL;
 const ::google::protobuf::Descriptor* NodeSelfDevice_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   NodeSelfDevice_reflection_ = NULL;
@@ -165,6 +171,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* NodeMessageNoti_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   NodeMessageNoti_reflection_ = NULL;
+const ::google::protobuf::Descriptor* setReadMessage_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  setReadMessage_reflection_ = NULL;
 const ::google::protobuf::Descriptor* QueryMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   QueryMessage_reflection_ = NULL;
@@ -277,7 +286,35 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(AddFriendInfo),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendInfo, _internal_metadata_));
-  NodeSelfDevice_descriptor_ = file->message_type(4);
+  Ping_descriptor_ = file->message_type(4);
+  static const int Ping_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ping, msg_),
+  };
+  Ping_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Ping_descriptor_,
+      Ping::internal_default_instance(),
+      Ping_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Ping),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ping, _internal_metadata_));
+  Pong_descriptor_ = file->message_type(5);
+  static const int Pong_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pong, msg_),
+  };
+  Pong_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Pong_descriptor_,
+      Pong::internal_default_instance(),
+      Pong_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Pong),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pong, _internal_metadata_));
+  NodeSelfDevice_descriptor_ = file->message_type(6);
   static const int NodeSelfDevice_offsets_[1] = {
   };
   NodeSelfDevice_reflection_ =
@@ -290,7 +327,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(NodeSelfDevice),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeSelfDevice, _internal_metadata_));
-  NodePeerServer_descriptor_ = file->message_type(5);
+  NodePeerServer_descriptor_ = file->message_type(7);
   static const int NodePeerServer_offsets_[1] = {
   };
   NodePeerServer_reflection_ =
@@ -303,7 +340,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(NodePeerServer),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodePeerServer, _internal_metadata_));
-  NodeSpecifiy_descriptor_ = file->message_type(6);
+  NodeSpecifiy_descriptor_ = file->message_type(8);
   static const int NodeSpecifiy_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeSpecifiy, tonodeid_),
   };
@@ -317,7 +354,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(NodeSpecifiy),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeSpecifiy, _internal_metadata_));
-  NodeUser_descriptor_ = file->message_type(7);
+  NodeUser_descriptor_ = file->message_type(9);
   static const int NodeUser_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeUser, touserid_),
   };
@@ -331,7 +368,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(NodeUser),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeUser, _internal_metadata_));
-  Error_descriptor_ = file->message_type(8);
+  Error_descriptor_ = file->message_type(10);
   static const int Error_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Error, errnum_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Error, errmsg_),
@@ -346,7 +383,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(Error),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Error, _internal_metadata_));
-  Device_descriptor_ = file->message_type(9);
+  Device_descriptor_ = file->message_type(11);
   static const int Device_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Device, os_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Device, devicemodel_),
@@ -364,7 +401,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       sizeof(Device),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Device, _internal_metadata_));
   Device_OperatingSystem_descriptor_ = Device_descriptor_->enum_type(0);
-  MessageNode_descriptor_ = file->message_type(10);
+  MessageNode_descriptor_ = file->message_type(12);
   static const int MessageNode_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageNode, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageNode, authorize_),
@@ -385,7 +422,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       sizeof(MessageNode),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageNode, _internal_metadata_));
   MessageNode_Authorize_descriptor_ = MessageNode_descriptor_->enum_type(0);
-  UserInfo_descriptor_ = file->message_type(11);
+  UserInfo_descriptor_ = file->message_type(13);
   static const int UserInfo_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UserInfo, tonodeid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UserInfo, userid_),
@@ -400,7 +437,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(UserInfo),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(UserInfo, _internal_metadata_));
-  User_descriptor_ = file->message_type(12);
+  User_descriptor_ = file->message_type(14);
   static const int User_offsets_[15] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(User, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(User, realname_),
@@ -428,7 +465,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(User),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(User, _internal_metadata_));
-  QueryUser_descriptor_ = file->message_type(13);
+  QueryUser_descriptor_ = file->message_type(15);
   static const int QueryUser_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUser, userid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUser, countrycode_),
@@ -444,7 +481,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryUser),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUser, _internal_metadata_));
-  QueryUserRes_descriptor_ = file->message_type(14);
+  QueryUserRes_descriptor_ = file->message_type(16);
   static const int QueryUserRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUserRes, touserid_outer_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUserRes, user_),
@@ -459,7 +496,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryUserRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUserRes, _internal_metadata_));
-  QueryUserVersion_descriptor_ = file->message_type(15);
+  QueryUserVersion_descriptor_ = file->message_type(17);
   static const int QueryUserVersion_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUserVersion, userid_),
   };
@@ -473,7 +510,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryUserVersion),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUserVersion, _internal_metadata_));
-  QueryUserVersionRes_descriptor_ = file->message_type(16);
+  QueryUserVersionRes_descriptor_ = file->message_type(18);
   static const int QueryUserVersionRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUserVersionRes, userid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUserVersionRes, version_),
@@ -488,7 +525,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryUserVersionRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUserVersionRes, _internal_metadata_));
-  QueryNode_descriptor_ = file->message_type(17);
+  QueryNode_descriptor_ = file->message_type(19);
   static const int QueryNode_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNode, tonodeid_),
   };
@@ -502,7 +539,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryNode),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNode, _internal_metadata_));
-  QueryNodeRes_descriptor_ = file->message_type(18);
+  QueryNodeRes_descriptor_ = file->message_type(20);
   static const int QueryNodeRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNodeRes, touserid_outer_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNodeRes, node_),
@@ -517,7 +554,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryNodeRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNodeRes, _internal_metadata_));
-  QueryNodeVersion_descriptor_ = file->message_type(19);
+  QueryNodeVersion_descriptor_ = file->message_type(21);
   static const int QueryNodeVersion_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNodeVersion, tonodeid_),
   };
@@ -531,7 +568,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryNodeVersion),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNodeVersion, _internal_metadata_));
-  QueryNodeVersionRes_descriptor_ = file->message_type(20);
+  QueryNodeVersionRes_descriptor_ = file->message_type(22);
   static const int QueryNodeVersionRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNodeVersionRes, tonodeid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNodeVersionRes, version_),
@@ -546,7 +583,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryNodeVersionRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryNodeVersionRes, _internal_metadata_));
-  Register_descriptor_ = file->message_type(21);
+  Register_descriptor_ = file->message_type(23);
   static const int Register_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Register, phoneno_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Register, countrycode_),
@@ -564,7 +601,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(Register),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Register, _internal_metadata_));
-  RegisterRes_descriptor_ = file->message_type(22);
+  RegisterRes_descriptor_ = file->message_type(24);
   static const int RegisterRes_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RegisterRes, userid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RegisterRes, issuccess_),
@@ -581,7 +618,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(RegisterRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(RegisterRes, _internal_metadata_));
-  Login_descriptor_ = file->message_type(23);
+  Login_descriptor_ = file->message_type(25);
   static const int Login_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Login, phoneno_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Login, countrycode_),
@@ -599,7 +636,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(Login),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Login, _internal_metadata_));
-  LoginRes_descriptor_ = file->message_type(24);
+  LoginRes_descriptor_ = file->message_type(26);
   static const int LoginRes_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginRes, issuccess_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginRes, userid_),
@@ -616,7 +653,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(LoginRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginRes, _internal_metadata_));
-  LoginNoti_descriptor_ = file->message_type(25);
+  LoginNoti_descriptor_ = file->message_type(27);
   static const int LoginNoti_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginNoti, touserid_outer_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginNoti, uuid_),
@@ -631,7 +668,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(LoginNoti),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginNoti, _internal_metadata_));
-  ClientConnect_descriptor_ = file->message_type(26);
+  ClientConnect_descriptor_ = file->message_type(28);
   static const int ClientConnect_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, userid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, uuid_),
@@ -651,7 +688,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(ClientConnect),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, _internal_metadata_));
-  ClientConnectRes_descriptor_ = file->message_type(27);
+  ClientConnectRes_descriptor_ = file->message_type(29);
   static const int ClientConnectRes_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnectRes, uuid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnectRes, userid_),
@@ -670,7 +707,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(ClientConnectRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnectRes, _internal_metadata_));
-  ClientDisConnect_descriptor_ = file->message_type(28);
+  ClientDisConnect_descriptor_ = file->message_type(30);
   static const int ClientDisConnect_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientDisConnect, userid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientDisConnect, uuid_),
@@ -685,7 +722,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(ClientDisConnect),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientDisConnect, _internal_metadata_));
-  ClientDisConnectRes_descriptor_ = file->message_type(29);
+  ClientDisConnectRes_descriptor_ = file->message_type(31);
   static const int ClientDisConnectRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientDisConnectRes, uuid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientDisConnectRes, userid_),
@@ -700,7 +737,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(ClientDisConnectRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientDisConnectRes, _internal_metadata_));
-  Logout_descriptor_ = file->message_type(30);
+  Logout_descriptor_ = file->message_type(32);
   static const int Logout_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Logout, userid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Logout, uuid_),
@@ -715,7 +752,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(Logout),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Logout, _internal_metadata_));
-  LogoutRes_descriptor_ = file->message_type(31);
+  LogoutRes_descriptor_ = file->message_type(33);
   static const int LogoutRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LogoutRes, uuid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LogoutRes, userid_),
@@ -730,7 +767,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(LogoutRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LogoutRes, _internal_metadata_));
-  AddFriend_descriptor_ = file->message_type(32);
+  AddFriend_descriptor_ = file->message_type(34);
   static const int AddFriend_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriend, inviteeid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriend, inviterid_),
@@ -746,7 +783,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(AddFriend),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriend, _internal_metadata_));
-  AddFriendRes_descriptor_ = file->message_type(33);
+  AddFriendRes_descriptor_ = file->message_type(35);
   static const int AddFriendRes_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendRes, inviterid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendRes, inviteeid_),
@@ -762,7 +799,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(AddFriendRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendRes, _internal_metadata_));
-  AddFriendNoti_descriptor_ = file->message_type(34);
+  AddFriendNoti_descriptor_ = file->message_type(36);
   static const int AddFriendNoti_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendNoti, touserid_outer_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendNoti, response_),
@@ -777,7 +814,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(AddFriendNoti),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendNoti, _internal_metadata_));
-  AddFriendAuthorize_descriptor_ = file->message_type(35);
+  AddFriendAuthorize_descriptor_ = file->message_type(37);
   static const int AddFriendAuthorize_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorize, inviterid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorize, inviteeid_),
@@ -793,7 +830,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(AddFriendAuthorize),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorize, _internal_metadata_));
-  AddFriendAuthorizeRes_descriptor_ = file->message_type(36);
+  AddFriendAuthorizeRes_descriptor_ = file->message_type(38);
   static const int AddFriendAuthorizeRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeRes, isagree_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeRes, touserid_outer_),
@@ -808,7 +845,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(AddFriendAuthorizeRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeRes, _internal_metadata_));
-  AddFriendAuthorizeNoti_descriptor_ = file->message_type(37);
+  AddFriendAuthorizeNoti_descriptor_ = file->message_type(39);
   static const int AddFriendAuthorizeNoti_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeNoti, touserid_outer_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeNoti, response_),
@@ -823,7 +860,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(AddFriendAuthorizeNoti),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeNoti, _internal_metadata_));
-  QueryAddfriendInfo_descriptor_ = file->message_type(38);
+  QueryAddfriendInfo_descriptor_ = file->message_type(40);
   static const int QueryAddfriendInfo_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryAddfriendInfo, count_),
   };
@@ -837,7 +874,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryAddfriendInfo),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryAddfriendInfo, _internal_metadata_));
-  QueryAddfriendInfoRes_descriptor_ = file->message_type(39);
+  QueryAddfriendInfoRes_descriptor_ = file->message_type(41);
   static const int QueryAddfriendInfoRes_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryAddfriendInfoRes, inviter_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryAddfriendInfoRes, invitee_),
@@ -854,7 +891,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryAddfriendInfoRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryAddfriendInfoRes, _internal_metadata_));
-  CreateGroup_descriptor_ = file->message_type(40);
+  CreateGroup_descriptor_ = file->message_type(42);
   static const int CreateGroup_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CreateGroup, userid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CreateGroup, nickname_),
@@ -870,7 +907,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(CreateGroup),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CreateGroup, _internal_metadata_));
-  CreateGroupRes_descriptor_ = file->message_type(41);
+  CreateGroupRes_descriptor_ = file->message_type(43);
   static const int CreateGroupRes_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CreateGroupRes, touserid_outer_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CreateGroupRes, nickname_),
@@ -886,7 +923,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(CreateGroupRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CreateGroupRes, _internal_metadata_));
-  GroupAddMember_descriptor_ = file->message_type(42);
+  GroupAddMember_descriptor_ = file->message_type(44);
   static const int GroupAddMember_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GroupAddMember, tonodeid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GroupAddMember, membersid_),
@@ -901,7 +938,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(GroupAddMember),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GroupAddMember, _internal_metadata_));
-  GroupAddMemberRes_descriptor_ = file->message_type(43);
+  GroupAddMemberRes_descriptor_ = file->message_type(45);
   static const int GroupAddMemberRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GroupAddMemberRes, touserid_outer_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GroupAddMemberRes, tonodeid_),
@@ -916,7 +953,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(GroupAddMemberRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(GroupAddMemberRes, _internal_metadata_));
-  NodeMessage_descriptor_ = file->message_type(44);
+  NodeMessage_descriptor_ = file->message_type(46);
   static const int NodeMessage_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, fromuserid_),
@@ -936,7 +973,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(NodeMessage),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, _internal_metadata_));
-  NodeMessageRes_descriptor_ = file->message_type(45);
+  NodeMessageRes_descriptor_ = file->message_type(47);
   static const int NodeMessageRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageRes, tonodeid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageRes, incrementid_),
@@ -951,7 +988,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(NodeMessageRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageRes, _internal_metadata_));
-  NodeMessageNoti_descriptor_ = file->message_type(46);
+  NodeMessageNoti_descriptor_ = file->message_type(48);
   static const int NodeMessageNoti_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, tonodeid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, unreadincrement_),
@@ -967,7 +1004,22 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(NodeMessageNoti),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, _internal_metadata_));
-  QueryMessage_descriptor_ = file->message_type(47);
+  setReadMessage_descriptor_ = file->message_type(49);
+  static const int setReadMessage_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(setReadMessage, tonodeid_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(setReadMessage, readedincrement_),
+  };
+  setReadMessage_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      setReadMessage_descriptor_,
+      setReadMessage::internal_default_instance(),
+      setReadMessage_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(setReadMessage),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(setReadMessage, _internal_metadata_));
+  QueryMessage_descriptor_ = file->message_type(50);
   static const int QueryMessage_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessage, tonodeid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessage, fromincrementid_),
@@ -983,7 +1035,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryMessage),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessage, _internal_metadata_));
-  QueryOneMessage_descriptor_ = file->message_type(48);
+  QueryOneMessage_descriptor_ = file->message_type(51);
   static const int QueryOneMessage_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryOneMessage, tonodeid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryOneMessage, incrementid_),
@@ -998,7 +1050,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryOneMessage),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryOneMessage, _internal_metadata_));
-  ServerConnect_descriptor_ = file->message_type(49);
+  ServerConnect_descriptor_ = file->message_type(52);
   static const int ServerConnect_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerConnect, servername_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerConnect, serverip_),
@@ -1013,7 +1065,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(ServerConnect),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerConnect, _internal_metadata_));
-  ServerDisconnect_descriptor_ = file->message_type(50);
+  ServerDisconnect_descriptor_ = file->message_type(53);
   static const int ServerDisconnect_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerDisconnect, servername_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerDisconnect, serverip_),
@@ -1028,7 +1080,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(ServerDisconnect),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerDisconnect, _internal_metadata_));
-  ConnectInfo_descriptor_ = file->message_type(51);
+  ConnectInfo_descriptor_ = file->message_type(54);
   static const int ConnectInfo_offsets_[11] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnectInfo, uuid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnectInfo, userid_),
@@ -1053,7 +1105,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       sizeof(ConnectInfo),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnectInfo, _internal_metadata_));
   ConnectInfo_UsersEntry_descriptor_ = ConnectInfo_descriptor_->nested_type(0);
-  ConnectInfoLittle_descriptor_ = file->message_type(52);
+  ConnectInfoLittle_descriptor_ = file->message_type(55);
   static const int ConnectInfoLittle_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnectInfoLittle, uuid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnectInfoLittle, isconnected_),
@@ -1070,7 +1122,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(ConnectInfoLittle),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConnectInfoLittle, _internal_metadata_));
-  Media_descriptor_ = file->message_type(53);
+  Media_descriptor_ = file->message_type(56);
   static const int Media_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Media, sha1_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Media, nth_),
@@ -1088,7 +1140,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(Media),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Media, _internal_metadata_));
-  MediaRes_descriptor_ = file->message_type(54);
+  MediaRes_descriptor_ = file->message_type(57);
   static const int MediaRes_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaRes, sha1_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaRes, nth_),
@@ -1104,7 +1156,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(MediaRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaRes, _internal_metadata_));
-  QueryMedia_descriptor_ = file->message_type(55);
+  QueryMedia_descriptor_ = file->message_type(58);
   static const int QueryMedia_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMedia, sha1_),
   };
@@ -1118,7 +1170,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(QueryMedia),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMedia, _internal_metadata_));
-  MediaIsExist_descriptor_ = file->message_type(56);
+  MediaIsExist_descriptor_ = file->message_type(59);
   static const int MediaIsExist_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaIsExist, sha1_),
   };
@@ -1132,7 +1184,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(MediaIsExist),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaIsExist, _internal_metadata_));
-  MediaIsExistRes_descriptor_ = file->message_type(57);
+  MediaIsExistRes_descriptor_ = file->message_type(60);
   static const int MediaIsExistRes_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaIsExistRes, isexist_),
   };
@@ -1146,7 +1198,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(MediaIsExistRes),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaIsExistRes, _internal_metadata_));
-  MediaCheck_descriptor_ = file->message_type(58);
+  MediaCheck_descriptor_ = file->message_type(61);
   static const int MediaCheck_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaCheck, sha1_),
   };
@@ -1160,7 +1212,7 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       -1,
       sizeof(MediaCheck),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaCheck, _internal_metadata_));
-  MediaCheckRes_descriptor_ = file->message_type(59);
+  MediaCheckRes_descriptor_ = file->message_type(62);
   static const int MediaCheckRes_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaCheckRes, sha1_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MediaCheckRes, isintact_),
@@ -1207,6 +1259,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
                 TalkList_NodemapEntry_descriptor_));
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       AddFriendInfo_descriptor_, AddFriendInfo::internal_default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Ping_descriptor_, Ping::internal_default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Pong_descriptor_, Pong::internal_default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       NodeSelfDevice_descriptor_, NodeSelfDevice::internal_default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -1294,6 +1350,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       NodeMessageNoti_descriptor_, NodeMessageNoti::internal_default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      setReadMessage_descriptor_, setReadMessage::internal_default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       QueryMessage_descriptor_, QueryMessage::internal_default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       QueryOneMessage_descriptor_, QueryOneMessage::internal_default_instance());
@@ -1341,6 +1399,10 @@ void protobuf_ShutdownFile_chat_5fmessage_2eproto() {
   delete TalkList_reflection_;
   AddFriendInfo_default_instance_.Shutdown();
   delete AddFriendInfo_reflection_;
+  Ping_default_instance_.Shutdown();
+  delete Ping_reflection_;
+  Pong_default_instance_.Shutdown();
+  delete Pong_reflection_;
   NodeSelfDevice_default_instance_.Shutdown();
   delete NodeSelfDevice_reflection_;
   NodePeerServer_default_instance_.Shutdown();
@@ -1427,6 +1489,8 @@ void protobuf_ShutdownFile_chat_5fmessage_2eproto() {
   delete NodeMessageRes_reflection_;
   NodeMessageNoti_default_instance_.Shutdown();
   delete NodeMessageNoti_reflection_;
+  setReadMessage_default_instance_.Shutdown();
+  delete setReadMessage_reflection_;
   QueryMessage_default_instance_.Shutdown();
   delete QueryMessage_reflection_;
   QueryOneMessage_default_instance_.Shutdown();
@@ -1463,6 +1527,10 @@ void protobuf_InitDefaults_chat_5fmessage_2eproto_impl() {
   ::google::protobuf::internal::GetEmptyString();
   TalkList_default_instance_.DefaultConstruct();
   AddFriendInfo_default_instance_.DefaultConstruct();
+  ::google::protobuf::internal::GetEmptyString();
+  Ping_default_instance_.DefaultConstruct();
+  ::google::protobuf::internal::GetEmptyString();
+  Pong_default_instance_.DefaultConstruct();
   NodeSelfDevice_default_instance_.DefaultConstruct();
   NodePeerServer_default_instance_.DefaultConstruct();
   ::google::protobuf::internal::GetEmptyString();
@@ -1547,6 +1615,8 @@ void protobuf_InitDefaults_chat_5fmessage_2eproto_impl() {
   ::google::protobuf::internal::GetEmptyString();
   NodeMessageNoti_default_instance_.DefaultConstruct();
   ::google::protobuf::internal::GetEmptyString();
+  setReadMessage_default_instance_.DefaultConstruct();
+  ::google::protobuf::internal::GetEmptyString();
   QueryMessage_default_instance_.DefaultConstruct();
   ::google::protobuf::internal::GetEmptyString();
   QueryOneMessage_default_instance_.DefaultConstruct();
@@ -1575,6 +1645,8 @@ void protobuf_InitDefaults_chat_5fmessage_2eproto_impl() {
   NodeInfo_default_instance_.get_mutable()->InitAsDefaultInstance();
   TalkList_default_instance_.get_mutable()->InitAsDefaultInstance();
   AddFriendInfo_default_instance_.get_mutable()->InitAsDefaultInstance();
+  Ping_default_instance_.get_mutable()->InitAsDefaultInstance();
+  Pong_default_instance_.get_mutable()->InitAsDefaultInstance();
   NodeSelfDevice_default_instance_.get_mutable()->InitAsDefaultInstance();
   NodePeerServer_default_instance_.get_mutable()->InitAsDefaultInstance();
   NodeSpecifiy_default_instance_.get_mutable()->InitAsDefaultInstance();
@@ -1618,6 +1690,7 @@ void protobuf_InitDefaults_chat_5fmessage_2eproto_impl() {
   NodeMessage_default_instance_.get_mutable()->InitAsDefaultInstance();
   NodeMessageRes_default_instance_.get_mutable()->InitAsDefaultInstance();
   NodeMessageNoti_default_instance_.get_mutable()->InitAsDefaultInstance();
+  setReadMessage_default_instance_.get_mutable()->InitAsDefaultInstance();
   QueryMessage_default_instance_.get_mutable()->InitAsDefaultInstance();
   QueryOneMessage_default_instance_.get_mutable()->InitAsDefaultInstance();
   ServerConnect_default_instance_.get_mutable()->InitAsDefaultInstance();
@@ -1651,118 +1724,121 @@ void protobuf_AddDesc_chat_5fmessage_2eproto_impl() {
     "\n\014NodemapEntry\022\013\n\003key\030\001 \001(\t\022\035\n\005value\030\002 \001"
     "(\0132\016.chat.NodeInfo:\0028\001\":\n\rAddFriendInfo\022"
     ")\n\004info\030\001 \003(\0132\033.chat.QueryAddfriendInfoR"
-    "es\"\020\n\016NodeSelfDevice\"\020\n\016NodePeerServer\" "
-    "\n\014NodeSpecifiy\022\020\n\010toNodeID\030\001 \001(\t\"\034\n\010Node"
-    "User\022\020\n\010toUserID\030\001 \001(\t\"\'\n\005Error\022\016\n\006errnu"
-    "m\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"\226\001\n\006Device\022(\n\002OS"
-    "\030\001 \001(\0162\034.chat.Device.OperatingSystem\022\023\n\013"
-    "deviceModel\030\002 \001(\t\022\026\n\016deviceNickname\030\003 \001("
-    "\t\022\014\n\004UUID\030\004 \001(\t\"\'\n\017OperatingSystem\022\007\n\003iO"
-    "S\020\000\022\013\n\007Android\020\001\"\341\001\n\013MessageNode\022\n\n\002id\030\001"
-    " \001(\t\022.\n\tauthorize\030\002 \001(\0162\033.chat.MessageNo"
-    "de.Authorize\022\021\n\tcreatorID\030\003 \001(\t\022\020\n\010nickn"
-    "ame\030\004 \001(\t\022\017\n\007version\030\005 \001(\005\022\022\n\nmanagerIDs"
-    "\030\006 \003(\t\022\017\n\007members\030\007 \003(\t\";\n\tAuthorize\022\013\n\007"
-    "creator\020\000\022\013\n\007manager\020\001\022\n\n\006member\020\002\022\010\n\004pe"
-    "er\020\003\",\n\010UserInfo\022\020\n\010toNodeID\030\001 \001(\t\022\016\n\006us"
-    "erID\030\002 \001(\t\"\255\002\n\004User\022\n\n\002id\030\001 \001(\t\022\020\n\010realn"
-    "ame\030\002 \001(\t\022\020\n\010nickname\030\003 \001(\t\022\014\n\004icon\030\004 \001("
-    "\t\022\023\n\013description\030\005 \001(\t\022\016\n\006isMale\030\006 \001(\010\022\017"
-    "\n\007phoneNo\030\007 \001(\t\022\023\n\013countryCode\030\010 \001(\t\022\020\n\010"
-    "password\030\t \001(\t\022\020\n\010birthday\030\n \001(\005\022\017\n\007vers"
-    "ion\030\013 \001(\005\022\037\n\007friends\030\014 \003(\0132\016.chat.UserIn"
-    "fo\022\021\n\tblacklist\030\r \003(\t\022\024\n\014groupNodeIDs\030\016 "
-    "\003(\t\022\035\n\007devices\030\017 \003(\0132\014.chat.Device\"A\n\tQu"
-    "eryUser\022\016\n\006userID\030\001 \001(\t\022\023\n\013countryCode\030\002"
-    " \001(\t\022\017\n\007phoneNo\030\003 \001(\t\"@\n\014QueryUserRes\022\026\n"
-    "\016toUserID_outer\030\001 \001(\t\022\030\n\004user\030\002 \001(\0132\n.ch"
-    "at.User\"\"\n\020QueryUserVersion\022\016\n\006userID\030\001 "
-    "\001(\t\"6\n\023QueryUserVersionRes\022\016\n\006userID\030\001 \001"
-    "(\t\022\017\n\007version\030\002 \001(\005\"\035\n\tQueryNode\022\020\n\010toNo"
-    "deID\030\001 \001(\t\"G\n\014QueryNodeRes\022\026\n\016toUserID_o"
-    "uter\030\001 \001(\t\022\037\n\004node\030\002 \001(\0132\021.chat.MessageN"
-    "ode\"$\n\020QueryNodeVersion\022\020\n\010toNodeID\030\001 \001("
-    "\t\"8\n\023QueryNodeVersionRes\022\020\n\010toNodeID\030\001 \001"
-    "(\t\022\017\n\007version\030\002 \001(\005\"h\n\010Register\022\017\n\007phone"
-    "No\030\001 \001(\t\022\023\n\013countryCode\030\002 \001(\t\022\020\n\010passwor"
-    "d\030\003 \001(\t\022\020\n\010nickname\030\004 \001(\t\022\022\n\nverifycode\030"
-    "\005 \001(\t\"M\n\013RegisterRes\022\016\n\006userID\030\001 \001(\t\022\021\n\t"
-    "isSuccess\030\002 \001(\010\022\r\n\005e_msg\030\003 \001(\t\022\014\n\004e_no\030\004"
-    " \001(\005\"j\n\005Login\022\017\n\007phoneNo\030\001 \001(\t\022\023\n\013countr"
-    "yCode\030\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\034\n\006device\030"
-    "\004 \001(\0132\014.chat.Device\022\013\n\003ips\030\005 \003(\t\"J\n\010Logi"
-    "nRes\022\021\n\tisSuccess\030\001 \001(\010\022\016\n\006userID\030\002 \001(\t\022"
-    "\014\n\004e_no\030\003 \001(\005\022\r\n\005e_msg\030\004 \001(\t\"1\n\tLoginNot"
-    "i\022\026\n\016toUserID_outer\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\""
-    "\216\001\n\rClientConnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUI"
-    "D\030\002 \001(\t\022\024\n\014isReciveNoti\030\003 \001(\010\022\025\n\rclientV"
-    "ersion\030\004 \001(\t\022\021\n\tOSVersion\030\005 \001(\t\022\022\n\nappVe"
-    "rsion\030\006 \001(\t\022\013\n\003ips\030\007 \003(\t\"s\n\020ClientConnec"
-    "tRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022\021\n\tse"
-    "ssionid\030\003 \001(\005\022\021\n\tisSuccess\030\004 \001(\010\022\r\n\005e_ms"
-    "g\030\005 \001(\t\022\014\n\004e_no\030\006 \001(\005\"0\n\020ClientDisConnec"
-    "t\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"3\n\023Clien"
-    "tDisConnectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002"
-    " \001(\t\"&\n\006Logout\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002"
-    " \001(\t\")\n\tLogoutRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userI"
-    "D\030\002 \001(\t\">\n\tAddFriend\022\021\n\tinviteeID\030\001 \001(\t\022"
-    "\021\n\tinviterID\030\002 \001(\t\022\013\n\003msg\030\003 \001(\t\"F\n\014AddFr"
-    "iendRes\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeID\030"
-    "\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\"M\n\rAddFriendNoti"
-    "\022\026\n\016toUserID_outer\030\001 \001(\t\022$\n\010response\030\002 \001"
-    "(\0132\022.chat.AddFriendRes\"Z\n\022AddFriendAutho"
-    "rize\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeID\030\002 \001"
-    "(\t\022\036\n\007isAgree\030\003 \001(\0162\r.chat.IsAgree\"O\n\025Ad"
-    "dFriendAuthorizeRes\022\036\n\007isAgree\030\001 \001(\0162\r.c"
-    "hat.IsAgree\022\026\n\016toUserID_outer\030\002 \001(\t\"\\\n\026A"
-    "ddFriendAuthorizeNoti\022\026\n\016toUserID_outer\030"
-    "\001 \001(\t\022*\n\010response\030\002 \001(\0132\030.chat.AddFriend"
-    "Authorize\"#\n\022QueryAddfriendInfo\022\r\n\005count"
-    "\030\001 \001(\005\"Z\n\025QueryAddfriendInfoRes\022\017\n\007invit"
-    "er\030\001 \001(\t\022\017\n\007invitee\030\002 \001(\t\022\020\n\010toNodeID\030\003 "
-    "\001(\t\022\r\n\005isEnd\030\004 \001(\010\"B\n\013CreateGroup\022\016\n\006use"
-    "rID\030\001 \001(\t\022\020\n\010nickname\030\002 \001(\t\022\021\n\tmembersID"
-    "\030\003 \003(\t\"L\n\016CreateGroupRes\022\026\n\016toUserID_out"
-    "er\030\001 \001(\t\022\020\n\010nickname\030\002 \001(\t\022\020\n\010toNodeID\030\003"
-    " \001(\t\"5\n\016GroupAddMember\022\020\n\010toNodeID\030\001 \001(\t"
-    "\022\021\n\tmembersID\030\002 \003(\t\"=\n\021GroupAddMemberRes"
-    "\022\026\n\016toUserID_outer\030\001 \001(\t\022\020\n\010toNodeID\030\002 \001"
-    "(\t\"\234\001\n\013NodeMessage\022\n\n\002id\030\001 \001(\t\022\022\n\nfromUs"
-    "erID\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\022\023\n\013incremen"
-    "tID\030\004 \001(\005\022\035\n\004type\030\005 \001(\0162\017.chat.MediaType"
-    "\022\017\n\007content\030\006 \001(\t\022\026\n\016toUserID_outer\030\007 \001("
-    "\t\"7\n\016NodeMessageRes\022\020\n\010toNodeID\030\002 \001(\t\022\023\n"
-    "\013incrementID\030\003 \001(\005\"T\n\017NodeMessageNoti\022\020\n"
-    "\010toNodeID\030\001 \001(\t\022\027\n\017unreadIncrement\030\002 \001(\005"
-    "\022\026\n\016toUserID_outer\030\003 \001(\t\"P\n\014QueryMessage"
-    "\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017fromIncrementID\030\002 "
-    "\001(\005\022\025\n\rtoIncrementID\030\003 \001(\005\"8\n\017QueryOneMe"
-    "ssage\022\020\n\010toNodeID\030\001 \001(\t\022\023\n\013incrementID\030\002"
-    " \001(\005\"5\n\rServerConnect\022\022\n\nserverName\030\001 \001("
-    "\t\022\020\n\010serverIP\030\002 \001(\t\"8\n\020ServerDisconnect\022"
-    "\022\n\nserverName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\"\247\002"
-    "\n\013ConnectInfo\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 "
-    "\001(\t\022\017\n\007isLogin\030\003 \001(\010\022\023\n\013isConnected\030\004 \001("
-    "\010\022\024\n\014isReciveNoti\030\005 \001(\010\022\022\n\nserverName\030\006 "
-    "\001(\t\022+\n\005users\030\010 \003(\0132\034.chat.ConnectInfo.Us"
-    "ersEntry\022\025\n\rclientVersion\030\t \001(\t\022\021\n\tOSVer"
-    "sion\030\n \001(\t\022\022\n\nappVersion\030\013 \001(\t\022\021\n\ttimest"
-    "amp\030\014 \001(\t\032,\n\nUsersEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005"
-    "value\030\002 \001(\005:\0028\001\"a\n\021ConnectInfoLittle\022\014\n\004"
-    "UUID\030\001 \001(\t\022\023\n\013isConnected\030\002 \001(\010\022\024\n\014isRec"
-    "iveNoti\030\003 \001(\010\022\023\n\013nodepointor\030\004 \001(\003\"b\n\005Me"
-    "dia\022\014\n\004sha1\030\001 \001(\t\022\013\n\003nth\030\002 \001(\005\022\035\n\004type\030\003"
-    " \001(\0162\017.chat.MediaType\022\016\n\006length\030\004 \001(\005\022\017\n"
-    "\007content\030\005 \001(\014\"D\n\010MediaRes\022\014\n\004sha1\030\001 \001(\t"
+    "es\"\023\n\004Ping\022\013\n\003msg\030\001 \001(\t\"\023\n\004Pong\022\013\n\003msg\030\001"
+    " \001(\t\"\020\n\016NodeSelfDevice\"\020\n\016NodePeerServer"
+    "\" \n\014NodeSpecifiy\022\020\n\010toNodeID\030\001 \001(\t\"\034\n\010No"
+    "deUser\022\020\n\010toUserID\030\001 \001(\t\"\'\n\005Error\022\016\n\006err"
+    "num\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"\226\001\n\006Device\022(\n\002"
+    "OS\030\001 \001(\0162\034.chat.Device.OperatingSystem\022\023"
+    "\n\013deviceModel\030\002 \001(\t\022\026\n\016deviceNickname\030\003 "
+    "\001(\t\022\014\n\004UUID\030\004 \001(\t\"\'\n\017OperatingSystem\022\007\n\003"
+    "iOS\020\000\022\013\n\007Android\020\001\"\341\001\n\013MessageNode\022\n\n\002id"
+    "\030\001 \001(\t\022.\n\tauthorize\030\002 \001(\0162\033.chat.Message"
+    "Node.Authorize\022\021\n\tcreatorID\030\003 \001(\t\022\020\n\010nic"
+    "kname\030\004 \001(\t\022\017\n\007version\030\005 \001(\005\022\022\n\nmanagerI"
+    "Ds\030\006 \003(\t\022\017\n\007members\030\007 \003(\t\";\n\tAuthorize\022\013"
+    "\n\007creator\020\000\022\013\n\007manager\020\001\022\n\n\006member\020\002\022\010\n\004"
+    "peer\020\003\",\n\010UserInfo\022\020\n\010toNodeID\030\001 \001(\t\022\016\n\006"
+    "userID\030\002 \001(\t\"\255\002\n\004User\022\n\n\002id\030\001 \001(\t\022\020\n\010rea"
+    "lname\030\002 \001(\t\022\020\n\010nickname\030\003 \001(\t\022\014\n\004icon\030\004 "
+    "\001(\t\022\023\n\013description\030\005 \001(\t\022\016\n\006isMale\030\006 \001(\010"
+    "\022\017\n\007phoneNo\030\007 \001(\t\022\023\n\013countryCode\030\010 \001(\t\022\020"
+    "\n\010password\030\t \001(\t\022\020\n\010birthday\030\n \001(\005\022\017\n\007ve"
+    "rsion\030\013 \001(\005\022\037\n\007friends\030\014 \003(\0132\016.chat.User"
+    "Info\022\021\n\tblacklist\030\r \003(\t\022\024\n\014groupNodeIDs\030"
+    "\016 \003(\t\022\035\n\007devices\030\017 \003(\0132\014.chat.Device\"A\n\t"
+    "QueryUser\022\016\n\006userID\030\001 \001(\t\022\023\n\013countryCode"
+    "\030\002 \001(\t\022\017\n\007phoneNo\030\003 \001(\t\"@\n\014QueryUserRes\022"
+    "\026\n\016toUserID_outer\030\001 \001(\t\022\030\n\004user\030\002 \001(\0132\n."
+    "chat.User\"\"\n\020QueryUserVersion\022\016\n\006userID\030"
+    "\001 \001(\t\"6\n\023QueryUserVersionRes\022\016\n\006userID\030\001"
+    " \001(\t\022\017\n\007version\030\002 \001(\005\"\035\n\tQueryNode\022\020\n\010to"
+    "NodeID\030\001 \001(\t\"G\n\014QueryNodeRes\022\026\n\016toUserID"
+    "_outer\030\001 \001(\t\022\037\n\004node\030\002 \001(\0132\021.chat.Messag"
+    "eNode\"$\n\020QueryNodeVersion\022\020\n\010toNodeID\030\001 "
+    "\001(\t\"8\n\023QueryNodeVersionRes\022\020\n\010toNodeID\030\001"
+    " \001(\t\022\017\n\007version\030\002 \001(\005\"h\n\010Register\022\017\n\007pho"
+    "neNo\030\001 \001(\t\022\023\n\013countryCode\030\002 \001(\t\022\020\n\010passw"
+    "ord\030\003 \001(\t\022\020\n\010nickname\030\004 \001(\t\022\022\n\nverifycod"
+    "e\030\005 \001(\t\"M\n\013RegisterRes\022\016\n\006userID\030\001 \001(\t\022\021"
+    "\n\tisSuccess\030\002 \001(\010\022\r\n\005e_msg\030\003 \001(\t\022\014\n\004e_no"
+    "\030\004 \001(\005\"j\n\005Login\022\017\n\007phoneNo\030\001 \001(\t\022\023\n\013coun"
+    "tryCode\030\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\034\n\006devic"
+    "e\030\004 \001(\0132\014.chat.Device\022\013\n\003ips\030\005 \003(\t\"J\n\010Lo"
+    "ginRes\022\021\n\tisSuccess\030\001 \001(\010\022\016\n\006userID\030\002 \001("
+    "\t\022\014\n\004e_no\030\003 \001(\005\022\r\n\005e_msg\030\004 \001(\t\"1\n\tLoginN"
+    "oti\022\026\n\016toUserID_outer\030\001 \001(\t\022\014\n\004UUID\030\002 \001("
+    "\t\"\216\001\n\rClientConnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004U"
+    "UID\030\002 \001(\t\022\024\n\014isReciveNoti\030\003 \001(\010\022\025\n\rclien"
+    "tVersion\030\004 \001(\t\022\021\n\tOSVersion\030\005 \001(\t\022\022\n\napp"
+    "Version\030\006 \001(\t\022\013\n\003ips\030\007 \003(\t\"s\n\020ClientConn"
+    "ectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022\021\n\t"
+    "sessionid\030\003 \001(\005\022\021\n\tisSuccess\030\004 \001(\010\022\r\n\005e_"
+    "msg\030\005 \001(\t\022\014\n\004e_no\030\006 \001(\005\"0\n\020ClientDisConn"
+    "ect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"3\n\023Cli"
+    "entDisConnectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID"
+    "\030\002 \001(\t\"&\n\006Logout\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID"
+    "\030\002 \001(\t\")\n\tLogoutRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006use"
+    "rID\030\002 \001(\t\">\n\tAddFriend\022\021\n\tinviteeID\030\001 \001("
+    "\t\022\021\n\tinviterID\030\002 \001(\t\022\013\n\003msg\030\003 \001(\t\"F\n\014Add"
+    "FriendRes\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeI"
+    "D\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\"M\n\rAddFriendNo"
+    "ti\022\026\n\016toUserID_outer\030\001 \001(\t\022$\n\010response\030\002"
+    " \001(\0132\022.chat.AddFriendRes\"Z\n\022AddFriendAut"
+    "horize\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeID\030\002"
+    " \001(\t\022\036\n\007isAgree\030\003 \001(\0162\r.chat.IsAgree\"O\n\025"
+    "AddFriendAuthorizeRes\022\036\n\007isAgree\030\001 \001(\0162\r"
+    ".chat.IsAgree\022\026\n\016toUserID_outer\030\002 \001(\t\"\\\n"
+    "\026AddFriendAuthorizeNoti\022\026\n\016toUserID_oute"
+    "r\030\001 \001(\t\022*\n\010response\030\002 \001(\0132\030.chat.AddFrie"
+    "ndAuthorize\"#\n\022QueryAddfriendInfo\022\r\n\005cou"
+    "nt\030\001 \001(\005\"Z\n\025QueryAddfriendInfoRes\022\017\n\007inv"
+    "iter\030\001 \001(\t\022\017\n\007invitee\030\002 \001(\t\022\020\n\010toNodeID\030"
+    "\003 \001(\t\022\r\n\005isEnd\030\004 \001(\010\"B\n\013CreateGroup\022\016\n\006u"
+    "serID\030\001 \001(\t\022\020\n\010nickname\030\002 \001(\t\022\021\n\tmembers"
+    "ID\030\003 \003(\t\"L\n\016CreateGroupRes\022\026\n\016toUserID_o"
+    "uter\030\001 \001(\t\022\020\n\010nickname\030\002 \001(\t\022\020\n\010toNodeID"
+    "\030\003 \001(\t\"5\n\016GroupAddMember\022\020\n\010toNodeID\030\001 \001"
+    "(\t\022\021\n\tmembersID\030\002 \003(\t\"=\n\021GroupAddMemberR"
+    "es\022\026\n\016toUserID_outer\030\001 \001(\t\022\020\n\010toNodeID\030\002"
+    " \001(\t\"\234\001\n\013NodeMessage\022\n\n\002id\030\001 \001(\t\022\022\n\nfrom"
+    "UserID\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\022\023\n\013increm"
+    "entID\030\004 \001(\005\022\035\n\004type\030\005 \001(\0162\017.chat.MediaTy"
+    "pe\022\017\n\007content\030\006 \001(\t\022\026\n\016toUserID_outer\030\007 "
+    "\001(\t\"7\n\016NodeMessageRes\022\020\n\010toNodeID\030\002 \001(\t\022"
+    "\023\n\013incrementID\030\003 \001(\005\"T\n\017NodeMessageNoti\022"
+    "\020\n\010toNodeID\030\001 \001(\t\022\027\n\017unreadIncrement\030\002 \001"
+    "(\005\022\026\n\016toUserID_outer\030\003 \001(\t\";\n\016setReadMes"
+    "sage\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017readedIncremen"
+    "t\030\002 \001(\005\"P\n\014QueryMessage\022\020\n\010toNodeID\030\001 \001("
+    "\t\022\027\n\017fromIncrementID\030\002 \001(\005\022\025\n\rtoIncremen"
+    "tID\030\003 \001(\005\"8\n\017QueryOneMessage\022\020\n\010toNodeID"
+    "\030\001 \001(\t\022\023\n\013incrementID\030\002 \001(\005\"5\n\rServerCon"
+    "nect\022\022\n\nserverName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001"
+    "(\t\"8\n\020ServerDisconnect\022\022\n\nserverName\030\001 \001"
+    "(\t\022\020\n\010serverIP\030\002 \001(\t\"\247\002\n\013ConnectInfo\022\014\n\004"
+    "UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022\017\n\007isLogin\030\003 "
+    "\001(\010\022\023\n\013isConnected\030\004 \001(\010\022\024\n\014isReciveNoti"
+    "\030\005 \001(\010\022\022\n\nserverName\030\006 \001(\t\022+\n\005users\030\010 \003("
+    "\0132\034.chat.ConnectInfo.UsersEntry\022\025\n\rclien"
+    "tVersion\030\t \001(\t\022\021\n\tOSVersion\030\n \001(\t\022\022\n\napp"
+    "Version\030\013 \001(\t\022\021\n\ttimestamp\030\014 \001(\t\032,\n\nUser"
+    "sEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"a"
+    "\n\021ConnectInfoLittle\022\014\n\004UUID\030\001 \001(\t\022\023\n\013isC"
+    "onnected\030\002 \001(\010\022\024\n\014isReciveNoti\030\003 \001(\010\022\023\n\013"
+    "nodepointor\030\004 \001(\003\"b\n\005Media\022\014\n\004sha1\030\001 \001(\t"
     "\022\013\n\003nth\030\002 \001(\005\022\035\n\004type\030\003 \001(\0162\017.chat.Media"
-    "Type\"\032\n\nQueryMedia\022\014\n\004sha1\030\001 \001(\t\"\034\n\014Medi"
-    "aIsExist\022\014\n\004sha1\030\001 \001(\t\"\"\n\017MediaIsExistRe"
-    "s\022\017\n\007isExist\030\001 \001(\010\"\032\n\nMediaCheck\022\014\n\004sha1"
-    "\030\001 \001(\t\"/\n\rMediaCheckRes\022\014\n\004sha1\030\001 \001(\t\022\020\n"
-    "\010isIntact\030\002 \001(\010*8\n\007IsAgree\022\n\n\006unknow\020\000\022\t"
-    "\n\005agree\020\001\022\n\n\006refuse\020\002\022\n\n\006ignore\020\003*3\n\tMed"
-    "iaType\022\n\n\006UNKNOW\020\000\022\010\n\004TEXT\020\001\022\007\n\003JPG\020\002\022\007\n"
-    "\003MP3\020\003B\003\370\001\000b\006proto3", 4779);
+    "Type\022\016\n\006length\030\004 \001(\005\022\017\n\007content\030\005 \001(\014\"D\n"
+    "\010MediaRes\022\014\n\004sha1\030\001 \001(\t\022\013\n\003nth\030\002 \001(\005\022\035\n\004"
+    "type\030\003 \001(\0162\017.chat.MediaType\"\032\n\nQueryMedi"
+    "a\022\014\n\004sha1\030\001 \001(\t\"\034\n\014MediaIsExist\022\014\n\004sha1\030"
+    "\001 \001(\t\"\"\n\017MediaIsExistRes\022\017\n\007isExist\030\001 \001("
+    "\010\"\032\n\nMediaCheck\022\014\n\004sha1\030\001 \001(\t\"/\n\rMediaCh"
+    "eckRes\022\014\n\004sha1\030\001 \001(\t\022\020\n\010isIntact\030\002 \001(\010*8"
+    "\n\007IsAgree\022\n\n\006unknow\020\000\022\t\n\005agree\020\001\022\n\n\006refu"
+    "se\020\002\022\n\n\006ignore\020\003*3\n\tMediaType\022\n\n\006UNKNOW\020"
+    "\000\022\010\n\004TEXT\020\001\022\007\n\003JPG\020\002\022\007\n\003MP3\020\003B\003\370\001\000b\006prot"
+    "o3", 4882);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chat_message.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_chat_5fmessage_2eproto);
@@ -3056,6 +3132,584 @@ AddFriendInfo::info() const {
 
 inline const AddFriendInfo* AddFriendInfo::internal_default_instance() {
   return &AddFriendInfo_default_instance_.get();
+}
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Ping::kMsgFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Ping::Ping()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (this != internal_default_instance()) protobuf_InitDefaults_chat_5fmessage_2eproto();
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:chat.Ping)
+}
+
+void Ping::InitAsDefaultInstance() {
+}
+
+Ping::Ping(const Ping& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  UnsafeMergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:chat.Ping)
+}
+
+void Ping::SharedCtor() {
+  msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _cached_size_ = 0;
+}
+
+Ping::~Ping() {
+  // @@protoc_insertion_point(destructor:chat.Ping)
+  SharedDtor();
+}
+
+void Ping::SharedDtor() {
+  msg_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void Ping::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Ping::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Ping_descriptor_;
+}
+
+const Ping& Ping::default_instance() {
+  protobuf_InitDefaults_chat_5fmessage_2eproto();
+  return *internal_default_instance();
+}
+
+::google::protobuf::internal::ExplicitlyConstructed<Ping> Ping_default_instance_;
+
+Ping* Ping::New(::google::protobuf::Arena* arena) const {
+  Ping* n = new Ping;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Ping::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.Ping)
+  msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+bool Ping::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:chat.Ping)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string msg = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_msg()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->msg().data(), this->msg().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.Ping.msg"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:chat.Ping)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:chat.Ping)
+  return false;
+#undef DO_
+}
+
+void Ping::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:chat.Ping)
+  // optional string msg = 1;
+  if (this->msg().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->msg().data(), this->msg().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.Ping.msg");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->msg(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:chat.Ping)
+}
+
+::google::protobuf::uint8* Ping::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:chat.Ping)
+  // optional string msg = 1;
+  if (this->msg().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->msg().data(), this->msg().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.Ping.msg");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->msg(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:chat.Ping)
+  return target;
+}
+
+size_t Ping::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.Ping)
+  size_t total_size = 0;
+
+  // optional string msg = 1;
+  if (this->msg().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->msg());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Ping::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:chat.Ping)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Ping* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const Ping>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:chat.Ping)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:chat.Ping)
+    UnsafeMergeFrom(*source);
+  }
+}
+
+void Ping::MergeFrom(const Ping& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:chat.Ping)
+  if (GOOGLE_PREDICT_TRUE(&from != this)) {
+    UnsafeMergeFrom(from);
+  } else {
+    MergeFromFail(__LINE__);
+  }
+}
+
+void Ping::UnsafeMergeFrom(const Ping& from) {
+  GOOGLE_DCHECK(&from != this);
+  if (from.msg().size() > 0) {
+
+    msg_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.msg_);
+  }
+}
+
+void Ping::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:chat.Ping)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Ping::CopyFrom(const Ping& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.Ping)
+  if (&from == this) return;
+  Clear();
+  UnsafeMergeFrom(from);
+}
+
+bool Ping::IsInitialized() const {
+
+  return true;
+}
+
+void Ping::Swap(Ping* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Ping::InternalSwap(Ping* other) {
+  msg_.Swap(&other->msg_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Ping::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Ping_descriptor_;
+  metadata.reflection = Ping_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Ping
+
+// optional string msg = 1;
+void Ping::clear_msg() {
+  msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& Ping::msg() const {
+  // @@protoc_insertion_point(field_get:chat.Ping.msg)
+  return msg_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void Ping::set_msg(const ::std::string& value) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.Ping.msg)
+}
+void Ping::set_msg(const char* value) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.Ping.msg)
+}
+void Ping::set_msg(const char* value, size_t size) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.Ping.msg)
+}
+::std::string* Ping::mutable_msg() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.Ping.msg)
+  return msg_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* Ping::release_msg() {
+  // @@protoc_insertion_point(field_release:chat.Ping.msg)
+  
+  return msg_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void Ping::set_allocated_msg(::std::string* msg) {
+  if (msg != NULL) {
+    
+  } else {
+    
+  }
+  msg_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), msg);
+  // @@protoc_insertion_point(field_set_allocated:chat.Ping.msg)
+}
+
+inline const Ping* Ping::internal_default_instance() {
+  return &Ping_default_instance_.get();
+}
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Pong::kMsgFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Pong::Pong()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (this != internal_default_instance()) protobuf_InitDefaults_chat_5fmessage_2eproto();
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:chat.Pong)
+}
+
+void Pong::InitAsDefaultInstance() {
+}
+
+Pong::Pong(const Pong& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  UnsafeMergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:chat.Pong)
+}
+
+void Pong::SharedCtor() {
+  msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _cached_size_ = 0;
+}
+
+Pong::~Pong() {
+  // @@protoc_insertion_point(destructor:chat.Pong)
+  SharedDtor();
+}
+
+void Pong::SharedDtor() {
+  msg_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void Pong::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Pong::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Pong_descriptor_;
+}
+
+const Pong& Pong::default_instance() {
+  protobuf_InitDefaults_chat_5fmessage_2eproto();
+  return *internal_default_instance();
+}
+
+::google::protobuf::internal::ExplicitlyConstructed<Pong> Pong_default_instance_;
+
+Pong* Pong::New(::google::protobuf::Arena* arena) const {
+  Pong* n = new Pong;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Pong::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.Pong)
+  msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+bool Pong::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:chat.Pong)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string msg = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_msg()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->msg().data(), this->msg().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.Pong.msg"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:chat.Pong)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:chat.Pong)
+  return false;
+#undef DO_
+}
+
+void Pong::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:chat.Pong)
+  // optional string msg = 1;
+  if (this->msg().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->msg().data(), this->msg().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.Pong.msg");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->msg(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:chat.Pong)
+}
+
+::google::protobuf::uint8* Pong::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:chat.Pong)
+  // optional string msg = 1;
+  if (this->msg().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->msg().data(), this->msg().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.Pong.msg");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->msg(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:chat.Pong)
+  return target;
+}
+
+size_t Pong::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.Pong)
+  size_t total_size = 0;
+
+  // optional string msg = 1;
+  if (this->msg().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->msg());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Pong::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:chat.Pong)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const Pong* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const Pong>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:chat.Pong)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:chat.Pong)
+    UnsafeMergeFrom(*source);
+  }
+}
+
+void Pong::MergeFrom(const Pong& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:chat.Pong)
+  if (GOOGLE_PREDICT_TRUE(&from != this)) {
+    UnsafeMergeFrom(from);
+  } else {
+    MergeFromFail(__LINE__);
+  }
+}
+
+void Pong::UnsafeMergeFrom(const Pong& from) {
+  GOOGLE_DCHECK(&from != this);
+  if (from.msg().size() > 0) {
+
+    msg_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.msg_);
+  }
+}
+
+void Pong::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:chat.Pong)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Pong::CopyFrom(const Pong& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.Pong)
+  if (&from == this) return;
+  Clear();
+  UnsafeMergeFrom(from);
+}
+
+bool Pong::IsInitialized() const {
+
+  return true;
+}
+
+void Pong::Swap(Pong* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Pong::InternalSwap(Pong* other) {
+  msg_.Swap(&other->msg_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Pong::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Pong_descriptor_;
+  metadata.reflection = Pong_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Pong
+
+// optional string msg = 1;
+void Pong::clear_msg() {
+  msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& Pong::msg() const {
+  // @@protoc_insertion_point(field_get:chat.Pong.msg)
+  return msg_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void Pong::set_msg(const ::std::string& value) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.Pong.msg)
+}
+void Pong::set_msg(const char* value) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.Pong.msg)
+}
+void Pong::set_msg(const char* value, size_t size) {
+  
+  msg_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.Pong.msg)
+}
+::std::string* Pong::mutable_msg() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.Pong.msg)
+  return msg_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* Pong::release_msg() {
+  // @@protoc_insertion_point(field_release:chat.Pong.msg)
+  
+  return msg_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void Pong::set_allocated_msg(::std::string* msg) {
+  if (msg != NULL) {
+    
+  } else {
+    
+  }
+  msg_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), msg);
+  // @@protoc_insertion_point(field_set_allocated:chat.Pong.msg)
+}
+
+inline const Pong* Pong::internal_default_instance() {
+  return &Pong_default_instance_.get();
 }
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
@@ -22886,6 +23540,348 @@ void NodeMessageNoti::set_allocated_touserid_outer(::std::string* touserid_outer
 
 inline const NodeMessageNoti* NodeMessageNoti::internal_default_instance() {
   return &NodeMessageNoti_default_instance_.get();
+}
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int setReadMessage::kToNodeIDFieldNumber;
+const int setReadMessage::kReadedIncrementFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+setReadMessage::setReadMessage()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (this != internal_default_instance()) protobuf_InitDefaults_chat_5fmessage_2eproto();
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:chat.setReadMessage)
+}
+
+void setReadMessage::InitAsDefaultInstance() {
+}
+
+setReadMessage::setReadMessage(const setReadMessage& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  UnsafeMergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:chat.setReadMessage)
+}
+
+void setReadMessage::SharedCtor() {
+  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  readedincrement_ = 0;
+  _cached_size_ = 0;
+}
+
+setReadMessage::~setReadMessage() {
+  // @@protoc_insertion_point(destructor:chat.setReadMessage)
+  SharedDtor();
+}
+
+void setReadMessage::SharedDtor() {
+  tonodeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void setReadMessage::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* setReadMessage::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return setReadMessage_descriptor_;
+}
+
+const setReadMessage& setReadMessage::default_instance() {
+  protobuf_InitDefaults_chat_5fmessage_2eproto();
+  return *internal_default_instance();
+}
+
+::google::protobuf::internal::ExplicitlyConstructed<setReadMessage> setReadMessage_default_instance_;
+
+setReadMessage* setReadMessage::New(::google::protobuf::Arena* arena) const {
+  setReadMessage* n = new setReadMessage;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void setReadMessage::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.setReadMessage)
+  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  readedincrement_ = 0;
+}
+
+bool setReadMessage::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:chat.setReadMessage)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string toNodeID = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_tonodeid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->tonodeid().data(), this->tonodeid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.setReadMessage.toNodeID"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_readedIncrement;
+        break;
+      }
+
+      // optional int32 readedIncrement = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_readedIncrement:
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &readedincrement_)));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:chat.setReadMessage)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:chat.setReadMessage)
+  return false;
+#undef DO_
+}
+
+void setReadMessage::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:chat.setReadMessage)
+  // optional string toNodeID = 1;
+  if (this->tonodeid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tonodeid().data(), this->tonodeid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.setReadMessage.toNodeID");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->tonodeid(), output);
+  }
+
+  // optional int32 readedIncrement = 2;
+  if (this->readedincrement() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->readedincrement(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:chat.setReadMessage)
+}
+
+::google::protobuf::uint8* setReadMessage::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:chat.setReadMessage)
+  // optional string toNodeID = 1;
+  if (this->tonodeid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tonodeid().data(), this->tonodeid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.setReadMessage.toNodeID");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->tonodeid(), target);
+  }
+
+  // optional int32 readedIncrement = 2;
+  if (this->readedincrement() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->readedincrement(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:chat.setReadMessage)
+  return target;
+}
+
+size_t setReadMessage::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.setReadMessage)
+  size_t total_size = 0;
+
+  // optional string toNodeID = 1;
+  if (this->tonodeid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->tonodeid());
+  }
+
+  // optional int32 readedIncrement = 2;
+  if (this->readedincrement() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->readedincrement());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void setReadMessage::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:chat.setReadMessage)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  const setReadMessage* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const setReadMessage>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:chat.setReadMessage)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:chat.setReadMessage)
+    UnsafeMergeFrom(*source);
+  }
+}
+
+void setReadMessage::MergeFrom(const setReadMessage& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:chat.setReadMessage)
+  if (GOOGLE_PREDICT_TRUE(&from != this)) {
+    UnsafeMergeFrom(from);
+  } else {
+    MergeFromFail(__LINE__);
+  }
+}
+
+void setReadMessage::UnsafeMergeFrom(const setReadMessage& from) {
+  GOOGLE_DCHECK(&from != this);
+  if (from.tonodeid().size() > 0) {
+
+    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
+  }
+  if (from.readedincrement() != 0) {
+    set_readedincrement(from.readedincrement());
+  }
+}
+
+void setReadMessage::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:chat.setReadMessage)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void setReadMessage::CopyFrom(const setReadMessage& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.setReadMessage)
+  if (&from == this) return;
+  Clear();
+  UnsafeMergeFrom(from);
+}
+
+bool setReadMessage::IsInitialized() const {
+
+  return true;
+}
+
+void setReadMessage::Swap(setReadMessage* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void setReadMessage::InternalSwap(setReadMessage* other) {
+  tonodeid_.Swap(&other->tonodeid_);
+  std::swap(readedincrement_, other->readedincrement_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata setReadMessage::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = setReadMessage_descriptor_;
+  metadata.reflection = setReadMessage_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// setReadMessage
+
+// optional string toNodeID = 1;
+void setReadMessage::clear_tonodeid() {
+  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& setReadMessage::tonodeid() const {
+  // @@protoc_insertion_point(field_get:chat.setReadMessage.toNodeID)
+  return tonodeid_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void setReadMessage::set_tonodeid(const ::std::string& value) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.setReadMessage.toNodeID)
+}
+void setReadMessage::set_tonodeid(const char* value) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.setReadMessage.toNodeID)
+}
+void setReadMessage::set_tonodeid(const char* value, size_t size) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.setReadMessage.toNodeID)
+}
+::std::string* setReadMessage::mutable_tonodeid() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.setReadMessage.toNodeID)
+  return tonodeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* setReadMessage::release_tonodeid() {
+  // @@protoc_insertion_point(field_release:chat.setReadMessage.toNodeID)
+  
+  return tonodeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void setReadMessage::set_allocated_tonodeid(::std::string* tonodeid) {
+  if (tonodeid != NULL) {
+    
+  } else {
+    
+  }
+  tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
+  // @@protoc_insertion_point(field_set_allocated:chat.setReadMessage.toNodeID)
+}
+
+// optional int32 readedIncrement = 2;
+void setReadMessage::clear_readedincrement() {
+  readedincrement_ = 0;
+}
+::google::protobuf::int32 setReadMessage::readedincrement() const {
+  // @@protoc_insertion_point(field_get:chat.setReadMessage.readedIncrement)
+  return readedincrement_;
+}
+void setReadMessage::set_readedincrement(::google::protobuf::int32 value) {
+  
+  readedincrement_ = value;
+  // @@protoc_insertion_point(field_set:chat.setReadMessage.readedIncrement)
+}
+
+inline const setReadMessage* setReadMessage::internal_default_instance() {
+  return &setReadMessage_default_instance_.get();
 }
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 

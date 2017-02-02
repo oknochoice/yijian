@@ -1060,6 +1060,12 @@ void dispatch(chat::QueryMedia & querymedia) {
   }
 }
 
+void dispatch(chat::Ping & ping) {
+  YILOG_TRACE ("func: {}. media", __func__);
+  auto pong = chat::Pong();
+  mountBuffer2Node(buffer::Buffer(pong), node_self_);
+}
+
 void dispatch(int type, char * header, std::size_t length) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto static map_p = std::make_shared<std::map<int, std::function<void(void)>>>();
@@ -1193,6 +1199,10 @@ void dispatch(int type, char * header, std::size_t length) {
       (*map_p)[ChatType::queryaddfriendinfo] = [=]() {
         auto chat = chat::QueryAddfriendInfo();
         chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::ping] = [=]() {
+        auto chat = chat::Ping();
         dispatch(chat);
       };
   });
