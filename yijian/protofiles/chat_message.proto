@@ -188,7 +188,7 @@ message Login {
   string countryCode = 2;// default is 86
   string password = 3; // sha1 double
   Device device = 4;
-  repeated string ips = 5;
+  //repeated string ips = 5;
 
 }
 
@@ -213,7 +213,7 @@ message ClientConnect {
   string clientVersion = 4;// Dot-decimal notation
   string OSVersion = 5;
   string appVersion = 6; // Dot-decimal notaiton
-  repeated string ips = 7;
+  //repeated string ips = 7;
 }
 
 message ClientConnectRes {

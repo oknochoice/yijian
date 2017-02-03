@@ -3041,27 +3041,10 @@ class Login : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::chat::Device* release_device();
   void set_allocated_device(::chat::Device* device);
 
-  // repeated string ips = 5;
-  int ips_size() const;
-  void clear_ips();
-  static const int kIpsFieldNumber = 5;
-  const ::std::string& ips(int index) const;
-  ::std::string* mutable_ips(int index);
-  void set_ips(int index, const ::std::string& value);
-  void set_ips(int index, const char* value);
-  void set_ips(int index, const char* value, size_t size);
-  ::std::string* add_ips();
-  void add_ips(const ::std::string& value);
-  void add_ips(const char* value);
-  void add_ips(const char* value, size_t size);
-  const ::google::protobuf::RepeatedPtrField< ::std::string>& ips() const;
-  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_ips();
-
   // @@protoc_insertion_point(class_scope:chat.Login)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::std::string> ips_;
   ::google::protobuf::internal::ArenaStringPtr phoneno_;
   ::google::protobuf::internal::ArenaStringPtr countrycode_;
   ::google::protobuf::internal::ArenaStringPtr password_;
@@ -3422,27 +3405,10 @@ class ClientConnect : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::std::string* release_appversion();
   void set_allocated_appversion(::std::string* appversion);
 
-  // repeated string ips = 7;
-  int ips_size() const;
-  void clear_ips();
-  static const int kIpsFieldNumber = 7;
-  const ::std::string& ips(int index) const;
-  ::std::string* mutable_ips(int index);
-  void set_ips(int index, const ::std::string& value);
-  void set_ips(int index, const char* value);
-  void set_ips(int index, const char* value, size_t size);
-  ::std::string* add_ips();
-  void add_ips(const ::std::string& value);
-  void add_ips(const char* value);
-  void add_ips(const char* value, size_t size);
-  const ::google::protobuf::RepeatedPtrField< ::std::string>& ips() const;
-  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_ips();
-
   // @@protoc_insertion_point(class_scope:chat.ClientConnect)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::std::string> ips_;
   ::google::protobuf::internal::ArenaStringPtr userid_;
   ::google::protobuf::internal::ArenaStringPtr uuid_;
   ::google::protobuf::internal::ArenaStringPtr clientversion_;
@@ -9814,61 +9780,6 @@ inline void Login::set_allocated_device(::chat::Device* device) {
   // @@protoc_insertion_point(field_set_allocated:chat.Login.device)
 }
 
-// repeated string ips = 5;
-inline int Login::ips_size() const {
-  return ips_.size();
-}
-inline void Login::clear_ips() {
-  ips_.Clear();
-}
-inline const ::std::string& Login::ips(int index) const {
-  // @@protoc_insertion_point(field_get:chat.Login.ips)
-  return ips_.Get(index);
-}
-inline ::std::string* Login::mutable_ips(int index) {
-  // @@protoc_insertion_point(field_mutable:chat.Login.ips)
-  return ips_.Mutable(index);
-}
-inline void Login::set_ips(int index, const ::std::string& value) {
-  // @@protoc_insertion_point(field_set:chat.Login.ips)
-  ips_.Mutable(index)->assign(value);
-}
-inline void Login::set_ips(int index, const char* value) {
-  ips_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:chat.Login.ips)
-}
-inline void Login::set_ips(int index, const char* value, size_t size) {
-  ips_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:chat.Login.ips)
-}
-inline ::std::string* Login::add_ips() {
-  // @@protoc_insertion_point(field_add_mutable:chat.Login.ips)
-  return ips_.Add();
-}
-inline void Login::add_ips(const ::std::string& value) {
-  ips_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:chat.Login.ips)
-}
-inline void Login::add_ips(const char* value) {
-  ips_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:chat.Login.ips)
-}
-inline void Login::add_ips(const char* value, size_t size) {
-  ips_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:chat.Login.ips)
-}
-inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
-Login::ips() const {
-  // @@protoc_insertion_point(field_list:chat.Login.ips)
-  return ips_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::std::string>*
-Login::mutable_ips() {
-  // @@protoc_insertion_point(field_mutable_list:chat.Login.ips)
-  return &ips_;
-}
-
 inline const Login* Login::internal_default_instance() {
   return &Login_default_instance_.get();
 }
@@ -10326,61 +10237,6 @@ inline void ClientConnect::set_allocated_appversion(::std::string* appversion) {
   }
   appversion_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), appversion);
   // @@protoc_insertion_point(field_set_allocated:chat.ClientConnect.appVersion)
-}
-
-// repeated string ips = 7;
-inline int ClientConnect::ips_size() const {
-  return ips_.size();
-}
-inline void ClientConnect::clear_ips() {
-  ips_.Clear();
-}
-inline const ::std::string& ClientConnect::ips(int index) const {
-  // @@protoc_insertion_point(field_get:chat.ClientConnect.ips)
-  return ips_.Get(index);
-}
-inline ::std::string* ClientConnect::mutable_ips(int index) {
-  // @@protoc_insertion_point(field_mutable:chat.ClientConnect.ips)
-  return ips_.Mutable(index);
-}
-inline void ClientConnect::set_ips(int index, const ::std::string& value) {
-  // @@protoc_insertion_point(field_set:chat.ClientConnect.ips)
-  ips_.Mutable(index)->assign(value);
-}
-inline void ClientConnect::set_ips(int index, const char* value) {
-  ips_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:chat.ClientConnect.ips)
-}
-inline void ClientConnect::set_ips(int index, const char* value, size_t size) {
-  ips_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:chat.ClientConnect.ips)
-}
-inline ::std::string* ClientConnect::add_ips() {
-  // @@protoc_insertion_point(field_add_mutable:chat.ClientConnect.ips)
-  return ips_.Add();
-}
-inline void ClientConnect::add_ips(const ::std::string& value) {
-  ips_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:chat.ClientConnect.ips)
-}
-inline void ClientConnect::add_ips(const char* value) {
-  ips_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:chat.ClientConnect.ips)
-}
-inline void ClientConnect::add_ips(const char* value, size_t size) {
-  ips_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:chat.ClientConnect.ips)
-}
-inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
-ClientConnect::ips() const {
-  // @@protoc_insertion_point(field_list:chat.ClientConnect.ips)
-  return ips_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::std::string>*
-ClientConnect::mutable_ips() {
-  // @@protoc_insertion_point(field_mutable_list:chat.ClientConnect.ips)
-  return &ips_;
 }
 
 inline const ClientConnect* ClientConnect::internal_default_instance() {

@@ -1592,7 +1592,6 @@ struct Chat_Login: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
     2: .same(proto: "countryCode", swift: "countryCode"),
     3: .same(proto: "password", swift: "password"),
     4: .same(proto: "device", swift: "device"),
-    5: .same(proto: "ips", swift: "ips"),
   ]
 
   private class _StorageClass {
@@ -1601,7 +1600,6 @@ struct Chat_Login: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
     var _countryCode: String = ""
     var _password: String = ""
     var _device: Chat_Device? = nil
-    var _ips: [String] = []
 
     init() {}
 
@@ -1611,7 +1609,6 @@ struct Chat_Login: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
       case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &_countryCode)
       case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &_password)
       case 4: try setter.decodeSingularMessageField(fieldType: Chat_Device.self, value: &_device)
-      case 5: try setter.decodeRepeatedField(fieldType: SwiftProtobuf.ProtobufString.self, value: &_ips)
       default: break
       }
     }
@@ -1629,9 +1626,6 @@ struct Chat_Login: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
       if let v = _device {
         try visitor.visitSingularMessageField(value: v, protoFieldNumber: 4)
       }
-      if !_ips.isEmpty {
-        try visitor.visitRepeatedField(fieldType: SwiftProtobuf.ProtobufString.self, value: _ips, protoFieldNumber: 5)
-      }
     }
 
     func isEqualTo(other: _StorageClass) -> Bool {
@@ -1639,7 +1633,6 @@ struct Chat_Login: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
       if _countryCode != other._countryCode {return false}
       if _password != other._password {return false}
       if _device != other._device {return false}
-      if _ips != other._ips {return false}
       return true
     }
 
@@ -1649,7 +1642,6 @@ struct Chat_Login: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
       clone._countryCode = _countryCode
       clone._password = _password
       clone._device = _device
-      clone._ips = _ips
       return clone
     }
   }
@@ -1674,6 +1666,7 @@ struct Chat_Login: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
     set {_uniqueStorage()._password = newValue}
   }
 
+  ///  repeated string ips = 5;
   var device: Chat_Device {
     get {return _storage._device ?? Chat_Device()}
     set {_uniqueStorage()._device = newValue}
@@ -1683,11 +1676,6 @@ struct Chat_Login: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
   }
   public mutating func clearDevice() {
     return _storage._device = nil
-  }
-
-  var ips: [String] {
-    get {return _storage._ips}
-    set {_uniqueStorage()._ips = newValue}
   }
 
   init() {}
@@ -1819,7 +1807,6 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     4: .same(proto: "clientVersion", swift: "clientVersion"),
     5: .same(proto: "OSVersion", swift: "osversion"),
     6: .same(proto: "appVersion", swift: "appVersion"),
-    7: .same(proto: "ips", swift: "ips"),
   ]
 
 
@@ -1837,8 +1824,6 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
   ///   Dot-decimal notaiton
   var appVersion: String = ""
 
-  var ips: [String] = []
-
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
@@ -1849,7 +1834,6 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &clientVersion)
     case 5: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &osversion)
     case 6: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &appVersion)
-    case 7: try setter.decodeRepeatedField(fieldType: SwiftProtobuf.ProtobufString.self, value: &ips)
     default: break
     }
   }
@@ -1873,9 +1857,6 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     if appVersion != "" {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: appVersion, protoFieldNumber: 6)
     }
-    if !ips.isEmpty {
-      try visitor.visitRepeatedField(fieldType: SwiftProtobuf.ProtobufString.self, value: ips, protoFieldNumber: 7)
-    }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_ClientConnect) -> Bool {
@@ -1885,7 +1866,6 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     if clientVersion != other.clientVersion {return false}
     if osversion != other.osversion {return false}
     if appVersion != other.appVersion {return false}
-    if ips != other.ips {return false}
     return true
   }
 }
