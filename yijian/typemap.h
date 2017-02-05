@@ -2,6 +2,9 @@
 #define TYPEMAP_H
 #include <stdint.h>
 
+#define MinSessionID 100
+#define MaxSessionID 65535
+
 enum ChatType : uint8_t {
 
   error = 0,
@@ -53,5 +56,7 @@ enum ChatType : uint8_t {
   ping = 46,
   pong = 47,
 };
+
+bool missing_check(int32_t type);
 
 #endif

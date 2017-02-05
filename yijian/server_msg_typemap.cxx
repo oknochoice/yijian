@@ -258,7 +258,7 @@ void dispatch(chat::Login & login) {
         auto users_inconnectinfo = connectInfo_.mutable_users();
         auto it = users_inconnectinfo->find(user_sp->id());
         if (it == users_inconnectinfo->end()) {// not find
-          (*users_inconnectinfo)[user_sp->id()] = 1;
+          (*users_inconnectinfo)[user_sp->id()] = MinSessionID;
         }else {
         }
         connectInfo_.set_uuid(device->uuid());
@@ -278,14 +278,14 @@ void dispatch(chat::Login & login) {
         connectInfo_.set_servername(SERVER_NAME);
         connectInfo_.clear_users();
         auto users_inconnectinfo = connectInfo_.mutable_users();
-        (*users_inconnectinfo)[user_sp->id()] = 1;
+        (*users_inconnectinfo)[user_sp->id()] = MinSessionID;
 
         // insert connect info
         client->insertUUID(connectInfo_);
       }
       // record login
-      client->loginRecord(login.countrycode(), login.phoneno(), 
-          login.ips(), true);
+      //client->loginRecord(login.countrycode(), login.phoneno(), 
+          //login.ips(), true);
       // response request device
       auto res = chat::LoginRes();
       res.set_issuccess(true);
@@ -302,8 +302,8 @@ void dispatch(chat::Login & login) {
       YILOG_INFO ("send login noti {}", pro2string(noti));
       mountBuffer2Node(buffer::Buffer(noti), node_peer_);
     }else {
-      client->loginRecord(login.countrycode(), login.phoneno(), 
-          login.ips(), false);
+      //client->loginRecord(login.countrycode(), login.phoneno(), 
+       //   login.ips(), false);
       throw std::system_error(std::error_code(11001, std::generic_category()),
           "password or account error");
     }
@@ -424,7 +424,7 @@ void dispatch(chat::ClientConnect & connect)  {
       connectInfo_.set_osversion(connect.osversion());
       client->updateUUID(connectInfo_);
       // connect record
-      client->connectRecord(connect.userid(), connect.uuid(), connect.ips());
+      //client->connectRecord(connect.userid(), connect.uuid(), connect.ips());
       // send buffer
       auto res = chat::ClientConnectRes();
       res.set_issuccess(true);
@@ -1215,24 +1215,6 @@ void dispatch(int type, char * header, std::size_t length) {
   }
 }
 
-static std::unordered_map<int32_t, bool> 
-check_map_ = {
-  {ChatType::clientdisconnect, true},
-  {ChatType::logout, true},
-  {ChatType::queryuser, true},
-  {ChatType::queryuserversion, true},
-  {ChatType::querynode, true},
-  {ChatType::addfriend, true},
-  {ChatType::addfriendauthorize, true},
-  {ChatType::creategroup, true},
-  {ChatType::groupaddmember, true},
-  {ChatType::nodemessage, true},
-  {ChatType::querymessage, true},
-  {ChatType::media, true},
-  {ChatType::querymedia, true},
-  {ChatType::mediacheck, true},
-};
-
 
 void dispatch(std::shared_ptr<Read_IO> node, 
     std::shared_ptr<yijian::buffer> sp,
@@ -1241,7 +1223,7 @@ void dispatch(std::shared_ptr<Read_IO> node,
   currentNode_ = node;
   session_id_ = session_id;
   
-  YILOG_DEBUG ("session id {}. sp session di: {}", 
+  YILOG_DEBUG ("session id {}. sp session id: {}", 
       session_id_ ,  sp->session_id());
   YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
       "userid:{}, uuid:{}", 
@@ -1251,35 +1233,42 @@ void dispatch(std::shared_ptr<Read_IO> node,
       currentNode_->userid, 
       currentNode_->uuid);
 
-  if (unlikely(session_id_ != sp->session_id() && 
-              check_map_.find(sp->datatype()) != check_map_.end()
-        )) {
-    auto error = chat::Error();
-    error.set_errnum(11010);
-    auto err_msg = "session id error, right id is " + 
-      std::to_string(session_id_) + " .";
-    error.set_errmsg(err_msg);
-    mountBuffer2Node(buffer::Buffer(error), node_self_);
-  }else {
-    YILOG_TRACE("func: {}, sp {} {} {}", __func__,
-        sp->datatype(), sp->data(), sp->data_size());
-    if (unlikely(false == currentNode_->isConnect)) {
-      if (likely(sp->datatype() == ChatType::registor ||
-              sp->datatype() == ChatType::login ||
-              sp->datatype() == ChatType::clientconnect)) {
+  // normal
+  if (likely(session_id_ == sp->session_id())) {
+    // miss msg check
+    if (session_id_ >= MinSessionID) {
+      if (likely(true == currentNode_->isConnect &&
+            missing_check(sp->datatype())
+            )) {
+        auto client = yijian::threadCurrent::mongoClient();
+        client->updateSessionID(currentNode_->uuid, currentNode_->userid,
+            session_id_);
         dispatch(sp->datatype(), sp->data(), sp->data_size());
       }else {
         auto error = chat::Error();
         error.set_errnum(11011);
-        error.set_errmsg("need connect first");
+        error.set_errmsg("need connect first or "
+            "msg type can not pair the session id");
         mountBuffer2Node(buffer::Buffer(error), node_self_);
       }
-    }else {
-      auto client = yijian::threadCurrent::mongoClient();
-      client->updateSessionID(currentNode_->uuid, currentNode_->userid,
-          session_id_);
-      dispatch(sp->datatype(), sp->data(), sp->data_size());
+    }else {// miss msg no check
+      if (likely(!missing_check(sp->datatype()))) {
+        dispatch(sp->datatype(), sp->data(), sp->data_size());
+      }else {
+        auto error = chat::Error();
+        error.set_errnum(11013);
+        error.set_errmsg("session need < MinSessionID"
+            "msg type can not pair the session id");
+        mountBuffer2Node(buffer::Buffer(error), node_self_);
+      }
     }
+  }else {// excaption
+      auto error = chat::Error();
+      error.set_errnum(11010);
+      auto err_msg = "session id error, right id is " + 
+        std::to_string(session_id_) + " .";
+      error.set_errmsg(err_msg);
+      mountBuffer2Node(buffer::Buffer(error), node_self_);
   }
   currentNode_.reset();
 }

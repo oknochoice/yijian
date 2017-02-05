@@ -16,11 +16,11 @@
 
 #include "server_msg_typemap.h"
 
-#define PINGPONGTIME 1200
-#define PINGPONGTIMEOUT 1200
+#define PINGPONGTIME 120
+#define PINGPONGTIMEOUT 120
 
-#define QUICKREMOVETIME 1000
-#define QUICKREMOVETIMEOUT 1000
+#define QUICKREMOVETIME 100
+#define QUICKREMOVETIMEOUT 100
 /*
  *
  * declare
@@ -289,7 +289,7 @@ void configure_sslctx(SSL_CTX * ctx) {
   //SSL_CTX_set_mode(ctx, SSL_MODE_ENABLE_PARTIAL_WRITE);
   //SSL_CTX_set_mode(ctx, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
   SSL_CTX_set_mode(ctx, SSL_MODE_AUTO_RETRY);
-  SSL_CTX_set_timeout(ctx, 30);
+  SSL_CTX_set_timeout(ctx, 300);
 }
 /*
  * peer server manage
@@ -670,7 +670,15 @@ connection_read_callback (struct ev_loop * loop,
           YILOG_TRACE ("func: {}. subthread do work", __func__);
           auto sp = io->buffer_sp;
           auto watcher = &write_asyn_watcher()->as;
-          uint16_t sessionid = io->sessionid++;
+          uint16_t sessionid = 0;
+          if (missing_check(sp->datatype())) {
+            if (unlikely(io->sessionid == MaxSessionID)) {
+              io->sessionid = MinSessionID;
+              sessionid = io->sessionid;
+            }else {
+              sessionid = io->sessionid++;
+            }
+          }
           YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
               "userid:{}, uuid:{}", 
               io_sp->ping_time, 

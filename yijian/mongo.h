@@ -39,6 +39,7 @@ public:
   std::shared_ptr<chat::User> 
     queryUser(const std::string & userID);
 
+  /*
   template <class Vec_like> 
   void loginRecord(const std::string & countryCode, 
                    const std::string & phoneNo,
@@ -91,6 +92,7 @@ public:
           userID, uuid);
     }
   }
+  */
 
   std::shared_ptr<chat::AddFriendRes>
     addFriend(const chat::AddFriend & addfrd);
