@@ -668,11 +668,10 @@ void protobuf_AssignDesc_chat_5fmessage_2eproto() {
       sizeof(LoginNoti),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginNoti, _internal_metadata_));
   ClientConnect_descriptor_ = file->message_type(28);
-  static const int ClientConnect_offsets_[6] = {
+  static const int ClientConnect_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, userid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, uuid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, isrecivenoti_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, clientversion_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, osversion_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ClientConnect, appversion_),
   };
@@ -1765,77 +1764,76 @@ void protobuf_AddDesc_chat_5fmessage_2eproto_impl() {
     "e\030\004 \001(\0132\014.chat.Device\"J\n\010LoginRes\022\021\n\tisS"
     "uccess\030\001 \001(\010\022\016\n\006userID\030\002 \001(\t\022\014\n\004e_no\030\003 \001"
     "(\005\022\r\n\005e_msg\030\004 \001(\t\"1\n\tLoginNoti\022\026\n\016toUser"
-    "ID_outer\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"\201\001\n\rClientC"
-    "onnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\022\024\n\014"
-    "isReciveNoti\030\003 \001(\010\022\025\n\rclientVersion\030\004 \001("
-    "\t\022\021\n\tOSVersion\030\005 \001(\t\022\022\n\nappVersion\030\006 \001(\t"
-    "\"s\n\020ClientConnectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006us"
-    "erID\030\002 \001(\t\022\021\n\tsessionid\030\003 \001(\005\022\021\n\tisSucce"
-    "ss\030\004 \001(\010\022\r\n\005e_msg\030\005 \001(\t\022\014\n\004e_no\030\006 \001(\005\"0\n"
-    "\020ClientDisConnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUI"
-    "D\030\002 \001(\t\"3\n\023ClientDisConnectRes\022\014\n\004UUID\030\001"
-    " \001(\t\022\016\n\006userID\030\002 \001(\t\"&\n\006Logout\022\016\n\006userID"
-    "\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\")\n\tLogoutRes\022\014\n\004UUI"
-    "D\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\">\n\tAddFriend\022\021\n\t"
-    "inviteeID\030\001 \001(\t\022\021\n\tinviterID\030\002 \001(\t\022\013\n\003ms"
-    "g\030\003 \001(\t\"F\n\014AddFriendRes\022\021\n\tinviterID\030\001 \001"
-    "(\t\022\021\n\tinviteeID\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\""
-    "M\n\rAddFriendNoti\022\026\n\016toUserID_outer\030\001 \001(\t"
-    "\022$\n\010response\030\002 \001(\0132\022.chat.AddFriendRes\"Z"
-    "\n\022AddFriendAuthorize\022\021\n\tinviterID\030\001 \001(\t\022"
-    "\021\n\tinviteeID\030\002 \001(\t\022\036\n\007isAgree\030\003 \001(\0162\r.ch"
-    "at.IsAgree\"O\n\025AddFriendAuthorizeRes\022\036\n\007i"
-    "sAgree\030\001 \001(\0162\r.chat.IsAgree\022\026\n\016toUserID_"
-    "outer\030\002 \001(\t\"\\\n\026AddFriendAuthorizeNoti\022\026\n"
-    "\016toUserID_outer\030\001 \001(\t\022*\n\010response\030\002 \001(\0132"
-    "\030.chat.AddFriendAuthorize\"#\n\022QueryAddfri"
-    "endInfo\022\r\n\005count\030\001 \001(\005\"Z\n\025QueryAddfriend"
-    "InfoRes\022\017\n\007inviter\030\001 \001(\t\022\017\n\007invitee\030\002 \001("
-    "\t\022\020\n\010toNodeID\030\003 \001(\t\022\r\n\005isEnd\030\004 \001(\010\"B\n\013Cr"
-    "eateGroup\022\016\n\006userID\030\001 \001(\t\022\020\n\010nickname\030\002 "
-    "\001(\t\022\021\n\tmembersID\030\003 \003(\t\"L\n\016CreateGroupRes"
-    "\022\026\n\016toUserID_outer\030\001 \001(\t\022\020\n\010nickname\030\002 \001"
-    "(\t\022\020\n\010toNodeID\030\003 \001(\t\"5\n\016GroupAddMember\022\020"
-    "\n\010toNodeID\030\001 \001(\t\022\021\n\tmembersID\030\002 \003(\t\"=\n\021G"
-    "roupAddMemberRes\022\026\n\016toUserID_outer\030\001 \001(\t"
-    "\022\020\n\010toNodeID\030\002 \001(\t\"\234\001\n\013NodeMessage\022\n\n\002id"
-    "\030\001 \001(\t\022\022\n\nfromUserID\030\002 \001(\t\022\020\n\010toNodeID\030\003"
-    " \001(\t\022\023\n\013incrementID\030\004 \001(\005\022\035\n\004type\030\005 \001(\0162"
-    "\017.chat.MediaType\022\017\n\007content\030\006 \001(\t\022\026\n\016toU"
-    "serID_outer\030\007 \001(\t\"7\n\016NodeMessageRes\022\020\n\010t"
-    "oNodeID\030\002 \001(\t\022\023\n\013incrementID\030\003 \001(\005\"T\n\017No"
-    "deMessageNoti\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017unrea"
-    "dIncrement\030\002 \001(\005\022\026\n\016toUserID_outer\030\003 \001(\t"
-    "\";\n\016setReadMessage\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017"
-    "readedIncrement\030\002 \001(\005\"P\n\014QueryMessage\022\020\n"
-    "\010toNodeID\030\001 \001(\t\022\027\n\017fromIncrementID\030\002 \001(\005"
-    "\022\025\n\rtoIncrementID\030\003 \001(\005\"8\n\017QueryOneMessa"
-    "ge\022\020\n\010toNodeID\030\001 \001(\t\022\023\n\013incrementID\030\002 \001("
-    "\005\"5\n\rServerConnect\022\022\n\nserverName\030\001 \001(\t\022\020"
-    "\n\010serverIP\030\002 \001(\t\"8\n\020ServerDisconnect\022\022\n\n"
-    "serverName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\"\247\002\n\013C"
-    "onnectInfo\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t"
-    "\022\017\n\007isLogin\030\003 \001(\010\022\023\n\013isConnected\030\004 \001(\010\022\024"
-    "\n\014isReciveNoti\030\005 \001(\010\022\022\n\nserverName\030\006 \001(\t"
-    "\022+\n\005users\030\010 \003(\0132\034.chat.ConnectInfo.Users"
-    "Entry\022\025\n\rclientVersion\030\t \001(\t\022\021\n\tOSVersio"
-    "n\030\n \001(\t\022\022\n\nappVersion\030\013 \001(\t\022\021\n\ttimestamp"
-    "\030\014 \001(\t\032,\n\nUsersEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005val"
-    "ue\030\002 \001(\005:\0028\001\"a\n\021ConnectInfoLittle\022\014\n\004UUI"
-    "D\030\001 \001(\t\022\023\n\013isConnected\030\002 \001(\010\022\024\n\014isRecive"
-    "Noti\030\003 \001(\010\022\023\n\013nodepointor\030\004 \001(\003\"b\n\005Media"
-    "\022\014\n\004sha1\030\001 \001(\t\022\013\n\003nth\030\002 \001(\005\022\035\n\004type\030\003 \001("
-    "\0162\017.chat.MediaType\022\016\n\006length\030\004 \001(\005\022\017\n\007co"
-    "ntent\030\005 \001(\014\"D\n\010MediaRes\022\014\n\004sha1\030\001 \001(\t\022\013\n"
-    "\003nth\030\002 \001(\005\022\035\n\004type\030\003 \001(\0162\017.chat.MediaTyp"
-    "e\"\032\n\nQueryMedia\022\014\n\004sha1\030\001 \001(\t\"\034\n\014MediaIs"
-    "Exist\022\014\n\004sha1\030\001 \001(\t\"\"\n\017MediaIsExistRes\022\017"
-    "\n\007isExist\030\001 \001(\010\"\032\n\nMediaCheck\022\014\n\004sha1\030\001 "
-    "\001(\t\"/\n\rMediaCheckRes\022\014\n\004sha1\030\001 \001(\t\022\020\n\010is"
-    "Intact\030\002 \001(\010*8\n\007IsAgree\022\n\n\006unknow\020\000\022\t\n\005a"
-    "gree\020\001\022\n\n\006refuse\020\002\022\n\n\006ignore\020\003*3\n\tMediaT"
-    "ype\022\n\n\006UNKNOW\020\000\022\010\n\004TEXT\020\001\022\007\n\003JPG\020\002\022\007\n\003MP"
-    "3\020\003B\003\370\001\000b\006proto3", 4856);
+    "ID_outer\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"j\n\rClientCo"
+    "nnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\022\024\n\014i"
+    "sReciveNoti\030\003 \001(\010\022\021\n\tOSVersion\030\004 \001(\t\022\022\n\n"
+    "appVersion\030\005 \001(\t\"s\n\020ClientConnectRes\022\014\n\004"
+    "UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022\021\n\tsessionid\030"
+    "\003 \001(\005\022\021\n\tisSuccess\030\004 \001(\010\022\r\n\005e_msg\030\005 \001(\t\022"
+    "\014\n\004e_no\030\006 \001(\005\"0\n\020ClientDisConnect\022\016\n\006use"
+    "rID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"3\n\023ClientDisConn"
+    "ectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\"&\n\006"
+    "Logout\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\")\n\t"
+    "LogoutRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\""
+    ">\n\tAddFriend\022\021\n\tinviteeID\030\001 \001(\t\022\021\n\tinvit"
+    "erID\030\002 \001(\t\022\013\n\003msg\030\003 \001(\t\"F\n\014AddFriendRes\022"
+    "\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeID\030\002 \001(\t\022\020\n"
+    "\010toNodeID\030\003 \001(\t\"M\n\rAddFriendNoti\022\026\n\016toUs"
+    "erID_outer\030\001 \001(\t\022$\n\010response\030\002 \001(\0132\022.cha"
+    "t.AddFriendRes\"Z\n\022AddFriendAuthorize\022\021\n\t"
+    "inviterID\030\001 \001(\t\022\021\n\tinviteeID\030\002 \001(\t\022\036\n\007is"
+    "Agree\030\003 \001(\0162\r.chat.IsAgree\"O\n\025AddFriendA"
+    "uthorizeRes\022\036\n\007isAgree\030\001 \001(\0162\r.chat.IsAg"
+    "ree\022\026\n\016toUserID_outer\030\002 \001(\t\"\\\n\026AddFriend"
+    "AuthorizeNoti\022\026\n\016toUserID_outer\030\001 \001(\t\022*\n"
+    "\010response\030\002 \001(\0132\030.chat.AddFriendAuthoriz"
+    "e\"#\n\022QueryAddfriendInfo\022\r\n\005count\030\001 \001(\005\"Z"
+    "\n\025QueryAddfriendInfoRes\022\017\n\007inviter\030\001 \001(\t"
+    "\022\017\n\007invitee\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\022\r\n\005i"
+    "sEnd\030\004 \001(\010\"B\n\013CreateGroup\022\016\n\006userID\030\001 \001("
+    "\t\022\020\n\010nickname\030\002 \001(\t\022\021\n\tmembersID\030\003 \003(\t\"L"
+    "\n\016CreateGroupRes\022\026\n\016toUserID_outer\030\001 \001(\t"
+    "\022\020\n\010nickname\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\"5\n\016"
+    "GroupAddMember\022\020\n\010toNodeID\030\001 \001(\t\022\021\n\tmemb"
+    "ersID\030\002 \003(\t\"=\n\021GroupAddMemberRes\022\026\n\016toUs"
+    "erID_outer\030\001 \001(\t\022\020\n\010toNodeID\030\002 \001(\t\"\234\001\n\013N"
+    "odeMessage\022\n\n\002id\030\001 \001(\t\022\022\n\nfromUserID\030\002 \001"
+    "(\t\022\020\n\010toNodeID\030\003 \001(\t\022\023\n\013incrementID\030\004 \001("
+    "\005\022\035\n\004type\030\005 \001(\0162\017.chat.MediaType\022\017\n\007cont"
+    "ent\030\006 \001(\t\022\026\n\016toUserID_outer\030\007 \001(\t\"7\n\016Nod"
+    "eMessageRes\022\020\n\010toNodeID\030\002 \001(\t\022\023\n\013increme"
+    "ntID\030\003 \001(\005\"T\n\017NodeMessageNoti\022\020\n\010toNodeI"
+    "D\030\001 \001(\t\022\027\n\017unreadIncrement\030\002 \001(\005\022\026\n\016toUs"
+    "erID_outer\030\003 \001(\t\";\n\016setReadMessage\022\020\n\010to"
+    "NodeID\030\001 \001(\t\022\027\n\017readedIncrement\030\002 \001(\005\"P\n"
+    "\014QueryMessage\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017fromI"
+    "ncrementID\030\002 \001(\005\022\025\n\rtoIncrementID\030\003 \001(\005\""
+    "8\n\017QueryOneMessage\022\020\n\010toNodeID\030\001 \001(\t\022\023\n\013"
+    "incrementID\030\002 \001(\005\"5\n\rServerConnect\022\022\n\nse"
+    "rverName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\"8\n\020Serv"
+    "erDisconnect\022\022\n\nserverName\030\001 \001(\t\022\020\n\010serv"
+    "erIP\030\002 \001(\t\"\247\002\n\013ConnectInfo\022\014\n\004UUID\030\001 \001(\t"
+    "\022\016\n\006userID\030\002 \001(\t\022\017\n\007isLogin\030\003 \001(\010\022\023\n\013isC"
+    "onnected\030\004 \001(\010\022\024\n\014isReciveNoti\030\005 \001(\010\022\022\n\n"
+    "serverName\030\006 \001(\t\022+\n\005users\030\010 \003(\0132\034.chat.C"
+    "onnectInfo.UsersEntry\022\025\n\rclientVersion\030\t"
+    " \001(\t\022\021\n\tOSVersion\030\n \001(\t\022\022\n\nappVersion\030\013 "
+    "\001(\t\022\021\n\ttimestamp\030\014 \001(\t\032,\n\nUsersEntry\022\013\n\003"
+    "key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"a\n\021ConnectI"
+    "nfoLittle\022\014\n\004UUID\030\001 \001(\t\022\023\n\013isConnected\030\002"
+    " \001(\010\022\024\n\014isReciveNoti\030\003 \001(\010\022\023\n\013nodepointo"
+    "r\030\004 \001(\003\"b\n\005Media\022\014\n\004sha1\030\001 \001(\t\022\013\n\003nth\030\002 "
+    "\001(\005\022\035\n\004type\030\003 \001(\0162\017.chat.MediaType\022\016\n\006le"
+    "ngth\030\004 \001(\005\022\017\n\007content\030\005 \001(\014\"D\n\010MediaRes\022"
+    "\014\n\004sha1\030\001 \001(\t\022\013\n\003nth\030\002 \001(\005\022\035\n\004type\030\003 \001(\016"
+    "2\017.chat.MediaType\"\032\n\nQueryMedia\022\014\n\004sha1\030"
+    "\001 \001(\t\"\034\n\014MediaIsExist\022\014\n\004sha1\030\001 \001(\t\"\"\n\017M"
+    "ediaIsExistRes\022\017\n\007isExist\030\001 \001(\010\"\032\n\nMedia"
+    "Check\022\014\n\004sha1\030\001 \001(\t\"/\n\rMediaCheckRes\022\014\n\004"
+    "sha1\030\001 \001(\t\022\020\n\010isIntact\030\002 \001(\010*8\n\007IsAgree\022"
+    "\n\n\006unknow\020\000\022\t\n\005agree\020\001\022\n\n\006refuse\020\002\022\n\n\006ig"
+    "nore\020\003*3\n\tMediaType\022\n\n\006UNKNOW\020\000\022\010\n\004TEXT\020"
+    "\001\022\007\n\003JPG\020\002\022\007\n\003MP3\020\003B\003\370\001\000b\006proto3", 4832);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chat_message.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_chat_5fmessage_2eproto);
@@ -13761,7 +13759,6 @@ inline const LoginNoti* LoginNoti::internal_default_instance() {
 const int ClientConnect::kUserIDFieldNumber;
 const int ClientConnect::kUUIDFieldNumber;
 const int ClientConnect::kIsReciveNotiFieldNumber;
-const int ClientConnect::kClientVersionFieldNumber;
 const int ClientConnect::kOSVersionFieldNumber;
 const int ClientConnect::kAppVersionFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -13787,7 +13784,6 @@ ClientConnect::ClientConnect(const ClientConnect& from)
 void ClientConnect::SharedCtor() {
   userid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clientversion_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   osversion_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   appversion_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   isrecivenoti_ = false;
@@ -13802,7 +13798,6 @@ ClientConnect::~ClientConnect() {
 void ClientConnect::SharedDtor() {
   userid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   uuid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clientversion_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   osversion_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   appversion_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -13837,7 +13832,6 @@ void ClientConnect::Clear() {
   userid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   uuid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   isrecivenoti_ = false;
-  clientversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   osversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   appversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -13896,30 +13890,13 @@ bool ClientConnect::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_clientVersion;
+        if (input->ExpectTag(34)) goto parse_OSVersion;
         break;
       }
 
-      // optional string clientVersion = 4;
+      // optional string OSVersion = 4;
       case 4: {
         if (tag == 34) {
-         parse_clientVersion:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_clientversion()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->clientversion().data(), this->clientversion().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "chat.ClientConnect.clientVersion"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(42)) goto parse_OSVersion;
-        break;
-      }
-
-      // optional string OSVersion = 5;
-      case 5: {
-        if (tag == 42) {
          parse_OSVersion:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_osversion()));
@@ -13930,13 +13907,13 @@ bool ClientConnect::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_appVersion;
+        if (input->ExpectTag(42)) goto parse_appVersion;
         break;
       }
 
-      // optional string appVersion = 6;
-      case 6: {
-        if (tag == 50) {
+      // optional string appVersion = 5;
+      case 5: {
+        if (tag == 42) {
          parse_appVersion:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_appversion()));
@@ -14000,34 +13977,24 @@ void ClientConnect::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->isrecivenoti(), output);
   }
 
-  // optional string clientVersion = 4;
-  if (this->clientversion().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->clientversion().data(), this->clientversion().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.ClientConnect.clientVersion");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->clientversion(), output);
-  }
-
-  // optional string OSVersion = 5;
+  // optional string OSVersion = 4;
   if (this->osversion().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->osversion().data(), this->osversion().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "chat.ClientConnect.OSVersion");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->osversion(), output);
+      4, this->osversion(), output);
   }
 
-  // optional string appVersion = 6;
+  // optional string appVersion = 5;
   if (this->appversion().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->appversion().data(), this->appversion().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "chat.ClientConnect.appVersion");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      6, this->appversion(), output);
+      5, this->appversion(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:chat.ClientConnect)
@@ -14064,18 +14031,7 @@ void ClientConnect::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->isrecivenoti(), target);
   }
 
-  // optional string clientVersion = 4;
-  if (this->clientversion().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->clientversion().data(), this->clientversion().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.ClientConnect.clientVersion");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->clientversion(), target);
-  }
-
-  // optional string OSVersion = 5;
+  // optional string OSVersion = 4;
   if (this->osversion().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->osversion().data(), this->osversion().length(),
@@ -14083,10 +14039,10 @@ void ClientConnect::SerializeWithCachedSizes(
       "chat.ClientConnect.OSVersion");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->osversion(), target);
+        4, this->osversion(), target);
   }
 
-  // optional string appVersion = 6;
+  // optional string appVersion = 5;
   if (this->appversion().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->appversion().data(), this->appversion().length(),
@@ -14094,7 +14050,7 @@ void ClientConnect::SerializeWithCachedSizes(
       "chat.ClientConnect.appVersion");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        6, this->appversion(), target);
+        5, this->appversion(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:chat.ClientConnect)
@@ -14124,21 +14080,14 @@ size_t ClientConnect::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
-  // optional string clientVersion = 4;
-  if (this->clientversion().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->clientversion());
-  }
-
-  // optional string OSVersion = 5;
+  // optional string OSVersion = 4;
   if (this->osversion().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->osversion());
   }
 
-  // optional string appVersion = 6;
+  // optional string appVersion = 5;
   if (this->appversion().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -14189,10 +14138,6 @@ void ClientConnect::UnsafeMergeFrom(const ClientConnect& from) {
   if (from.isrecivenoti() != 0) {
     set_isrecivenoti(from.isrecivenoti());
   }
-  if (from.clientversion().size() > 0) {
-
-    clientversion_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.clientversion_);
-  }
   if (from.osversion().size() > 0) {
 
     osversion_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.osversion_);
@@ -14230,7 +14175,6 @@ void ClientConnect::InternalSwap(ClientConnect* other) {
   userid_.Swap(&other->userid_);
   uuid_.Swap(&other->uuid_);
   std::swap(isrecivenoti_, other->isrecivenoti_);
-  clientversion_.Swap(&other->clientversion_);
   osversion_.Swap(&other->osversion_);
   appversion_.Swap(&other->appversion_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -14350,51 +14294,7 @@ void ClientConnect::set_isrecivenoti(bool value) {
   // @@protoc_insertion_point(field_set:chat.ClientConnect.isReciveNoti)
 }
 
-// optional string clientVersion = 4;
-void ClientConnect::clear_clientversion() {
-  clientversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& ClientConnect::clientversion() const {
-  // @@protoc_insertion_point(field_get:chat.ClientConnect.clientVersion)
-  return clientversion_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void ClientConnect::set_clientversion(const ::std::string& value) {
-  
-  clientversion_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.ClientConnect.clientVersion)
-}
-void ClientConnect::set_clientversion(const char* value) {
-  
-  clientversion_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.ClientConnect.clientVersion)
-}
-void ClientConnect::set_clientversion(const char* value, size_t size) {
-  
-  clientversion_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.ClientConnect.clientVersion)
-}
-::std::string* ClientConnect::mutable_clientversion() {
-  
-  // @@protoc_insertion_point(field_mutable:chat.ClientConnect.clientVersion)
-  return clientversion_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* ClientConnect::release_clientversion() {
-  // @@protoc_insertion_point(field_release:chat.ClientConnect.clientVersion)
-  
-  return clientversion_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void ClientConnect::set_allocated_clientversion(::std::string* clientversion) {
-  if (clientversion != NULL) {
-    
-  } else {
-    
-  }
-  clientversion_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), clientversion);
-  // @@protoc_insertion_point(field_set_allocated:chat.ClientConnect.clientVersion)
-}
-
-// optional string OSVersion = 5;
+// optional string OSVersion = 4;
 void ClientConnect::clear_osversion() {
   osversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -14438,7 +14338,7 @@ void ClientConnect::set_allocated_osversion(::std::string* osversion) {
   // @@protoc_insertion_point(field_set_allocated:chat.ClientConnect.OSVersion)
 }
 
-// optional string appVersion = 6;
+// optional string appVersion = 5;
 void ClientConnect::clear_appversion() {
   appversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

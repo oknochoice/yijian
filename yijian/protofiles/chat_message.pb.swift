@@ -1804,9 +1804,8 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     1: .same(proto: "userID", swift: "userId"),
     2: .same(proto: "UUID", swift: "uuid"),
     3: .same(proto: "isReciveNoti", swift: "isReciveNoti"),
-    4: .same(proto: "clientVersion", swift: "clientVersion"),
-    5: .same(proto: "OSVersion", swift: "osversion"),
-    6: .same(proto: "appVersion", swift: "appVersion"),
+    4: .same(proto: "OSVersion", swift: "osversion"),
+    5: .same(proto: "appVersion", swift: "appVersion"),
   ]
 
 
@@ -1815,9 +1814,6 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
   var uuid: String = ""
 
   var isReciveNoti: Bool = false
-
-  ///   Dot-decimal notation
-  var clientVersion: String = ""
 
   var osversion: String = ""
 
@@ -1831,9 +1827,8 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &userId)
     case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &uuid)
     case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: &isReciveNoti)
-    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &clientVersion)
-    case 5: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &osversion)
-    case 6: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &appVersion)
+    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &osversion)
+    case 5: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &appVersion)
     default: break
     }
   }
@@ -1848,14 +1843,11 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     if isReciveNoti != false {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: isReciveNoti, protoFieldNumber: 3)
     }
-    if clientVersion != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: clientVersion, protoFieldNumber: 4)
-    }
     if osversion != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: osversion, protoFieldNumber: 5)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: osversion, protoFieldNumber: 4)
     }
     if appVersion != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: appVersion, protoFieldNumber: 6)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: appVersion, protoFieldNumber: 5)
     }
   }
 
@@ -1863,7 +1855,6 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     if userId != other.userId {return false}
     if uuid != other.uuid {return false}
     if isReciveNoti != other.isReciveNoti {return false}
-    if clientVersion != other.clientVersion {return false}
     if osversion != other.osversion {return false}
     if appVersion != other.appVersion {return false}
     return true

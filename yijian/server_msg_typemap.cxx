@@ -200,22 +200,36 @@ void dispatch(chat::Register & enroll) {
   try {
 
     auto client = yijian::threadCurrent::mongoClient();
-    auto id = client->insertUser(enroll);
+    if (enroll.verifycode().empty()) {
+      // find user whether already signup
+      auto user_sp = client->queryUser(enroll.phoneno(), enroll.countrycode());
 
-    YILOG_TRACE ("func: {}. register, userid {}.", 
-        __func__, id);
+      throw std::system_error(std::error_code(11007, std::generic_category()),
+          "user had signup");
+    }else {
+      auto id = client->insertUser(enroll);
 
-    auto res = chat::RegisterRes();
-    res.set_userid(id);
-    res.set_issuccess(true);
-    YILOG_INFO ("register success {}", pro2string(res));
-    mountBuffer2Node(buffer::Buffer(res), node_self_);
+      YILOG_TRACE ("func: {}. register, userid {}.", 
+          __func__, id);
+
+      auto res = chat::RegisterRes();
+      res.set_userid(id);
+      res.set_issuccess(true);
+      YILOG_INFO ("register success {}", pro2string(res));
+      mountBuffer2Node(buffer::Buffer(res), node_self_);
+    }
 
   }catch (std::system_error & sys_error) {
     auto res = chat::RegisterRes();
-    res.set_issuccess(false);
-    res.set_e_no(sys_error.code().value());
-    res.set_e_msg(sys_error.what());
+    if (40002 == sys_error.code().value()) {
+      res.set_issuccess(true);
+      res.set_e_no(0);
+      res.set_e_msg("not enroll");
+    }else {
+      res.set_issuccess(false);
+      res.set_e_no(sys_error.code().value());
+      res.set_e_msg(sys_error.what());
+    }
     YILOG_INFO ("register failure {}", pro2string(res));
     mountBuffer2Node(buffer::Buffer(res), node_self_);
   }
@@ -1061,7 +1075,8 @@ void dispatch(chat::QueryMedia & querymedia) {
 }
 
 void dispatch(chat::Ping & ping) {
-  YILOG_TRACE ("func: {}. media", __func__);
+  YILOG_TRACE ("func: {}. ping", __func__);
+  YILOG_INFO ("ping {}", pro2string(ping));
   auto pong = chat::Pong();
   pong.set_msg("pong");
   mountBuffer2Node(buffer::Buffer(pong), node_self_);
@@ -1204,6 +1219,7 @@ void dispatch(int type, char * header, std::size_t length) {
       };
       (*map_p)[ChatType::ping] = [=]() {
         auto chat = chat::Ping();
+        chat.ParseFromArray(header, length);
         dispatch(chat);
       };
   });

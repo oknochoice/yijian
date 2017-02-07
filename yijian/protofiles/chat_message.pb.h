@@ -3372,20 +3372,9 @@ class ClientConnect : public ::google::protobuf::Message /* @@protoc_insertion_p
   bool isrecivenoti() const;
   void set_isrecivenoti(bool value);
 
-  // optional string clientVersion = 4;
-  void clear_clientversion();
-  static const int kClientVersionFieldNumber = 4;
-  const ::std::string& clientversion() const;
-  void set_clientversion(const ::std::string& value);
-  void set_clientversion(const char* value);
-  void set_clientversion(const char* value, size_t size);
-  ::std::string* mutable_clientversion();
-  ::std::string* release_clientversion();
-  void set_allocated_clientversion(::std::string* clientversion);
-
-  // optional string OSVersion = 5;
+  // optional string OSVersion = 4;
   void clear_osversion();
-  static const int kOSVersionFieldNumber = 5;
+  static const int kOSVersionFieldNumber = 4;
   const ::std::string& osversion() const;
   void set_osversion(const ::std::string& value);
   void set_osversion(const char* value);
@@ -3394,9 +3383,9 @@ class ClientConnect : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::std::string* release_osversion();
   void set_allocated_osversion(::std::string* osversion);
 
-  // optional string appVersion = 6;
+  // optional string appVersion = 5;
   void clear_appversion();
-  static const int kAppVersionFieldNumber = 6;
+  static const int kAppVersionFieldNumber = 5;
   const ::std::string& appversion() const;
   void set_appversion(const ::std::string& value);
   void set_appversion(const char* value);
@@ -3411,7 +3400,6 @@ class ClientConnect : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr userid_;
   ::google::protobuf::internal::ArenaStringPtr uuid_;
-  ::google::protobuf::internal::ArenaStringPtr clientversion_;
   ::google::protobuf::internal::ArenaStringPtr osversion_;
   ::google::protobuf::internal::ArenaStringPtr appversion_;
   bool isrecivenoti_;
@@ -10107,51 +10095,7 @@ inline void ClientConnect::set_isrecivenoti(bool value) {
   // @@protoc_insertion_point(field_set:chat.ClientConnect.isReciveNoti)
 }
 
-// optional string clientVersion = 4;
-inline void ClientConnect::clear_clientversion() {
-  clientversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& ClientConnect::clientversion() const {
-  // @@protoc_insertion_point(field_get:chat.ClientConnect.clientVersion)
-  return clientversion_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void ClientConnect::set_clientversion(const ::std::string& value) {
-  
-  clientversion_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.ClientConnect.clientVersion)
-}
-inline void ClientConnect::set_clientversion(const char* value) {
-  
-  clientversion_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.ClientConnect.clientVersion)
-}
-inline void ClientConnect::set_clientversion(const char* value, size_t size) {
-  
-  clientversion_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.ClientConnect.clientVersion)
-}
-inline ::std::string* ClientConnect::mutable_clientversion() {
-  
-  // @@protoc_insertion_point(field_mutable:chat.ClientConnect.clientVersion)
-  return clientversion_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* ClientConnect::release_clientversion() {
-  // @@protoc_insertion_point(field_release:chat.ClientConnect.clientVersion)
-  
-  return clientversion_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void ClientConnect::set_allocated_clientversion(::std::string* clientversion) {
-  if (clientversion != NULL) {
-    
-  } else {
-    
-  }
-  clientversion_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), clientversion);
-  // @@protoc_insertion_point(field_set_allocated:chat.ClientConnect.clientVersion)
-}
-
-// optional string OSVersion = 5;
+// optional string OSVersion = 4;
 inline void ClientConnect::clear_osversion() {
   osversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -10195,7 +10139,7 @@ inline void ClientConnect::set_allocated_osversion(::std::string* osversion) {
   // @@protoc_insertion_point(field_set_allocated:chat.ClientConnect.OSVersion)
 }
 
-// optional string appVersion = 6;
+// optional string appVersion = 5;
 inline void ClientConnect::clear_appversion() {
   appversion_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
