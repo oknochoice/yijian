@@ -413,8 +413,8 @@ void dispatch(chat::ClientConnect & connect)  {
                   return device.uuid() == connect.uuid();
                 });
     if (unlikely(it == devices->end())) {
-      mountBuffer2Node(errorBuffer(11003, "device not find"), 
-          node_self_);
+      throw std::system_error(std::error_code(11003, std::generic_category()),
+          "device not find");
     }else {
       auto isFind = client->findUUID(connect.uuid(), connectInfo_);
       YILOG_INFO ("connectInfo_: {}", pro2string(connectInfo_));
@@ -474,8 +474,8 @@ void dispatch(chat::ClientDisConnect & disconnect)  {
                   return device.uuid() == disconnect.uuid();
                 });
     if (unlikely(it == devices->end())) {
-      mountBuffer2Node(errorBuffer(11004, "device not find"),
-          node_self_);
+      throw std::system_error(std::error_code(11004, std::generic_category()),
+          "device not find");
     }else {
       // update in memory db connectinfo
       auto isFind = client->findUUID(disconnect.uuid(), connectInfo_);

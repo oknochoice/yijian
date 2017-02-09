@@ -143,6 +143,7 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
  * quick remove node
  *
  * */
+/*
 struct QuickRemove {
   Imp_list first_;
   Imp_list second_;
@@ -176,6 +177,7 @@ quickremove_callback(EV_P_ ev_timer *w, int revents) {
   ev_timer_set (w, QUICKREMOVETIME, 0.);
   ev_timer_start (loop, w);
 }
+*/
 /*
  *
  * uuid key read io pointor value: map
@@ -629,7 +631,8 @@ socket_accept_callback (struct ev_loop * loop,
   ev_io_start (loop, &client_read_watcher->io);
 
   // add read wather to pinglist
-  quickremove_append(client_read_watcher);
+  // quickremove_append(client_read_watcher);
+  ping_append(client_read_watcher);
 }
 
 static void 
@@ -778,6 +781,8 @@ connection_write_callback (struct ev_loop * loop,
         YILOG_INFO ("clientconnectres set isConnect true");
         read_io_sp->isConnect = true;
         if (likely(!read_io_sp->uuid.empty())) {
+          uuidnode_put(read_io_sp->uuid, read_io_sp);
+            /*
           // remove old node from pinglist;
           try {
             auto lsp = uuidnode_get(read_io_sp->uuid);
@@ -785,13 +790,14 @@ connection_write_callback (struct ev_loop * loop,
               YILOG_TRACE ("erase old Read_IO from pinglist");
               ping_erase(lsp);
             }
+            // append new
+            ping_append(read_io_sp);
+            // uuid node map
+            uuidnode_put(read_io_sp->uuid, read_io_sp);
           }catch(std::out_of_range & e) {
             YILOG_TRACE ("node not in pinglist");
           }
-          // append new
-          ping_append(read_io_sp);
-          // uuid node map
-          uuidnode_put(read_io_sp->uuid, read_io_sp);
+            */
         }else {
           YILOG_ERROR ("uuid not find in client connect res, connect write callback");
         }
@@ -898,9 +904,11 @@ int start_server_libev(IPS ips ) {
   ev_timer_start (lloop, timer);
 
   //timer quick remove
+  /*
   struct ev_timer * quick_timer = quicktimer_watcher();
   ev_timer_init (quick_timer, quickremove_callback, QUICKREMOVETIME, 0.);
   ev_timer_start (lloop, quick_timer);
+  */
 
   ev_run (lloop, 0);
 

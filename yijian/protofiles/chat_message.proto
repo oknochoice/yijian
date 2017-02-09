@@ -212,7 +212,7 @@ message ClientConnect {
   bool   isReciveNoti = 3;
   string OSVersion = 4;
   string appVersion = 5; // Dot-decimal notaiton
-  //string clientVersion = 4;// Dot-decimal notation
+  string clientVersion = 6;// Dot-decimal notation
   //repeated string ips = 7;
 }
 

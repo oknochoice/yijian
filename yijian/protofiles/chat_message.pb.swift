@@ -1806,6 +1806,7 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     3: .same(proto: "isReciveNoti", swift: "isReciveNoti"),
     4: .same(proto: "OSVersion", swift: "osversion"),
     5: .same(proto: "appVersion", swift: "appVersion"),
+    6: .same(proto: "clientVersion", swift: "clientVersion"),
   ]
 
 
@@ -1820,6 +1821,9 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
   ///   Dot-decimal notaiton
   var appVersion: String = ""
 
+  ///   Dot-decimal notation
+  var clientVersion: String = ""
+
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
@@ -1829,6 +1833,7 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: &isReciveNoti)
     case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &osversion)
     case 5: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &appVersion)
+    case 6: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &clientVersion)
     default: break
     }
   }
@@ -1849,6 +1854,9 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     if appVersion != "" {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: appVersion, protoFieldNumber: 5)
     }
+    if clientVersion != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: clientVersion, protoFieldNumber: 6)
+    }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_ClientConnect) -> Bool {
@@ -1857,6 +1865,7 @@ struct Chat_ClientConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
     if isReciveNoti != other.isReciveNoti {return false}
     if osversion != other.osversion {return false}
     if appVersion != other.appVersion {return false}
+    if clientVersion != other.clientVersion {return false}
     return true
   }
 }
