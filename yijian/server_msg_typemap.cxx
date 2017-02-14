@@ -7,7 +7,7 @@
 #include "protofiles/chat_message.pb.h"
 #include <string>
 #include <queue>
-#include "buffer_yi.h"
+#include "buffer_yi_util.hpp"
 #include "libev_server.h"
 #include <unordered_map>
 #include <google/protobuf/util/json_util.h>
@@ -80,11 +80,11 @@ using yijian::buffer;
 
 namespace yijian {
   namespace threadCurrent {
-    Buffer_SP errorBuffer(uint_fast32_t err_num, std::string && err_msg) {
+    std::vector<Buffer_SP> errorBuffer(uint_fast32_t err_num, std::string && err_msg) {
       auto error = chat::Error();
       error.set_errnum(err_num);
       error.set_errmsg(err_msg);
-      return buffer::Buffer(error);
+      return yijianBuffer(error);
     }
   }
 }
@@ -100,11 +100,14 @@ using yijian::threadCurrent::infolittle_;
 using yijian::threadCurrent::session_id_;
 
 // user require device
-void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSelfDevice & ) {
+void mountBuffer2Node(std::vector<Buffer_SP> && buf_sp_v, chat::NodeSelfDevice & ) {
   YILOG_TRACE ("func: {}. self device", __func__);
-  buf_sp->set_sessionid(session_id_);
   std::unique_lock<std::mutex> ul(currentNode_->writeio_sp->buffers_p_mutex);
-  currentNode_->writeio_sp->buffers_p.push(buf_sp);
+  for( auto sp: buf_sp_v) {
+    sp->set_sessionid(session_id_, false);
+    currentNode_->writeio_sp->buffers_p.push(sp);
+  }
+  buf_sp_v.back()->set_sessionid(session_id_, true);
   YILOG_TRACE ("func: {}. self device, write queue count {}", 
       __func__, currentNode_->writeio_sp->buffers_p.size());
   // push node
@@ -112,14 +115,18 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSelfDevice & ) {
 }
 
 // peer server
-void mountBuffer2Node(Buffer_SP buf_sp, chat::NodePeerServer & ) {
+void mountBuffer2Node(std::vector<Buffer_SP> && buf_sp_v, chat::NodePeerServer & ) {
   YILOG_TRACE ("func: {}. peer server", __func__);
   //transmit to peer server
-  peer_server_foreach([buf_sp](std::shared_ptr<Read_IO> lnode){
+  peer_server_foreach([&buf_sp_v](std::shared_ptr<Read_IO> lnode){
         // mount buffer to pingnode
         {
           std::unique_lock<std::mutex> ul(lnode->writeio_sp->buffers_p_mutex);
-          lnode->writeio_sp->buffers_p.push(buf_sp);
+          for( auto sp: buf_sp_v) {
+            sp->set_sessionid(session_id_, false);
+            lnode->writeio_sp->buffers_p.push(sp);
+          }
+          buf_sp_v.back()->set_sessionid(session_id_, true);
           YILOG_TRACE ("func: {}. peer server, write queue count {}", 
               __func__, lnode->writeio_sp->buffers_p.size());
           // push node
@@ -131,7 +138,7 @@ void mountBuffer2Node(Buffer_SP buf_sp, chat::NodePeerServer & ) {
       });
 }
 
-void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
+void traverseDevices(chat::ConnectInfoLittle & infolittle, std::vector<Buffer_SP> && buf_sp_v) {
   YILOG_TRACE ("func: {}. ", __func__);
   if (infolittle.isconnected()) {
     YILOG_TRACE ("func: {}. online", __func__);
@@ -141,12 +148,16 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
     if (unlikely(currentNode_->uuid == luuid)) return;
     // mount buffer to pingnode
     YILOG_INFO ("luuid: {}", luuid);
-    mountBuffer2Device(luuid, [buf_sp](std::shared_ptr<Read_IO> io_sp){
+    mountBuffer2Device(luuid, [&buf_sp_v](std::shared_ptr<Read_IO> io_sp){
           YILOG_INFO ("uuid: {}", io_sp->uuid);
           {
             std::unique_lock<std::mutex> uiol(
                 io_sp->writeio_sp->buffers_p_mutex);
-            io_sp->writeio_sp->buffers_p.push(buf_sp);
+            for( auto sp: buf_sp_v) {
+              sp->set_sessionid(session_id_, false);
+              io_sp->writeio_sp->buffers_p.push(sp);
+            }
+            buf_sp_v.back()->set_sessionid(session_id_, true);
           }
           yijian::threadCurrent::pushPingnode(io_sp);
         });
@@ -154,30 +165,23 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle, Buffer_SP buf_sp) {
 }
 
 // current server subscribe to toNode devices(exclude require device)
-void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeSpecifiy & node_specifiy) {
+void mountBuffer2Node(std::vector<Buffer_SP> && buf_sp_v, chat::NodeSpecifiy & node_specifiy) {
   YILOG_TRACE ("func: {}. node specifiy", __func__);
   auto client = yijian::threadCurrent::mongoClient();
   auto node_sp = client->queryNode(node_specifiy.tonodeid());
   client->devices(node_sp->members(), 
-      [buf_sp](chat::ConnectInfoLittle & infolittle) {
-        traverseDevices(infolittle, buf_sp);
+      [&buf_sp_v](chat::ConnectInfoLittle & infolittle) {
+        traverseDevices(infolittle, std::forward<std::vector<Buffer_SP>>(buf_sp_v));
       });
 }
 
-void mountBuffer2Node(Buffer_SP buf_sp, chat::NodeUser & node_user) {
+void mountBuffer2Node(std::vector<Buffer_SP> && buf_sp_v, chat::NodeUser & node_user) {
   YILOG_TRACE ("func: {}. node user", __func__);
   auto client = yijian::threadCurrent::mongoClient();
   client->devices(node_user, 
-      [buf_sp](chat::ConnectInfoLittle & infolittle) {
-        traverseDevices(infolittle, buf_sp);
+      [&buf_sp_v](chat::ConnectInfoLittle & infolittle) {
+        traverseDevices(infolittle, std::forward<std::vector<Buffer_SP>>(buf_sp_v));
       });
-}
-
-template <typename Proto>
-std::string pro2string(Proto & any) {
-  std::string value;
-  google::protobuf::util::MessageToJsonString(any, &value);
-  return value;
 }
 
 // dispatch 
@@ -216,7 +220,7 @@ void dispatch(chat::Register & enroll) {
       res.set_userid(id);
       res.set_issuccess(true);
       YILOG_INFO ("register success {}", pro2string(res));
-      mountBuffer2Node(buffer::Buffer(res), node_self_);
+      mountBuffer2Node(yijianBuffer(res), node_self_);
     }
 
   }catch (std::system_error & sys_error) {
@@ -231,7 +235,7 @@ void dispatch(chat::Register & enroll) {
       res.set_e_msg(sys_error.what());
     }
     YILOG_INFO ("register failure {}", pro2string(res));
-    mountBuffer2Node(buffer::Buffer(res), node_self_);
+    mountBuffer2Node(yijianBuffer(res), node_self_);
   }
 
 }
@@ -305,16 +309,16 @@ void dispatch(chat::Login & login) {
       res.set_issuccess(true);
       res.set_userid(user_sp->id());
       YILOG_INFO ("login success {}", pro2string(res));
-      mountBuffer2Node(buffer::Buffer(res), node_self_);
+      mountBuffer2Node(yijianBuffer(res), node_self_);
       node_user_.set_touserid(currentNode_->userid);
 
       auto noti = chat::LoginNoti();
       noti.set_uuid(login.device().uuid());
-      mountBuffer2Node(buffer::Buffer(noti), node_user_);
+      mountBuffer2Node(yijianBuffer(noti), node_user_);
 
       noti.set_touserid_outer(currentNode_->userid);
       YILOG_INFO ("send login noti {}", pro2string(noti));
-      mountBuffer2Node(buffer::Buffer(noti), node_peer_);
+      mountBuffer2Node(yijianBuffer(noti), node_peer_);
     }else {
       //client->loginRecord(login.countrycode(), login.phoneno(), 
        //   login.ips(), false);
@@ -328,7 +332,7 @@ void dispatch(chat::Login & login) {
     res.set_e_no(sys_error.code().value());
     res.set_e_msg(sys_error.what());
     YILOG_INFO ("login failure {}", pro2string(res));
-    mountBuffer2Node(buffer::Buffer(res), node_self_);
+    mountBuffer2Node(yijianBuffer(res), node_self_);
   }
 
 }
@@ -340,7 +344,7 @@ void dispatch(chat::LoginNoti & noti) {
   try {
     node_user_.set_touserid(noti.touserid_outer());
     noti.clear_touserid_outer();
-    mountBuffer2Node(buffer::Buffer(noti), node_user_);
+    mountBuffer2Node(yijianBuffer(noti), node_user_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
         node_self_);
@@ -383,7 +387,7 @@ void dispatch(chat::Logout & logout) {
       auto res = chat::LogoutRes();
       res.set_uuid(it->uuid());
       YILOG_INFO ("logout success {}", pro2string(res));
-      mountBuffer2Node(buffer::Buffer(res), node_self_);
+      mountBuffer2Node(yijianBuffer(res), node_self_);
       node_user_.set_touserid(currentNode_->userid);
     }
 
@@ -441,11 +445,12 @@ void dispatch(chat::ClientConnect & connect)  {
       //client->connectRecord(connect.userid(), connect.uuid(), connect.ips());
       // send buffer
       auto res = chat::ClientConnectRes();
+      res.set_userid(connectInfo_.userid());
       res.set_issuccess(true);
       res.set_uuid(connectInfo_.uuid());
       res.set_sessionid(currentNode_->sessionid);
       YILOG_INFO ("connect success {}", pro2string(res));
-      mountBuffer2Node(buffer::Buffer(res), node_self_);
+      mountBuffer2Node(yijianBuffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
     auto res = chat::ClientConnectRes();
@@ -453,7 +458,7 @@ void dispatch(chat::ClientConnect & connect)  {
     res.set_e_no(sys_error.code().value());
     res.set_e_msg(sys_error.what());
     YILOG_INFO ("connect failure {}", pro2string(res));
-    mountBuffer2Node(buffer::Buffer(res), node_self_);
+    mountBuffer2Node(yijianBuffer(res), node_self_);
   }
 
 }
@@ -491,7 +496,7 @@ void dispatch(chat::ClientDisConnect & disconnect)  {
       auto res = chat::ClientDisConnectRes();
       res.set_uuid(connectInfo_.uuid());
       YILOG_INFO ("disconnect success {}", pro2string(res));
-      mountBuffer2Node(buffer::Buffer(res), node_self_);
+      mountBuffer2Node(yijianBuffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("disconnect failure");
@@ -552,8 +557,7 @@ void dispatch(chat::AddFriend & frd) {
     auto res = client->addFriend(frd);
     YILOG_INFO ("add friend success {}", pro2string(*res));
     // send buffer
-    auto buf_sp = buffer::Buffer(*res);
-    mountBuffer2Node(buf_sp, node_self_);
+    mountBuffer2Node(yijianBuffer(*res), node_self_);
 
     // send to friend
     auto noti = chat::AddFriendNoti();
@@ -561,14 +565,14 @@ void dispatch(chat::AddFriend & frd) {
     *addres = *res;
     node_user_.set_touserid(res->inviteeid());
     YILOG_INFO ("add friend send noti to friend {}", pro2string(*res));
-    mountBuffer2Node(buffer::Buffer(noti), node_user_);
-    mountBuffer2Node(buffer::Buffer(noti), node_peer_);
+    mountBuffer2Node(yijianBuffer(noti), node_user_);
+    mountBuffer2Node(yijianBuffer(noti), node_peer_);
     // send buffer
     // send to other self
     node_user_.set_touserid(res->inviterid());
     YILOG_INFO ("add friend send noti to self {}", pro2string(*res));
-    mountBuffer2Node(buffer::Buffer(noti), node_user_);
-    mountBuffer2Node(buffer::Buffer(noti), node_peer_);
+    mountBuffer2Node(yijianBuffer(noti), node_user_);
+    mountBuffer2Node(yijianBuffer(noti), node_peer_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -584,11 +588,10 @@ void dispatch(chat::AddFriendNoti & noti) {
   YILOG_INFO ("add friend noti {}", pro2string(noti));
 
   try {
-    auto buf_sp = buffer::Buffer(noti);
     // send to userid outer
     node_user_.set_touserid(noti.touserid_outer());
     noti.clear_touserid_outer();
-    mountBuffer2Node(buf_sp, node_user_);
+    mountBuffer2Node(yijianBuffer(noti), node_user_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -621,19 +624,17 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
       // self
       YILOG_INFO ("add friend authorize success {}", 
           pro2string(authRes));
-      mountBuffer2Node(buffer::Buffer(authRes), node_self_);
+      mountBuffer2Node(yijianBuffer(authRes), node_self_);
       // inviter
       noti.set_touserid_outer(addAuth.inviterid());
-      auto inviter_buf = buffer::Buffer(noti);
       node_user_.set_touserid(addAuth.inviterid());
-      mountBuffer2Node(inviter_buf, node_user_);
-      mountBuffer2Node(inviter_buf, node_peer_);
+      mountBuffer2Node(yijianBuffer(noti), node_user_);
+      mountBuffer2Node(yijianBuffer(noti), node_peer_);
       // invitee
       noti.set_touserid_outer(addAuth.inviteeid());
       node_user_.set_touserid(addAuth.inviteeid());
-      auto invitee_buf = buffer::Buffer(authRes);
-      mountBuffer2Node(invitee_buf, node_user_);
-      mountBuffer2Node(invitee_buf, node_peer_);
+      mountBuffer2Node(yijianBuffer(authRes), node_user_);
+      mountBuffer2Node(yijianBuffer(authRes), node_peer_);
     }
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
@@ -651,7 +652,7 @@ void dispatch(chat::AddFriendAuthorizeNoti & noti) {
   try {
     node_user_.set_touserid(noti.touserid_outer());
     noti.clear_touserid_outer();
-    mountBuffer2Node(buffer::Buffer(noti), node_user_);
+    mountBuffer2Node(yijianBuffer(noti), node_user_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -672,11 +673,11 @@ void dispatch(chat::QueryAddfriendInfo & info) {
     client->queryAddfriendInfo([](std::shared_ptr<chat::QueryAddfriendInfoRes> sp){
           sp->set_isend(false);
           YILOG_INFO ("query addfriend info success {}", pro2string(*sp));
-          mountBuffer2Node(buffer::Buffer(*sp), node_self_);
+          mountBuffer2Node(yijianBuffer(*sp), node_self_);
         }, currentNode_->userid, limit);
     chat::QueryAddfriendInfoRes end;
     end.set_isend(true);
-    mountBuffer2Node(buffer::Buffer(end), node_self_);
+    mountBuffer2Node(yijianBuffer(end), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -713,7 +714,7 @@ void dispatch(chat::CreateGroup & group) {
     auto groupRes = client->createGroup(group);
     YILOG_INFO ("create group success {}", pro2string(*groupRes));
     // send to self
-    mountBuffer2Node(buffer::Buffer(*groupRes), node_self_);
+    mountBuffer2Node(yijianBuffer(*groupRes), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -747,7 +748,7 @@ void dispatch(chat::GroupAddMember & groupMember) {
     YILOG_INFO ("add group members success {}", 
         pro2string(*addRes));
     // send to self
-    mountBuffer2Node(buffer::Buffer(*addRes), node_self_);
+    mountBuffer2Node(yijianBuffer(*addRes), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -768,7 +769,7 @@ void dispatch(chat::QueryUserVersion & queryVersion) {
     version.set_userid(queryVersion.userid());
     YILOG_INFO ("query user version success {}", 
         pro2string(version));
-    mountBuffer2Node(buffer::Buffer(version), node_self_);
+    mountBuffer2Node(yijianBuffer(version), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -795,7 +796,6 @@ void dispatch(chat::QueryUser & queryUser) {
     auto queryUserRes = chat::QueryUserRes();
     auto queryuser = queryUserRes.mutable_user();
     if (queryUser.userid() != currentNode_->userid) {
-      user_sp->clear_version();
       user_sp->clear_friends();
       user_sp->clear_blacklist();
       user_sp->clear_groupnodeids();
@@ -803,7 +803,7 @@ void dispatch(chat::QueryUser & queryUser) {
     }
     *queryuser = *user_sp;
     YILOG_INFO ("query success {}", pro2string(queryUserRes));
-    mountBuffer2Node(buffer::Buffer(queryUserRes), node_self_);
+    mountBuffer2Node(yijianBuffer(queryUserRes), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -825,7 +825,7 @@ void dispatch(chat::QueryNodeVersion & querynodev) {
     version.set_version(node_sp->version());
     YILOG_INFO ("query node version success {}", 
         pro2string(version));
-    mountBuffer2Node(buffer::Buffer(version), node_self_);
+    mountBuffer2Node(yijianBuffer(version), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -847,7 +847,7 @@ void dispatch(chat::QueryNode & querynode) {
     auto node = querynoderes.mutable_node();
     *node = *node_sp;
     YILOG_INFO ("query node success {}", pro2string(querynoderes));
-    mountBuffer2Node(buffer::Buffer(querynoderes), node_self_);
+    mountBuffer2Node(yijianBuffer(querynoderes), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -872,29 +872,26 @@ void dispatch(chat::NodeMessage & message) {
     // send self
     YILOG_INFO ("message success {}", 
         pro2string(*res));
-    mountBuffer2Node(buffer::Buffer(*res), node_self_);
+    mountBuffer2Node(yijianBuffer(*res), node_self_);
     auto noti = chat::NodeMessageNoti();
     noti.set_tonodeid(res->tonodeid());
     noti.set_unreadincrement(res->incrementid());
     if (likely(message.touserid_outer().empty())) {// node
       // send to node
-      auto buf = buffer::Buffer(noti);
       node_specifiy_.set_tonodeid(res->tonodeid());
-      mountBuffer2Node(buf, node_specifiy_);
-      mountBuffer2Node(buf, node_peer_);
+      mountBuffer2Node(yijianBuffer(noti), node_specifiy_);
+      mountBuffer2Node(yijianBuffer(noti), node_peer_);
     }else {// user
       // to self other device
       noti.set_touserid_outer(currentNode_->userid);
-      auto buf_self = buffer::Buffer(noti);
       node_user_.set_touserid(currentNode_->userid);
-      mountBuffer2Node(buf_self, node_user_);
-      mountBuffer2Node(buf_self, node_peer_);
+      mountBuffer2Node(yijianBuffer(noti), node_user_);
+      mountBuffer2Node(yijianBuffer(noti), node_peer_);
       // to friend
       noti.set_touserid_outer(message.touserid_outer()) ;
-      auto buf_friend = buffer::Buffer(noti);
       node_user_.set_touserid(message.touserid_outer());
-      mountBuffer2Node(buf_friend, node_user_);
-      mountBuffer2Node(buf_friend, node_peer_);
+      mountBuffer2Node(yijianBuffer(noti), node_user_);
+      mountBuffer2Node(yijianBuffer(noti), node_peer_);
     }
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
@@ -915,12 +912,12 @@ void dispatch(chat::NodeMessageNoti & noti) {
     if (noti.touserid_outer().empty()) {
       // sent to node
       node_specifiy_.set_tonodeid(noti.tonodeid());
-      mountBuffer2Node(buffer::Buffer(noti), node_specifiy_);
+      mountBuffer2Node(yijianBuffer(noti), node_specifiy_);
     }else {
       // to user
       node_user_.set_touserid(noti.touserid_outer());
       noti.clear_touserid_outer();
-      mountBuffer2Node(buffer::Buffer(noti), node_user_);
+      mountBuffer2Node(yijianBuffer(noti), node_user_);
     }
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
@@ -950,7 +947,7 @@ void dispatch(chat::QueryMessage & query) {
     } else {
       client->queryMessage(query, [](std::shared_ptr<chat::NodeMessage> sp){
             YILOG_INFO ("query message success {}", pro2string(*sp));
-            mountBuffer2Node(buffer::Buffer(*sp), node_self_);
+            mountBuffer2Node(yijianBuffer(*sp), node_self_);
           });
     }
   }catch (std::system_error & sys_error) {
@@ -972,7 +969,7 @@ void dispatch(chat::QueryOneMessage & query) {
     auto nodemessage_sp = 
       client->queryMessage(query.tonodeid(), query.incrementid());
     YILOG_INFO ("query one message success {}", pro2string(*nodemessage_sp));
-    mountBuffer2Node(buffer::Buffer(*nodemessage_sp), node_self_);
+    mountBuffer2Node(yijianBuffer(*nodemessage_sp), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -993,7 +990,7 @@ void dispatch(chat::Media & media) {
       currentNode_->media_vec.push_back(std::move(media));
     }
     YILOG_INFO ("media {}", pro2string(mediares));
-    mountBuffer2Node(buffer::Buffer(mediares), node_self_);
+    mountBuffer2Node(yijianBuffer(mediares), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -1011,7 +1008,7 @@ void dispatch(chat::MediaIsExist & isExist) {
     chat::MediaIsExistRes res;
     res.set_isexist(isE);
     YILOG_INFO ("media is exist success {}", pro2string(res));
-    mountBuffer2Node(buffer::Buffer(res), node_self_);
+    mountBuffer2Node(yijianBuffer(res), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -1040,7 +1037,7 @@ void dispatch(chat::MediaCheck & mediacheck) {
     mediares.set_sha1(mediacheck.sha1());
     mediares.set_isintact(true);
     YILOG_INFO ("media check success {}", pro2string(mediares));
-    mountBuffer2Node(buffer::Buffer(mediares), node_self_);
+    mountBuffer2Node(yijianBuffer(mediares), node_self_);
   }catch (std::system_error & sys_error) {
     {
       std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
@@ -1064,7 +1061,7 @@ void dispatch(chat::QueryMedia & querymedia) {
     client->queryMedia(querymedia.sha1(), medias, maxlength);
     for (auto media_sp: medias) {
       YILOG_INFO ("query media success {}", pro2string(*media_sp));
-      mountBuffer2Node(buffer::Buffer(*media_sp), node_self_);
+      mountBuffer2Node(yijianBuffer(*media_sp), node_self_);
     }
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
@@ -1079,10 +1076,10 @@ void dispatch(chat::Ping & ping) {
   YILOG_INFO ("ping {}", pro2string(ping));
   auto pong = chat::Pong();
   pong.set_msg("pong");
-  mountBuffer2Node(buffer::Buffer(pong), node_self_);
+  mountBuffer2Node(yijianBuffer(pong), node_self_);
 }
 
-void dispatch(int type, char * header, std::size_t length) {
+void dispatch(const int type, char const * header, const std::size_t length) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto static map_p = std::make_shared<std::map<int, std::function<void(void)>>>();
   std::once_flag flag;
@@ -1232,15 +1229,16 @@ void dispatch(int type, char * header, std::size_t length) {
 }
 
 
-void dispatch(std::shared_ptr<Read_IO> node, 
-    std::shared_ptr<yijian::buffer> sp,
-    uint16_t session_id) {
+void dispatch(const std::shared_ptr<Read_IO> node, 
+    const std::vector<std::shared_ptr<yijian::buffer> > & spvec,
+    const uint16_t session_id) {
+
   YILOG_TRACE ("func: dispatch tuple");
   currentNode_ = node;
   session_id_ = session_id;
-  
+
   YILOG_DEBUG ("session id {}. sp session id: {}", 
-      session_id_ ,  sp->session_id());
+      session_id_ ,  spvec.back()->session_id());
   YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
       "userid:{}, uuid:{}", 
       currentNode_->ping_time, 
@@ -1249,33 +1247,40 @@ void dispatch(std::shared_ptr<Read_IO> node,
       currentNode_->userid, 
       currentNode_->uuid);
 
+  std::string data_string;
+  for (auto sp: spvec) {
+    data_string.append(sp->data(), sp->data_size());
+  }
+  uint16_t data_sessionid = spvec.back()->session_id();
+  uint8_t data_datatype = spvec.back()->datatype();
+
   // normal
-  if (likely(session_id_ == sp->session_id())) {
+  if (likely(session_id_ == data_sessionid)) {
     // miss msg check
     if (session_id_ >= MinSessionID) {
       if (likely(true == currentNode_->isConnect &&
-            missing_check(sp->datatype())
+            missing_check(data_datatype)
             )) {
         auto client = yijian::threadCurrent::mongoClient();
         client->updateSessionID(currentNode_->uuid, currentNode_->userid,
             session_id_);
-        dispatch(sp->datatype(), sp->data(), sp->data_size());
+        dispatch(data_datatype, data_string.c_str(), data_string.size());
       }else {
         auto error = chat::Error();
         error.set_errnum(11011);
         error.set_errmsg("need connect first or "
             "msg type can not pair the session id");
-        mountBuffer2Node(buffer::Buffer(error), node_self_);
+        mountBuffer2Node(yijianBuffer(error), node_self_);
       }
     }else {// miss msg no check
-      if (likely(!missing_check(sp->datatype()))) {
-        dispatch(sp->datatype(), sp->data(), sp->data_size());
+      if (likely(!missing_check(data_datatype))) {
+        dispatch(data_datatype, data_string.c_str(), data_string.size());
       }else {
         auto error = chat::Error();
         error.set_errnum(11013);
         error.set_errmsg("session need < MinSessionID"
             "msg type can not pair the session id");
-        mountBuffer2Node(buffer::Buffer(error), node_self_);
+        mountBuffer2Node(yijianBuffer(error), node_self_);
       }
     }
   }else {// excaption
@@ -1284,7 +1289,7 @@ void dispatch(std::shared_ptr<Read_IO> node,
       auto err_msg = "session id error, right id is " + 
         std::to_string(session_id_) + " .";
       error.set_errmsg(err_msg);
-      mountBuffer2Node(buffer::Buffer(error), node_self_);
+      mountBuffer2Node(yijianBuffer(error), node_self_);
   }
   currentNode_.reset();
 }

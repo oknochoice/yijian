@@ -1,12 +1,13 @@
 #ifndef BUFFER_H_YIJIAN
 #define BUFFER_H_YIJIAN
 
+#define MinSessionID 100
+#define MaxSessionID 32767
+
 #include "macro.h"
 #include <deque>
 #include <unistd.h>
 #include "typemap.h"
-#include "typemapre.h"
-#include <google/protobuf/util/json_util.h>
 
 #include <openssl/ssl.h>
 
@@ -51,6 +52,7 @@ public:
     //bool socket_write(int sfd);
     bool socket_read(SSL * ssl);
     bool socket_write(SSL * ssl);
+    void makeReWrite();
 
     // socket read fixed length 
     // first set length second read
@@ -80,41 +82,13 @@ void buffer::data_encoding_current_addpos(std::size_t length) {
 
     // session id
     uint16_t session_id();
-    void set_sessionid(uint16_t sessionid);
-
-    // c++ protobuf 
-    template <typename Proto> 
-    void encoding(Proto && any) {
-
-      if (unlikely(any.ByteSize() > 1024 - PADDING_LENGTH || any.ByteSize() == 0)) {
-        throw std::system_error(std::error_code(20010, std::generic_category()),
-            "Malformed Length");
-      }
-
-      uint8_t type = dispatchType(any);
-      current_pos_ += SESSIONID_LENGTH;
-      memcpy(current_pos_, &type, 1);
-      ++current_pos_;
-      auto current_end = encoding_var_length(current_pos_, any.ByteSize());
-      int varLength_length = current_end - current_pos_;
-      current_pos_ = current_end;
-      any.SerializeToArray(current_pos_, remain_size());
-      remain_data_length_ = 
-        SESSIONID_LENGTH + 1 + varLength_length + any.ByteSize();
-      current_pos_ += any.ByteSize();
-      // set buffer 
-      end_pos_ = current_pos_;
-      current_pos_ = header_pos_;
-      data_type_ = type;
-      // session_id_ send set
-      YILOG_TRACE ("func: {}, type: {}, length: {}",
-          __func__, type, any.ByteSize());
-    }
-    // c++ protobuf 
-    template <typename Proto>
-    static std::shared_ptr<buffer> Buffer(Proto && any);
-
+    void set_sessionid(const uint16_t sessionid, const bool isLast);
+    bool isLast_buffer();
+    
+    void encoding(const uint8_t type, const std::string & data);
+    static std::shared_ptr<buffer> Buffer(const uint8_t type, const std::string & data);
 //private:
+    
     std::pair<uint32_t, char *>
     decoding_var_length(char * pos);
     char *
@@ -130,8 +104,11 @@ private:
     bool isParseMsgReaded_ = false;
     bool isParseFinish_ = false;
     bool isFinish_ = false;
+    bool isLastBuf_ = false;
 
     uint8_t data_type_;
+    std::size_t data_encode_length_;
+    std::size_t data_length_;
 
     Message_Type buffer_type_;
 
@@ -139,6 +116,7 @@ private:
     char * end_pos_;
     char * data_pos_;
     char * current_pos_;
+    
 
     uint16_t session_id_;
 
@@ -150,17 +128,6 @@ private:
     int_fast16_t noread_count_ = 0;
 };
 
-// c++ protobuf 
-template <typename Proto>
-std::shared_ptr<buffer> buffer::Buffer(Proto && any) {
-
-  std::string value;
-  google::protobuf::util::MessageToJsonString(any, &value);
-  YILOG_TRACE("func: {}, any: {}", __func__, value);
-  auto buf = std::make_shared<yijian::buffer>();
-  buf->encoding(std::forward<Proto>(any));
-  return buf;
-}
 
 }
 

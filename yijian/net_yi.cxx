@@ -1,7 +1,7 @@
 #include "net_yi.h"
 #include "macro.h"
 #include "typemap.h"
-#include "buffer_yi.h"
+#include "buffer_yi_util.hpp"
 
 using yijian::buffer;
 

@@ -5,7 +5,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "buffer_yi.h"
 #include <list>
 #include <tuple>
 #include <stdio.h>
@@ -651,67 +650,70 @@ connection_read_callback (struct ev_loop * loop,
 
       // read to buffer 
       // if read complete stop watch 
-      if (io->buffer_sp->socket_read(io->ssl)) {
-        // update ping time
-        YILOG_TRACE ("func: {}. update ping time", __func__);
-        // server connect
-        if (unlikely(io->buffer_sp->datatype() == 
-              ChatType::serverconnect)) {
-          // remove peer server's pingnode from pinglist
-          // add to peer server list;
-          YILOG_TRACE ("func: {}. process peer sever connect", __func__);
-          ping_erase(io_sp);
-          peer_servers_push(io_sp);
-        // server disconnect
-        }else if (unlikely(io->buffer_sp->datatype() == 
-              ChatType::serverdisconnect)) {
-          // remove peer server list;
-          YILOG_TRACE ("func: {}. process peer sever disconnect", __func__);
-          peer_servers_erase(io_sp);
-        }else {
-          // do work 
-          YILOG_TRACE ("func: {}. subthread do work", __func__);
-          auto sp = io->buffer_sp;
-          auto watcher = &write_asyn_watcher()->as;
-          uint16_t sessionid = 0;
-          if (missing_check(sp->datatype())) {
-            if (unlikely(io->sessionid == MaxSessionID)) {
-              io->sessionid = MinSessionID;
-              sessionid = io->sessionid;
-            }else {
-              sessionid = io->sessionid++;
+      if (io->buffer_sp_v.empty()) {
+        auto sp = std::make_shared<yijian::buffer>();
+        io->buffer_sp_v.push_back(sp);
+      }
+      if (io->buffer_sp_v.back()->isLast_buffer()){
+        if (io->buffer_sp_v.back()->socket_read(io->ssl)) {
+          // update ping time
+          YILOG_TRACE ("func: {}. update ping time", __func__);
+          // server connect
+          if (unlikely(io->buffer_sp_v.back()->datatype() == 
+                ChatType::serverconnect)) {
+            // remove peer server's pingnode from pinglist
+            // add to peer server list;
+            YILOG_TRACE ("func: {}. process peer sever connect", __func__);
+            ping_erase(io_sp);
+            peer_servers_push(io_sp);
+          // server disconnect
+          }else if (unlikely(io->buffer_sp_v.back()->datatype() == 
+                ChatType::serverdisconnect)) {
+            // remove peer server list;
+            YILOG_TRACE ("func: {}. process peer sever disconnect", __func__);
+            peer_servers_erase(io_sp);
+          }else {
+            // do work 
+            YILOG_TRACE ("func: {}. subthread do work", __func__);
+            auto & sp_vec = io->buffer_sp_v;
+            auto watcher = &write_asyn_watcher()->as;
+            uint16_t sessionid = 0;
+            if (missing_check(sp_vec.back()->datatype())) {
+              if (unlikely(io->sessionid == MaxSessionID)) {
+                io->sessionid = MinSessionID;
+                sessionid = io->sessionid;
+              }else {
+                sessionid = io->sessionid++;
+              }
             }
+            YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
+                "userid:{}, uuid:{}", 
+                io_sp->ping_time, 
+                io_sp->isConnect, 
+                io_sp->sessionid, 
+                io_sp->userid, 
+                io_sp->uuid);
+            /*
+            std::tuple<std::shared_ptr<Read_IO>, 
+              std::shared_ptr<yijian::buffer>,
+              uint16_t> t(io_sp, sp, sessionid);
+              */
+            noti_threads()->sentWork(
+                [loop, watcher, io_sp, sp_vec, sessionid](){
+                  YILOG_TRACE ("dispatch message");
+                  dispatch(io_sp, sp_vec, sessionid);
+                  ev_async_send(loop, watcher);
+                });
           }
-          YILOG_INFO ("pingtime:{}, isConnect:{}, sessionid:{}, "
-              "userid:{}, uuid:{}", 
-              io_sp->ping_time, 
-              io_sp->isConnect, 
-              io_sp->sessionid, 
-              io_sp->userid, 
-              io_sp->uuid);
-          /*
-          std::tuple<std::shared_ptr<Read_IO>, 
-            std::shared_ptr<yijian::buffer>,
-            uint16_t> t(io_sp, sp, sessionid);
-            */
-          YILOG_DEBUG("buffer sp reference count {}",
-              sp.use_count());
-          noti_threads()->sentWork(
-              [loop, watcher, io_sp, sp, sessionid](){
-                YILOG_TRACE ("dispatch message");
-                YILOG_DEBUG("buffer sp reference count {}",
-                    sp.use_count());
-                dispatch(io_sp, sp, sessionid);
-                ev_async_send(loop, watcher);
-              });
+          
+          io->buffer_sp_v.clear();
+        }else{
+          YILOG_TRACE ("read is not complete message");
+          //ev_io_start(loop, rw);
         }
-        
-        YILOG_DEBUG("buffer sp reference count {}", 
-            io->buffer_sp.use_count());
-        io->buffer_sp.reset(new yijian::buffer());
       }else{
-        YILOG_TRACE ("read is not complete message");
-        //ev_io_start(loop, rw);
+        auto sp = std::make_shared<yijian::buffer>();
+        io->buffer_sp_v.push_back(sp);
       }
     }else {
       YILOG_TRACE ("node is released");

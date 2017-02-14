@@ -11,7 +11,7 @@
 #include "protofiles/chat_message.pb.h"
 #include "typemap.h"
 #include "typemapre.h"
-#include "buffer_yi.h"
+#include "buffer_yi_util.hpp"
 #include "threads_work.h"
 
 #ifdef __cpluscplus
@@ -33,15 +33,14 @@ namespace yijian {
     static thread_local chat::NodeSpecifiy node_specifiy_;
     static thread_local uint16_t session_id_;
 
-    Buffer_SP errorBuffer();
-    Buffer_SP errorBuffer(uint_fast32_t err_num, std::string && err_msg);
+    std::vector<Buffer_SP> errorBuffer(uint_fast32_t err_num, std::string && err_msg);
   }
 }
 
 // gcc6.2 bug
-void dispatch(std::shared_ptr<Read_IO> node, 
-    std::shared_ptr<yijian::buffer> sp,
-    uint16_t session_id);
+void dispatch(const std::shared_ptr<Read_IO> node, 
+    const std::vector<std::shared_ptr<yijian::buffer> > & spvec,
+    const uint16_t session_id);
 /*
 void dispatch(const std::tuple<std::shared_ptr<Read_IO>, 
     std::shared_ptr<yijian::buffer>,

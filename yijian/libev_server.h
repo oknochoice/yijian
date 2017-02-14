@@ -12,8 +12,7 @@
 #include <list>
 #include <string>
 #include <chrono>
-#include "buffer_yi.h"
-#include "libev_server.h"
+#include "buffer_yi_util.hpp"
 
 #include <openssl/ssl.h>
 
@@ -43,7 +42,7 @@ struct Read_IO {
   std::shared_ptr<Write_IO> writeio_sp;
   std::weak_ptr<Read_IO> self;
   // socket buffer subthread must not change
-  Buffer_SP buffer_sp = std::make_shared<yijian::buffer>();
+  std::vector<Buffer_SP> buffer_sp_v;
   // node info
   // connect info subthread must not change
   bool isConnect = false;

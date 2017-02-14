@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <ev.h>
-#include "buffer_yi.h"
+#include "buffer_yi_util.hpp"
 #include <functional>
 
 #include <openssl/ssl.h>
