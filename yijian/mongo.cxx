@@ -901,7 +901,7 @@ void mongo_client::queryMedia(const std::string & sha1,
     media_vec.push_back(media_sp);
     ++i;
     pos += length;
-  }while(pos >= content.size());
+  }while(pos < content.size());
 
 }
 

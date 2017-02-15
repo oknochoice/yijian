@@ -654,8 +654,8 @@ connection_read_callback (struct ev_loop * loop,
         auto sp = std::make_shared<yijian::buffer>();
         io->buffer_sp_v.push_back(sp);
       }
-      if (io->buffer_sp_v.back()->isLast_buffer()){
-        if (io->buffer_sp_v.back()->socket_read(io->ssl)) {
+      if (io->buffer_sp_v.back()->socket_read(io->ssl)) {
+        if (io->buffer_sp_v.back()->isLast_buffer()) {
           // update ping time
           YILOG_TRACE ("func: {}. update ping time", __func__);
           // server connect
@@ -707,13 +707,13 @@ connection_read_callback (struct ev_loop * loop,
           }
           
           io->buffer_sp_v.clear();
-        }else{
-          YILOG_TRACE ("read is not complete message");
-          //ev_io_start(loop, rw);
+        }else {
+          auto sp = std::make_shared<yijian::buffer>();
+          io->buffer_sp_v.push_back(sp);
         }
       }else{
-        auto sp = std::make_shared<yijian::buffer>();
-        io->buffer_sp_v.push_back(sp);
+        YILOG_TRACE ("read is not complete message");
+        //ev_io_start(loop, rw);
       }
     }else {
       YILOG_TRACE ("node is released");

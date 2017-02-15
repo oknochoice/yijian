@@ -33,6 +33,12 @@ public:
 // c++11 thread-safe
 void initConsoleLog();
 
+#ifdef DEBUG
+#define Assert(...) assert(__VA_ARGS__)
+#else
+#define Assert(...) 
+#endif
+
 #ifdef YILOG_ON
 #define YILOG_STR_H(x) #x
 #define YILOG_STR_HELPER(x) YILOG_STR_H(x)

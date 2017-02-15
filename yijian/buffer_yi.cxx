@@ -5,10 +5,12 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <string>
+#include <bitset>
 
 #include <openssl/err.h>
 
-#define BufferLastFlag (1 << 15)
+// uint_16: 1 << 15
+#define BufferLastFlag (32768)
 
 namespace yijian {
 
@@ -103,9 +105,18 @@ bool buffer::socket_read(SSL * sfd) {
       YILOG_TRACE ("func: {}, parse header", __func__);
       // session id
       uint16_t session_net = *reinterpret_cast<uint16_t*>(header_pos_);
+      YILOG_TRACE ("session_net: {}", std::bitset<16>(session_net).to_string());
       auto sessionid = ntohs(session_net);
-      isLastBuf_ = sessionid >> 15;
-      session_id_ = sessionid << 1 >> 1;
+      YILOG_TRACE ("session_loc: {}", std::bitset<16>(sessionid).to_string());
+      if (sessionid >= BufferLastFlag) {
+        isLastBuf_ = true;
+        session_id_ = sessionid - BufferLastFlag;
+      }else {
+        isLastBuf_ = false;
+        session_id_ = sessionid;
+      }
+      YILOG_TRACE ("func: {}, buf_sessionid: {}, isLastBuf: {}, sessionid: {}", 
+          __func__, sessionid, isLastBuf_, session_id_);
       
       // type
       data_type_ =  *(header_pos_ + SESSIONID_LENGTH);
@@ -216,7 +227,7 @@ void buffer::set_sessionid(const uint16_t sessionid, const bool isLast) {
   }
   uint16_t loc_sessionid = sessionid;
   isLastBuf_ = isLast;
-  if (unlikely(!isLast)) {
+  if (unlikely(isLast)) {
     loc_sessionid += BufferLastFlag;
   }
   uint16_t sessionid_l= htons(loc_sessionid);
@@ -413,8 +424,8 @@ void buffer::encoding(const uint8_t type, const std::string & data) {
         "Malformed Length");
   }
    */
-  assert(data_length_ > 0);
-  assert(data_length_ < 1024 - PADDING_LENGTH);
+  Assert(data_length_ > 0);
+  Assert(data_length_ < 1024 - PADDING_LENGTH);
 
   current_pos_ += SESSIONID_LENGTH;
   memcpy(current_pos_, &type, 1);

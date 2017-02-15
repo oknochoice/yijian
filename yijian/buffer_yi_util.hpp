@@ -45,7 +45,7 @@ std::vector<std::shared_ptr<yijian::buffer> > yijianBuffer(Proto && any) {
     vec.push_back(yijian::buffer::Buffer(dispatchType(any), subContent));
     ++i;
     pos += length;
-  }while(pos >= data_string.size());
+  }while(pos < data_string.size());
   return vec;
 }
 
