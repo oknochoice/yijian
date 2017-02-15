@@ -210,6 +210,12 @@ extern ServerConnectDefaultTypeInternal _ServerConnect_default_instance_;
 class ServerDisconnect;
 class ServerDisconnectDefaultTypeInternal;
 extern ServerDisconnectDefaultTypeInternal _ServerDisconnect_default_instance_;
+class SetUserProperty;
+class SetUserPropertyDefaultTypeInternal;
+extern SetUserPropertyDefaultTypeInternal _SetUserProperty_default_instance_;
+class SetUserPropertyRes;
+class SetUserPropertyResDefaultTypeInternal;
+extern SetUserPropertyResDefaultTypeInternal _SetUserPropertyRes_default_instance_;
 class TalkList;
 class TalkListDefaultTypeInternal;
 extern TalkListDefaultTypeInternal _TalkList_default_instance_;
@@ -303,6 +309,31 @@ inline bool IsAgree_Parse(
     const ::std::string& name, IsAgree* value) {
   return ::google::protobuf::internal::ParseNamedEnum<IsAgree>(
     IsAgree_descriptor(), name, value);
+}
+enum UserProperty {
+  realname = 0,
+  nickname = 1,
+  icon = 2,
+  description = 3,
+  isMale = 4,
+  birthday = 5,
+  UserProperty_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  UserProperty_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool UserProperty_IsValid(int value);
+const UserProperty UserProperty_MIN = realname;
+const UserProperty UserProperty_MAX = birthday;
+const int UserProperty_ARRAYSIZE = UserProperty_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* UserProperty_descriptor();
+inline const ::std::string& UserProperty_Name(UserProperty value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    UserProperty_descriptor(), value);
+}
+inline bool UserProperty_Parse(
+    const ::std::string& name, UserProperty* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<UserProperty>(
+    UserProperty_descriptor(), name, value);
 }
 enum MediaType {
   UNKNOW = 0,
@@ -2043,6 +2074,187 @@ class User : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   bool ismale_;
   ::google::protobuf::int32 birthday_;
   ::google::protobuf::int32 version_;
+  mutable int _cached_size_;
+  friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class SetUserProperty : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.SetUserProperty) */ {
+ public:
+  SetUserProperty();
+  virtual ~SetUserProperty();
+
+  SetUserProperty(const SetUserProperty& from);
+
+  inline SetUserProperty& operator=(const SetUserProperty& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SetUserProperty& default_instance();
+
+  static inline const SetUserProperty* internal_default_instance() {
+    return reinterpret_cast<const SetUserProperty*>(
+               &_SetUserProperty_default_instance_);
+  }
+
+  void Swap(SetUserProperty* other);
+
+  // implements Message ----------------------------------------------
+
+  inline SetUserProperty* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  SetUserProperty* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const SetUserProperty& from);
+  void MergeFrom(const SetUserProperty& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(SetUserProperty* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string value = 2;
+  void clear_value();
+  static const int kValueFieldNumber = 2;
+  const ::std::string& value() const;
+  void set_value(const ::std::string& value);
+  #if LANG_CXX11
+  void set_value(::std::string&& value);
+  #endif
+  void set_value(const char* value);
+  void set_value(const char* value, size_t size);
+  ::std::string* mutable_value();
+  ::std::string* release_value();
+  void set_allocated_value(::std::string* value);
+
+  // .chat.UserProperty property = 1;
+  void clear_property();
+  static const int kPropertyFieldNumber = 1;
+  ::chat::UserProperty property() const;
+  void set_property(::chat::UserProperty value);
+
+  // @@protoc_insertion_point(class_scope:chat.SetUserProperty)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr value_;
+  int property_;
+  mutable int _cached_size_;
+  friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class SetUserPropertyRes : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.SetUserPropertyRes) */ {
+ public:
+  SetUserPropertyRes();
+  virtual ~SetUserPropertyRes();
+
+  SetUserPropertyRes(const SetUserPropertyRes& from);
+
+  inline SetUserPropertyRes& operator=(const SetUserPropertyRes& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const SetUserPropertyRes& default_instance();
+
+  static inline const SetUserPropertyRes* internal_default_instance() {
+    return reinterpret_cast<const SetUserPropertyRes*>(
+               &_SetUserPropertyRes_default_instance_);
+  }
+
+  void Swap(SetUserPropertyRes* other);
+
+  // implements Message ----------------------------------------------
+
+  inline SetUserPropertyRes* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  SetUserPropertyRes* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const SetUserPropertyRes& from);
+  void MergeFrom(const SetUserPropertyRes& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(SetUserPropertyRes* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .chat.UserProperty property = 1;
+  void clear_property();
+  static const int kPropertyFieldNumber = 1;
+  ::chat::UserProperty property() const;
+  void set_property(::chat::UserProperty value);
+
+  // @@protoc_insertion_point(class_scope:chat.SetUserPropertyRes)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  int property_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -9069,6 +9281,94 @@ User::devices() const {
 
 // -------------------------------------------------------------------
 
+// SetUserProperty
+
+// .chat.UserProperty property = 1;
+inline void SetUserProperty::clear_property() {
+  property_ = 0;
+}
+inline ::chat::UserProperty SetUserProperty::property() const {
+  // @@protoc_insertion_point(field_get:chat.SetUserProperty.property)
+  return static_cast< ::chat::UserProperty >(property_);
+}
+inline void SetUserProperty::set_property(::chat::UserProperty value) {
+  
+  property_ = value;
+  // @@protoc_insertion_point(field_set:chat.SetUserProperty.property)
+}
+
+// string value = 2;
+inline void SetUserProperty::clear_value() {
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& SetUserProperty::value() const {
+  // @@protoc_insertion_point(field_get:chat.SetUserProperty.value)
+  return value_.GetNoArena();
+}
+inline void SetUserProperty::set_value(const ::std::string& value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.SetUserProperty.value)
+}
+#if LANG_CXX11
+inline void SetUserProperty::set_value(::std::string&& value) {
+  
+  value_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.SetUserProperty.value)
+}
+#endif
+inline void SetUserProperty::set_value(const char* value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.SetUserProperty.value)
+}
+inline void SetUserProperty::set_value(const char* value, size_t size) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.SetUserProperty.value)
+}
+inline ::std::string* SetUserProperty::mutable_value() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.SetUserProperty.value)
+  return value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* SetUserProperty::release_value() {
+  // @@protoc_insertion_point(field_release:chat.SetUserProperty.value)
+  
+  return value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void SetUserProperty::set_allocated_value(::std::string* value) {
+  if (value != NULL) {
+    
+  } else {
+    
+  }
+  value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set_allocated:chat.SetUserProperty.value)
+}
+
+// -------------------------------------------------------------------
+
+// SetUserPropertyRes
+
+// .chat.UserProperty property = 1;
+inline void SetUserPropertyRes::clear_property() {
+  property_ = 0;
+}
+inline ::chat::UserProperty SetUserPropertyRes::property() const {
+  // @@protoc_insertion_point(field_get:chat.SetUserPropertyRes.property)
+  return static_cast< ::chat::UserProperty >(property_);
+}
+inline void SetUserPropertyRes::set_property(::chat::UserProperty value) {
+  
+  property_ = value;
+  // @@protoc_insertion_point(field_set:chat.SetUserPropertyRes.property)
+}
+
+// -------------------------------------------------------------------
+
 // QueryUser
 
 // string userID = 1;
@@ -14987,6 +15287,10 @@ inline void MediaCheckRes::set_isintact(bool value) {
 
 // -------------------------------------------------------------------
 
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -15011,6 +15315,11 @@ template <> struct is_proto_enum< ::chat::IsAgree> : ::google::protobuf::interna
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::chat::IsAgree>() {
   return ::chat::IsAgree_descriptor();
+}
+template <> struct is_proto_enum< ::chat::UserProperty> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::chat::UserProperty>() {
+  return ::chat::UserProperty_descriptor();
 }
 template <> struct is_proto_enum< ::chat::MediaType> : ::google::protobuf::internal::true_type {};
 template <>

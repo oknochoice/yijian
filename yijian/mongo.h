@@ -39,6 +39,8 @@ public:
   std::shared_ptr<chat::User> 
     queryUser(const std::string & userID);
 
+  void setUserProperty(const std::string & userID, const chat::SetUserProperty & property);
+
   /*
   template <class Vec_like> 
   void loginRecord(const std::string & countryCode, 

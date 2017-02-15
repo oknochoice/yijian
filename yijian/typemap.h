@@ -52,6 +52,8 @@ enum ChatType : uint8_t {
   serverdisconnect = 43,// outer
   ping = 46,
   pong = 47,
+  setuserproterty = 48,
+  setuserprotertyres = 49
 };
 
 bool missing_check(int32_t type);

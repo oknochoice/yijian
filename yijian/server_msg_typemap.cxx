@@ -1125,6 +1125,23 @@ void dispatch(chat::Ping & ping) {
   mountBuffer2Node(yijianBuffer(pong), node_self_);
 }
 
+void dispatch(chat::SetUserProperty & property) {
+  YILOG_TRACE ("func: {}. media", __func__);
+  YILOG_INFO ("set property {}", pro2string(property));
+  try {
+    auto client = yijian::threadCurrent::mongoClient();
+    client->setUserProperty(currentNode_->userid, property);
+    auto res = chat::SetUserPropertyRes();
+    res.set_property(property.property());
+    mountBuffer2Node(yijianBuffer(res), node_self_);
+  }catch (std::system_error & sys_error) {
+    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
+        __func__, sys_error.code().value(), sys_error.what());
+    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+        node_self_);
+  }
+}
+
 void dispatch(const int type, char const * header, const std::size_t length) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto static map_p = std::make_shared<std::map<int, std::function<void(void)>>>();
@@ -1262,6 +1279,11 @@ void dispatch(const int type, char const * header, const std::size_t length) {
       };
       (*map_p)[ChatType::ping] = [=]() {
         auto chat = chat::Ping();
+        chat.ParseFromArray(header, length);
+        dispatch(chat);
+      };
+      (*map_p)[ChatType::setuserproterty] = [=]() {
+        auto chat = chat::SetUserProperty();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };

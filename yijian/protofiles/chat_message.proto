@@ -90,6 +90,7 @@ enum IsAgree {
 }
 
 message User {
+
   string    id = 1;
   string    realname = 2;
   string    nickname = 3; 
@@ -105,6 +106,25 @@ message User {
   repeated  string blacklist = 13;
   repeated  string groupNodeIDs = 14;
   repeated  Device devices = 15;
+
+}
+
+enum UserProperty {
+  realname = 0;
+  nickname = 1;
+  icon = 2;
+  description = 3;
+  isMale = 4;
+  birthday = 5; 
+}
+
+message SetUserProperty {
+  UserProperty property = 1;
+  string value = 2;
+}
+
+message SetUserPropertyRes {
+  UserProperty property = 1;
 }
 
 message QueryUser {

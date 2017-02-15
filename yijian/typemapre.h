@@ -1,8 +1,8 @@
 #ifndef TYPEMAPRE_H
 #define TYPEMAPRE_H
 
-
 #include "protofiles/chat_message.pb.h"
+#include "typemap.h"
 
 #ifdef __cpluscplus
 extern "C" {
@@ -145,6 +145,12 @@ constexpr uint8_t dispatchType(chat::Ping & ) {
 }
 constexpr uint8_t dispatchType(chat::Pong & ) {
   return ChatType::pong;
+}
+constexpr uint8_t dispatchType(chat::SetUserProperty & ) {
+  return ChatType::setuserproterty;
+}
+constexpr uint8_t dispatchType(chat::SetUserPropertyRes & ) {
+  return ChatType::setuserprotertyres;
 }
 
 #ifdef __cpluscplus

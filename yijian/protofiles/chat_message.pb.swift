@@ -104,6 +104,114 @@ enum Chat_IsAgree: SwiftProtobuf.Enum {
 
 }
 
+enum Chat_UserProperty: SwiftProtobuf.Enum {
+  typealias RawValue = Int
+  case realname // = 0
+  case nickname // = 1
+  case icon // = 2
+  case description // = 3
+  case isMale // = 4
+  case birthday // = 5
+  case UNRECOGNIZED(Int)
+
+  init() {
+    self = .realname
+  }
+
+  init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .realname
+    case 1: self = .nickname
+    case 2: self = .icon
+    case 3: self = .description
+    case 4: self = .isMale
+    case 5: self = .birthday
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  init?(name: String) {
+    switch name {
+    case "realname": self = .realname
+    case "nickname": self = .nickname
+    case "icon": self = .icon
+    case "description": self = .description
+    case "isMale": self = .isMale
+    case "birthday": self = .birthday
+    default: return nil
+    }
+  }
+
+  init?(jsonName: String) {
+    switch jsonName {
+    case "realname": self = .realname
+    case "nickname": self = .nickname
+    case "icon": self = .icon
+    case "description": self = .description
+    case "isMale": self = .isMale
+    case "birthday": self = .birthday
+    default: return nil
+    }
+  }
+
+  init?(protoName: String) {
+    switch protoName {
+    case "realname": self = .realname
+    case "nickname": self = .nickname
+    case "icon": self = .icon
+    case "description": self = .description
+    case "isMale": self = .isMale
+    case "birthday": self = .birthday
+    default: return nil
+    }
+  }
+
+  var rawValue: Int {
+    get {
+      switch self {
+      case .realname: return 0
+      case .nickname: return 1
+      case .icon: return 2
+      case .description: return 3
+      case .isMale: return 4
+      case .birthday: return 5
+      case .UNRECOGNIZED(let i): return i
+      }
+    }
+  }
+
+  var json: String {
+    get {
+      switch self {
+      case .realname: return "\"realname\""
+      case .nickname: return "\"nickname\""
+      case .icon: return "\"icon\""
+      case .description: return "\"description\""
+      case .isMale: return "\"isMale\""
+      case .birthday: return "\"birthday\""
+      case .UNRECOGNIZED(let i): return String(i)
+      }
+    }
+  }
+
+  var hashValue: Int { return rawValue }
+
+  var debugDescription: String {
+    get {
+      switch self {
+      case .realname: return ".realname"
+      case .nickname: return ".nickname"
+      case .icon: return ".icon"
+      case .description: return ".description"
+      case .isMale: return ".isMale"
+      case .birthday: return ".birthday"
+      case .UNRECOGNIZED(let v): return ".UNRECOGNIZED(\(v))"
+      }
+    }
+  }
+
+}
+
 ///   mongo scheme 
 ///   index toNodeID 1, incrementID 1
 enum Chat_MediaType: SwiftProtobuf.Enum {
@@ -1043,6 +1151,78 @@ struct Chat_User: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProto
     if blacklist != other.blacklist {return false}
     if groupNodeIds != other.groupNodeIds {return false}
     if devices != other.devices {return false}
+    return true
+  }
+}
+
+struct Chat_SetUserProperty: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_SetUserProperty"}
+  public var protoMessageName: String {return "SetUserProperty"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "property", swift: "property"),
+    2: .same(proto: "value", swift: "value"),
+  ]
+
+
+  var property: Chat_UserProperty = Chat_UserProperty.realname
+
+  var value: String = ""
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeSingularField(fieldType: Chat_UserProperty.self, value: &property)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &value)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if property != Chat_UserProperty.realname {
+      try visitor.visitSingularField(fieldType: Chat_UserProperty.self, value: property, protoFieldNumber: 1)
+    }
+    if value != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: value, protoFieldNumber: 2)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_SetUserProperty) -> Bool {
+    if property != other.property {return false}
+    if value != other.value {return false}
+    return true
+  }
+}
+
+struct Chat_SetUserPropertyRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_SetUserPropertyRes"}
+  public var protoMessageName: String {return "SetUserPropertyRes"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "property", swift: "property"),
+  ]
+
+
+  var property: Chat_UserProperty = Chat_UserProperty.realname
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeSingularField(fieldType: Chat_UserProperty.self, value: &property)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if property != Chat_UserProperty.realname {
+      try visitor.visitSingularField(fieldType: Chat_UserProperty.self, value: property, protoFieldNumber: 1)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_SetUserPropertyRes) -> Bool {
+    if property != other.property {return false}
     return true
   }
 }

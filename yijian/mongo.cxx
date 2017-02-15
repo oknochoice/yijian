@@ -310,6 +310,68 @@ mongo_client::queryUser(const std::string & userID) {
   auto user_view = maybe_result->view();
   return userDocoument(user_view);
 }
+void mongo_client::setUserProperty(const std::string & userID, const chat::SetUserProperty & property) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto user_collection = db["user"];
+  std::string property_string;
+  switch (property.property()) {
+    case(chat::UserProperty::realname):
+    {
+      property_string = "realname";
+      break;
+    }
+    case(chat::UserProperty::nickname):
+    {
+      property_string = "nickname";
+      break;
+    }
+    case(chat::UserProperty::icon):
+    {
+      property_string = "icon";
+      break;
+    }
+    case(chat::UserProperty::description):
+    {
+      property_string = "description";
+      break;
+    }
+    case(chat::UserProperty::birthday):
+    {
+      property_string = "birthday";
+      break;
+    }
+    case(chat::UserProperty::isMale):
+    {
+      property_string = "isMale";
+      break;
+    }
+    default:
+    throw std::system_error(std::error_code(40012, std::generic_category()),
+        "no this property");
+  }
+  if (property_string.substr(0, 2) == "is") {
+    bool isTrue = false;
+    if (property.value().front() == 't') {
+      isTrue = true;
+    }
+    user_collection.update_one(
+        document{} << "_id" << bsoncxx::oid(userID)
+        << finalize,
+        document{} << "$set" << open_document
+        << property_string << isTrue
+        << close_document
+        << finalize);
+  }else {
+    user_collection.update_one(
+        document{} << "_id" << bsoncxx::oid(userID)
+        << finalize,
+        document{} << "$set" << open_document
+        << property_string << property.value()
+        << close_document
+        << finalize);
+  }
+}
 
 std::shared_ptr<chat::AddFriendRes>
 mongo_client::addFriend(const chat::AddFriend & addfrd) {
