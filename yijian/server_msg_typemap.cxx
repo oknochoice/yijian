@@ -1076,6 +1076,52 @@ void dispatch(chat::Ping & ping) {
   YILOG_INFO ("ping {}", pro2string(ping));
   auto pong = chat::Pong();
   pong.set_msg("pong");
+  /*
+#ifdef YILOG_ON
+  pong.set_msg("pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong"
+               "pongpongpongpongpongpongpongpongpongpongpongpongpongpongpong");
+#endif
+*/
   mountBuffer2Node(yijianBuffer(pong), node_self_);
 }
 

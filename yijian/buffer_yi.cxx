@@ -418,14 +418,12 @@ void buffer::makeReWrite() {
   
 void buffer::encoding(const uint8_t type, const std::string & data) {
   data_length_ = data.length();
-  /*
   if (unlikely(data_length_ > 1024 - PADDING_LENGTH || data_length_ == 0)) {
     throw std::system_error(std::error_code(20011, std::generic_category()),
         "Malformed Length");
   }
-   */
   Assert(data_length_ > 0);
-  Assert(data_length_ < 1024 - PADDING_LENGTH);
+  Assert(data_length_ <= 1024 - PADDING_LENGTH);
 
   current_pos_ += SESSIONID_LENGTH;
   memcpy(current_pos_, &type, 1);
