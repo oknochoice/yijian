@@ -90,6 +90,8 @@ void nodemessageDocument(chat::NodeMessage & nodemessage,
       get_int32().value);
   nodemessage.set_type(static_cast<chat::MediaType>(
         nodemessage_view["type"].get_int32().value));
+  nodemessage.set_mediapath(nodemessage_view["mediaPath"].
+      get_utf8().value.to_string());
   nodemessage.set_content(nodemessage_view["content"].
       get_utf8().value.to_string());
 }
@@ -820,6 +822,7 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
         << "toNodeID" << message.tonodeid()
         << "incrementID" << incrementid
         << "type" << message.type()
+        << "meidaPath" << message.mediapath()
         << "content" << message.content()
         << finalize);
     auto msgRes = std::make_shared<chat::NodeMessageRes>();

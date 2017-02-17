@@ -480,6 +480,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, tonodeid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, incrementid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, type_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, mediapath_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, content_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessage, touserid_outer_),
   ~0u,  // no _has_bits_
@@ -623,19 +624,19 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 305, -1, sizeof(GroupAddMember)},
   { 311, -1, sizeof(GroupAddMemberRes)},
   { 317, -1, sizeof(NodeMessage)},
-  { 328, -1, sizeof(NodeMessageRes)},
-  { 334, -1, sizeof(NodeMessageNoti)},
-  { 341, -1, sizeof(setReadMessage)},
-  { 347, -1, sizeof(QueryMessage)},
-  { 354, -1, sizeof(QueryOneMessage)},
-  { 360, -1, sizeof(ServerConnect)},
-  { 366, -1, sizeof(ServerDisconnect)},
-  { 372, -1, sizeof(ConnectInfo)},
-  { 387, -1, sizeof(ConnectInfoLittle)},
-  { 395, -1, sizeof(Media)},
-  { 402, -1, sizeof(MediaRes)},
-  { 407, -1, sizeof(QueryMedia)},
-  { 412, -1, sizeof(QueryMediaRes)},
+  { 329, -1, sizeof(NodeMessageRes)},
+  { 335, -1, sizeof(NodeMessageNoti)},
+  { 342, -1, sizeof(setReadMessage)},
+  { 348, -1, sizeof(QueryMessage)},
+  { 355, -1, sizeof(QueryOneMessage)},
+  { 361, -1, sizeof(ServerConnect)},
+  { 367, -1, sizeof(ServerDisconnect)},
+  { 373, -1, sizeof(ConnectInfo)},
+  { 388, -1, sizeof(ConnectInfoLittle)},
+  { 396, -1, sizeof(Media)},
+  { 403, -1, sizeof(MediaRes)},
+  { 408, -1, sizeof(QueryMedia)},
+  { 413, -1, sizeof(QueryMediaRes)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -1047,45 +1048,45 @@ void AddDescriptorsImpl() {
       "eID\030\003 \001(\t\"5\n\016GroupAddMember\022\020\n\010toNodeID\030"
       "\001 \001(\t\022\021\n\tmembersID\030\002 \003(\t\"=\n\021GroupAddMemb"
       "erRes\022\026\n\016toUserID_outer\030\001 \001(\t\022\020\n\010toNodeI"
-      "D\030\002 \001(\t\"\234\001\n\013NodeMessage\022\n\n\002id\030\001 \001(\t\022\022\n\nf"
+      "D\030\002 \001(\t\"\257\001\n\013NodeMessage\022\n\n\002id\030\001 \001(\t\022\022\n\nf"
       "romUserID\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\022\023\n\013inc"
       "rementID\030\004 \001(\005\022\035\n\004type\030\005 \001(\0162\017.chat.Medi"
-      "aType\022\017\n\007content\030\006 \001(\t\022\026\n\016toUserID_outer"
-      "\030\007 \001(\t\"7\n\016NodeMessageRes\022\020\n\010toNodeID\030\002 \001"
-      "(\t\022\023\n\013incrementID\030\003 \001(\005\"T\n\017NodeMessageNo"
-      "ti\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017unreadIncrement\030"
-      "\002 \001(\005\022\026\n\016toUserID_outer\030\003 \001(\t\";\n\016setRead"
-      "Message\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017readedIncre"
-      "ment\030\002 \001(\005\"P\n\014QueryMessage\022\020\n\010toNodeID\030\001"
-      " \001(\t\022\027\n\017fromIncrementID\030\002 \001(\005\022\025\n\rtoIncre"
-      "mentID\030\003 \001(\005\"8\n\017QueryOneMessage\022\020\n\010toNod"
-      "eID\030\001 \001(\t\022\023\n\013incrementID\030\002 \001(\005\"5\n\rServer"
-      "Connect\022\022\n\nserverName\030\001 \001(\t\022\020\n\010serverIP\030"
-      "\002 \001(\t\"8\n\020ServerDisconnect\022\022\n\nserverName\030"
-      "\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\"\247\002\n\013ConnectInfo\022"
-      "\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022\017\n\007isLogin"
-      "\030\003 \001(\010\022\023\n\013isConnected\030\004 \001(\010\022\024\n\014isReciveN"
-      "oti\030\005 \001(\010\022\022\n\nserverName\030\006 \001(\t\022+\n\005users\030\010"
-      " \003(\0132\034.chat.ConnectInfo.UsersEntry\022\025\n\rcl"
-      "ientVersion\030\t \001(\t\022\021\n\tOSVersion\030\n \001(\t\022\022\n\n"
-      "appVersion\030\013 \001(\t\022\021\n\ttimestamp\030\014 \001(\t\032,\n\nU"
-      "sersEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028"
-      "\001\"a\n\021ConnectInfoLittle\022\014\n\004UUID\030\001 \001(\t\022\023\n\013"
-      "isConnected\030\002 \001(\010\022\024\n\014isReciveNoti\030\003 \001(\010\022"
-      "\023\n\013nodepointor\030\004 \001(\003\"B\n\005Media\022\014\n\004sha1\030\001 "
-      "\001(\t\022\014\n\004path\030\002 \001(\t\022\035\n\004type\030\003 \001(\0162\017.chat.M"
-      "ediaType\"\035\n\010MediaRes\022\021\n\tisSuccess\030\001 \001(\010\""
-      "\032\n\nQueryMedia\022\014\n\004sha1\030\001 \001(\t\"+\n\rQueryMedi"
-      "aRes\022\032\n\005media\030\001 \001(\0132\013.chat.Media*8\n\007IsAg"
-      "ree\022\n\n\006unknow\020\000\022\t\n\005agree\020\001\022\n\n\006refuse\020\002\022\n"
-      "\n\006ignore\020\003*_\n\014UserProperty\022\014\n\010realname\020\000"
-      "\022\014\n\010nickname\020\001\022\010\n\004icon\020\002\022\017\n\013description\020"
-      "\003\022\n\n\006isMale\020\004\022\014\n\010birthday\020\005*3\n\tMediaType"
-      "\022\n\n\006UNKNOW\020\000\022\010\n\004TEXT\020\001\022\007\n\003JPG\020\002\022\007\n\003MP3\020\003"
-      "B\003\370\001\000b\006proto3"
+      "aType\022\021\n\tmediaPath\030\006 \001(\t\022\017\n\007content\030\007 \001("
+      "\t\022\026\n\016toUserID_outer\030\010 \001(\t\"7\n\016NodeMessage"
+      "Res\022\020\n\010toNodeID\030\002 \001(\t\022\023\n\013incrementID\030\003 \001"
+      "(\005\"T\n\017NodeMessageNoti\022\020\n\010toNodeID\030\001 \001(\t\022"
+      "\027\n\017unreadIncrement\030\002 \001(\005\022\026\n\016toUserID_out"
+      "er\030\003 \001(\t\";\n\016setReadMessage\022\020\n\010toNodeID\030\001"
+      " \001(\t\022\027\n\017readedIncrement\030\002 \001(\005\"P\n\014QueryMe"
+      "ssage\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017fromIncrement"
+      "ID\030\002 \001(\005\022\025\n\rtoIncrementID\030\003 \001(\005\"8\n\017Query"
+      "OneMessage\022\020\n\010toNodeID\030\001 \001(\t\022\023\n\013incremen"
+      "tID\030\002 \001(\005\"5\n\rServerConnect\022\022\n\nserverName"
+      "\030\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\"8\n\020ServerDiscon"
+      "nect\022\022\n\nserverName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001"
+      "(\t\"\247\002\n\013ConnectInfo\022\014\n\004UUID\030\001 \001(\t\022\016\n\006user"
+      "ID\030\002 \001(\t\022\017\n\007isLogin\030\003 \001(\010\022\023\n\013isConnected"
+      "\030\004 \001(\010\022\024\n\014isReciveNoti\030\005 \001(\010\022\022\n\nserverNa"
+      "me\030\006 \001(\t\022+\n\005users\030\010 \003(\0132\034.chat.ConnectIn"
+      "fo.UsersEntry\022\025\n\rclientVersion\030\t \001(\t\022\021\n\t"
+      "OSVersion\030\n \001(\t\022\022\n\nappVersion\030\013 \001(\t\022\021\n\tt"
+      "imestamp\030\014 \001(\t\032,\n\nUsersEntry\022\013\n\003key\030\001 \001("
+      "\t\022\r\n\005value\030\002 \001(\005:\0028\001\"a\n\021ConnectInfoLittl"
+      "e\022\014\n\004UUID\030\001 \001(\t\022\023\n\013isConnected\030\002 \001(\010\022\024\n\014"
+      "isReciveNoti\030\003 \001(\010\022\023\n\013nodepointor\030\004 \001(\003\""
+      "B\n\005Media\022\014\n\004sha1\030\001 \001(\t\022\014\n\004path\030\002 \001(\t\022\035\n\004"
+      "type\030\003 \001(\0162\017.chat.MediaType\"\035\n\010MediaRes\022"
+      "\021\n\tisSuccess\030\001 \001(\010\"\032\n\nQueryMedia\022\014\n\004sha1"
+      "\030\001 \001(\t\"+\n\rQueryMediaRes\022\032\n\005media\030\001 \001(\0132\013"
+      ".chat.Media*8\n\007IsAgree\022\n\n\006unknow\020\000\022\t\n\005ag"
+      "ree\020\001\022\n\n\006refuse\020\002\022\n\n\006ignore\020\003*_\n\014UserPro"
+      "perty\022\014\n\010realname\020\000\022\014\n\010nickname\020\001\022\010\n\004ico"
+      "n\020\002\022\017\n\013description\020\003\022\n\n\006isMale\020\004\022\014\n\010birt"
+      "hday\020\005*3\n\tMediaType\022\n\n\006UNKNOW\020\000\022\010\n\004TEXT\020"
+      "\001\022\007\n\003JPG\020\002\022\007\n\003MP3\020\003B\003\370\001\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 4893);
+      descriptor, 4912);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chat_message.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -21383,6 +21384,7 @@ const int NodeMessage::kFromUserIDFieldNumber;
 const int NodeMessage::kToNodeIDFieldNumber;
 const int NodeMessage::kIncrementIDFieldNumber;
 const int NodeMessage::kTypeFieldNumber;
+const int NodeMessage::kMediaPathFieldNumber;
 const int NodeMessage::kContentFieldNumber;
 const int NodeMessage::kToUserIDOuterFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -21412,6 +21414,10 @@ NodeMessage::NodeMessage(const NodeMessage& from)
   if (from.tonodeid().size() > 0) {
     tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
   }
+  mediapath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.mediapath().size() > 0) {
+    mediapath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.mediapath_);
+  }
   content_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.content().size() > 0) {
     content_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.content_);
@@ -21430,6 +21436,7 @@ void NodeMessage::SharedCtor() {
   id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   fromuserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  mediapath_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   content_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&incrementid_, 0, reinterpret_cast<char*>(&type_) -
@@ -21446,6 +21453,7 @@ void NodeMessage::SharedDtor() {
   id_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   fromuserid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   tonodeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  mediapath_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   content_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   touserid_outer_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -21478,6 +21486,7 @@ void NodeMessage::Clear() {
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   fromuserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  mediapath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   content_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&incrementid_, 0, reinterpret_cast<char*>(&type_) -
@@ -21566,9 +21575,24 @@ bool NodeMessage::MergePartialFromCodedStream(
         break;
       }
 
-      // string content = 6;
+      // string mediaPath = 6;
       case 6: {
         if (tag == 50u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_mediapath()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->mediapath().data(), this->mediapath().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.NodeMessage.mediaPath"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string content = 7;
+      case 7: {
+        if (tag == 58u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_content()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -21581,9 +21605,9 @@ bool NodeMessage::MergePartialFromCodedStream(
         break;
       }
 
-      // string toUserID_outer = 7;
-      case 7: {
-        if (tag == 58u) {
+      // string toUserID_outer = 8;
+      case 8: {
+        if (tag == 66u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_touserid_outer()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -21661,24 +21685,34 @@ void NodeMessage::SerializeWithCachedSizes(
       5, this->type(), output);
   }
 
-  // string content = 6;
+  // string mediaPath = 6;
+  if (this->mediapath().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->mediapath().data(), this->mediapath().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessage.mediaPath");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      6, this->mediapath(), output);
+  }
+
+  // string content = 7;
   if (this->content().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->content().data(), this->content().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "chat.NodeMessage.content");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      6, this->content(), output);
+      7, this->content(), output);
   }
 
-  // string toUserID_outer = 7;
+  // string toUserID_outer = 8;
   if (this->touserid_outer().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->touserid_outer().data(), this->touserid_outer().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "chat.NodeMessage.toUserID_outer");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      7, this->touserid_outer(), output);
+      8, this->touserid_outer(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:chat.NodeMessage)
@@ -21732,7 +21766,18 @@ void NodeMessage::SerializeWithCachedSizes(
       5, this->type(), target);
   }
 
-  // string content = 6;
+  // string mediaPath = 6;
+  if (this->mediapath().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->mediapath().data(), this->mediapath().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessage.mediaPath");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->mediapath(), target);
+  }
+
+  // string content = 7;
   if (this->content().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->content().data(), this->content().length(),
@@ -21740,10 +21785,10 @@ void NodeMessage::SerializeWithCachedSizes(
       "chat.NodeMessage.content");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        6, this->content(), target);
+        7, this->content(), target);
   }
 
-  // string toUserID_outer = 7;
+  // string toUserID_outer = 8;
   if (this->touserid_outer().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->touserid_outer().data(), this->touserid_outer().length(),
@@ -21751,7 +21796,7 @@ void NodeMessage::SerializeWithCachedSizes(
       "chat.NodeMessage.toUserID_outer");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        7, this->touserid_outer(), target);
+        8, this->touserid_outer(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:chat.NodeMessage)
@@ -21783,14 +21828,21 @@ size_t NodeMessage::ByteSizeLong() const {
         this->tonodeid());
   }
 
-  // string content = 6;
+  // string mediaPath = 6;
+  if (this->mediapath().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->mediapath());
+  }
+
+  // string content = 7;
   if (this->content().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->content());
   }
 
-  // string toUserID_outer = 7;
+  // string toUserID_outer = 8;
   if (this->touserid_outer().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -21848,6 +21900,10 @@ void NodeMessage::MergeFrom(const NodeMessage& from) {
 
     tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
   }
+  if (from.mediapath().size() > 0) {
+
+    mediapath_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.mediapath_);
+  }
   if (from.content().size() > 0) {
 
     content_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.content_);
@@ -21890,6 +21946,7 @@ void NodeMessage::InternalSwap(NodeMessage* other) {
   id_.Swap(&other->id_);
   fromuserid_.Swap(&other->fromuserid_);
   tonodeid_.Swap(&other->tonodeid_);
+  mediapath_.Swap(&other->mediapath_);
   content_.Swap(&other->content_);
   touserid_outer_.Swap(&other->touserid_outer_);
   std::swap(incrementid_, other->incrementid_);
@@ -22089,7 +22146,59 @@ void NodeMessage::set_type(::chat::MediaType value) {
   // @@protoc_insertion_point(field_set:chat.NodeMessage.type)
 }
 
-// string content = 6;
+// string mediaPath = 6;
+void NodeMessage::clear_mediapath() {
+  mediapath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& NodeMessage::mediapath() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessage.mediaPath)
+  return mediapath_.GetNoArena();
+}
+void NodeMessage::set_mediapath(const ::std::string& value) {
+  
+  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeMessage.mediaPath)
+}
+#if LANG_CXX11
+void NodeMessage::set_mediapath(::std::string&& value) {
+  
+  mediapath_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessage.mediaPath)
+}
+#endif
+void NodeMessage::set_mediapath(const char* value) {
+  
+  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeMessage.mediaPath)
+}
+void NodeMessage::set_mediapath(const char* value, size_t size) {
+  
+  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessage.mediaPath)
+}
+::std::string* NodeMessage::mutable_mediapath() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.NodeMessage.mediaPath)
+  return mediapath_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* NodeMessage::release_mediapath() {
+  // @@protoc_insertion_point(field_release:chat.NodeMessage.mediaPath)
+  
+  return mediapath_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void NodeMessage::set_allocated_mediapath(::std::string* mediapath) {
+  if (mediapath != NULL) {
+    
+  } else {
+    
+  }
+  mediapath_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), mediapath);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessage.mediaPath)
+}
+
+// string content = 7;
 void NodeMessage::clear_content() {
   content_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -22141,7 +22250,7 @@ void NodeMessage::set_allocated_content(::std::string* content) {
   // @@protoc_insertion_point(field_set_allocated:chat.NodeMessage.content)
 }
 
-// string toUserID_outer = 7;
+// string toUserID_outer = 8;
 void NodeMessage::clear_touserid_outer() {
   touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

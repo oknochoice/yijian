@@ -2920,8 +2920,9 @@ struct Chat_NodeMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Swi
     3: .same(proto: "toNodeID", swift: "toNodeId"),
     4: .same(proto: "incrementID", swift: "incrementId"),
     5: .same(proto: "type", swift: "type"),
-    6: .same(proto: "content", swift: "content"),
-    7: .unique(proto: "toUserID_outer", json: "toUserIDOuter", swift: "toUserIdOuter"),
+    6: .same(proto: "mediaPath", swift: "mediaPath"),
+    7: .same(proto: "content", swift: "content"),
+    8: .unique(proto: "toUserID_outer", json: "toUserIDOuter", swift: "toUserIdOuter"),
   ]
 
 
@@ -2935,6 +2936,8 @@ struct Chat_NodeMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Swi
   var incrementId: Int32 = 0
 
   var type: Chat_MediaType = Chat_MediaType.unknow
+
+  var mediaPath: String = ""
 
   ///   nontext base64
   var content: String = ""
@@ -2951,8 +2954,9 @@ struct Chat_NodeMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Swi
     case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
     case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &incrementId)
     case 5: try setter.decodeSingularField(fieldType: Chat_MediaType.self, value: &type)
-    case 6: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &content)
-    case 7: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toUserIdOuter)
+    case 6: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &mediaPath)
+    case 7: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &content)
+    case 8: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toUserIdOuter)
     default: break
     }
   }
@@ -2973,11 +2977,14 @@ struct Chat_NodeMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Swi
     if type != Chat_MediaType.unknow {
       try visitor.visitSingularField(fieldType: Chat_MediaType.self, value: type, protoFieldNumber: 5)
     }
+    if mediaPath != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: mediaPath, protoFieldNumber: 6)
+    }
     if content != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: content, protoFieldNumber: 6)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: content, protoFieldNumber: 7)
     }
     if toUserIdOuter != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toUserIdOuter, protoFieldNumber: 7)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toUserIdOuter, protoFieldNumber: 8)
     }
   }
 
@@ -2987,6 +2994,7 @@ struct Chat_NodeMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Swi
     if toNodeId != other.toNodeId {return false}
     if incrementId != other.incrementId {return false}
     if type != other.type {return false}
+    if mediaPath != other.mediaPath {return false}
     if content != other.content {return false}
     if toUserIdOuter != other.toUserIdOuter {return false}
     return true

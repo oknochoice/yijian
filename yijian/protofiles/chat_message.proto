@@ -361,9 +361,10 @@ message NodeMessage {
   string toNodeID = 3;
   int32  incrementID = 4;// 
   MediaType   type = 5;
-  string content = 6;// nontext base64
+  string mediaPath = 6;
+  string content = 7;// nontext base64
 
-  string toUserID_outer = 7; // server used to quick search device
+  string toUserID_outer = 8; // server used to quick search device
   
 }
 message NodeMessageRes {

@@ -5821,9 +5821,23 @@ class NodeMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_tonodeid();
   void set_allocated_tonodeid(::std::string* tonodeid);
 
-  // string content = 6;
+  // string mediaPath = 6;
+  void clear_mediapath();
+  static const int kMediaPathFieldNumber = 6;
+  const ::std::string& mediapath() const;
+  void set_mediapath(const ::std::string& value);
+  #if LANG_CXX11
+  void set_mediapath(::std::string&& value);
+  #endif
+  void set_mediapath(const char* value);
+  void set_mediapath(const char* value, size_t size);
+  ::std::string* mutable_mediapath();
+  ::std::string* release_mediapath();
+  void set_allocated_mediapath(::std::string* mediapath);
+
+  // string content = 7;
   void clear_content();
-  static const int kContentFieldNumber = 6;
+  static const int kContentFieldNumber = 7;
   const ::std::string& content() const;
   void set_content(const ::std::string& value);
   #if LANG_CXX11
@@ -5835,9 +5849,9 @@ class NodeMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_content();
   void set_allocated_content(::std::string* content);
 
-  // string toUserID_outer = 7;
+  // string toUserID_outer = 8;
   void clear_touserid_outer();
-  static const int kToUserIDOuterFieldNumber = 7;
+  static const int kToUserIDOuterFieldNumber = 8;
   const ::std::string& touserid_outer() const;
   void set_touserid_outer(const ::std::string& value);
   #if LANG_CXX11
@@ -5868,6 +5882,7 @@ class NodeMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::internal::ArenaStringPtr id_;
   ::google::protobuf::internal::ArenaStringPtr fromuserid_;
   ::google::protobuf::internal::ArenaStringPtr tonodeid_;
+  ::google::protobuf::internal::ArenaStringPtr mediapath_;
   ::google::protobuf::internal::ArenaStringPtr content_;
   ::google::protobuf::internal::ArenaStringPtr touserid_outer_;
   ::google::protobuf::int32 incrementid_;
@@ -13061,7 +13076,59 @@ inline void NodeMessage::set_type(::chat::MediaType value) {
   // @@protoc_insertion_point(field_set:chat.NodeMessage.type)
 }
 
-// string content = 6;
+// string mediaPath = 6;
+inline void NodeMessage::clear_mediapath() {
+  mediapath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& NodeMessage::mediapath() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessage.mediaPath)
+  return mediapath_.GetNoArena();
+}
+inline void NodeMessage::set_mediapath(const ::std::string& value) {
+  
+  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeMessage.mediaPath)
+}
+#if LANG_CXX11
+inline void NodeMessage::set_mediapath(::std::string&& value) {
+  
+  mediapath_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessage.mediaPath)
+}
+#endif
+inline void NodeMessage::set_mediapath(const char* value) {
+  
+  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeMessage.mediaPath)
+}
+inline void NodeMessage::set_mediapath(const char* value, size_t size) {
+  
+  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessage.mediaPath)
+}
+inline ::std::string* NodeMessage::mutable_mediapath() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.NodeMessage.mediaPath)
+  return mediapath_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* NodeMessage::release_mediapath() {
+  // @@protoc_insertion_point(field_release:chat.NodeMessage.mediaPath)
+  
+  return mediapath_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void NodeMessage::set_allocated_mediapath(::std::string* mediapath) {
+  if (mediapath != NULL) {
+    
+  } else {
+    
+  }
+  mediapath_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), mediapath);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessage.mediaPath)
+}
+
+// string content = 7;
 inline void NodeMessage::clear_content() {
   content_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -13113,7 +13180,7 @@ inline void NodeMessage::set_allocated_content(::std::string* content) {
   // @@protoc_insertion_point(field_set_allocated:chat.NodeMessage.content)
 }
 
-// string toUserID_outer = 7;
+// string toUserID_outer = 8;
 inline void NodeMessage::clear_touserid_outer() {
   touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
