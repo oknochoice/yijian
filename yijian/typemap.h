@@ -42,14 +42,11 @@ enum ChatType : uint8_t {
   media = 35,
   mediares = 36,
   querymedia = 37,
-  mediaisexist = 38,
-  mediaisexistres = 39,
-  mediacheck = 40,
-  mediacheckres = 41,
-  queryaddfriendinfo = 44,
-  queryaddfriendinfores = 45,
+  querymediares = 38,
   serverconnect = 42,// outer
   serverdisconnect = 43,// outer
+  queryaddfriendinfo = 44,
+  queryaddfriendinfores = 45,
   ping = 46,
   pong = 47,
   setuserproterty = 48,

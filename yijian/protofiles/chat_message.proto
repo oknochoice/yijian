@@ -20,10 +20,6 @@ message TalkList {
   map<string, NodeInfo> nodemap  = 1;
 }
 
-message AddFriendInfo {
-  repeated QueryAddfriendInfoRes info = 1;
-}
-
 message Ping {
   string msg = 1;
 }
@@ -279,6 +275,11 @@ db.addFriend
 }
 */
 
+message AddFriendInfo {
+  string inviter = 1;
+  string invitee = 2;
+  string toNodeID = 3;
+}
 
 message AddFriend {
   string inviteeID = 1;
@@ -318,10 +319,7 @@ message QueryAddfriendInfo {
 }
 
 message QueryAddfriendInfoRes {
-  string inviter = 1;
-  string invitee = 2;
-  string toNodeID = 3;
-  bool   isEnd = 4;
+  repeated AddFriendInfo info = 1;
 }
 
 message CreateGroup {
@@ -470,43 +468,20 @@ message ConnectInfoLittle {
 //    content: 123,
 // }
 message Media {
-
   string sha1 = 1;
-  int32  nth = 2;
+  string path = 2;
   MediaType type = 3;
-  int32  length = 4;
-  bytes  content = 5;
-
 }
 
 message MediaRes {
-  string sha1 = 1;
-  int32  nth  = 2;
-  MediaType type = 3;
+  bool isSuccess = 1;
 }
 
 message QueryMedia {
   string sha1 = 1;
 }
 
-message MediaIsExist {
-  string sha1 = 1;
+message QueryMediaRes {
+  Media media = 1;
 }
-
-message MediaIsExistRes {
-  bool isExist = 1;
-}
-
-message MediaCheck {
-  string sha1 = 1;
-}
-
-message MediaCheckRes {
-
-  string sha1 = 1;
-  bool   isIntact = 2;
-
-}
-
-
 

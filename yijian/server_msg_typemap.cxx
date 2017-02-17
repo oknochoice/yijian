@@ -670,14 +670,13 @@ void dispatch(chat::QueryAddfriendInfo & info) {
     if (info.count() > 0 && info.count() <= 50) {
       limit = info.count();
     }
-    client->queryAddfriendInfo([](std::shared_ptr<chat::QueryAddfriendInfoRes> sp){
-          sp->set_isend(false);
-          YILOG_INFO ("query addfriend info success {}", pro2string(*sp));
-          mountBuffer2Node(yijianBuffer(*sp), node_self_);
+    auto res = chat::QueryAddfriendInfoRes();
+    client->queryAddfriendInfo([&res](chat::AddFriendInfo & info){
+          auto info_p =res.add_info();
+          *info_p = info;
         }, currentNode_->userid, limit);
-    chat::QueryAddfriendInfoRes end;
-    end.set_isend(true);
-    mountBuffer2Node(yijianBuffer(end), node_self_);
+    YILOG_INFO ("query addfriend info success {}", pro2string(res));
+    mountBuffer2Node(yijianBuffer(res), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -982,67 +981,13 @@ void dispatch(chat::Media & media) {
   YILOG_TRACE ("func: {}. media", __func__);
   YILOG_INFO ("media {}", pro2string(media));
   try {
+    auto client = yijian::threadCurrent::mongoClient();
     auto mediares = chat::MediaRes();
-    mediares.set_sha1(media.sha1());
-    mediares.set_nth(media.nth());
-    {
-      std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
-      currentNode_->media_vec.push_back(std::move(media));
-    }
+    client->insertMedia(media);
+    mediares.set_issuccess(true);
     YILOG_INFO ("media {}", pro2string(mediares));
     mountBuffer2Node(yijianBuffer(mediares), node_self_);
   }catch (std::system_error & sys_error) {
-    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
-        __func__, sys_error.code().value(), sys_error.what());
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
-        node_self_);
-  }
-}
-
-void dispatch(chat::MediaIsExist & isExist) {
-  YILOG_TRACE ("func: {}. media", __func__);
-  YILOG_INFO ("media is exist {}", pro2string(isExist));
-  try {
-    auto client = yijian::threadCurrent::mongoClient();
-    auto isE = client->mediaIsExist(isExist.sha1());
-    chat::MediaIsExistRes res;
-    res.set_isexist(isE);
-    YILOG_INFO ("media is exist success {}", pro2string(res));
-    mountBuffer2Node(yijianBuffer(res), node_self_);
-  }catch (std::system_error & sys_error) {
-    YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
-        __func__, sys_error.code().value(), sys_error.what());
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
-        node_self_);
-  }
-}
-
-void dispatch(chat::MediaCheck & mediacheck) {
-  YILOG_TRACE ("func: {}. media", __func__);
-  YILOG_INFO ("media check {}", pro2string(mediacheck));
-  try {
-    auto client = yijian::threadCurrent::mongoClient();
-    client->insertMedia(currentNode_->media_vec);
-    {
-      std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
-      std::sort(std::begin(currentNode_->media_vec),
-                std::end(currentNode_->media_vec),
-                [](const chat::Media &a, 
-                  const  chat::Media &b) -> bool{
-                    return a.nth() < b.nth();
-                });
-      currentNode_->media_vec.clear();
-    }
-    auto mediares = chat::MediaCheckRes();
-    mediares.set_sha1(mediacheck.sha1());
-    mediares.set_isintact(true);
-    YILOG_INFO ("media check success {}", pro2string(mediares));
-    mountBuffer2Node(yijianBuffer(mediares), node_self_);
-  }catch (std::system_error & sys_error) {
-    {
-      std::unique_lock<std::mutex> ul(currentNode_->media_vec_mutex_);
-      currentNode_->media_vec.clear();
-    }
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
@@ -1057,12 +1002,11 @@ void dispatch(chat::QueryMedia & querymedia) {
     auto client = yijian::threadCurrent::mongoClient();
     int32_t maxlength = static_cast<int32_t>(Message_Type::message)
       - PADDING_LENGTH;
-    std::vector<std::shared_ptr<chat::Media>> medias;
-    client->queryMedia(querymedia.sha1(), medias, maxlength);
-    for (auto media_sp: medias) {
-      YILOG_INFO ("query media success {}", pro2string(*media_sp));
-      mountBuffer2Node(yijianBuffer(*media_sp), node_self_);
-    }
+    auto res = chat::QueryMediaRes();
+    auto media_p = res.mutable_media();
+    client->queryMedia(querymedia.sha1(), *media_p);
+    YILOG_INFO ("query media success {}", pro2string(res));
+    mountBuffer2Node(yijianBuffer(res), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -1259,16 +1203,6 @@ void dispatch(const int type, char const * header, const std::size_t length) {
       };
       (*map_p)[ChatType::querymedia] = [=]() {
         auto chat = chat::QueryMedia();
-        chat.ParseFromArray(header, length);
-        dispatch(chat);
-      };
-      (*map_p)[ChatType::mediaisexist] = [=]() {
-        auto chat = chat::MediaIsExist();
-        chat.ParseFromArray(header, length);
-        dispatch(chat);
-      };
-      (*map_p)[ChatType::mediacheck] = [=]() {
-        auto chat = chat::MediaCheck();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };

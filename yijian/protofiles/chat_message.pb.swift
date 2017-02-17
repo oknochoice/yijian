@@ -418,38 +418,6 @@ struct Chat_TalkList: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   }
 }
 
-struct Chat_AddFriendInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_AddFriendInfo"}
-  public var protoMessageName: String {return "AddFriendInfo"}
-  public var protoPackageName: String {return "chat"}
-  public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "info", swift: "info"),
-  ]
-
-
-  var info: [Chat_QueryAddfriendInfoRes] = []
-
-  init() {}
-
-  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
-    switch protoFieldNumber {
-    case 1: try setter.decodeRepeatedMessageField(fieldType: Chat_QueryAddfriendInfoRes.self, value: &info)
-    default: break
-    }
-  }
-
-  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if !info.isEmpty {
-      try visitor.visitRepeatedMessageField(value: info, protoFieldNumber: 1)
-    }
-  }
-
-  public func _protoc_generated_isEqualTo(other: Chat_AddFriendInfo) -> Bool {
-    if info != other.info {return false}
-    return true
-  }
-}
-
 struct Chat_Ping: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
   public var swiftClassName: String {return "Chat_Ping"}
   public var protoMessageName: String {return "Ping"}
@@ -2293,6 +2261,54 @@ struct Chat_LogoutRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Swift
 // addInviter userUnreadInviter addInvitee finish(userUnreadInvitee)
 // }
 
+struct Chat_AddFriendInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_AddFriendInfo"}
+  public var protoMessageName: String {return "AddFriendInfo"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "inviter", swift: "inviter"),
+    2: .same(proto: "invitee", swift: "invitee"),
+    3: .same(proto: "toNodeID", swift: "toNodeId"),
+  ]
+
+
+  var inviter: String = ""
+
+  var invitee: String = ""
+
+  var toNodeId: String = ""
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &inviter)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &invitee)
+    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if inviter != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: inviter, protoFieldNumber: 1)
+    }
+    if invitee != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: invitee, protoFieldNumber: 2)
+    }
+    if toNodeId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 3)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_AddFriendInfo) -> Bool {
+    if inviter != other.inviter {return false}
+    if invitee != other.invitee {return false}
+    if toNodeId != other.toNodeId {return false}
+    return true
+  }
+}
+
 struct Chat_AddFriend: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
   public var swiftClassName: String {return "Chat_AddFriend"}
   public var protoMessageName: String {return "AddFriend"}
@@ -2690,53 +2706,29 @@ struct Chat_QueryAddfriendInfoRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Me
   public var protoMessageName: String {return "QueryAddfriendInfoRes"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "inviter", swift: "inviter"),
-    2: .same(proto: "invitee", swift: "invitee"),
-    3: .same(proto: "toNodeID", swift: "toNodeId"),
-    4: .same(proto: "isEnd", swift: "isEnd"),
+    1: .same(proto: "info", swift: "info"),
   ]
 
 
-  var inviter: String = ""
-
-  var invitee: String = ""
-
-  var toNodeId: String = ""
-
-  var isEnd: Bool = false
+  var info: [Chat_AddFriendInfo] = []
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &inviter)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &invitee)
-    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
-    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: &isEnd)
+    case 1: try setter.decodeRepeatedMessageField(fieldType: Chat_AddFriendInfo.self, value: &info)
     default: break
     }
   }
 
   public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if inviter != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: inviter, protoFieldNumber: 1)
-    }
-    if invitee != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: invitee, protoFieldNumber: 2)
-    }
-    if toNodeId != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 3)
-    }
-    if isEnd != false {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: isEnd, protoFieldNumber: 4)
+    if !info.isEmpty {
+      try visitor.visitRepeatedMessageField(value: info, protoFieldNumber: 1)
     }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_QueryAddfriendInfoRes) -> Bool {
-    if inviter != other.inviter {return false}
-    if invitee != other.invitee {return false}
-    if toNodeId != other.toNodeId {return false}
-    if isEnd != other.isEnd {return false}
+    if info != other.info {return false}
     return true
   }
 }
@@ -3508,32 +3500,24 @@ struct Chat_Media: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
     1: .same(proto: "sha1", swift: "sha1"),
-    2: .same(proto: "nth", swift: "nth"),
+    2: .same(proto: "path", swift: "path"),
     3: .same(proto: "type", swift: "type"),
-    4: .same(proto: "length", swift: "length"),
-    5: .same(proto: "content", swift: "content"),
   ]
 
 
   var sha1: String = ""
 
-  var nth: Int32 = 0
+  var path: String = ""
 
   var type: Chat_MediaType = Chat_MediaType.unknow
-
-  var length: Int32 = 0
-
-  var content: Data = Data()
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
     case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &sha1)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &nth)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &path)
     case 3: try setter.decodeSingularField(fieldType: Chat_MediaType.self, value: &type)
-    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &length)
-    case 5: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufBytes.self, value: &content)
     default: break
     }
   }
@@ -3542,26 +3526,18 @@ struct Chat_Media: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProt
     if sha1 != "" {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: sha1, protoFieldNumber: 1)
     }
-    if nth != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: nth, protoFieldNumber: 2)
+    if path != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: path, protoFieldNumber: 2)
     }
     if type != Chat_MediaType.unknow {
       try visitor.visitSingularField(fieldType: Chat_MediaType.self, value: type, protoFieldNumber: 3)
-    }
-    if length != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: length, protoFieldNumber: 4)
-    }
-    if content != Data() {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufBytes.self, value: content, protoFieldNumber: 5)
     }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_Media) -> Bool {
     if sha1 != other.sha1 {return false}
-    if nth != other.nth {return false}
+    if path != other.path {return false}
     if type != other.type {return false}
-    if length != other.length {return false}
-    if content != other.content {return false}
     return true
   }
 }
@@ -3571,45 +3547,29 @@ struct Chat_MediaRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   public var protoMessageName: String {return "MediaRes"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "sha1", swift: "sha1"),
-    2: .same(proto: "nth", swift: "nth"),
-    3: .same(proto: "type", swift: "type"),
+    1: .same(proto: "isSuccess", swift: "isSuccess"),
   ]
 
 
-  var sha1: String = ""
-
-  var nth: Int32 = 0
-
-  var type: Chat_MediaType = Chat_MediaType.unknow
+  var isSuccess: Bool = false
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &sha1)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &nth)
-    case 3: try setter.decodeSingularField(fieldType: Chat_MediaType.self, value: &type)
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: &isSuccess)
     default: break
     }
   }
 
   public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if sha1 != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: sha1, protoFieldNumber: 1)
-    }
-    if nth != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: nth, protoFieldNumber: 2)
-    }
-    if type != Chat_MediaType.unknow {
-      try visitor.visitSingularField(fieldType: Chat_MediaType.self, value: type, protoFieldNumber: 3)
+    if isSuccess != false {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: isSuccess, protoFieldNumber: 1)
     }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_MediaRes) -> Bool {
-    if sha1 != other.sha1 {return false}
-    if nth != other.nth {return false}
-    if type != other.type {return false}
+    if isSuccess != other.isSuccess {return false}
     return true
   }
 }
@@ -3646,138 +3606,77 @@ struct Chat_QueryMedia: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Swif
   }
 }
 
-struct Chat_MediaIsExist: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_MediaIsExist"}
-  public var protoMessageName: String {return "MediaIsExist"}
+struct Chat_QueryMediaRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_QueryMediaRes"}
+  public var protoMessageName: String {return "QueryMediaRes"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "sha1", swift: "sha1"),
+    1: .same(proto: "media", swift: "media"),
   ]
 
+  private class _StorageClass {
+    typealias ExtendedMessage = Chat_QueryMediaRes
+    var _media: Chat_Media? = nil
 
-  var sha1: String = ""
+    init() {}
+
+    func decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+      switch protoFieldNumber {
+      case 1: try setter.decodeSingularMessageField(fieldType: Chat_Media.self, value: &_media)
+      default: break
+      }
+    }
+
+    func traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+      if let v = _media {
+        try visitor.visitSingularMessageField(value: v, protoFieldNumber: 1)
+      }
+    }
+
+    func isEqualTo(other: _StorageClass) -> Bool {
+      if _media != other._media {return false}
+      return true
+    }
+
+    func copy() -> _StorageClass {
+      let clone = _StorageClass()
+      clone._media = _media
+      return clone
+    }
+  }
+
+  private var _storage = _StorageClass()
+
+
+  var media: Chat_Media {
+    get {return _storage._media ?? Chat_Media()}
+    set {_uniqueStorage()._media = newValue}
+  }
+  public var hasMedia: Bool {
+    return _storage._media != nil
+  }
+  public mutating func clearMedia() {
+    return _storage._media = nil
+  }
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
-    switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &sha1)
-    default: break
-    }
+    try _uniqueStorage().decodeField(setter: &setter, protoFieldNumber: protoFieldNumber)
   }
 
   public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if sha1 != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: sha1, protoFieldNumber: 1)
+    try _storage.traverse(visitor: &visitor)
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_QueryMediaRes) -> Bool {
+    return _storage === other._storage || _storage.isEqualTo(other: other._storage)
+  }
+
+  private mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _storage.copy()
     }
-  }
-
-  public func _protoc_generated_isEqualTo(other: Chat_MediaIsExist) -> Bool {
-    if sha1 != other.sha1 {return false}
-    return true
-  }
-}
-
-struct Chat_MediaIsExistRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_MediaIsExistRes"}
-  public var protoMessageName: String {return "MediaIsExistRes"}
-  public var protoPackageName: String {return "chat"}
-  public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "isExist", swift: "isExist"),
-  ]
-
-
-  var isExist: Bool = false
-
-  init() {}
-
-  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
-    switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: &isExist)
-    default: break
-    }
-  }
-
-  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if isExist != false {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: isExist, protoFieldNumber: 1)
-    }
-  }
-
-  public func _protoc_generated_isEqualTo(other: Chat_MediaIsExistRes) -> Bool {
-    if isExist != other.isExist {return false}
-    return true
-  }
-}
-
-struct Chat_MediaCheck: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_MediaCheck"}
-  public var protoMessageName: String {return "MediaCheck"}
-  public var protoPackageName: String {return "chat"}
-  public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "sha1", swift: "sha1"),
-  ]
-
-
-  var sha1: String = ""
-
-  init() {}
-
-  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
-    switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &sha1)
-    default: break
-    }
-  }
-
-  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if sha1 != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: sha1, protoFieldNumber: 1)
-    }
-  }
-
-  public func _protoc_generated_isEqualTo(other: Chat_MediaCheck) -> Bool {
-    if sha1 != other.sha1 {return false}
-    return true
-  }
-}
-
-struct Chat_MediaCheckRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_MediaCheckRes"}
-  public var protoMessageName: String {return "MediaCheckRes"}
-  public var protoPackageName: String {return "chat"}
-  public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "sha1", swift: "sha1"),
-    2: .same(proto: "isIntact", swift: "isIntact"),
-  ]
-
-
-  var sha1: String = ""
-
-  var isIntact: Bool = false
-
-  init() {}
-
-  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
-    switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &sha1)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: &isIntact)
-    default: break
-    }
-  }
-
-  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if sha1 != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: sha1, protoFieldNumber: 1)
-    }
-    if isIntact != false {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: isIntact, protoFieldNumber: 2)
-    }
-  }
-
-  public func _protoc_generated_isEqualTo(other: Chat_MediaCheckRes) -> Bool {
-    if sha1 != other.sha1 {return false}
-    if isIntact != other.isIntact {return false}
-    return true
+    return _storage
   }
 }

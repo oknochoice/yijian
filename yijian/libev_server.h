@@ -52,9 +52,6 @@ struct Read_IO {
   std::string uuid;
   std::string appVersion;
   std::string clientVersion;
-  // media need 
-  std::mutex media_vec_mutex_;
-  std::vector<chat::Media> media_vec;
   // ssl
   SSL * ssl = nullptr;  
 };

@@ -362,6 +362,15 @@ void mongo_client::setUserProperty(const std::string & userID, const chat::SetUs
         << property_string << isTrue
         << close_document
         << finalize);
+  }else if (property_string == "birthday"){
+    int32_t birthday_ts = std::stoi(property.value());
+    user_collection.update_one(
+        document{} << "_id" << bsoncxx::oid(userID)
+        << finalize,
+        document{} << "$set" << open_document
+        << property_string << birthday_ts
+        << close_document
+        << finalize);
   }else {
     user_collection.update_one(
         document{} << "_id" << bsoncxx::oid(userID)
@@ -587,7 +596,7 @@ void mongo_client::addFriendAuthorize(const std::string & inviter,
 
 }
 void mongo_client::queryAddfriendInfo(
-      std::function<void(std::shared_ptr<chat::QueryAddfriendInfoRes>)> && func,
+      std::function<void(chat::AddFriendInfo &)> && func,
       const std::string & userid,
       const int limit) {
   YILOG_TRACE ("func: {}. ", __func__);
@@ -620,11 +629,11 @@ void mongo_client::queryAddfriendInfo(
         << close_document << close_document << close_array
         << finalize);
     for (auto doc: cursor) {
-      auto re = std::make_shared<chat::QueryAddfriendInfoRes>();
-      re->set_inviter(doc["inviter"].get_utf8().value.to_string());
-      re->set_invitee(doc["invitee"].get_utf8().value.to_string());
-      re->set_tonodeid(doc["toNodeID"].get_utf8().value.to_string());
-      func(re);
+      auto info = chat::AddFriendInfo();
+      info.set_inviter(doc["inviter"].get_utf8().value.to_string());
+      info.set_invitee(doc["invitee"].get_utf8().value.to_string());
+      info.set_tonodeid(doc["toNodeID"].get_utf8().value.to_string());
+      func(info);
     }
   }catch(std::system_error & e) {
     YILOG_ERROR ("query addfriend authorize info failre.\n"
@@ -885,9 +894,10 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
 
 // media
 void mongo_client::insertMedia(
-    const std::vector<chat::Media> & media_vec) {
+    const chat::Media & media) {
   YILOG_TRACE ("func: {}. ", __func__);
 
+  /*  // sha1
   SHA_CTX ctx;
   SHA1_Init(&ctx);
 
@@ -903,7 +913,8 @@ void mongo_client::insertMedia(
 
   if (unlikely(sha1 !=
         media_vec.front().sha1())) {
-    throw std::system_error(std::error_code(40060, std::generic_category()), "sha1 check failure");
+    throw std::system_error(std::error_code(40060, std::generic_category()),
+        "sha1 check failure");
   }
 
   std::string content;
@@ -911,19 +922,19 @@ void mongo_client::insertMedia(
   for (auto media: media_vec) {
     content.append(media.content());
   }
+  */
 
   auto db = client_["chatdb"];
   auto media_col = db["media"];
   try {
   auto maybe_result = media_col.insert_one(
-      document{} << "sha1" << sha1
-      << "type" << media_vec.front().type()
-      << "content" << content
+      document{} << "sha1" << media.sha1()
+      << "path" << media.path()
       << finalize);
   }catch (std::system_error & e) {
     YILOG_ERROR ("media insert failure, sha1: {}"
         "system_error code:{}, what:{}.", 
-        sha1, e.code().value(), e.what());
+        media.sha1(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40061, std::generic_category()),
         "media insert failure");
   }
@@ -931,8 +942,7 @@ void mongo_client::insertMedia(
 
 
 void mongo_client::queryMedia(const std::string & sha1, 
-    std::vector<std::shared_ptr<chat::Media>> & media_vec,
-    int32_t maxLength) {
+    chat::Media & media) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto media_col = db["media"];
@@ -946,42 +956,11 @@ void mongo_client::queryMedia(const std::string & sha1,
         "media not find");
   }
   auto doc = maybe_result->view();
-  auto type = doc["type"].get_int32().value;
-  auto content = doc["content"].get_utf8().value.to_string();
-
-  auto media_sp = std::make_shared<chat::Media>();
-  int i = 0;
-  std::size_t pos = 0;
-  do {
-    media_sp->set_sha1(sha1);
-    media_sp->set_nth(i);
-    media_sp->set_length(content.size());
-    media_sp->set_type(static_cast<chat::MediaType>(type));
-    auto length = maxLength - media_sp->ByteSize();
-    auto subContent = content.substr(pos, length);
-    media_sp->set_content(subContent);
-    media_vec.push_back(media_sp);
-    ++i;
-    pos += length;
-  }while(pos < content.size());
+  media.set_type(static_cast<chat::MediaType>(doc["type"].get_int32().value));
+  media.set_sha1(doc["sha1"].get_utf8().value.to_string());
+  media.set_path(doc["path"].get_utf8().value.to_string());
 
 }
-
-
-bool mongo_client::mediaIsExist(const std::string & sha1) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  auto db = client_["chatdb"];
-  auto media_col = db["media"];
-  auto maybe_result = media_col.find_one(
-      document{} << "sha1" << sha1
-      << finalize);
-  bool isExist = false;
-  if (maybe_result) {
-    isExist = true;
-  }
-  return isExist;
-}
-
 
 void mongo_client::devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func) {

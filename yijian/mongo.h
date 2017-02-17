@@ -103,7 +103,7 @@ public:
       const std::string & invitee);
 
   void queryAddfriendInfo(
-      std::function<void(std::shared_ptr<chat::QueryAddfriendInfoRes>)> && func,
+      std::function<void(chat::AddFriendInfo &)> && func,
       const std::string & userid,
       const int limit = 10);
 
@@ -137,11 +137,9 @@ public:
 
   // media
   // 40060
-  void insertMedia(const std::vector<chat::Media> & media_vec);
+  void insertMedia(const chat::Media & media);
   void queryMedia(const std::string & sha1, 
-      std::vector<std::shared_ptr<chat::Media>> & media_vec,
-      int32_t maxLength);
-  bool mediaIsExist(const std::string & sha1);
+      chat::Media & media);
 
   // query current server device connect info
 //  void devices(const chat::NodeSpecifiy& node_specifiy, 

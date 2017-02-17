@@ -16,7 +16,6 @@ check_map_ = {
   {ChatType::querymessage, true},
   {ChatType::media, true},
   {ChatType::querymedia, true},
-  {ChatType::mediacheck, true},
   {ChatType::setuserproterty, true},
 };
 bool missing_check(int32_t type) {

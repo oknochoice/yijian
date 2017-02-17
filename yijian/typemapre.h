@@ -8,148 +8,139 @@
 extern "C" {
 #endif
 
-constexpr uint8_t dispatchType(chat::Error &) {
+constexpr uint8_t dispatchType(const chat::Error &) {
   return ChatType::error;
 }
-constexpr uint8_t dispatchType(chat::Register &) {
+constexpr uint8_t dispatchType(const chat::Register &) {
   return ChatType::registor;
 }
-constexpr uint8_t dispatchType(chat::RegisterRes &) {
+constexpr uint8_t dispatchType(const chat::RegisterRes &) {
   return ChatType::registorres;
 }
-constexpr uint8_t dispatchType(chat::Login &) {
+constexpr uint8_t dispatchType(const chat::Login &) {
   return ChatType::login;
 }
-constexpr uint8_t dispatchType(chat::LoginRes &) {
+constexpr uint8_t dispatchType(const chat::LoginRes &) {
   return ChatType::loginres;
 }
-constexpr uint8_t dispatchType(chat::LoginNoti & ) {
+constexpr uint8_t dispatchType(const chat::LoginNoti & ) {
   return ChatType::loginnoti;
 }
-constexpr uint8_t dispatchType(chat::Logout & ) {
+constexpr uint8_t dispatchType(const chat::Logout & ) {
   return ChatType::logout;
 }
-constexpr uint8_t dispatchType(chat::LogoutRes & ) {
+constexpr uint8_t dispatchType(const chat::LogoutRes & ) {
   return ChatType::logoutres;
 }
-constexpr uint8_t dispatchType(chat::ClientConnect & ) {
+constexpr uint8_t dispatchType(const chat::ClientConnect & ) {
   return ChatType::clientconnect;
 }
-constexpr uint8_t dispatchType(chat::ClientConnectRes & ) {
+constexpr uint8_t dispatchType(const chat::ClientConnectRes & ) {
   return ChatType::clientconnectres;
 }
-constexpr uint8_t dispatchType(chat::ClientDisConnect & ) {
+constexpr uint8_t dispatchType(const chat::ClientDisConnect & ) {
   return ChatType::clientdisconnect;
 }
-constexpr uint8_t dispatchType(chat::ClientDisConnectRes & ) {
+constexpr uint8_t dispatchType(const chat::ClientDisConnectRes & ) {
   return ChatType::clientdisconnectres;
 }
-constexpr uint8_t dispatchType(chat::QueryUser & ) {
+constexpr uint8_t dispatchType(const chat::QueryUser & ) {
   return ChatType::queryuser;
 }
-constexpr uint8_t dispatchType(chat::QueryUserRes & ) {
+constexpr uint8_t dispatchType(const chat::QueryUserRes & ) {
   return ChatType::queryuserres;
 }
-constexpr uint8_t dispatchType(chat::QueryUserVersion & ) {
+constexpr uint8_t dispatchType(const chat::QueryUserVersion & ) {
   return ChatType::queryuserversion;
 }
-constexpr uint8_t dispatchType(chat::QueryUserVersionRes & ) {
+constexpr uint8_t dispatchType(const chat::QueryUserVersionRes & ) {
   return ChatType::queryuserversionres;
 }
-constexpr uint8_t dispatchType(chat::QueryNode & ) {
+constexpr uint8_t dispatchType(const chat::QueryNode & ) {
   return ChatType::querynode;
 }
-constexpr uint8_t dispatchType(chat::QueryNodeRes & ) {
+constexpr uint8_t dispatchType(const chat::QueryNodeRes & ) {
   return ChatType::querynoderes;
 }
-constexpr uint8_t dispatchType(chat::QueryNodeVersion & ) {
+constexpr uint8_t dispatchType(const chat::QueryNodeVersion & ) {
   return ChatType::querynodeversion;
 }
-constexpr uint8_t dispatchType(chat::QueryNodeVersionRes & ) {
+constexpr uint8_t dispatchType(const chat::QueryNodeVersionRes & ) {
   return ChatType::querynodeversionres;
 }
-constexpr uint8_t dispatchType(chat::AddFriend & ) {
+constexpr uint8_t dispatchType(const chat::AddFriend & ) {
   return ChatType::addfriend;
 }
-constexpr uint8_t dispatchType(chat::AddFriendRes & ) {
+constexpr uint8_t dispatchType(const chat::AddFriendRes & ) {
   return ChatType::addfriendres;
 }
-constexpr uint8_t dispatchType(chat::AddFriendNoti & ) {
+constexpr uint8_t dispatchType(const chat::AddFriendNoti & ) {
   return ChatType::addfriendnoti;
 }
-constexpr uint8_t dispatchType(chat::AddFriendAuthorize & ) {
+constexpr uint8_t dispatchType(const chat::AddFriendAuthorize & ) {
   return ChatType::addfriendauthorize;
 }
-constexpr uint8_t dispatchType(chat::AddFriendAuthorizeRes & ) {
+constexpr uint8_t dispatchType(const chat::AddFriendAuthorizeRes & ) {
   return ChatType::addfriendauthorizeres;
 }
-constexpr uint8_t dispatchType(chat::AddFriendAuthorizeNoti & ) {
+constexpr uint8_t dispatchType(const chat::AddFriendAuthorizeNoti & ) {
   return ChatType::addfriendauthorizenoti;
 }
-constexpr uint8_t dispatchType(chat::CreateGroup & ) {
+constexpr uint8_t dispatchType(const chat::CreateGroup & ) {
   return ChatType::creategroup;
 }
-constexpr uint8_t dispatchType(chat::CreateGroupRes & ) {
+constexpr uint8_t dispatchType(const chat::CreateGroupRes & ) {
   return ChatType::creategroupres;
 }
-constexpr uint8_t dispatchType(chat::GroupAddMember & ) {
+constexpr uint8_t dispatchType(const chat::GroupAddMember & ) {
   return ChatType::groupaddmember;
 }
-constexpr uint8_t dispatchType(chat::GroupAddMemberRes & ) {
+constexpr uint8_t dispatchType(const chat::GroupAddMemberRes & ) {
   return ChatType::groupaddmemberres;
 }
-constexpr uint8_t dispatchType(chat::NodeMessage & ) {
+constexpr uint8_t dispatchType(const chat::NodeMessage & ) {
   return ChatType::nodemessage;
 }
-constexpr uint8_t dispatchType(chat::NodeMessageRes & ) {
+constexpr uint8_t dispatchType(const chat::NodeMessageRes & ) {
   return ChatType::nodemessageres;
 }
-constexpr uint8_t dispatchType(chat::NodeMessageNoti & ) {
+constexpr uint8_t dispatchType(const chat::NodeMessageNoti & ) {
   return ChatType::nodemessagenoti;
 }
-constexpr uint8_t dispatchType(chat::QueryMessage & ) {
+constexpr uint8_t dispatchType(const chat::QueryMessage & ) {
   return ChatType::querymessage;
 }
-constexpr uint8_t dispatchType(chat::QueryOneMessage & ) {
+constexpr uint8_t dispatchType(const chat::QueryOneMessage & ) {
   return ChatType::queryonemessage;
 }
-constexpr uint8_t dispatchType(chat::Media & ) {
+constexpr uint8_t dispatchType(const chat::Media & ) {
   return ChatType::media;
 }
-constexpr uint8_t dispatchType(chat::MediaRes & ) {
+constexpr uint8_t dispatchType(const chat::MediaRes & ) {
   return ChatType::mediares;
 }
-constexpr uint8_t dispatchType(chat::QueryMedia & ) {
+constexpr uint8_t dispatchType(const chat::QueryMedia & ) {
   return ChatType::querymedia;
 }
-constexpr uint8_t dispatchType(chat::MediaIsExist & ) {
-  return ChatType::mediaisexist;
+constexpr uint8_t dispatchType(const chat::QueryMediaRes & ) {
+  return ChatType::querymediares;
 }
-constexpr uint8_t dispatchType(chat::MediaIsExistRes & ) {
-  return ChatType::mediaisexistres;
-}
-constexpr uint8_t dispatchType(chat::MediaCheck & ) {
-  return ChatType::mediacheck;
-}
-constexpr uint8_t dispatchType(chat::MediaCheckRes & ) {
-  return ChatType::mediacheckres;
-}
-constexpr uint8_t dispatchType(chat::QueryAddfriendInfo & ) {
+constexpr uint8_t dispatchType(const chat::QueryAddfriendInfo & ) {
   return ChatType::queryaddfriendinfo;
 }
-constexpr uint8_t dispatchType(chat::QueryAddfriendInfoRes & ) {
+constexpr uint8_t dispatchType(const chat::QueryAddfriendInfoRes & ) {
   return ChatType::queryaddfriendinfores;
 }
-constexpr uint8_t dispatchType(chat::Ping & ) {
+constexpr uint8_t dispatchType(const chat::Ping & ) {
   return ChatType::ping;
 }
-constexpr uint8_t dispatchType(chat::Pong & ) {
+constexpr uint8_t dispatchType(const chat::Pong & ) {
   return ChatType::pong;
 }
-constexpr uint8_t dispatchType(chat::SetUserProperty & ) {
+constexpr uint8_t dispatchType(const chat::SetUserProperty & ) {
   return ChatType::setuserproterty;
 }
-constexpr uint8_t dispatchType(chat::SetUserPropertyRes & ) {
+constexpr uint8_t dispatchType(const chat::SetUserPropertyRes & ) {
   return ChatType::setuserprotertyres;
 }
 
