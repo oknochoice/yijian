@@ -404,6 +404,9 @@ message QueryOneMessage {
   int32  incrementID = 2;
 }
 
+message QueryMessageRes {
+  repeated NodeMessage messages = 1;
+}
 
 message ServerConnect {
   string serverName = 1;

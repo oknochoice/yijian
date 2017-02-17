@@ -126,6 +126,8 @@ class QueryMessageDefaultTypeInternal : public ::google::protobuf::internal::Exp
 } _QueryMessage_default_instance_;
 class QueryOneMessageDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<QueryOneMessage> {
 } _QueryOneMessage_default_instance_;
+class QueryMessageResDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<QueryMessageRes> {
+} _QueryMessageRes_default_instance_;
 class ServerConnectDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<ServerConnect> {
 } _ServerConnect_default_instance_;
 class ServerDisconnectDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<ServerDisconnect> {
@@ -148,7 +150,7 @@ namespace protobuf_chat_5fmessage_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[64];
+::google::protobuf::Metadata file_level_metadata[65];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[5];
 
 }  // namespace
@@ -515,6 +517,11 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryOneMessage, tonodeid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryOneMessage, incrementid_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessageRes, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessageRes, messages_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ServerConnect, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -628,14 +635,15 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 341, -1, sizeof(setReadMessage)},
   { 347, -1, sizeof(QueryMessage)},
   { 354, -1, sizeof(QueryOneMessage)},
-  { 360, -1, sizeof(ServerConnect)},
-  { 366, -1, sizeof(ServerDisconnect)},
-  { 372, -1, sizeof(ConnectInfo)},
-  { 387, -1, sizeof(ConnectInfoLittle)},
-  { 395, -1, sizeof(Media)},
-  { 402, -1, sizeof(MediaRes)},
-  { 407, -1, sizeof(QueryMedia)},
-  { 412, -1, sizeof(QueryMediaRes)},
+  { 360, -1, sizeof(QueryMessageRes)},
+  { 365, -1, sizeof(ServerConnect)},
+  { 371, -1, sizeof(ServerDisconnect)},
+  { 377, -1, sizeof(ConnectInfo)},
+  { 392, -1, sizeof(ConnectInfoLittle)},
+  { 400, -1, sizeof(Media)},
+  { 407, -1, sizeof(MediaRes)},
+  { 412, -1, sizeof(QueryMedia)},
+  { 417, -1, sizeof(QueryMediaRes)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -693,6 +701,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_setReadMessage_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_QueryMessage_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_QueryOneMessage_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_QueryMessageRes_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_ServerConnect_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_ServerDisconnect_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_ConnectInfo_default_instance_),
@@ -721,7 +730,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 64);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 65);
   const ::google::protobuf::Descriptor* TalkList_NodemapEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[2].descriptor;
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
         TalkList_NodemapEntry_descriptor,
@@ -732,7 +741,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
             ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
             0>::CreateDefaultInstance(
                 TalkList_NodemapEntry_descriptor));
-  const ::google::protobuf::Descriptor* ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[57].descriptor;
+  const ::google::protobuf::Descriptor* ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[58].descriptor;
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
         ConnectInfo_UsersEntry_descriptor,
         ::google::protobuf::internal::MapEntry<
@@ -855,22 +864,24 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[53].reflection;
   _QueryOneMessage_default_instance_.Shutdown();
   delete file_level_metadata[54].reflection;
-  _ServerConnect_default_instance_.Shutdown();
+  _QueryMessageRes_default_instance_.Shutdown();
   delete file_level_metadata[55].reflection;
-  _ServerDisconnect_default_instance_.Shutdown();
+  _ServerConnect_default_instance_.Shutdown();
   delete file_level_metadata[56].reflection;
+  _ServerDisconnect_default_instance_.Shutdown();
+  delete file_level_metadata[57].reflection;
   _ConnectInfo_default_instance_.Shutdown();
-  delete file_level_metadata[58].reflection;
-  _ConnectInfoLittle_default_instance_.Shutdown();
   delete file_level_metadata[59].reflection;
-  _Media_default_instance_.Shutdown();
+  _ConnectInfoLittle_default_instance_.Shutdown();
   delete file_level_metadata[60].reflection;
-  _MediaRes_default_instance_.Shutdown();
+  _Media_default_instance_.Shutdown();
   delete file_level_metadata[61].reflection;
-  _QueryMedia_default_instance_.Shutdown();
+  _MediaRes_default_instance_.Shutdown();
   delete file_level_metadata[62].reflection;
-  _QueryMediaRes_default_instance_.Shutdown();
+  _QueryMedia_default_instance_.Shutdown();
   delete file_level_metadata[63].reflection;
+  _QueryMediaRes_default_instance_.Shutdown();
+  delete file_level_metadata[64].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -931,6 +942,7 @@ void TableStruct::InitDefaultsImpl() {
   _setReadMessage_default_instance_.DefaultConstruct();
   _QueryMessage_default_instance_.DefaultConstruct();
   _QueryOneMessage_default_instance_.DefaultConstruct();
+  _QueryMessageRes_default_instance_.DefaultConstruct();
   _ServerConnect_default_instance_.DefaultConstruct();
   _ServerDisconnect_default_instance_.DefaultConstruct();
   _ConnectInfo_default_instance_.DefaultConstruct();
@@ -1059,33 +1071,34 @@ void AddDescriptorsImpl() {
       " \001(\005\"P\n\014QueryMessage\022\020\n\010toNodeID\030\001 \001(\t\022\027"
       "\n\017fromIncrementID\030\002 \001(\005\022\025\n\rtoIncrementID"
       "\030\003 \001(\005\"8\n\017QueryOneMessage\022\020\n\010toNodeID\030\001 "
-      "\001(\t\022\023\n\013incrementID\030\002 \001(\005\"5\n\rServerConnec"
-      "t\022\022\n\nserverName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\""
-      "8\n\020ServerDisconnect\022\022\n\nserverName\030\001 \001(\t\022"
-      "\020\n\010serverIP\030\002 \001(\t\"\247\002\n\013ConnectInfo\022\014\n\004UUI"
-      "D\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022\017\n\007isLogin\030\003 \001(\010"
-      "\022\023\n\013isConnected\030\004 \001(\010\022\024\n\014isReciveNoti\030\005 "
-      "\001(\010\022\022\n\nserverName\030\006 \001(\t\022+\n\005users\030\010 \003(\0132\034"
-      ".chat.ConnectInfo.UsersEntry\022\025\n\rclientVe"
-      "rsion\030\t \001(\t\022\021\n\tOSVersion\030\n \001(\t\022\022\n\nappVer"
-      "sion\030\013 \001(\t\022\021\n\ttimestamp\030\014 \001(\t\032,\n\nUsersEn"
-      "try\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"a\n\021C"
-      "onnectInfoLittle\022\014\n\004UUID\030\001 \001(\t\022\023\n\013isConn"
-      "ected\030\002 \001(\010\022\024\n\014isReciveNoti\030\003 \001(\010\022\023\n\013nod"
-      "epointor\030\004 \001(\003\"B\n\005Media\022\014\n\004sha1\030\001 \001(\t\022\014\n"
-      "\004path\030\002 \001(\t\022\035\n\004type\030\003 \001(\0162\017.chat.MediaTy"
-      "pe\"\035\n\010MediaRes\022\021\n\tisSuccess\030\001 \001(\010\"\032\n\nQue"
-      "ryMedia\022\014\n\004sha1\030\001 \001(\t\"+\n\rQueryMediaRes\022\032"
-      "\n\005media\030\001 \001(\0132\013.chat.Media*8\n\007IsAgree\022\n\n"
-      "\006unknow\020\000\022\t\n\005agree\020\001\022\n\n\006refuse\020\002\022\n\n\006igno"
-      "re\020\003*_\n\014UserProperty\022\014\n\010realname\020\000\022\014\n\010ni"
-      "ckname\020\001\022\010\n\004icon\020\002\022\017\n\013description\020\003\022\n\n\006i"
-      "sMale\020\004\022\014\n\010birthday\020\005*3\n\tMediaType\022\n\n\006UN"
-      "KNOW\020\000\022\010\n\004TEXT\020\001\022\007\n\003JPG\020\002\022\007\n\003MP3\020\003B\003\370\001\000b"
-      "\006proto3"
+      "\001(\t\022\023\n\013incrementID\030\002 \001(\005\"6\n\017QueryMessage"
+      "Res\022#\n\010messages\030\001 \003(\0132\021.chat.NodeMessage"
+      "\"5\n\rServerConnect\022\022\n\nserverName\030\001 \001(\t\022\020\n"
+      "\010serverIP\030\002 \001(\t\"8\n\020ServerDisconnect\022\022\n\ns"
+      "erverName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\"\247\002\n\013Co"
+      "nnectInfo\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022"
+      "\017\n\007isLogin\030\003 \001(\010\022\023\n\013isConnected\030\004 \001(\010\022\024\n"
+      "\014isReciveNoti\030\005 \001(\010\022\022\n\nserverName\030\006 \001(\t\022"
+      "+\n\005users\030\010 \003(\0132\034.chat.ConnectInfo.UsersE"
+      "ntry\022\025\n\rclientVersion\030\t \001(\t\022\021\n\tOSVersion"
+      "\030\n \001(\t\022\022\n\nappVersion\030\013 \001(\t\022\021\n\ttimestamp\030"
+      "\014 \001(\t\032,\n\nUsersEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005valu"
+      "e\030\002 \001(\005:\0028\001\"a\n\021ConnectInfoLittle\022\014\n\004UUID"
+      "\030\001 \001(\t\022\023\n\013isConnected\030\002 \001(\010\022\024\n\014isReciveN"
+      "oti\030\003 \001(\010\022\023\n\013nodepointor\030\004 \001(\003\"B\n\005Media\022"
+      "\014\n\004sha1\030\001 \001(\t\022\014\n\004path\030\002 \001(\t\022\035\n\004type\030\003 \001("
+      "\0162\017.chat.MediaType\"\035\n\010MediaRes\022\021\n\tisSucc"
+      "ess\030\001 \001(\010\"\032\n\nQueryMedia\022\014\n\004sha1\030\001 \001(\t\"+\n"
+      "\rQueryMediaRes\022\032\n\005media\030\001 \001(\0132\013.chat.Med"
+      "ia*8\n\007IsAgree\022\n\n\006unknow\020\000\022\t\n\005agree\020\001\022\n\n\006"
+      "refuse\020\002\022\n\n\006ignore\020\003*_\n\014UserProperty\022\014\n\010"
+      "realname\020\000\022\014\n\010nickname\020\001\022\010\n\004icon\020\002\022\017\n\013de"
+      "scription\020\003\022\n\n\006isMale\020\004\022\014\n\010birthday\020\005*3\n"
+      "\tMediaType\022\n\n\006UNKNOW\020\000\022\010\n\004TEXT\020\001\022\007\n\003JPG\020"
+      "\002\022\007\n\003MP3\020\003B\003\370\001\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 4887);
+      descriptor, 4943);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chat_message.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -24024,6 +24037,251 @@ void QueryOneMessage::set_incrementid(::google::protobuf::int32 value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int QueryMessageRes::kMessagesFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+QueryMessageRes::QueryMessageRes()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_chat_5fmessage_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:chat.QueryMessageRes)
+}
+QueryMessageRes::QueryMessageRes(const QueryMessageRes& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      messages_(from.messages_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:chat.QueryMessageRes)
+}
+
+void QueryMessageRes::SharedCtor() {
+  _cached_size_ = 0;
+}
+
+QueryMessageRes::~QueryMessageRes() {
+  // @@protoc_insertion_point(destructor:chat.QueryMessageRes)
+  SharedDtor();
+}
+
+void QueryMessageRes::SharedDtor() {
+}
+
+void QueryMessageRes::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* QueryMessageRes::descriptor() {
+  protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[55].descriptor;
+}
+
+const QueryMessageRes& QueryMessageRes::default_instance() {
+  protobuf_chat_5fmessage_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+QueryMessageRes* QueryMessageRes::New(::google::protobuf::Arena* arena) const {
+  QueryMessageRes* n = new QueryMessageRes;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void QueryMessageRes::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.QueryMessageRes)
+  messages_.Clear();
+}
+
+bool QueryMessageRes::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:chat.QueryMessageRes)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .chat.NodeMessage messages = 1;
+      case 1: {
+        if (tag == 10u) {
+          DO_(input->IncrementRecursionDepth());
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_messages()));
+        } else {
+          goto handle_unusual;
+        }
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:chat.QueryMessageRes)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:chat.QueryMessageRes)
+  return false;
+#undef DO_
+}
+
+void QueryMessageRes::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:chat.QueryMessageRes)
+  // repeated .chat.NodeMessage messages = 1;
+  for (unsigned int i = 0, n = this->messages_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->messages(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:chat.QueryMessageRes)
+}
+
+::google::protobuf::uint8* QueryMessageRes::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic;  // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:chat.QueryMessageRes)
+  // repeated .chat.NodeMessage messages = 1;
+  for (unsigned int i = 0, n = this->messages_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        1, this->messages(i), false, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:chat.QueryMessageRes)
+  return target;
+}
+
+size_t QueryMessageRes::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.QueryMessageRes)
+  size_t total_size = 0;
+
+  // repeated .chat.NodeMessage messages = 1;
+  {
+    unsigned int count = this->messages_size();
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->messages(i));
+    }
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void QueryMessageRes::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:chat.QueryMessageRes)
+  GOOGLE_DCHECK_NE(&from, this);
+  const QueryMessageRes* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const QueryMessageRes>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:chat.QueryMessageRes)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:chat.QueryMessageRes)
+    MergeFrom(*source);
+  }
+}
+
+void QueryMessageRes::MergeFrom(const QueryMessageRes& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:chat.QueryMessageRes)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  messages_.MergeFrom(from.messages_);
+}
+
+void QueryMessageRes::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:chat.QueryMessageRes)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void QueryMessageRes::CopyFrom(const QueryMessageRes& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.QueryMessageRes)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool QueryMessageRes::IsInitialized() const {
+  return true;
+}
+
+void QueryMessageRes::Swap(QueryMessageRes* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void QueryMessageRes::InternalSwap(QueryMessageRes* other) {
+  messages_.UnsafeArenaSwap(&other->messages_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata QueryMessageRes::GetMetadata() const {
+  protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[55];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// QueryMessageRes
+
+// repeated .chat.NodeMessage messages = 1;
+int QueryMessageRes::messages_size() const {
+  return messages_.size();
+}
+void QueryMessageRes::clear_messages() {
+  messages_.Clear();
+}
+const ::chat::NodeMessage& QueryMessageRes::messages(int index) const {
+  // @@protoc_insertion_point(field_get:chat.QueryMessageRes.messages)
+  return messages_.Get(index);
+}
+::chat::NodeMessage* QueryMessageRes::mutable_messages(int index) {
+  // @@protoc_insertion_point(field_mutable:chat.QueryMessageRes.messages)
+  return messages_.Mutable(index);
+}
+::chat::NodeMessage* QueryMessageRes::add_messages() {
+  // @@protoc_insertion_point(field_add:chat.QueryMessageRes.messages)
+  return messages_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::chat::NodeMessage >*
+QueryMessageRes::mutable_messages() {
+  // @@protoc_insertion_point(field_mutable_list:chat.QueryMessageRes.messages)
+  return &messages_;
+}
+const ::google::protobuf::RepeatedPtrField< ::chat::NodeMessage >&
+QueryMessageRes::messages() const {
+  // @@protoc_insertion_point(field_list:chat.QueryMessageRes.messages)
+  return messages_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ServerConnect::kServerNameFieldNumber;
 const int ServerConnect::kServerIPFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -24075,7 +24333,7 @@ void ServerConnect::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* ServerConnect::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[55].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[56].descriptor;
 }
 
 const ServerConnect& ServerConnect::default_instance() {
@@ -24298,7 +24556,7 @@ void ServerConnect::InternalSwap(ServerConnect* other) {
 
 ::google::protobuf::Metadata ServerConnect::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[55];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[56];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -24464,7 +24722,7 @@ void ServerDisconnect::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* ServerDisconnect::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[56].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[57].descriptor;
 }
 
 const ServerDisconnect& ServerDisconnect::default_instance() {
@@ -24687,7 +24945,7 @@ void ServerDisconnect::InternalSwap(ServerDisconnect* other) {
 
 ::google::protobuf::Metadata ServerDisconnect::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[56];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[57];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -24833,7 +25091,7 @@ ConnectInfo::ConnectInfo(const ConnectInfo& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  const ::google::protobuf::Descriptor*& ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[57].descriptor;
+  const ::google::protobuf::Descriptor*& ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[58].descriptor;
   users_.SetAssignDescriptorCallback(
       protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce);
   users_.SetEntryDescriptor(
@@ -24874,7 +25132,7 @@ ConnectInfo::ConnectInfo(const ConnectInfo& from)
 }
 
 void ConnectInfo::SharedCtor() {
-  const ::google::protobuf::Descriptor*& ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[57].descriptor;
+  const ::google::protobuf::Descriptor*& ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[58].descriptor;
   users_.SetAssignDescriptorCallback(
       protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce);
   users_.SetEntryDescriptor(
@@ -24913,7 +25171,7 @@ void ConnectInfo::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* ConnectInfo::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[58].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[59].descriptor;
 }
 
 const ConnectInfo& ConnectInfo::default_instance() {
@@ -25621,7 +25879,7 @@ void ConnectInfo::InternalSwap(ConnectInfo* other) {
 
 ::google::protobuf::Metadata ConnectInfo::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[58];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[59];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -26108,7 +26366,7 @@ void ConnectInfoLittle::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* ConnectInfoLittle::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[59].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[60].descriptor;
 }
 
 const ConnectInfoLittle& ConnectInfoLittle::default_instance() {
@@ -26382,7 +26640,7 @@ void ConnectInfoLittle::InternalSwap(ConnectInfoLittle* other) {
 
 ::google::protobuf::Metadata ConnectInfoLittle::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[59];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[60];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -26541,7 +26799,7 @@ void Media::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* Media::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[60].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[61].descriptor;
 }
 
 const Media& Media::default_instance() {
@@ -26801,7 +27059,7 @@ void Media::InternalSwap(Media* other) {
 
 ::google::protobuf::Metadata Media::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[60];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[61];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -26970,7 +27228,7 @@ void MediaRes::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* MediaRes::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[61].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[62].descriptor;
 }
 
 const MediaRes& MediaRes::default_instance() {
@@ -27128,7 +27386,7 @@ void MediaRes::InternalSwap(MediaRes* other) {
 
 ::google::protobuf::Metadata MediaRes::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[61];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[62];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -27197,7 +27455,7 @@ void QueryMedia::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* QueryMedia::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[62].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[63].descriptor;
 }
 
 const QueryMedia& QueryMedia::default_instance() {
@@ -27371,7 +27629,7 @@ void QueryMedia::InternalSwap(QueryMedia* other) {
 
 ::google::protobuf::Metadata QueryMedia::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[62];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[63];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -27481,7 +27739,7 @@ void QueryMediaRes::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* QueryMediaRes::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[63].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[64].descriptor;
 }
 
 const QueryMediaRes& QueryMediaRes::default_instance() {
@@ -27645,7 +27903,7 @@ void QueryMediaRes::InternalSwap(QueryMediaRes* other) {
 
 ::google::protobuf::Metadata QueryMediaRes::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[63];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[64];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS

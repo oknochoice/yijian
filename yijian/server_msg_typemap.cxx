@@ -944,10 +944,13 @@ void dispatch(chat::QueryMessage & query) {
       throw std::system_error(std::error_code(0, std::generic_category()),
           "just update node's readed");
     } else {
-      client->queryMessage(query, [](std::shared_ptr<chat::NodeMessage> sp){
-            YILOG_INFO ("query message success {}", pro2string(*sp));
-            mountBuffer2Node(yijianBuffer(*sp), node_self_);
+      auto res = chat::QueryMessageRes();
+      client->queryMessage(query, [&res](chat::NodeMessage & msg){
+            auto msg_p = res.add_messages();
+            *msg_p = msg;
           });
+      YILOG_INFO ("query message success {}", pro2string(res));
+      mountBuffer2Node(yijianBuffer(res), node_self_);
     }
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
@@ -967,8 +970,11 @@ void dispatch(chat::QueryOneMessage & query) {
     // query message
     auto nodemessage_sp = 
       client->queryMessage(query.tonodeid(), query.incrementid());
-    YILOG_INFO ("query one message success {}", pro2string(*nodemessage_sp));
-    mountBuffer2Node(yijianBuffer(*nodemessage_sp), node_self_);
+    auto res = chat::QueryMessageRes();
+    auto msg = res.add_messages();
+    *msg = *nodemessage_sp;
+    YILOG_INFO ("query one message success {}", pro2string(res));
+    mountBuffer2Node(yijianBuffer(res), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());

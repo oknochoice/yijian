@@ -3218,6 +3218,38 @@ struct Chat_QueryOneMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message,
   }
 }
 
+struct Chat_QueryMessageRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_QueryMessageRes"}
+  public var protoMessageName: String {return "QueryMessageRes"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "messages", swift: "messages"),
+  ]
+
+
+  var messages: [Chat_NodeMessage] = []
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeRepeatedMessageField(fieldType: Chat_NodeMessage.self, value: &messages)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if !messages.isEmpty {
+      try visitor.visitRepeatedMessageField(value: messages, protoFieldNumber: 1)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_QueryMessageRes) -> Bool {
+    if messages != other.messages {return false}
+    return true
+  }
+}
+
 struct Chat_ServerConnect: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
   public var swiftClassName: String {return "Chat_ServerConnect"}
   public var protoMessageName: String {return "ServerConnect"}

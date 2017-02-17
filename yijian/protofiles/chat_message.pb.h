@@ -162,6 +162,9 @@ extern QueryMediaResDefaultTypeInternal _QueryMediaRes_default_instance_;
 class QueryMessage;
 class QueryMessageDefaultTypeInternal;
 extern QueryMessageDefaultTypeInternal _QueryMessage_default_instance_;
+class QueryMessageRes;
+class QueryMessageResDefaultTypeInternal;
+extern QueryMessageResDefaultTypeInternal _QueryMessageRes_default_instance_;
 class QueryNode;
 class QueryNodeDefaultTypeInternal;
 extern QueryNodeDefaultTypeInternal _QueryNode_default_instance_;
@@ -6384,6 +6387,95 @@ class QueryOneMessage : public ::google::protobuf::Message /* @@protoc_insertion
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr tonodeid_;
   ::google::protobuf::int32 incrementid_;
+  mutable int _cached_size_;
+  friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class QueryMessageRes : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.QueryMessageRes) */ {
+ public:
+  QueryMessageRes();
+  virtual ~QueryMessageRes();
+
+  QueryMessageRes(const QueryMessageRes& from);
+
+  inline QueryMessageRes& operator=(const QueryMessageRes& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const QueryMessageRes& default_instance();
+
+  static inline const QueryMessageRes* internal_default_instance() {
+    return reinterpret_cast<const QueryMessageRes*>(
+               &_QueryMessageRes_default_instance_);
+  }
+
+  void Swap(QueryMessageRes* other);
+
+  // implements Message ----------------------------------------------
+
+  inline QueryMessageRes* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  QueryMessageRes* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const QueryMessageRes& from);
+  void MergeFrom(const QueryMessageRes& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(QueryMessageRes* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .chat.NodeMessage messages = 1;
+  int messages_size() const;
+  void clear_messages();
+  static const int kMessagesFieldNumber = 1;
+  const ::chat::NodeMessage& messages(int index) const;
+  ::chat::NodeMessage* mutable_messages(int index);
+  ::chat::NodeMessage* add_messages();
+  ::google::protobuf::RepeatedPtrField< ::chat::NodeMessage >*
+      mutable_messages();
+  const ::google::protobuf::RepeatedPtrField< ::chat::NodeMessage >&
+      messages() const;
+
+  // @@protoc_insertion_point(class_scope:chat.QueryMessageRes)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::chat::NodeMessage > messages_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -13583,6 +13675,40 @@ inline void QueryOneMessage::set_incrementid(::google::protobuf::int32 value) {
 
 // -------------------------------------------------------------------
 
+// QueryMessageRes
+
+// repeated .chat.NodeMessage messages = 1;
+inline int QueryMessageRes::messages_size() const {
+  return messages_.size();
+}
+inline void QueryMessageRes::clear_messages() {
+  messages_.Clear();
+}
+inline const ::chat::NodeMessage& QueryMessageRes::messages(int index) const {
+  // @@protoc_insertion_point(field_get:chat.QueryMessageRes.messages)
+  return messages_.Get(index);
+}
+inline ::chat::NodeMessage* QueryMessageRes::mutable_messages(int index) {
+  // @@protoc_insertion_point(field_mutable:chat.QueryMessageRes.messages)
+  return messages_.Mutable(index);
+}
+inline ::chat::NodeMessage* QueryMessageRes::add_messages() {
+  // @@protoc_insertion_point(field_add:chat.QueryMessageRes.messages)
+  return messages_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::chat::NodeMessage >*
+QueryMessageRes::mutable_messages() {
+  // @@protoc_insertion_point(field_mutable_list:chat.QueryMessageRes.messages)
+  return &messages_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::chat::NodeMessage >&
+QueryMessageRes::messages() const {
+  // @@protoc_insertion_point(field_list:chat.QueryMessageRes.messages)
+  return messages_;
+}
+
+// -------------------------------------------------------------------
+
 // ServerConnect
 
 // string serverName = 1;
@@ -14565,6 +14691,8 @@ inline void QueryMediaRes::set_allocated_media(::chat::Media* media) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

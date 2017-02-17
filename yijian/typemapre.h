@@ -113,6 +113,9 @@ constexpr uint8_t dispatchType(const chat::QueryMessage & ) {
 constexpr uint8_t dispatchType(const chat::QueryOneMessage & ) {
   return ChatType::queryonemessage;
 }
+constexpr uint8_t dispatchType(const chat::QueryMessageRes & ) {
+  return ChatType::querymessageres;
+}
 constexpr uint8_t dispatchType(const chat::Media & ) {
   return ChatType::media;
 }

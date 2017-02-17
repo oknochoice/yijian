@@ -863,7 +863,7 @@ mongo_client::queryMessage(const std::string & tonodeid,
 }
 
 void mongo_client::queryMessage(chat::QueryMessage & query, 
-      std::function<void(std::shared_ptr<chat::NodeMessage>)> && func) {
+      std::function<void(chat::NodeMessage&)> && func) {
   YILOG_TRACE ("func: {}. ", __func__);
 
   auto db = client_["chatdb"];
@@ -879,7 +879,7 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
       << "$gte" << query.fromincrementid() 
       << close_document << close_document << open_document
       << "incrementID" << open_document
-      << "$lt" << query.toincrementid()
+      << "$lte" << query.toincrementid()
       << close_document << close_document << close_array;
   }
   auto filter = builder << finalize;
@@ -888,9 +888,9 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
   auto cursor = nodemessage_collection.find(filter.view(), opt);
   
   for (auto doc: cursor) {
-    auto message_sp = std::make_shared<chat::NodeMessage>();
-    nodemessageDocument(*message_sp, doc);
-    func(message_sp);
+    auto message = chat::NodeMessage();
+    nodemessageDocument(message, doc);
+    func(message);
   }
 }
 

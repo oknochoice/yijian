@@ -132,7 +132,7 @@ public:
     queryMessage(const std::string & tonodeid, const int32_t incrementid);
 
   void queryMessage(chat::QueryMessage & query, 
-      std::function<void(std::shared_ptr<chat::NodeMessage>)> && func);
+      std::function<void(chat::NodeMessage&)> && func);
 
 
   // media

@@ -39,10 +39,11 @@ enum ChatType : uint8_t {
   nodemessagenoti = 32,
   querymessage = 33,
   queryonemessage = 34,
-  media = 35,
-  mediares = 36,
-  querymedia = 37,
-  querymediares = 38,
+  querymessageres = 35,
+  media = 36,
+  mediares = 37,
+  querymedia = 38,
+  querymediares = 39,
   serverconnect = 42,// outer
   serverdisconnect = 43,// outer
   queryaddfriendinfo = 44,
