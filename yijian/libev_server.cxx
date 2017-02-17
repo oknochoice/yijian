@@ -496,6 +496,7 @@ int open_thread_manager () {
   sigset_t emptymask;
   if (sigemptyset(&emptymask) == -1 ||
       sigaddset(&emptymask, SIGUSR1) == -1 ||
+      sigaddset(&emptymask, SIGINT) == -1 ||
       sigprocmask(SIG_UNBLOCK, &emptymask, NULL) == -1) {
     YILOG_ERROR("signal unblock failure, errno:{}", errno);
   }
@@ -511,24 +512,33 @@ int open_thread_manager () {
  *
  * */
 
-static void
-sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
-
+void start_threads() {
   YILOG_TRACE ("func: {}. ", __func__);
 
   // manager thread
   if (0 > open_thread_manager()) {
     perror("thread manager open Failed");
   }
+  /*
   // connect to peer server
   for (auto & pair: peer_servers_.ips_) {
     peer_servers_push(connect_peer(pair.first, pair.second));
   }
+  */
+}
+
+static void
+sigint_cb (struct ev_loop * loop, ev_signal * w, int revents) {
+
+  YILOG_TRACE ("func: {}. ", __func__);
   // reclaim resource
   // stop server
   if (false) {
     isStopThreadFunc_ = true;
   }
+
+  // fixed
+  exit(0);
 }
 
 
@@ -536,7 +546,13 @@ static void
 sigusr1_cb (struct ev_loop * loop, ev_signal * w, int revents) {
 
   YILOG_TRACE ("func: {}. ", __func__);
-  
+#warning fixed  
+  /*
+  // connect to peer server
+  for (auto & pair: peer_servers_.ips_) {
+    peer_servers_push(connect_peer(pair.first, pair.second));
+  }
+  */
 }
 
 static void 
@@ -911,6 +927,8 @@ int start_server_libev(IPS ips ) {
   ev_timer_init (quick_timer, quickremove_callback, QUICKREMOVETIME, 0.);
   ev_timer_start (lloop, quick_timer);
   */
+
+  start_threads();
 
   ev_run (lloop, 0);
 

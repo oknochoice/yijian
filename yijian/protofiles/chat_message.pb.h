@@ -5821,23 +5821,9 @@ class NodeMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_tonodeid();
   void set_allocated_tonodeid(::std::string* tonodeid);
 
-  // string mediaPath = 6;
-  void clear_mediapath();
-  static const int kMediaPathFieldNumber = 6;
-  const ::std::string& mediapath() const;
-  void set_mediapath(const ::std::string& value);
-  #if LANG_CXX11
-  void set_mediapath(::std::string&& value);
-  #endif
-  void set_mediapath(const char* value);
-  void set_mediapath(const char* value, size_t size);
-  ::std::string* mutable_mediapath();
-  ::std::string* release_mediapath();
-  void set_allocated_mediapath(::std::string* mediapath);
-
-  // string content = 7;
+  // string content = 6;
   void clear_content();
-  static const int kContentFieldNumber = 7;
+  static const int kContentFieldNumber = 6;
   const ::std::string& content() const;
   void set_content(const ::std::string& value);
   #if LANG_CXX11
@@ -5849,9 +5835,9 @@ class NodeMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_content();
   void set_allocated_content(::std::string* content);
 
-  // string toUserID_outer = 8;
+  // string toUserID_outer = 7;
   void clear_touserid_outer();
-  static const int kToUserIDOuterFieldNumber = 8;
+  static const int kToUserIDOuterFieldNumber = 7;
   const ::std::string& touserid_outer() const;
   void set_touserid_outer(const ::std::string& value);
   #if LANG_CXX11
@@ -5882,7 +5868,6 @@ class NodeMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::internal::ArenaStringPtr id_;
   ::google::protobuf::internal::ArenaStringPtr fromuserid_;
   ::google::protobuf::internal::ArenaStringPtr tonodeid_;
-  ::google::protobuf::internal::ArenaStringPtr mediapath_;
   ::google::protobuf::internal::ArenaStringPtr content_;
   ::google::protobuf::internal::ArenaStringPtr touserid_outer_;
   ::google::protobuf::int32 incrementid_;
@@ -5959,23 +5944,23 @@ class NodeMessageRes : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // accessors -------------------------------------------------------
 
-  // string toNodeID = 2;
-  void clear_tonodeid();
-  static const int kToNodeIDFieldNumber = 2;
-  const ::std::string& tonodeid() const;
-  void set_tonodeid(const ::std::string& value);
+  // string id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  const ::std::string& id() const;
+  void set_id(const ::std::string& value);
   #if LANG_CXX11
-  void set_tonodeid(::std::string&& value);
+  void set_id(::std::string&& value);
   #endif
-  void set_tonodeid(const char* value);
-  void set_tonodeid(const char* value, size_t size);
-  ::std::string* mutable_tonodeid();
-  ::std::string* release_tonodeid();
-  void set_allocated_tonodeid(::std::string* tonodeid);
+  void set_id(const char* value);
+  void set_id(const char* value, size_t size);
+  ::std::string* mutable_id();
+  ::std::string* release_id();
+  void set_allocated_id(::std::string* id);
 
-  // int32 incrementID = 3;
+  // int32 incrementID = 2;
   void clear_incrementid();
-  static const int kIncrementIDFieldNumber = 3;
+  static const int kIncrementIDFieldNumber = 2;
   ::google::protobuf::int32 incrementid() const;
   void set_incrementid(::google::protobuf::int32 value);
 
@@ -5983,7 +5968,7 @@ class NodeMessageRes : public ::google::protobuf::Message /* @@protoc_insertion_
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr tonodeid_;
+  ::google::protobuf::internal::ArenaStringPtr id_;
   ::google::protobuf::int32 incrementid_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
@@ -13076,59 +13061,7 @@ inline void NodeMessage::set_type(::chat::MediaType value) {
   // @@protoc_insertion_point(field_set:chat.NodeMessage.type)
 }
 
-// string mediaPath = 6;
-inline void NodeMessage::clear_mediapath() {
-  mediapath_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& NodeMessage::mediapath() const {
-  // @@protoc_insertion_point(field_get:chat.NodeMessage.mediaPath)
-  return mediapath_.GetNoArena();
-}
-inline void NodeMessage::set_mediapath(const ::std::string& value) {
-  
-  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.NodeMessage.mediaPath)
-}
-#if LANG_CXX11
-inline void NodeMessage::set_mediapath(::std::string&& value) {
-  
-  mediapath_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessage.mediaPath)
-}
-#endif
-inline void NodeMessage::set_mediapath(const char* value) {
-  
-  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.NodeMessage.mediaPath)
-}
-inline void NodeMessage::set_mediapath(const char* value, size_t size) {
-  
-  mediapath_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessage.mediaPath)
-}
-inline ::std::string* NodeMessage::mutable_mediapath() {
-  
-  // @@protoc_insertion_point(field_mutable:chat.NodeMessage.mediaPath)
-  return mediapath_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* NodeMessage::release_mediapath() {
-  // @@protoc_insertion_point(field_release:chat.NodeMessage.mediaPath)
-  
-  return mediapath_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void NodeMessage::set_allocated_mediapath(::std::string* mediapath) {
-  if (mediapath != NULL) {
-    
-  } else {
-    
-  }
-  mediapath_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), mediapath);
-  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessage.mediaPath)
-}
-
-// string content = 7;
+// string content = 6;
 inline void NodeMessage::clear_content() {
   content_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -13180,7 +13113,7 @@ inline void NodeMessage::set_allocated_content(::std::string* content) {
   // @@protoc_insertion_point(field_set_allocated:chat.NodeMessage.content)
 }
 
-// string toUserID_outer = 8;
+// string toUserID_outer = 7;
 inline void NodeMessage::clear_touserid_outer() {
   touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -13236,59 +13169,59 @@ inline void NodeMessage::set_allocated_touserid_outer(::std::string* touserid_ou
 
 // NodeMessageRes
 
-// string toNodeID = 2;
-inline void NodeMessageRes::clear_tonodeid() {
-  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string id = 1;
+inline void NodeMessageRes::clear_id() {
+  id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& NodeMessageRes::tonodeid() const {
-  // @@protoc_insertion_point(field_get:chat.NodeMessageRes.toNodeID)
-  return tonodeid_.GetNoArena();
+inline const ::std::string& NodeMessageRes::id() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageRes.id)
+  return id_.GetNoArena();
 }
-inline void NodeMessageRes::set_tonodeid(const ::std::string& value) {
+inline void NodeMessageRes::set_id(const ::std::string& value) {
   
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.NodeMessageRes.toNodeID)
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeMessageRes.id)
 }
 #if LANG_CXX11
-inline void NodeMessageRes::set_tonodeid(::std::string&& value) {
+inline void NodeMessageRes::set_id(::std::string&& value) {
   
-  tonodeid_.SetNoArena(
+  id_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessageRes.toNodeID)
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessageRes.id)
 }
 #endif
-inline void NodeMessageRes::set_tonodeid(const char* value) {
+inline void NodeMessageRes::set_id(const char* value) {
   
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.NodeMessageRes.toNodeID)
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeMessageRes.id)
 }
-inline void NodeMessageRes::set_tonodeid(const char* value, size_t size) {
+inline void NodeMessageRes::set_id(const char* value, size_t size) {
   
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessageRes.toNodeID)
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessageRes.id)
 }
-inline ::std::string* NodeMessageRes::mutable_tonodeid() {
+inline ::std::string* NodeMessageRes::mutable_id() {
   
-  // @@protoc_insertion_point(field_mutable:chat.NodeMessageRes.toNodeID)
-  return tonodeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:chat.NodeMessageRes.id)
+  return id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* NodeMessageRes::release_tonodeid() {
-  // @@protoc_insertion_point(field_release:chat.NodeMessageRes.toNodeID)
+inline ::std::string* NodeMessageRes::release_id() {
+  // @@protoc_insertion_point(field_release:chat.NodeMessageRes.id)
   
-  return tonodeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return id_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void NodeMessageRes::set_allocated_tonodeid(::std::string* tonodeid) {
-  if (tonodeid != NULL) {
+inline void NodeMessageRes::set_allocated_id(::std::string* id) {
+  if (id != NULL) {
     
   } else {
     
   }
-  tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
-  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageRes.toNodeID)
+  id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), id);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageRes.id)
 }
 
-// int32 incrementID = 3;
+// int32 incrementID = 2;
 inline void NodeMessageRes::clear_incrementid() {
   incrementid_ = 0;
 }

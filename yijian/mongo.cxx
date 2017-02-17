@@ -90,8 +90,8 @@ void nodemessageDocument(chat::NodeMessage & nodemessage,
       get_int32().value);
   nodemessage.set_type(static_cast<chat::MediaType>(
         nodemessage_view["type"].get_int32().value));
-  nodemessage.set_mediapath(nodemessage_view["mediaPath"].
-      get_utf8().value.to_string());
+  //nodemessage.set_mediapath(nodemessage_view["mediaPath"].
+      //get_utf8().value.to_string());
   nodemessage.set_content(nodemessage_view["content"].
       get_utf8().value.to_string());
 }
@@ -817,16 +817,16 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
           "not find tonodeid");
     }
 
-    nodemessage_collection.insert_one(
+    auto result = nodemessage_collection.insert_one(
         document{} << "fromUserID" << message.fromuserid()
         << "toNodeID" << message.tonodeid()
         << "incrementID" << incrementid
         << "type" << message.type()
-        << "meidaPath" << message.mediapath()
+        //<< "meidaPath" << message.mediapath()
         << "content" << message.content()
         << finalize);
     auto msgRes = std::make_shared<chat::NodeMessageRes>();
-    msgRes->set_tonodeid(message.tonodeid());
+    msgRes->set_id(result->inserted_id().get_oid().value.to_string());
     msgRes->set_incrementid(incrementid);
     return msgRes;
   }catch(std::system_error & e) {

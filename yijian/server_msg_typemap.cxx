@@ -867,17 +867,17 @@ void dispatch(chat::NodeMessage & message) {
     auto res = client->insertMessage(message);
     // update user unread
     client->updateUnreadIncrement(currentNode_->userid, 
-        res->tonodeid(), res->incrementid());
+        message.tonodeid(), res->incrementid());
     // send self
     YILOG_INFO ("message success {}", 
         pro2string(*res));
     mountBuffer2Node(yijianBuffer(*res), node_self_);
     auto noti = chat::NodeMessageNoti();
-    noti.set_tonodeid(res->tonodeid());
+    noti.set_tonodeid(message.tonodeid());
     noti.set_unreadincrement(res->incrementid());
     if (likely(message.touserid_outer().empty())) {// node
       // send to node
-      node_specifiy_.set_tonodeid(res->tonodeid());
+      node_specifiy_.set_tonodeid(message.tonodeid());
       mountBuffer2Node(yijianBuffer(noti), node_specifiy_);
       mountBuffer2Node(yijianBuffer(noti), node_peer_);
     }else {// user
