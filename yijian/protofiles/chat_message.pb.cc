@@ -20,8 +20,8 @@
 namespace chat {
 class ErrorNthDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<ErrorNth> {
 } _ErrorNth_default_instance_;
-class NodeInfoDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<NodeInfo> {
-} _NodeInfo_default_instance_;
+class NodeReadInfoDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<NodeReadInfo> {
+} _NodeReadInfo_default_instance_;
 class TalkListDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<TalkList> {
 } _TalkList_default_instance_;
 class PingDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<Ping> {
@@ -120,12 +120,8 @@ class NodeMessageResDefaultTypeInternal : public ::google::protobuf::internal::E
 } _NodeMessageRes_default_instance_;
 class NodeMessageNotiDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<NodeMessageNoti> {
 } _NodeMessageNoti_default_instance_;
-class setReadMessageDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<setReadMessage> {
-} _setReadMessage_default_instance_;
 class QueryMessageDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<QueryMessage> {
 } _QueryMessage_default_instance_;
-class QueryOneMessageDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<QueryOneMessage> {
-} _QueryOneMessage_default_instance_;
 class QueryMessageResDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<QueryMessageRes> {
 } _QueryMessageRes_default_instance_;
 class ServerConnectDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<ServerConnect> {
@@ -150,7 +146,7 @@ namespace protobuf_chat_5fmessage_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[65];
+::google::protobuf::Metadata file_level_metadata[63];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[5];
 
 }  // namespace
@@ -162,12 +158,11 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ErrorNth, maxnth_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeInfo, _internal_metadata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeReadInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeInfo, updatetime_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeInfo, readedincrementid_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeInfo, unreadincrementid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeReadInfo, readedincrementid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeReadInfo, unreadincrementid_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TalkList, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -339,6 +334,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginRes, issuccess_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginRes, userid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginRes, uuid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginRes, e_no_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LoginRes, e_msg_),
   ~0u,  // no _has_bits_
@@ -416,7 +412,6 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendNoti, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendNoti, touserid_outer_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendNoti, response_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorize, _internal_metadata_),
@@ -429,13 +424,13 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeRes, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeRes, inviterid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeRes, inviteeid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeRes, isagree_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeRes, touserid_outer_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeNoti, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeNoti, touserid_outer_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AddFriendAuthorizeNoti, response_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryAddfriendInfo, _internal_metadata_),
@@ -490,19 +485,18 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageRes, id_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageRes, incrementid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageRes, fromuserid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageRes, touserid_outer_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageRes, tonodeid_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, tonodeid_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, unreadincrement_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, fromuserid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, touserid_outer_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(setReadMessage, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(setReadMessage, tonodeid_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(setReadMessage, readedincrement_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, tonodeid_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, readedincrement_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(NodeMessageNoti, unreadincrement_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -510,12 +504,6 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessage, tonodeid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessage, fromincrementid_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessage, toincrementid_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryOneMessage, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryOneMessage, tonodeid_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryOneMessage, incrementid_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryMessageRes, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -582,33 +570,33 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(ErrorNth)},
-  { 5, -1, sizeof(NodeInfo)},
-  { 12, -1, sizeof(TalkList)},
-  { 17, -1, sizeof(Ping)},
-  { 22, -1, sizeof(Pong)},
-  { 27, -1, sizeof(NodeSelfDevice)},
-  { 31, -1, sizeof(NodePeerServer)},
-  { 35, -1, sizeof(NodeSpecifiy)},
-  { 40, -1, sizeof(NodeUser)},
-  { 45, -1, sizeof(Error)},
-  { 51, -1, sizeof(Device)},
-  { 59, -1, sizeof(MessageNode)},
-  { 70, -1, sizeof(UserInfo)},
-  { 76, -1, sizeof(User)},
-  { 95, -1, sizeof(SetUserProperty)},
-  { 101, -1, sizeof(SetUserPropertyRes)},
-  { 106, -1, sizeof(QueryUser)},
-  { 113, -1, sizeof(QueryUserRes)},
-  { 119, -1, sizeof(QueryUserVersion)},
-  { 124, -1, sizeof(QueryUserVersionRes)},
-  { 130, -1, sizeof(QueryNode)},
-  { 135, -1, sizeof(QueryNodeRes)},
-  { 141, -1, sizeof(QueryNodeVersion)},
-  { 146, -1, sizeof(QueryNodeVersionRes)},
-  { 152, -1, sizeof(Register)},
-  { 161, -1, sizeof(RegisterRes)},
-  { 169, -1, sizeof(Login)},
-  { 177, -1, sizeof(LoginRes)},
+  { 5, -1, sizeof(NodeReadInfo)},
+  { 11, -1, sizeof(TalkList)},
+  { 16, -1, sizeof(Ping)},
+  { 21, -1, sizeof(Pong)},
+  { 26, -1, sizeof(NodeSelfDevice)},
+  { 30, -1, sizeof(NodePeerServer)},
+  { 34, -1, sizeof(NodeSpecifiy)},
+  { 39, -1, sizeof(NodeUser)},
+  { 44, -1, sizeof(Error)},
+  { 50, -1, sizeof(Device)},
+  { 58, -1, sizeof(MessageNode)},
+  { 69, -1, sizeof(UserInfo)},
+  { 75, -1, sizeof(User)},
+  { 94, -1, sizeof(SetUserProperty)},
+  { 100, -1, sizeof(SetUserPropertyRes)},
+  { 105, -1, sizeof(QueryUser)},
+  { 112, -1, sizeof(QueryUserRes)},
+  { 118, -1, sizeof(QueryUserVersion)},
+  { 123, -1, sizeof(QueryUserVersionRes)},
+  { 129, -1, sizeof(QueryNode)},
+  { 134, -1, sizeof(QueryNodeRes)},
+  { 140, -1, sizeof(QueryNodeVersion)},
+  { 145, -1, sizeof(QueryNodeVersionRes)},
+  { 151, -1, sizeof(Register)},
+  { 160, -1, sizeof(RegisterRes)},
+  { 168, -1, sizeof(Login)},
+  { 176, -1, sizeof(LoginRes)},
   { 185, -1, sizeof(LoginNoti)},
   { 191, -1, sizeof(ClientConnect)},
   { 201, -1, sizeof(ClientConnectRes)},
@@ -620,35 +608,33 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 242, -1, sizeof(AddFriend)},
   { 249, -1, sizeof(AddFriendRes)},
   { 256, -1, sizeof(AddFriendNoti)},
-  { 262, -1, sizeof(AddFriendAuthorize)},
-  { 269, -1, sizeof(AddFriendAuthorizeRes)},
+  { 261, -1, sizeof(AddFriendAuthorize)},
+  { 268, -1, sizeof(AddFriendAuthorizeRes)},
   { 275, -1, sizeof(AddFriendAuthorizeNoti)},
-  { 281, -1, sizeof(QueryAddfriendInfo)},
-  { 286, -1, sizeof(QueryAddfriendInfoRes)},
-  { 291, -1, sizeof(CreateGroup)},
-  { 298, -1, sizeof(CreateGroupRes)},
-  { 305, -1, sizeof(GroupAddMember)},
-  { 311, -1, sizeof(GroupAddMemberRes)},
-  { 317, -1, sizeof(NodeMessage)},
-  { 328, -1, sizeof(NodeMessageRes)},
-  { 334, -1, sizeof(NodeMessageNoti)},
-  { 341, -1, sizeof(setReadMessage)},
-  { 347, -1, sizeof(QueryMessage)},
-  { 354, -1, sizeof(QueryOneMessage)},
-  { 360, -1, sizeof(QueryMessageRes)},
-  { 365, -1, sizeof(ServerConnect)},
-  { 371, -1, sizeof(ServerDisconnect)},
-  { 377, -1, sizeof(ConnectInfo)},
-  { 392, -1, sizeof(ConnectInfoLittle)},
-  { 400, -1, sizeof(Media)},
-  { 407, -1, sizeof(MediaRes)},
-  { 412, -1, sizeof(QueryMedia)},
-  { 417, -1, sizeof(QueryMediaRes)},
+  { 280, -1, sizeof(QueryAddfriendInfo)},
+  { 285, -1, sizeof(QueryAddfriendInfoRes)},
+  { 290, -1, sizeof(CreateGroup)},
+  { 297, -1, sizeof(CreateGroupRes)},
+  { 304, -1, sizeof(GroupAddMember)},
+  { 310, -1, sizeof(GroupAddMemberRes)},
+  { 316, -1, sizeof(NodeMessage)},
+  { 327, -1, sizeof(NodeMessageRes)},
+  { 336, -1, sizeof(NodeMessageNoti)},
+  { 345, -1, sizeof(QueryMessage)},
+  { 352, -1, sizeof(QueryMessageRes)},
+  { 357, -1, sizeof(ServerConnect)},
+  { 363, -1, sizeof(ServerDisconnect)},
+  { 369, -1, sizeof(ConnectInfo)},
+  { 384, -1, sizeof(ConnectInfoLittle)},
+  { 392, -1, sizeof(Media)},
+  { 399, -1, sizeof(MediaRes)},
+  { 404, -1, sizeof(QueryMedia)},
+  { 409, -1, sizeof(QueryMediaRes)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_ErrorNth_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_NodeInfo_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_NodeReadInfo_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_TalkList_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_Ping_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_Pong_default_instance_),
@@ -698,9 +684,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_NodeMessage_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_NodeMessageRes_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_NodeMessageNoti_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_setReadMessage_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_QueryMessage_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_QueryOneMessage_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_QueryMessageRes_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_ServerConnect_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_ServerDisconnect_default_instance_),
@@ -730,18 +714,18 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 65);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 63);
   const ::google::protobuf::Descriptor* TalkList_NodemapEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[2].descriptor;
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
         TalkList_NodemapEntry_descriptor,
         ::google::protobuf::internal::MapEntry<
             ::std::string,
-            ::chat::NodeInfo,
+            ::chat::NodeReadInfo,
             ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
             ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
             0>::CreateDefaultInstance(
                 TalkList_NodemapEntry_descriptor));
-  const ::google::protobuf::Descriptor* ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[58].descriptor;
+  const ::google::protobuf::Descriptor* ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[56].descriptor;
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
         ConnectInfo_UsersEntry_descriptor,
         ::google::protobuf::internal::MapEntry<
@@ -758,7 +742,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void TableStruct::Shutdown() {
   _ErrorNth_default_instance_.Shutdown();
   delete file_level_metadata[0].reflection;
-  _NodeInfo_default_instance_.Shutdown();
+  _NodeReadInfo_default_instance_.Shutdown();
   delete file_level_metadata[1].reflection;
   _TalkList_default_instance_.Shutdown();
   delete file_level_metadata[3].reflection;
@@ -858,30 +842,26 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[50].reflection;
   _NodeMessageNoti_default_instance_.Shutdown();
   delete file_level_metadata[51].reflection;
-  _setReadMessage_default_instance_.Shutdown();
-  delete file_level_metadata[52].reflection;
   _QueryMessage_default_instance_.Shutdown();
-  delete file_level_metadata[53].reflection;
-  _QueryOneMessage_default_instance_.Shutdown();
-  delete file_level_metadata[54].reflection;
+  delete file_level_metadata[52].reflection;
   _QueryMessageRes_default_instance_.Shutdown();
-  delete file_level_metadata[55].reflection;
+  delete file_level_metadata[53].reflection;
   _ServerConnect_default_instance_.Shutdown();
-  delete file_level_metadata[56].reflection;
+  delete file_level_metadata[54].reflection;
   _ServerDisconnect_default_instance_.Shutdown();
-  delete file_level_metadata[57].reflection;
+  delete file_level_metadata[55].reflection;
   _ConnectInfo_default_instance_.Shutdown();
-  delete file_level_metadata[59].reflection;
+  delete file_level_metadata[57].reflection;
   _ConnectInfoLittle_default_instance_.Shutdown();
-  delete file_level_metadata[60].reflection;
+  delete file_level_metadata[58].reflection;
   _Media_default_instance_.Shutdown();
-  delete file_level_metadata[61].reflection;
+  delete file_level_metadata[59].reflection;
   _MediaRes_default_instance_.Shutdown();
-  delete file_level_metadata[62].reflection;
+  delete file_level_metadata[60].reflection;
   _QueryMedia_default_instance_.Shutdown();
-  delete file_level_metadata[63].reflection;
+  delete file_level_metadata[61].reflection;
   _QueryMediaRes_default_instance_.Shutdown();
-  delete file_level_metadata[64].reflection;
+  delete file_level_metadata[62].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -889,7 +869,7 @@ void TableStruct::InitDefaultsImpl() {
 
   ::google::protobuf::internal::InitProtobufDefaults();
   _ErrorNth_default_instance_.DefaultConstruct();
-  _NodeInfo_default_instance_.DefaultConstruct();
+  _NodeReadInfo_default_instance_.DefaultConstruct();
   _TalkList_default_instance_.DefaultConstruct();
   _Ping_default_instance_.DefaultConstruct();
   _Pong_default_instance_.DefaultConstruct();
@@ -939,9 +919,7 @@ void TableStruct::InitDefaultsImpl() {
   _NodeMessage_default_instance_.DefaultConstruct();
   _NodeMessageRes_default_instance_.DefaultConstruct();
   _NodeMessageNoti_default_instance_.DefaultConstruct();
-  _setReadMessage_default_instance_.DefaultConstruct();
   _QueryMessage_default_instance_.DefaultConstruct();
-  _QueryOneMessage_default_instance_.DefaultConstruct();
   _QueryMessageRes_default_instance_.DefaultConstruct();
   _ServerConnect_default_instance_.DefaultConstruct();
   _ServerDisconnect_default_instance_.DefaultConstruct();
@@ -959,8 +937,8 @@ void TableStruct::InitDefaultsImpl() {
       ::chat::Device::internal_default_instance());
   _AddFriendNoti_default_instance_.get_mutable()->response_ = const_cast< ::chat::AddFriendRes*>(
       ::chat::AddFriendRes::internal_default_instance());
-  _AddFriendAuthorizeNoti_default_instance_.get_mutable()->response_ = const_cast< ::chat::AddFriendAuthorize*>(
-      ::chat::AddFriendAuthorize::internal_default_instance());
+  _AddFriendAuthorizeNoti_default_instance_.get_mutable()->response_ = const_cast< ::chat::AddFriendAuthorizeRes*>(
+      ::chat::AddFriendAuthorizeRes::internal_default_instance());
   _QueryMediaRes_default_instance_.get_mutable()->media_ = const_cast< ::chat::Media*>(
       ::chat::Media::internal_default_instance());
 }
@@ -973,105 +951,104 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] = {
       "\n\022chat_message.proto\022\004chat\"\032\n\010ErrorNth\022\016"
-      "\n\006maxnth\030\001 \001(\005\"T\n\010NodeInfo\022\022\n\nupdatetime"
-      "\030\001 \001(\005\022\031\n\021readedIncrementid\030\002 \001(\005\022\031\n\021unr"
-      "eadIncrementid\030\003 \001(\005\"x\n\010TalkList\022,\n\007node"
-      "map\030\001 \003(\0132\033.chat.TalkList.NodemapEntry\032>"
-      "\n\014NodemapEntry\022\013\n\003key\030\001 \001(\t\022\035\n\005value\030\002 \001"
-      "(\0132\016.chat.NodeInfo:\0028\001\"\023\n\004Ping\022\013\n\003msg\030\001 "
-      "\001(\t\"\023\n\004Pong\022\013\n\003msg\030\001 \001(\t\"\020\n\016NodeSelfDevi"
-      "ce\"\020\n\016NodePeerServer\" \n\014NodeSpecifiy\022\020\n\010"
-      "toNodeID\030\001 \001(\t\"\034\n\010NodeUser\022\020\n\010toUserID\030\001"
-      " \001(\t\"\'\n\005Error\022\016\n\006errnum\030\001 \001(\005\022\016\n\006errmsg\030"
-      "\002 \001(\t\"\226\001\n\006Device\022(\n\002OS\030\001 \001(\0162\034.chat.Devi"
-      "ce.OperatingSystem\022\023\n\013deviceModel\030\002 \001(\t\022"
-      "\026\n\016deviceNickname\030\003 \001(\t\022\014\n\004UUID\030\004 \001(\t\"\'\n"
-      "\017OperatingSystem\022\007\n\003iOS\020\000\022\013\n\007Android\020\001\"\341"
-      "\001\n\013MessageNode\022\n\n\002id\030\001 \001(\t\022.\n\tauthorize\030"
-      "\002 \001(\0162\033.chat.MessageNode.Authorize\022\021\n\tcr"
-      "eatorID\030\003 \001(\t\022\020\n\010nickname\030\004 \001(\t\022\017\n\007versi"
-      "on\030\005 \001(\005\022\022\n\nmanagerIDs\030\006 \003(\t\022\017\n\007members\030"
-      "\007 \003(\t\";\n\tAuthorize\022\013\n\007creator\020\000\022\013\n\007manag"
-      "er\020\001\022\n\n\006member\020\002\022\010\n\004peer\020\003\",\n\010UserInfo\022\020"
-      "\n\010toNodeID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\"\255\002\n\004Use"
-      "r\022\n\n\002id\030\001 \001(\t\022\020\n\010realname\030\002 \001(\t\022\020\n\010nickn"
-      "ame\030\003 \001(\t\022\014\n\004icon\030\004 \001(\t\022\023\n\013description\030\005"
-      " \001(\t\022\016\n\006isMale\030\006 \001(\010\022\017\n\007phoneNo\030\007 \001(\t\022\023\n"
-      "\013countryCode\030\010 \001(\t\022\020\n\010password\030\t \001(\t\022\020\n\010"
-      "birthday\030\n \001(\005\022\017\n\007version\030\013 \001(\005\022\037\n\007frien"
-      "ds\030\014 \003(\0132\016.chat.UserInfo\022\021\n\tblacklist\030\r "
-      "\003(\t\022\024\n\014groupNodeIDs\030\016 \003(\t\022\035\n\007devices\030\017 \003"
-      "(\0132\014.chat.Device\"F\n\017SetUserProperty\022$\n\010p"
-      "roperty\030\001 \001(\0162\022.chat.UserProperty\022\r\n\005val"
-      "ue\030\002 \001(\t\":\n\022SetUserPropertyRes\022$\n\010proper"
-      "ty\030\001 \001(\0162\022.chat.UserProperty\"A\n\tQueryUse"
-      "r\022\016\n\006userID\030\001 \001(\t\022\023\n\013countryCode\030\002 \001(\t\022\017"
-      "\n\007phoneNo\030\003 \001(\t\"@\n\014QueryUserRes\022\026\n\016toUse"
-      "rID_outer\030\001 \001(\t\022\030\n\004user\030\002 \001(\0132\n.chat.Use"
-      "r\"\"\n\020QueryUserVersion\022\016\n\006userID\030\001 \001(\t\"6\n"
-      "\023QueryUserVersionRes\022\016\n\006userID\030\001 \001(\t\022\017\n\007"
-      "version\030\002 \001(\005\"\035\n\tQueryNode\022\020\n\010toNodeID\030\001"
-      " \001(\t\"G\n\014QueryNodeRes\022\026\n\016toUserID_outer\030\001"
-      " \001(\t\022\037\n\004node\030\002 \001(\0132\021.chat.MessageNode\"$\n"
-      "\020QueryNodeVersion\022\020\n\010toNodeID\030\001 \001(\t\"8\n\023Q"
-      "ueryNodeVersionRes\022\020\n\010toNodeID\030\001 \001(\t\022\017\n\007"
-      "version\030\002 \001(\005\"h\n\010Register\022\017\n\007phoneNo\030\001 \001"
-      "(\t\022\023\n\013countryCode\030\002 \001(\t\022\020\n\010password\030\003 \001("
-      "\t\022\020\n\010nickname\030\004 \001(\t\022\022\n\nverifycode\030\005 \001(\t\""
-      "M\n\013RegisterRes\022\016\n\006userID\030\001 \001(\t\022\021\n\tisSucc"
-      "ess\030\002 \001(\010\022\r\n\005e_msg\030\003 \001(\t\022\014\n\004e_no\030\004 \001(\005\"]"
-      "\n\005Login\022\017\n\007phoneNo\030\001 \001(\t\022\023\n\013countryCode\030"
-      "\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\034\n\006device\030\004 \001(\0132"
-      "\014.chat.Device\"J\n\010LoginRes\022\021\n\tisSuccess\030\001"
-      " \001(\010\022\016\n\006userID\030\002 \001(\t\022\014\n\004e_no\030\003 \001(\005\022\r\n\005e_"
-      "msg\030\004 \001(\t\"1\n\tLoginNoti\022\026\n\016toUserID_outer"
-      "\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"\201\001\n\rClientConnect\022\016"
-      "\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\022\024\n\014isRecive"
-      "Noti\030\003 \001(\010\022\021\n\tOSVersion\030\004 \001(\t\022\022\n\nappVers"
-      "ion\030\005 \001(\t\022\025\n\rclientVersion\030\006 \001(\t\"s\n\020Clie"
-      "ntConnectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001"
-      "(\t\022\021\n\tsessionid\030\003 \001(\005\022\021\n\tisSuccess\030\004 \001(\010"
-      "\022\r\n\005e_msg\030\005 \001(\t\022\014\n\004e_no\030\006 \001(\005\"0\n\020ClientD"
-      "isConnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\""
-      "3\n\023ClientDisConnectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006"
-      "userID\030\002 \001(\t\"&\n\006Logout\022\016\n\006userID\030\001 \001(\t\022\014"
-      "\n\004UUID\030\002 \001(\t\")\n\tLogoutRes\022\014\n\004UUID\030\001 \001(\t\022"
-      "\016\n\006userID\030\002 \001(\t\"C\n\rAddFriendInfo\022\017\n\007invi"
-      "ter\030\001 \001(\t\022\017\n\007invitee\030\002 \001(\t\022\020\n\010toNodeID\030\003"
-      " \001(\t\">\n\tAddFriend\022\021\n\tinviteeID\030\001 \001(\t\022\021\n\t"
-      "inviterID\030\002 \001(\t\022\013\n\003msg\030\003 \001(\t\"F\n\014AddFrien"
-      "dRes\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeID\030\002 \001"
-      "(\t\022\020\n\010toNodeID\030\003 \001(\t\"M\n\rAddFriendNoti\022\026\n"
-      "\016toUserID_outer\030\001 \001(\t\022$\n\010response\030\002 \001(\0132"
-      "\022.chat.AddFriendRes\"Z\n\022AddFriendAuthoriz"
-      "e\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeID\030\002 \001(\t\022"
-      "\036\n\007isAgree\030\003 \001(\0162\r.chat.IsAgree\"O\n\025AddFr"
-      "iendAuthorizeRes\022\036\n\007isAgree\030\001 \001(\0162\r.chat"
-      ".IsAgree\022\026\n\016toUserID_outer\030\002 \001(\t\"\\\n\026AddF"
-      "riendAuthorizeNoti\022\026\n\016toUserID_outer\030\001 \001"
-      "(\t\022*\n\010response\030\002 \001(\0132\030.chat.AddFriendAut"
-      "horize\"#\n\022QueryAddfriendInfo\022\r\n\005count\030\001 "
-      "\001(\005\":\n\025QueryAddfriendInfoRes\022!\n\004info\030\001 \003"
-      "(\0132\023.chat.AddFriendInfo\"B\n\013CreateGroup\022\016"
-      "\n\006userID\030\001 \001(\t\022\020\n\010nickname\030\002 \001(\t\022\021\n\tmemb"
-      "ersID\030\003 \003(\t\"L\n\016CreateGroupRes\022\026\n\016toUserI"
-      "D_outer\030\001 \001(\t\022\020\n\010nickname\030\002 \001(\t\022\020\n\010toNod"
-      "eID\030\003 \001(\t\"5\n\016GroupAddMember\022\020\n\010toNodeID\030"
-      "\001 \001(\t\022\021\n\tmembersID\030\002 \003(\t\"=\n\021GroupAddMemb"
-      "erRes\022\026\n\016toUserID_outer\030\001 \001(\t\022\020\n\010toNodeI"
-      "D\030\002 \001(\t\"\234\001\n\013NodeMessage\022\n\n\002id\030\001 \001(\t\022\022\n\nf"
-      "romUserID\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\022\023\n\013inc"
-      "rementID\030\004 \001(\005\022\035\n\004type\030\005 \001(\0162\017.chat.Medi"
-      "aType\022\017\n\007content\030\006 \001(\t\022\026\n\016toUserID_outer"
-      "\030\007 \001(\t\"1\n\016NodeMessageRes\022\n\n\002id\030\001 \001(\t\022\023\n\013"
-      "incrementID\030\002 \001(\005\"T\n\017NodeMessageNoti\022\020\n\010"
-      "toNodeID\030\001 \001(\t\022\027\n\017unreadIncrement\030\002 \001(\005\022"
-      "\026\n\016toUserID_outer\030\003 \001(\t\";\n\016setReadMessag"
-      "e\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017readedIncrement\030\002"
-      " \001(\005\"P\n\014QueryMessage\022\020\n\010toNodeID\030\001 \001(\t\022\027"
-      "\n\017fromIncrementID\030\002 \001(\005\022\025\n\rtoIncrementID"
-      "\030\003 \001(\005\"8\n\017QueryOneMessage\022\020\n\010toNodeID\030\001 "
-      "\001(\t\022\023\n\013incrementID\030\002 \001(\005\"6\n\017QueryMessage"
+      "\n\006maxnth\030\001 \001(\005\"D\n\014NodeReadInfo\022\031\n\021readed"
+      "Incrementid\030\001 \001(\005\022\031\n\021unreadIncrementid\030\002"
+      " \001(\005\"|\n\010TalkList\022,\n\007nodemap\030\001 \003(\0132\033.chat"
+      ".TalkList.NodemapEntry\032B\n\014NodemapEntry\022\013"
+      "\n\003key\030\001 \001(\t\022!\n\005value\030\002 \001(\0132\022.chat.NodeRe"
+      "adInfo:\0028\001\"\023\n\004Ping\022\013\n\003msg\030\001 \001(\t\"\023\n\004Pong\022"
+      "\013\n\003msg\030\001 \001(\t\"\020\n\016NodeSelfDevice\"\020\n\016NodePe"
+      "erServer\" \n\014NodeSpecifiy\022\020\n\010toNodeID\030\001 \001"
+      "(\t\"\034\n\010NodeUser\022\020\n\010toUserID\030\001 \001(\t\"\'\n\005Erro"
+      "r\022\016\n\006errnum\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"\226\001\n\006De"
+      "vice\022(\n\002OS\030\001 \001(\0162\034.chat.Device.Operating"
+      "System\022\023\n\013deviceModel\030\002 \001(\t\022\026\n\016deviceNic"
+      "kname\030\003 \001(\t\022\014\n\004UUID\030\004 \001(\t\"\'\n\017OperatingSy"
+      "stem\022\007\n\003iOS\020\000\022\013\n\007Android\020\001\"\341\001\n\013MessageNo"
+      "de\022\n\n\002id\030\001 \001(\t\022.\n\tauthorize\030\002 \001(\0162\033.chat"
+      ".MessageNode.Authorize\022\021\n\tcreatorID\030\003 \001("
+      "\t\022\020\n\010nickname\030\004 \001(\t\022\017\n\007version\030\005 \001(\005\022\022\n\n"
+      "managerIDs\030\006 \003(\t\022\017\n\007members\030\007 \003(\t\";\n\tAut"
+      "horize\022\013\n\007creator\020\000\022\013\n\007manager\020\001\022\n\n\006memb"
+      "er\020\002\022\010\n\004peer\020\003\",\n\010UserInfo\022\020\n\010toNodeID\030\001"
+      " \001(\t\022\016\n\006userID\030\002 \001(\t\"\255\002\n\004User\022\n\n\002id\030\001 \001("
+      "\t\022\020\n\010realname\030\002 \001(\t\022\020\n\010nickname\030\003 \001(\t\022\014\n"
+      "\004icon\030\004 \001(\t\022\023\n\013description\030\005 \001(\t\022\016\n\006isMa"
+      "le\030\006 \001(\010\022\017\n\007phoneNo\030\007 \001(\t\022\023\n\013countryCode"
+      "\030\010 \001(\t\022\020\n\010password\030\t \001(\t\022\020\n\010birthday\030\n \001"
+      "(\005\022\017\n\007version\030\013 \001(\005\022\037\n\007friends\030\014 \003(\0132\016.c"
+      "hat.UserInfo\022\021\n\tblacklist\030\r \003(\t\022\024\n\014group"
+      "NodeIDs\030\016 \003(\t\022\035\n\007devices\030\017 \003(\0132\014.chat.De"
+      "vice\"F\n\017SetUserProperty\022$\n\010property\030\001 \001("
+      "\0162\022.chat.UserProperty\022\r\n\005value\030\002 \001(\t\":\n\022"
+      "SetUserPropertyRes\022$\n\010property\030\001 \001(\0162\022.c"
+      "hat.UserProperty\"A\n\tQueryUser\022\016\n\006userID\030"
+      "\001 \001(\t\022\023\n\013countryCode\030\002 \001(\t\022\017\n\007phoneNo\030\003 "
+      "\001(\t\"@\n\014QueryUserRes\022\026\n\016toUserID_outer\030\001 "
+      "\001(\t\022\030\n\004user\030\002 \001(\0132\n.chat.User\"\"\n\020QueryUs"
+      "erVersion\022\016\n\006userID\030\001 \001(\t\"6\n\023QueryUserVe"
+      "rsionRes\022\016\n\006userID\030\001 \001(\t\022\017\n\007version\030\002 \001("
+      "\005\"\035\n\tQueryNode\022\020\n\010toNodeID\030\001 \001(\t\"G\n\014Quer"
+      "yNodeRes\022\026\n\016toUserID_outer\030\001 \001(\t\022\037\n\004node"
+      "\030\002 \001(\0132\021.chat.MessageNode\"$\n\020QueryNodeVe"
+      "rsion\022\020\n\010toNodeID\030\001 \001(\t\"8\n\023QueryNodeVers"
+      "ionRes\022\020\n\010toNodeID\030\001 \001(\t\022\017\n\007version\030\002 \001("
+      "\005\"h\n\010Register\022\017\n\007phoneNo\030\001 \001(\t\022\023\n\013countr"
+      "yCode\030\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\020\n\010nicknam"
+      "e\030\004 \001(\t\022\022\n\nverifycode\030\005 \001(\t\"M\n\013RegisterR"
+      "es\022\016\n\006userID\030\001 \001(\t\022\021\n\tisSuccess\030\002 \001(\010\022\r\n"
+      "\005e_msg\030\003 \001(\t\022\014\n\004e_no\030\004 \001(\005\"]\n\005Login\022\017\n\007p"
+      "honeNo\030\001 \001(\t\022\023\n\013countryCode\030\002 \001(\t\022\020\n\010pas"
+      "sword\030\003 \001(\t\022\034\n\006device\030\004 \001(\0132\014.chat.Devic"
+      "e\"X\n\010LoginRes\022\021\n\tisSuccess\030\001 \001(\010\022\016\n\006user"
+      "ID\030\002 \001(\t\022\014\n\004uuid\030\003 \001(\t\022\014\n\004e_no\030\004 \001(\005\022\r\n\005"
+      "e_msg\030\005 \001(\t\"1\n\tLoginNoti\022\026\n\016toUserID_out"
+      "er\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"\201\001\n\rClientConnect"
+      "\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\022\024\n\014isReci"
+      "veNoti\030\003 \001(\010\022\021\n\tOSVersion\030\004 \001(\t\022\022\n\nappVe"
+      "rsion\030\005 \001(\t\022\025\n\rclientVersion\030\006 \001(\t\"s\n\020Cl"
+      "ientConnectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002"
+      " \001(\t\022\021\n\tsessionid\030\003 \001(\005\022\021\n\tisSuccess\030\004 \001"
+      "(\010\022\r\n\005e_msg\030\005 \001(\t\022\014\n\004e_no\030\006 \001(\005\"0\n\020Clien"
+      "tDisConnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001("
+      "\t\"3\n\023ClientDisConnectRes\022\014\n\004UUID\030\001 \001(\t\022\016"
+      "\n\006userID\030\002 \001(\t\"&\n\006Logout\022\016\n\006userID\030\001 \001(\t"
+      "\022\014\n\004UUID\030\002 \001(\t\")\n\tLogoutRes\022\014\n\004UUID\030\001 \001("
+      "\t\022\016\n\006userID\030\002 \001(\t\"C\n\rAddFriendInfo\022\017\n\007in"
+      "viter\030\001 \001(\t\022\017\n\007invitee\030\002 \001(\t\022\020\n\010toNodeID"
+      "\030\003 \001(\t\">\n\tAddFriend\022\021\n\tinviteeID\030\001 \001(\t\022\021"
+      "\n\tinviterID\030\002 \001(\t\022\013\n\003msg\030\003 \001(\t\"F\n\014AddFri"
+      "endRes\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeID\030\002"
+      " \001(\t\022\020\n\010toNodeID\030\003 \001(\t\"5\n\rAddFriendNoti\022"
+      "$\n\010response\030\001 \001(\0132\022.chat.AddFriendRes\"Z\n"
+      "\022AddFriendAuthorize\022\021\n\tinviterID\030\001 \001(\t\022\021"
+      "\n\tinviteeID\030\002 \001(\t\022\036\n\007isAgree\030\003 \001(\0162\r.cha"
+      "t.IsAgree\"]\n\025AddFriendAuthorizeRes\022\021\n\tin"
+      "viterID\030\001 \001(\t\022\021\n\tinviteeID\030\002 \001(\t\022\036\n\007isAg"
+      "ree\030\003 \001(\0162\r.chat.IsAgree\"G\n\026AddFriendAut"
+      "horizeNoti\022-\n\010response\030\001 \001(\0132\033.chat.AddF"
+      "riendAuthorizeRes\"#\n\022QueryAddfriendInfo\022"
+      "\r\n\005count\030\001 \001(\005\":\n\025QueryAddfriendInfoRes\022"
+      "!\n\004info\030\001 \003(\0132\023.chat.AddFriendInfo\"B\n\013Cr"
+      "eateGroup\022\016\n\006userID\030\001 \001(\t\022\020\n\010nickname\030\002 "
+      "\001(\t\022\021\n\tmembersID\030\003 \003(\t\"L\n\016CreateGroupRes"
+      "\022\026\n\016toUserID_outer\030\001 \001(\t\022\020\n\010nickname\030\002 \001"
+      "(\t\022\020\n\010toNodeID\030\003 \001(\t\"5\n\016GroupAddMember\022\020"
+      "\n\010toNodeID\030\001 \001(\t\022\021\n\tmembersID\030\002 \003(\t\"=\n\021G"
+      "roupAddMemberRes\022\026\n\016toUserID_outer\030\001 \001(\t"
+      "\022\020\n\010toNodeID\030\002 \001(\t\"\234\001\n\013NodeMessage\022\n\n\002id"
+      "\030\001 \001(\t\022\022\n\nfromUserID\030\002 \001(\t\022\020\n\010toNodeID\030\003"
+      " \001(\t\022\023\n\013incrementID\030\004 \001(\005\022\035\n\004type\030\005 \001(\0162"
+      "\017.chat.MediaType\022\017\n\007content\030\006 \001(\t\022\026\n\016toU"
+      "serID_outer\030\007 \001(\t\"o\n\016NodeMessageRes\022\n\n\002i"
+      "d\030\001 \001(\t\022\023\n\013incrementID\030\002 \001(\005\022\022\n\nfromUser"
+      "ID\030\003 \001(\t\022\026\n\016toUserID_outer\030\004 \001(\t\022\020\n\010toNo"
+      "deID\030\005 \001(\t\"\201\001\n\017NodeMessageNoti\022\022\n\nfromUs"
+      "erID\030\001 \001(\t\022\026\n\016toUserID_outer\030\002 \001(\t\022\020\n\010to"
+      "NodeID\030\003 \001(\t\022\027\n\017readedIncrement\030\004 \001(\005\022\027\n"
+      "\017unreadIncrement\030\005 \001(\005\"P\n\014QueryMessage\022\020"
+      "\n\010toNodeID\030\001 \001(\t\022\027\n\017fromIncrementID\030\002 \001("
+      "\005\022\025\n\rtoIncrementID\030\003 \001(\005\"6\n\017QueryMessage"
       "Res\022#\n\010messages\030\001 \003(\0132\021.chat.NodeMessage"
       "\"5\n\rServerConnect\022\022\n\nserverName\030\001 \001(\t\022\020\n"
       "\010serverIP\030\002 \001(\t\"8\n\020ServerDisconnect\022\022\n\ns"
@@ -1098,7 +1075,7 @@ void AddDescriptorsImpl() {
       "\002\022\007\n\003MP3\020\003B\003\370\001\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 4943);
+      descriptor, 4903);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chat_message.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -1442,99 +1419,85 @@ void ErrorNth::set_maxnth(::google::protobuf::int32 value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int NodeInfo::kUpdatetimeFieldNumber;
-const int NodeInfo::kReadedIncrementidFieldNumber;
-const int NodeInfo::kUnreadIncrementidFieldNumber;
+const int NodeReadInfo::kReadedIncrementidFieldNumber;
+const int NodeReadInfo::kUnreadIncrementidFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-NodeInfo::NodeInfo()
+NodeReadInfo::NodeReadInfo()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
     protobuf_chat_5fmessage_2eproto::InitDefaults();
   }
   SharedCtor();
-  // @@protoc_insertion_point(constructor:chat.NodeInfo)
+  // @@protoc_insertion_point(constructor:chat.NodeReadInfo)
 }
-NodeInfo::NodeInfo(const NodeInfo& from)
+NodeReadInfo::NodeReadInfo(const NodeReadInfo& from)
   : ::google::protobuf::Message(),
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::memcpy(&updatetime_, &from.updatetime_,
+  ::memcpy(&readedincrementid_, &from.readedincrementid_,
     reinterpret_cast<char*>(&unreadincrementid_) -
-    reinterpret_cast<char*>(&updatetime_) + sizeof(unreadincrementid_));
-  // @@protoc_insertion_point(copy_constructor:chat.NodeInfo)
+    reinterpret_cast<char*>(&readedincrementid_) + sizeof(unreadincrementid_));
+  // @@protoc_insertion_point(copy_constructor:chat.NodeReadInfo)
 }
 
-void NodeInfo::SharedCtor() {
-  ::memset(&updatetime_, 0, reinterpret_cast<char*>(&unreadincrementid_) -
-    reinterpret_cast<char*>(&updatetime_) + sizeof(unreadincrementid_));
+void NodeReadInfo::SharedCtor() {
+  ::memset(&readedincrementid_, 0, reinterpret_cast<char*>(&unreadincrementid_) -
+    reinterpret_cast<char*>(&readedincrementid_) + sizeof(unreadincrementid_));
   _cached_size_ = 0;
 }
 
-NodeInfo::~NodeInfo() {
-  // @@protoc_insertion_point(destructor:chat.NodeInfo)
+NodeReadInfo::~NodeReadInfo() {
+  // @@protoc_insertion_point(destructor:chat.NodeReadInfo)
   SharedDtor();
 }
 
-void NodeInfo::SharedDtor() {
+void NodeReadInfo::SharedDtor() {
 }
 
-void NodeInfo::SetCachedSize(int size) const {
+void NodeReadInfo::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* NodeInfo::descriptor() {
+const ::google::protobuf::Descriptor* NodeReadInfo::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_chat_5fmessage_2eproto::file_level_metadata[1].descriptor;
 }
 
-const NodeInfo& NodeInfo::default_instance() {
+const NodeReadInfo& NodeReadInfo::default_instance() {
   protobuf_chat_5fmessage_2eproto::InitDefaults();
   return *internal_default_instance();
 }
 
-NodeInfo* NodeInfo::New(::google::protobuf::Arena* arena) const {
-  NodeInfo* n = new NodeInfo;
+NodeReadInfo* NodeReadInfo::New(::google::protobuf::Arena* arena) const {
+  NodeReadInfo* n = new NodeReadInfo;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void NodeInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:chat.NodeInfo)
-  ::memset(&updatetime_, 0, reinterpret_cast<char*>(&unreadincrementid_) -
-    reinterpret_cast<char*>(&updatetime_) + sizeof(unreadincrementid_));
+void NodeReadInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.NodeReadInfo)
+  ::memset(&readedincrementid_, 0, reinterpret_cast<char*>(&unreadincrementid_) -
+    reinterpret_cast<char*>(&readedincrementid_) + sizeof(unreadincrementid_));
 }
 
-bool NodeInfo::MergePartialFromCodedStream(
+bool NodeReadInfo::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:chat.NodeInfo)
+  // @@protoc_insertion_point(parse_start:chat.NodeReadInfo)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // int32 updatetime = 1;
+      // int32 readedIncrementid = 1;
       case 1: {
         if (tag == 8u) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &updatetime_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // int32 readedIncrementid = 2;
-      case 2: {
-        if (tag == 16u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -1545,9 +1508,9 @@ bool NodeInfo::MergePartialFromCodedStream(
         break;
       }
 
-      // int32 unreadIncrementid = 3;
-      case 3: {
-        if (tag == 24u) {
+      // int32 unreadIncrementid = 2;
+      case 2: {
+        if (tag == 16u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -1571,77 +1534,60 @@ bool NodeInfo::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:chat.NodeInfo)
+  // @@protoc_insertion_point(parse_success:chat.NodeReadInfo)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:chat.NodeInfo)
+  // @@protoc_insertion_point(parse_failure:chat.NodeReadInfo)
   return false;
 #undef DO_
 }
 
-void NodeInfo::SerializeWithCachedSizes(
+void NodeReadInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:chat.NodeInfo)
-  // int32 updatetime = 1;
-  if (this->updatetime() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->updatetime(), output);
-  }
-
-  // int32 readedIncrementid = 2;
+  // @@protoc_insertion_point(serialize_start:chat.NodeReadInfo)
+  // int32 readedIncrementid = 1;
   if (this->readedincrementid() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->readedincrementid(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->readedincrementid(), output);
   }
 
-  // int32 unreadIncrementid = 3;
+  // int32 unreadIncrementid = 2;
   if (this->unreadincrementid() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->unreadincrementid(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->unreadincrementid(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:chat.NodeInfo)
+  // @@protoc_insertion_point(serialize_end:chat.NodeReadInfo)
 }
 
-::google::protobuf::uint8* NodeInfo::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* NodeReadInfo::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:chat.NodeInfo)
-  // int32 updatetime = 1;
-  if (this->updatetime() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->updatetime(), target);
-  }
-
-  // int32 readedIncrementid = 2;
+  // @@protoc_insertion_point(serialize_to_array_start:chat.NodeReadInfo)
+  // int32 readedIncrementid = 1;
   if (this->readedincrementid() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->readedincrementid(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->readedincrementid(), target);
   }
 
-  // int32 unreadIncrementid = 3;
+  // int32 unreadIncrementid = 2;
   if (this->unreadincrementid() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->unreadincrementid(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->unreadincrementid(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:chat.NodeInfo)
+  // @@protoc_insertion_point(serialize_to_array_end:chat.NodeReadInfo)
   return target;
 }
 
-size_t NodeInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:chat.NodeInfo)
+size_t NodeReadInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.NodeReadInfo)
   size_t total_size = 0;
 
-  // int32 updatetime = 1;
-  if (this->updatetime() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->updatetime());
-  }
-
-  // int32 readedIncrementid = 2;
+  // int32 readedIncrementid = 1;
   if (this->readedincrementid() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->readedincrementid());
   }
 
-  // int32 unreadIncrementid = 3;
+  // int32 unreadIncrementid = 2;
   if (this->unreadincrementid() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -1655,28 +1601,25 @@ size_t NodeInfo::ByteSizeLong() const {
   return total_size;
 }
 
-void NodeInfo::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:chat.NodeInfo)
+void NodeReadInfo::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:chat.NodeReadInfo)
   GOOGLE_DCHECK_NE(&from, this);
-  const NodeInfo* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const NodeInfo>(
+  const NodeReadInfo* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const NodeReadInfo>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:chat.NodeInfo)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:chat.NodeReadInfo)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:chat.NodeInfo)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:chat.NodeReadInfo)
     MergeFrom(*source);
   }
 }
 
-void NodeInfo::MergeFrom(const NodeInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:chat.NodeInfo)
+void NodeReadInfo::MergeFrom(const NodeReadInfo& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:chat.NodeReadInfo)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.updatetime() != 0) {
-    set_updatetime(from.updatetime());
-  }
   if (from.readedincrementid() != 0) {
     set_readedincrementid(from.readedincrementid());
   }
@@ -1685,83 +1628,68 @@ void NodeInfo::MergeFrom(const NodeInfo& from) {
   }
 }
 
-void NodeInfo::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:chat.NodeInfo)
+void NodeReadInfo::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:chat.NodeReadInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void NodeInfo::CopyFrom(const NodeInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:chat.NodeInfo)
+void NodeReadInfo::CopyFrom(const NodeReadInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.NodeReadInfo)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool NodeInfo::IsInitialized() const {
+bool NodeReadInfo::IsInitialized() const {
   return true;
 }
 
-void NodeInfo::Swap(NodeInfo* other) {
+void NodeReadInfo::Swap(NodeReadInfo* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void NodeInfo::InternalSwap(NodeInfo* other) {
-  std::swap(updatetime_, other->updatetime_);
+void NodeReadInfo::InternalSwap(NodeReadInfo* other) {
   std::swap(readedincrementid_, other->readedincrementid_);
   std::swap(unreadincrementid_, other->unreadincrementid_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata NodeInfo::GetMetadata() const {
+::google::protobuf::Metadata NodeReadInfo::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
   return protobuf_chat_5fmessage_2eproto::file_level_metadata[1];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// NodeInfo
+// NodeReadInfo
 
-// int32 updatetime = 1;
-void NodeInfo::clear_updatetime() {
-  updatetime_ = 0;
-}
-::google::protobuf::int32 NodeInfo::updatetime() const {
-  // @@protoc_insertion_point(field_get:chat.NodeInfo.updatetime)
-  return updatetime_;
-}
-void NodeInfo::set_updatetime(::google::protobuf::int32 value) {
-  
-  updatetime_ = value;
-  // @@protoc_insertion_point(field_set:chat.NodeInfo.updatetime)
-}
-
-// int32 readedIncrementid = 2;
-void NodeInfo::clear_readedincrementid() {
+// int32 readedIncrementid = 1;
+void NodeReadInfo::clear_readedincrementid() {
   readedincrementid_ = 0;
 }
-::google::protobuf::int32 NodeInfo::readedincrementid() const {
-  // @@protoc_insertion_point(field_get:chat.NodeInfo.readedIncrementid)
+::google::protobuf::int32 NodeReadInfo::readedincrementid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeReadInfo.readedIncrementid)
   return readedincrementid_;
 }
-void NodeInfo::set_readedincrementid(::google::protobuf::int32 value) {
+void NodeReadInfo::set_readedincrementid(::google::protobuf::int32 value) {
   
   readedincrementid_ = value;
-  // @@protoc_insertion_point(field_set:chat.NodeInfo.readedIncrementid)
+  // @@protoc_insertion_point(field_set:chat.NodeReadInfo.readedIncrementid)
 }
 
-// int32 unreadIncrementid = 3;
-void NodeInfo::clear_unreadincrementid() {
+// int32 unreadIncrementid = 2;
+void NodeReadInfo::clear_unreadincrementid() {
   unreadincrementid_ = 0;
 }
-::google::protobuf::int32 NodeInfo::unreadincrementid() const {
-  // @@protoc_insertion_point(field_get:chat.NodeInfo.unreadIncrementid)
+::google::protobuf::int32 NodeReadInfo::unreadincrementid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeReadInfo.unreadIncrementid)
   return unreadincrementid_;
 }
-void NodeInfo::set_unreadincrementid(::google::protobuf::int32 value) {
+void NodeReadInfo::set_unreadincrementid(::google::protobuf::int32 value) {
   
   unreadincrementid_ = value;
-  // @@protoc_insertion_point(field_set:chat.NodeInfo.unreadIncrementid)
+  // @@protoc_insertion_point(field_set:chat.NodeReadInfo.unreadIncrementid)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -1854,16 +1782,16 @@ bool TalkList::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // map<string, .chat.NodeInfo> nodemap = 1;
+      // map<string, .chat.NodeReadInfo> nodemap = 1;
       case 1: {
         if (tag == 10u) {
           DO_(input->IncrementRecursionDepth());
           TalkList_NodemapEntry::Parser< ::google::protobuf::internal::MapField<
-              ::std::string, ::chat::NodeInfo,
+              ::std::string, ::chat::NodeReadInfo,
               ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
               ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
               0 >,
-            ::google::protobuf::Map< ::std::string, ::chat::NodeInfo > > parser(&nodemap_);
+            ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo > > parser(&nodemap_);
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
               input, &parser));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -1901,9 +1829,9 @@ failure:
 void TalkList::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:chat.TalkList)
-  // map<string, .chat.NodeInfo> nodemap = 1;
+  // map<string, .chat.NodeReadInfo> nodemap = 1;
   if (!this->nodemap().empty()) {
-    typedef ::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::const_pointer
+    typedef ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::const_pointer
         ConstPtr;
     typedef ConstPtr SortItem;
     typedef ::google::protobuf::internal::CompareByDerefFirst<SortItem> Less;
@@ -1920,9 +1848,9 @@ void TalkList::SerializeWithCachedSizes(
         this->nodemap().size() > 1) {
       ::google::protobuf::scoped_array<SortItem> items(
           new SortItem[this->nodemap().size()]);
-      typedef ::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::size_type size_type;
+      typedef ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::size_type size_type;
       size_type n = 0;
-      for (::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::const_iterator
+      for (::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::const_iterator
           it = this->nodemap().begin();
           it != this->nodemap().end(); ++it, ++n) {
         items[n] = SortItem(&*it);
@@ -1938,7 +1866,7 @@ void TalkList::SerializeWithCachedSizes(
       }
     } else {
       ::google::protobuf::scoped_ptr<TalkList_NodemapEntry> entry;
-      for (::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::const_iterator
+      for (::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::const_iterator
           it = this->nodemap().begin();
           it != this->nodemap().end(); ++it) {
         entry.reset(nodemap_.NewEntryWrapper(
@@ -1957,9 +1885,9 @@ void TalkList::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:chat.TalkList)
-  // map<string, .chat.NodeInfo> nodemap = 1;
+  // map<string, .chat.NodeReadInfo> nodemap = 1;
   if (!this->nodemap().empty()) {
-    typedef ::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::const_pointer
+    typedef ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::const_pointer
         ConstPtr;
     typedef ConstPtr SortItem;
     typedef ::google::protobuf::internal::CompareByDerefFirst<SortItem> Less;
@@ -1976,9 +1904,9 @@ void TalkList::SerializeWithCachedSizes(
         this->nodemap().size() > 1) {
       ::google::protobuf::scoped_array<SortItem> items(
           new SortItem[this->nodemap().size()]);
-      typedef ::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::size_type size_type;
+      typedef ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::size_type size_type;
       size_type n = 0;
-      for (::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::const_iterator
+      for (::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::const_iterator
           it = this->nodemap().begin();
           it != this->nodemap().end(); ++it, ++n) {
         items[n] = SortItem(&*it);
@@ -1996,7 +1924,7 @@ void TalkList::SerializeWithCachedSizes(
       }
     } else {
       ::google::protobuf::scoped_ptr<TalkList_NodemapEntry> entry;
-      for (::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::const_iterator
+      for (::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::const_iterator
           it = this->nodemap().begin();
           it != this->nodemap().end(); ++it) {
         entry.reset(nodemap_.NewEntryWrapper(
@@ -2018,12 +1946,12 @@ size_t TalkList::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:chat.TalkList)
   size_t total_size = 0;
 
-  // map<string, .chat.NodeInfo> nodemap = 1;
+  // map<string, .chat.NodeReadInfo> nodemap = 1;
   total_size += 1 *
       ::google::protobuf::internal::FromIntSize(this->nodemap_size());
   {
     ::google::protobuf::scoped_ptr<TalkList_NodemapEntry> entry;
-    for (::google::protobuf::Map< ::std::string, ::chat::NodeInfo >::const_iterator
+    for (::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >::const_iterator
         it = this->nodemap().begin();
         it != this->nodemap().end(); ++it) {
       entry.reset(nodemap_.NewEntryWrapper(it->first, it->second));
@@ -2096,19 +2024,19 @@ void TalkList::InternalSwap(TalkList* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // TalkList
 
-// map<string, .chat.NodeInfo> nodemap = 1;
+// map<string, .chat.NodeReadInfo> nodemap = 1;
 int TalkList::nodemap_size() const {
   return nodemap_.size();
 }
 void TalkList::clear_nodemap() {
   nodemap_.Clear();
 }
- const ::google::protobuf::Map< ::std::string, ::chat::NodeInfo >&
+ const ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >&
 TalkList::nodemap() const {
   // @@protoc_insertion_point(field_map:chat.TalkList.nodemap)
   return nodemap_.GetMap();
 }
- ::google::protobuf::Map< ::std::string, ::chat::NodeInfo >*
+ ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >*
 TalkList::mutable_nodemap() {
   // @@protoc_insertion_point(field_mutable_map:chat.TalkList.nodemap)
   return nodemap_.MutableMap();
@@ -12303,6 +12231,7 @@ void Login::set_allocated_device(::chat::Device* device) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int LoginRes::kIsSuccessFieldNumber;
 const int LoginRes::kUserIDFieldNumber;
+const int LoginRes::kUuidFieldNumber;
 const int LoginRes::kENoFieldNumber;
 const int LoginRes::kEMsgFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -12324,6 +12253,10 @@ LoginRes::LoginRes(const LoginRes& from)
   if (from.userid().size() > 0) {
     userid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.userid_);
   }
+  uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.uuid().size() > 0) {
+    uuid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.uuid_);
+  }
   e_msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.e_msg().size() > 0) {
     e_msg_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.e_msg_);
@@ -12336,6 +12269,7 @@ LoginRes::LoginRes(const LoginRes& from)
 
 void LoginRes::SharedCtor() {
   userid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   e_msg_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&issuccess_, 0, reinterpret_cast<char*>(&e_no_) -
     reinterpret_cast<char*>(&issuccess_) + sizeof(e_no_));
@@ -12349,6 +12283,7 @@ LoginRes::~LoginRes() {
 
 void LoginRes::SharedDtor() {
   userid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  uuid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   e_msg_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
@@ -12378,6 +12313,7 @@ LoginRes* LoginRes::New(::google::protobuf::Arena* arena) const {
 void LoginRes::Clear() {
 // @@protoc_insertion_point(message_clear_start:chat.LoginRes)
   userid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  uuid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   e_msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&issuccess_, 0, reinterpret_cast<char*>(&e_no_) -
     reinterpret_cast<char*>(&issuccess_) + sizeof(e_no_));
@@ -12421,9 +12357,24 @@ bool LoginRes::MergePartialFromCodedStream(
         break;
       }
 
-      // int32 e_no = 3;
+      // string uuid = 3;
       case 3: {
-        if (tag == 24u) {
+        if (tag == 26u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_uuid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->uuid().data(), this->uuid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.LoginRes.uuid"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 e_no = 4;
+      case 4: {
+        if (tag == 32u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
@@ -12434,9 +12385,9 @@ bool LoginRes::MergePartialFromCodedStream(
         break;
       }
 
-      // string e_msg = 4;
-      case 4: {
-        if (tag == 34u) {
+      // string e_msg = 5;
+      case 5: {
+        if (tag == 42u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_e_msg()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -12488,19 +12439,29 @@ void LoginRes::SerializeWithCachedSizes(
       2, this->userid(), output);
   }
 
-  // int32 e_no = 3;
-  if (this->e_no() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->e_no(), output);
+  // string uuid = 3;
+  if (this->uuid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->uuid().data(), this->uuid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.LoginRes.uuid");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->uuid(), output);
   }
 
-  // string e_msg = 4;
+  // int32 e_no = 4;
+  if (this->e_no() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->e_no(), output);
+  }
+
+  // string e_msg = 5;
   if (this->e_msg().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->e_msg().data(), this->e_msg().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "chat.LoginRes.e_msg");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->e_msg(), output);
+      5, this->e_msg(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:chat.LoginRes)
@@ -12526,12 +12487,23 @@ void LoginRes::SerializeWithCachedSizes(
         2, this->userid(), target);
   }
 
-  // int32 e_no = 3;
-  if (this->e_no() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->e_no(), target);
+  // string uuid = 3;
+  if (this->uuid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->uuid().data(), this->uuid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.LoginRes.uuid");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->uuid(), target);
   }
 
-  // string e_msg = 4;
+  // int32 e_no = 4;
+  if (this->e_no() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->e_no(), target);
+  }
+
+  // string e_msg = 5;
   if (this->e_msg().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->e_msg().data(), this->e_msg().length(),
@@ -12539,7 +12511,7 @@ void LoginRes::SerializeWithCachedSizes(
       "chat.LoginRes.e_msg");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->e_msg(), target);
+        5, this->e_msg(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:chat.LoginRes)
@@ -12557,7 +12529,14 @@ size_t LoginRes::ByteSizeLong() const {
         this->userid());
   }
 
-  // string e_msg = 4;
+  // string uuid = 3;
+  if (this->uuid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->uuid());
+  }
+
+  // string e_msg = 5;
   if (this->e_msg().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -12569,7 +12548,7 @@ size_t LoginRes::ByteSizeLong() const {
     total_size += 1 + 1;
   }
 
-  // int32 e_no = 3;
+  // int32 e_no = 4;
   if (this->e_no() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -12605,6 +12584,10 @@ void LoginRes::MergeFrom(const LoginRes& from) {
   if (from.userid().size() > 0) {
 
     userid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.userid_);
+  }
+  if (from.uuid().size() > 0) {
+
+    uuid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.uuid_);
   }
   if (from.e_msg().size() > 0) {
 
@@ -12642,6 +12625,7 @@ void LoginRes::Swap(LoginRes* other) {
 }
 void LoginRes::InternalSwap(LoginRes* other) {
   userid_.Swap(&other->userid_);
+  uuid_.Swap(&other->uuid_);
   e_msg_.Swap(&other->e_msg_);
   std::swap(issuccess_, other->issuccess_);
   std::swap(e_no_, other->e_no_);
@@ -12722,7 +12706,59 @@ void LoginRes::set_allocated_userid(::std::string* userid) {
   // @@protoc_insertion_point(field_set_allocated:chat.LoginRes.userID)
 }
 
-// int32 e_no = 3;
+// string uuid = 3;
+void LoginRes::clear_uuid() {
+  uuid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& LoginRes::uuid() const {
+  // @@protoc_insertion_point(field_get:chat.LoginRes.uuid)
+  return uuid_.GetNoArena();
+}
+void LoginRes::set_uuid(const ::std::string& value) {
+  
+  uuid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.LoginRes.uuid)
+}
+#if LANG_CXX11
+void LoginRes::set_uuid(::std::string&& value) {
+  
+  uuid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.LoginRes.uuid)
+}
+#endif
+void LoginRes::set_uuid(const char* value) {
+  
+  uuid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.LoginRes.uuid)
+}
+void LoginRes::set_uuid(const char* value, size_t size) {
+  
+  uuid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.LoginRes.uuid)
+}
+::std::string* LoginRes::mutable_uuid() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.LoginRes.uuid)
+  return uuid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* LoginRes::release_uuid() {
+  // @@protoc_insertion_point(field_release:chat.LoginRes.uuid)
+  
+  return uuid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void LoginRes::set_allocated_uuid(::std::string* uuid) {
+  if (uuid != NULL) {
+    
+  } else {
+    
+  }
+  uuid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), uuid);
+  // @@protoc_insertion_point(field_set_allocated:chat.LoginRes.uuid)
+}
+
+// int32 e_no = 4;
 void LoginRes::clear_e_no() {
   e_no_ = 0;
 }
@@ -12736,7 +12772,7 @@ void LoginRes::set_e_no(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:chat.LoginRes.e_no)
 }
 
-// string e_msg = 4;
+// string e_msg = 5;
 void LoginRes::clear_e_msg() {
   e_msg_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -17641,7 +17677,6 @@ void AddFriendRes::set_allocated_tonodeid(::std::string* tonodeid) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int AddFriendNoti::kToUserIDOuterFieldNumber;
 const int AddFriendNoti::kResponseFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -17658,10 +17693,6 @@ AddFriendNoti::AddFriendNoti(const AddFriendNoti& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.touserid_outer().size() > 0) {
-    touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
-  }
   if (from.has_response()) {
     response_ = new ::chat::AddFriendRes(*from.response_);
   } else {
@@ -17671,7 +17702,6 @@ AddFriendNoti::AddFriendNoti(const AddFriendNoti& from)
 }
 
 void AddFriendNoti::SharedCtor() {
-  touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   response_ = NULL;
   _cached_size_ = 0;
 }
@@ -17682,7 +17712,6 @@ AddFriendNoti::~AddFriendNoti() {
 }
 
 void AddFriendNoti::SharedDtor() {
-  touserid_outer_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) {
     delete response_;
   }
@@ -17713,7 +17742,6 @@ AddFriendNoti* AddFriendNoti::New(::google::protobuf::Arena* arena) const {
 
 void AddFriendNoti::Clear() {
 // @@protoc_insertion_point(message_clear_start:chat.AddFriendNoti)
-  touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && response_ != NULL) {
     delete response_;
   }
@@ -17730,24 +17758,9 @@ bool AddFriendNoti::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string toUserID_outer = 1;
+      // .chat.AddFriendRes response = 1;
       case 1: {
         if (tag == 10u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_touserid_outer()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->touserid_outer().data(), this->touserid_outer().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "chat.AddFriendNoti.toUserID_outer"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // .chat.AddFriendRes response = 2;
-      case 2: {
-        if (tag == 18u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_response()));
         } else {
@@ -17780,20 +17793,10 @@ failure:
 void AddFriendNoti::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:chat.AddFriendNoti)
-  // string toUserID_outer = 1;
-  if (this->touserid_outer().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->touserid_outer().data(), this->touserid_outer().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.AddFriendNoti.toUserID_outer");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->touserid_outer(), output);
-  }
-
-  // .chat.AddFriendRes response = 2;
+  // .chat.AddFriendRes response = 1;
   if (this->has_response()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, *this->response_, output);
+      1, *this->response_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:chat.AddFriendNoti)
@@ -17803,22 +17806,11 @@ void AddFriendNoti::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:chat.AddFriendNoti)
-  // string toUserID_outer = 1;
-  if (this->touserid_outer().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->touserid_outer().data(), this->touserid_outer().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.AddFriendNoti.toUserID_outer");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->touserid_outer(), target);
-  }
-
-  // .chat.AddFriendRes response = 2;
+  // .chat.AddFriendRes response = 1;
   if (this->has_response()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        2, *this->response_, false, target);
+        1, *this->response_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:chat.AddFriendNoti)
@@ -17829,14 +17821,7 @@ size_t AddFriendNoti::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:chat.AddFriendNoti)
   size_t total_size = 0;
 
-  // string toUserID_outer = 1;
-  if (this->touserid_outer().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->touserid_outer());
-  }
-
-  // .chat.AddFriendRes response = 2;
+  // .chat.AddFriendRes response = 1;
   if (this->has_response()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -17869,10 +17854,6 @@ void AddFriendNoti::MergeFrom(const AddFriendNoti& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:chat.AddFriendNoti)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.touserid_outer().size() > 0) {
-
-    touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
-  }
   if (from.has_response()) {
     mutable_response()->::chat::AddFriendRes::MergeFrom(from.response());
   }
@@ -17901,7 +17882,6 @@ void AddFriendNoti::Swap(AddFriendNoti* other) {
   InternalSwap(other);
 }
 void AddFriendNoti::InternalSwap(AddFriendNoti* other) {
-  touserid_outer_.Swap(&other->touserid_outer_);
   std::swap(response_, other->response_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -17914,59 +17894,7 @@ void AddFriendNoti::InternalSwap(AddFriendNoti* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // AddFriendNoti
 
-// string toUserID_outer = 1;
-void AddFriendNoti::clear_touserid_outer() {
-  touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& AddFriendNoti::touserid_outer() const {
-  // @@protoc_insertion_point(field_get:chat.AddFriendNoti.toUserID_outer)
-  return touserid_outer_.GetNoArena();
-}
-void AddFriendNoti::set_touserid_outer(const ::std::string& value) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.AddFriendNoti.toUserID_outer)
-}
-#if LANG_CXX11
-void AddFriendNoti::set_touserid_outer(::std::string&& value) {
-  
-  touserid_outer_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.AddFriendNoti.toUserID_outer)
-}
-#endif
-void AddFriendNoti::set_touserid_outer(const char* value) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.AddFriendNoti.toUserID_outer)
-}
-void AddFriendNoti::set_touserid_outer(const char* value, size_t size) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.AddFriendNoti.toUserID_outer)
-}
-::std::string* AddFriendNoti::mutable_touserid_outer() {
-  
-  // @@protoc_insertion_point(field_mutable:chat.AddFriendNoti.toUserID_outer)
-  return touserid_outer_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* AddFriendNoti::release_touserid_outer() {
-  // @@protoc_insertion_point(field_release:chat.AddFriendNoti.toUserID_outer)
-  
-  return touserid_outer_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void AddFriendNoti::set_allocated_touserid_outer(::std::string* touserid_outer) {
-  if (touserid_outer != NULL) {
-    
-  } else {
-    
-  }
-  touserid_outer_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), touserid_outer);
-  // @@protoc_insertion_point(field_set_allocated:chat.AddFriendNoti.toUserID_outer)
-}
-
-// .chat.AddFriendRes response = 2;
+// .chat.AddFriendRes response = 1;
 bool AddFriendNoti::has_response() const {
   return this != internal_default_instance() && response_ != NULL;
 }
@@ -18453,8 +18381,9 @@ void AddFriendAuthorize::set_isagree(::chat::IsAgree value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int AddFriendAuthorizeRes::kInviterIDFieldNumber;
+const int AddFriendAuthorizeRes::kInviteeIDFieldNumber;
 const int AddFriendAuthorizeRes::kIsAgreeFieldNumber;
-const int AddFriendAuthorizeRes::kToUserIDOuterFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 AddFriendAuthorizeRes::AddFriendAuthorizeRes()
@@ -18470,16 +18399,21 @@ AddFriendAuthorizeRes::AddFriendAuthorizeRes(const AddFriendAuthorizeRes& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.touserid_outer().size() > 0) {
-    touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
+  inviterid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.inviterid().size() > 0) {
+    inviterid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.inviterid_);
+  }
+  inviteeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.inviteeid().size() > 0) {
+    inviteeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.inviteeid_);
   }
   isagree_ = from.isagree_;
   // @@protoc_insertion_point(copy_constructor:chat.AddFriendAuthorizeRes)
 }
 
 void AddFriendAuthorizeRes::SharedCtor() {
-  touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  inviterid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  inviteeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   isagree_ = 0;
   _cached_size_ = 0;
 }
@@ -18490,7 +18424,8 @@ AddFriendAuthorizeRes::~AddFriendAuthorizeRes() {
 }
 
 void AddFriendAuthorizeRes::SharedDtor() {
-  touserid_outer_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  inviterid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  inviteeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void AddFriendAuthorizeRes::SetCachedSize(int size) const {
@@ -18518,7 +18453,8 @@ AddFriendAuthorizeRes* AddFriendAuthorizeRes::New(::google::protobuf::Arena* are
 
 void AddFriendAuthorizeRes::Clear() {
 // @@protoc_insertion_point(message_clear_start:chat.AddFriendAuthorizeRes)
-  touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  inviterid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  inviteeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   isagree_ = 0;
 }
 
@@ -18532,29 +18468,44 @@ bool AddFriendAuthorizeRes::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .chat.IsAgree isAgree = 1;
+      // string inviterID = 1;
       case 1: {
-        if (tag == 8u) {
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          set_isagree(static_cast< ::chat::IsAgree >(value));
+        if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_inviterid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->inviterid().data(), this->inviterid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.AddFriendAuthorizeRes.inviterID"));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // string toUserID_outer = 2;
+      // string inviteeID = 2;
       case 2: {
         if (tag == 18u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_touserid_outer()));
+                input, this->mutable_inviteeid()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->touserid_outer().data(), this->touserid_outer().length(),
+            this->inviteeid().data(), this->inviteeid().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "chat.AddFriendAuthorizeRes.toUserID_outer"));
+            "chat.AddFriendAuthorizeRes.inviteeID"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .chat.IsAgree isAgree = 3;
+      case 3: {
+        if (tag == 24u) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_isagree(static_cast< ::chat::IsAgree >(value));
         } else {
           goto handle_unusual;
         }
@@ -18585,20 +18536,30 @@ failure:
 void AddFriendAuthorizeRes::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:chat.AddFriendAuthorizeRes)
-  // .chat.IsAgree isAgree = 1;
-  if (this->isagree() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->isagree(), output);
+  // string inviterID = 1;
+  if (this->inviterid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->inviterid().data(), this->inviterid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.AddFriendAuthorizeRes.inviterID");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->inviterid(), output);
   }
 
-  // string toUserID_outer = 2;
-  if (this->touserid_outer().size() > 0) {
+  // string inviteeID = 2;
+  if (this->inviteeid().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->touserid_outer().data(), this->touserid_outer().length(),
+      this->inviteeid().data(), this->inviteeid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.AddFriendAuthorizeRes.toUserID_outer");
+      "chat.AddFriendAuthorizeRes.inviteeID");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->touserid_outer(), output);
+      2, this->inviteeid(), output);
+  }
+
+  // .chat.IsAgree isAgree = 3;
+  if (this->isagree() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      3, this->isagree(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:chat.AddFriendAuthorizeRes)
@@ -18608,21 +18569,32 @@ void AddFriendAuthorizeRes::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:chat.AddFriendAuthorizeRes)
-  // .chat.IsAgree isAgree = 1;
-  if (this->isagree() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->isagree(), target);
-  }
-
-  // string toUserID_outer = 2;
-  if (this->touserid_outer().size() > 0) {
+  // string inviterID = 1;
+  if (this->inviterid().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->touserid_outer().data(), this->touserid_outer().length(),
+      this->inviterid().data(), this->inviterid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.AddFriendAuthorizeRes.toUserID_outer");
+      "chat.AddFriendAuthorizeRes.inviterID");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->touserid_outer(), target);
+        1, this->inviterid(), target);
+  }
+
+  // string inviteeID = 2;
+  if (this->inviteeid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->inviteeid().data(), this->inviteeid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.AddFriendAuthorizeRes.inviteeID");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->inviteeid(), target);
+  }
+
+  // .chat.IsAgree isAgree = 3;
+  if (this->isagree() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      3, this->isagree(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:chat.AddFriendAuthorizeRes)
@@ -18633,14 +18605,21 @@ size_t AddFriendAuthorizeRes::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:chat.AddFriendAuthorizeRes)
   size_t total_size = 0;
 
-  // string toUserID_outer = 2;
-  if (this->touserid_outer().size() > 0) {
+  // string inviterID = 1;
+  if (this->inviterid().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->touserid_outer());
+        this->inviterid());
   }
 
-  // .chat.IsAgree isAgree = 1;
+  // string inviteeID = 2;
+  if (this->inviteeid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->inviteeid());
+  }
+
+  // .chat.IsAgree isAgree = 3;
   if (this->isagree() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->isagree());
@@ -18672,9 +18651,13 @@ void AddFriendAuthorizeRes::MergeFrom(const AddFriendAuthorizeRes& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:chat.AddFriendAuthorizeRes)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.touserid_outer().size() > 0) {
+  if (from.inviterid().size() > 0) {
 
-    touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
+    inviterid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.inviterid_);
+  }
+  if (from.inviteeid().size() > 0) {
+
+    inviteeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.inviteeid_);
   }
   if (from.isagree() != 0) {
     set_isagree(from.isagree());
@@ -18704,7 +18687,8 @@ void AddFriendAuthorizeRes::Swap(AddFriendAuthorizeRes* other) {
   InternalSwap(other);
 }
 void AddFriendAuthorizeRes::InternalSwap(AddFriendAuthorizeRes* other) {
-  touserid_outer_.Swap(&other->touserid_outer_);
+  inviterid_.Swap(&other->inviterid_);
+  inviteeid_.Swap(&other->inviteeid_);
   std::swap(isagree_, other->isagree_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -18717,7 +18701,111 @@ void AddFriendAuthorizeRes::InternalSwap(AddFriendAuthorizeRes* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // AddFriendAuthorizeRes
 
-// .chat.IsAgree isAgree = 1;
+// string inviterID = 1;
+void AddFriendAuthorizeRes::clear_inviterid() {
+  inviterid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& AddFriendAuthorizeRes::inviterid() const {
+  // @@protoc_insertion_point(field_get:chat.AddFriendAuthorizeRes.inviterID)
+  return inviterid_.GetNoArena();
+}
+void AddFriendAuthorizeRes::set_inviterid(const ::std::string& value) {
+  
+  inviterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.AddFriendAuthorizeRes.inviterID)
+}
+#if LANG_CXX11
+void AddFriendAuthorizeRes::set_inviterid(::std::string&& value) {
+  
+  inviterid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.AddFriendAuthorizeRes.inviterID)
+}
+#endif
+void AddFriendAuthorizeRes::set_inviterid(const char* value) {
+  
+  inviterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.AddFriendAuthorizeRes.inviterID)
+}
+void AddFriendAuthorizeRes::set_inviterid(const char* value, size_t size) {
+  
+  inviterid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.AddFriendAuthorizeRes.inviterID)
+}
+::std::string* AddFriendAuthorizeRes::mutable_inviterid() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.AddFriendAuthorizeRes.inviterID)
+  return inviterid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* AddFriendAuthorizeRes::release_inviterid() {
+  // @@protoc_insertion_point(field_release:chat.AddFriendAuthorizeRes.inviterID)
+  
+  return inviterid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void AddFriendAuthorizeRes::set_allocated_inviterid(::std::string* inviterid) {
+  if (inviterid != NULL) {
+    
+  } else {
+    
+  }
+  inviterid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), inviterid);
+  // @@protoc_insertion_point(field_set_allocated:chat.AddFriendAuthorizeRes.inviterID)
+}
+
+// string inviteeID = 2;
+void AddFriendAuthorizeRes::clear_inviteeid() {
+  inviteeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& AddFriendAuthorizeRes::inviteeid() const {
+  // @@protoc_insertion_point(field_get:chat.AddFriendAuthorizeRes.inviteeID)
+  return inviteeid_.GetNoArena();
+}
+void AddFriendAuthorizeRes::set_inviteeid(const ::std::string& value) {
+  
+  inviteeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.AddFriendAuthorizeRes.inviteeID)
+}
+#if LANG_CXX11
+void AddFriendAuthorizeRes::set_inviteeid(::std::string&& value) {
+  
+  inviteeid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.AddFriendAuthorizeRes.inviteeID)
+}
+#endif
+void AddFriendAuthorizeRes::set_inviteeid(const char* value) {
+  
+  inviteeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.AddFriendAuthorizeRes.inviteeID)
+}
+void AddFriendAuthorizeRes::set_inviteeid(const char* value, size_t size) {
+  
+  inviteeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.AddFriendAuthorizeRes.inviteeID)
+}
+::std::string* AddFriendAuthorizeRes::mutable_inviteeid() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.AddFriendAuthorizeRes.inviteeID)
+  return inviteeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* AddFriendAuthorizeRes::release_inviteeid() {
+  // @@protoc_insertion_point(field_release:chat.AddFriendAuthorizeRes.inviteeID)
+  
+  return inviteeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void AddFriendAuthorizeRes::set_allocated_inviteeid(::std::string* inviteeid) {
+  if (inviteeid != NULL) {
+    
+  } else {
+    
+  }
+  inviteeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), inviteeid);
+  // @@protoc_insertion_point(field_set_allocated:chat.AddFriendAuthorizeRes.inviteeID)
+}
+
+// .chat.IsAgree isAgree = 3;
 void AddFriendAuthorizeRes::clear_isagree() {
   isagree_ = 0;
 }
@@ -18731,64 +18819,11 @@ void AddFriendAuthorizeRes::set_isagree(::chat::IsAgree value) {
   // @@protoc_insertion_point(field_set:chat.AddFriendAuthorizeRes.isAgree)
 }
 
-// string toUserID_outer = 2;
-void AddFriendAuthorizeRes::clear_touserid_outer() {
-  touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& AddFriendAuthorizeRes::touserid_outer() const {
-  // @@protoc_insertion_point(field_get:chat.AddFriendAuthorizeRes.toUserID_outer)
-  return touserid_outer_.GetNoArena();
-}
-void AddFriendAuthorizeRes::set_touserid_outer(const ::std::string& value) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.AddFriendAuthorizeRes.toUserID_outer)
-}
-#if LANG_CXX11
-void AddFriendAuthorizeRes::set_touserid_outer(::std::string&& value) {
-  
-  touserid_outer_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.AddFriendAuthorizeRes.toUserID_outer)
-}
-#endif
-void AddFriendAuthorizeRes::set_touserid_outer(const char* value) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.AddFriendAuthorizeRes.toUserID_outer)
-}
-void AddFriendAuthorizeRes::set_touserid_outer(const char* value, size_t size) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.AddFriendAuthorizeRes.toUserID_outer)
-}
-::std::string* AddFriendAuthorizeRes::mutable_touserid_outer() {
-  
-  // @@protoc_insertion_point(field_mutable:chat.AddFriendAuthorizeRes.toUserID_outer)
-  return touserid_outer_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* AddFriendAuthorizeRes::release_touserid_outer() {
-  // @@protoc_insertion_point(field_release:chat.AddFriendAuthorizeRes.toUserID_outer)
-  
-  return touserid_outer_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void AddFriendAuthorizeRes::set_allocated_touserid_outer(::std::string* touserid_outer) {
-  if (touserid_outer != NULL) {
-    
-  } else {
-    
-  }
-  touserid_outer_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), touserid_outer);
-  // @@protoc_insertion_point(field_set_allocated:chat.AddFriendAuthorizeRes.toUserID_outer)
-}
-
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int AddFriendAuthorizeNoti::kToUserIDOuterFieldNumber;
 const int AddFriendAuthorizeNoti::kResponseFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -18805,12 +18840,8 @@ AddFriendAuthorizeNoti::AddFriendAuthorizeNoti(const AddFriendAuthorizeNoti& fro
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.touserid_outer().size() > 0) {
-    touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
-  }
   if (from.has_response()) {
-    response_ = new ::chat::AddFriendAuthorize(*from.response_);
+    response_ = new ::chat::AddFriendAuthorizeRes(*from.response_);
   } else {
     response_ = NULL;
   }
@@ -18818,7 +18849,6 @@ AddFriendAuthorizeNoti::AddFriendAuthorizeNoti(const AddFriendAuthorizeNoti& fro
 }
 
 void AddFriendAuthorizeNoti::SharedCtor() {
-  touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   response_ = NULL;
   _cached_size_ = 0;
 }
@@ -18829,7 +18859,6 @@ AddFriendAuthorizeNoti::~AddFriendAuthorizeNoti() {
 }
 
 void AddFriendAuthorizeNoti::SharedDtor() {
-  touserid_outer_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) {
     delete response_;
   }
@@ -18860,7 +18889,6 @@ AddFriendAuthorizeNoti* AddFriendAuthorizeNoti::New(::google::protobuf::Arena* a
 
 void AddFriendAuthorizeNoti::Clear() {
 // @@protoc_insertion_point(message_clear_start:chat.AddFriendAuthorizeNoti)
-  touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && response_ != NULL) {
     delete response_;
   }
@@ -18877,24 +18905,9 @@ bool AddFriendAuthorizeNoti::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string toUserID_outer = 1;
+      // .chat.AddFriendAuthorizeRes response = 1;
       case 1: {
         if (tag == 10u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_touserid_outer()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->touserid_outer().data(), this->touserid_outer().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "chat.AddFriendAuthorizeNoti.toUserID_outer"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // .chat.AddFriendAuthorize response = 2;
-      case 2: {
-        if (tag == 18u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_response()));
         } else {
@@ -18927,20 +18940,10 @@ failure:
 void AddFriendAuthorizeNoti::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:chat.AddFriendAuthorizeNoti)
-  // string toUserID_outer = 1;
-  if (this->touserid_outer().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->touserid_outer().data(), this->touserid_outer().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.AddFriendAuthorizeNoti.toUserID_outer");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->touserid_outer(), output);
-  }
-
-  // .chat.AddFriendAuthorize response = 2;
+  // .chat.AddFriendAuthorizeRes response = 1;
   if (this->has_response()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, *this->response_, output);
+      1, *this->response_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:chat.AddFriendAuthorizeNoti)
@@ -18950,22 +18953,11 @@ void AddFriendAuthorizeNoti::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:chat.AddFriendAuthorizeNoti)
-  // string toUserID_outer = 1;
-  if (this->touserid_outer().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->touserid_outer().data(), this->touserid_outer().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.AddFriendAuthorizeNoti.toUserID_outer");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->touserid_outer(), target);
-  }
-
-  // .chat.AddFriendAuthorize response = 2;
+  // .chat.AddFriendAuthorizeRes response = 1;
   if (this->has_response()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        2, *this->response_, false, target);
+        1, *this->response_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:chat.AddFriendAuthorizeNoti)
@@ -18976,14 +18968,7 @@ size_t AddFriendAuthorizeNoti::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:chat.AddFriendAuthorizeNoti)
   size_t total_size = 0;
 
-  // string toUserID_outer = 1;
-  if (this->touserid_outer().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->touserid_outer());
-  }
-
-  // .chat.AddFriendAuthorize response = 2;
+  // .chat.AddFriendAuthorizeRes response = 1;
   if (this->has_response()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -19016,12 +19001,8 @@ void AddFriendAuthorizeNoti::MergeFrom(const AddFriendAuthorizeNoti& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:chat.AddFriendAuthorizeNoti)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.touserid_outer().size() > 0) {
-
-    touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
-  }
   if (from.has_response()) {
-    mutable_response()->::chat::AddFriendAuthorize::MergeFrom(from.response());
+    mutable_response()->::chat::AddFriendAuthorizeRes::MergeFrom(from.response());
   }
 }
 
@@ -19048,7 +19029,6 @@ void AddFriendAuthorizeNoti::Swap(AddFriendAuthorizeNoti* other) {
   InternalSwap(other);
 }
 void AddFriendAuthorizeNoti::InternalSwap(AddFriendAuthorizeNoti* other) {
-  touserid_outer_.Swap(&other->touserid_outer_);
   std::swap(response_, other->response_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -19061,59 +19041,7 @@ void AddFriendAuthorizeNoti::InternalSwap(AddFriendAuthorizeNoti* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // AddFriendAuthorizeNoti
 
-// string toUserID_outer = 1;
-void AddFriendAuthorizeNoti::clear_touserid_outer() {
-  touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& AddFriendAuthorizeNoti::touserid_outer() const {
-  // @@protoc_insertion_point(field_get:chat.AddFriendAuthorizeNoti.toUserID_outer)
-  return touserid_outer_.GetNoArena();
-}
-void AddFriendAuthorizeNoti::set_touserid_outer(const ::std::string& value) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.AddFriendAuthorizeNoti.toUserID_outer)
-}
-#if LANG_CXX11
-void AddFriendAuthorizeNoti::set_touserid_outer(::std::string&& value) {
-  
-  touserid_outer_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.AddFriendAuthorizeNoti.toUserID_outer)
-}
-#endif
-void AddFriendAuthorizeNoti::set_touserid_outer(const char* value) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.AddFriendAuthorizeNoti.toUserID_outer)
-}
-void AddFriendAuthorizeNoti::set_touserid_outer(const char* value, size_t size) {
-  
-  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.AddFriendAuthorizeNoti.toUserID_outer)
-}
-::std::string* AddFriendAuthorizeNoti::mutable_touserid_outer() {
-  
-  // @@protoc_insertion_point(field_mutable:chat.AddFriendAuthorizeNoti.toUserID_outer)
-  return touserid_outer_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* AddFriendAuthorizeNoti::release_touserid_outer() {
-  // @@protoc_insertion_point(field_release:chat.AddFriendAuthorizeNoti.toUserID_outer)
-  
-  return touserid_outer_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void AddFriendAuthorizeNoti::set_allocated_touserid_outer(::std::string* touserid_outer) {
-  if (touserid_outer != NULL) {
-    
-  } else {
-    
-  }
-  touserid_outer_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), touserid_outer);
-  // @@protoc_insertion_point(field_set_allocated:chat.AddFriendAuthorizeNoti.toUserID_outer)
-}
-
-// .chat.AddFriendAuthorize response = 2;
+// .chat.AddFriendAuthorizeRes response = 1;
 bool AddFriendAuthorizeNoti::has_response() const {
   return this != internal_default_instance() && response_ != NULL;
 }
@@ -19121,27 +19049,27 @@ void AddFriendAuthorizeNoti::clear_response() {
   if (GetArenaNoVirtual() == NULL && response_ != NULL) delete response_;
   response_ = NULL;
 }
-const ::chat::AddFriendAuthorize& AddFriendAuthorizeNoti::response() const {
+const ::chat::AddFriendAuthorizeRes& AddFriendAuthorizeNoti::response() const {
   // @@protoc_insertion_point(field_get:chat.AddFriendAuthorizeNoti.response)
   return response_ != NULL ? *response_
-                         : *::chat::AddFriendAuthorize::internal_default_instance();
+                         : *::chat::AddFriendAuthorizeRes::internal_default_instance();
 }
-::chat::AddFriendAuthorize* AddFriendAuthorizeNoti::mutable_response() {
+::chat::AddFriendAuthorizeRes* AddFriendAuthorizeNoti::mutable_response() {
   
   if (response_ == NULL) {
-    response_ = new ::chat::AddFriendAuthorize;
+    response_ = new ::chat::AddFriendAuthorizeRes;
   }
   // @@protoc_insertion_point(field_mutable:chat.AddFriendAuthorizeNoti.response)
   return response_;
 }
-::chat::AddFriendAuthorize* AddFriendAuthorizeNoti::release_response() {
+::chat::AddFriendAuthorizeRes* AddFriendAuthorizeNoti::release_response() {
   // @@protoc_insertion_point(field_release:chat.AddFriendAuthorizeNoti.response)
   
-  ::chat::AddFriendAuthorize* temp = response_;
+  ::chat::AddFriendAuthorizeRes* temp = response_;
   response_ = NULL;
   return temp;
 }
-void AddFriendAuthorizeNoti::set_allocated_response(::chat::AddFriendAuthorize* response) {
+void AddFriendAuthorizeNoti::set_allocated_response(::chat::AddFriendAuthorizeRes* response) {
   delete response_;
   response_ = response;
   if (response) {
@@ -22213,6 +22141,9 @@ void NodeMessage::set_allocated_touserid_outer(::std::string* touserid_outer) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int NodeMessageRes::kIdFieldNumber;
 const int NodeMessageRes::kIncrementIDFieldNumber;
+const int NodeMessageRes::kFromUserIDFieldNumber;
+const int NodeMessageRes::kToUserIDOuterFieldNumber;
+const int NodeMessageRes::kToNodeIDFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 NodeMessageRes::NodeMessageRes()
@@ -22232,12 +22163,27 @@ NodeMessageRes::NodeMessageRes(const NodeMessageRes& from)
   if (from.id().size() > 0) {
     id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.id_);
   }
+  fromuserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.fromuserid().size() > 0) {
+    fromuserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.fromuserid_);
+  }
+  touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.touserid_outer().size() > 0) {
+    touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
+  }
+  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.tonodeid().size() > 0) {
+    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
+  }
   incrementid_ = from.incrementid_;
   // @@protoc_insertion_point(copy_constructor:chat.NodeMessageRes)
 }
 
 void NodeMessageRes::SharedCtor() {
   id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  fromuserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   incrementid_ = 0;
   _cached_size_ = 0;
 }
@@ -22249,6 +22195,9 @@ NodeMessageRes::~NodeMessageRes() {
 
 void NodeMessageRes::SharedDtor() {
   id_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  fromuserid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  touserid_outer_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tonodeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void NodeMessageRes::SetCachedSize(int size) const {
@@ -22277,6 +22226,9 @@ NodeMessageRes* NodeMessageRes::New(::google::protobuf::Arena* arena) const {
 void NodeMessageRes::Clear() {
 // @@protoc_insertion_point(message_clear_start:chat.NodeMessageRes)
   id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  fromuserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   incrementid_ = 0;
 }
 
@@ -22312,6 +22264,51 @@ bool NodeMessageRes::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &incrementid_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string fromUserID = 3;
+      case 3: {
+        if (tag == 26u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_fromuserid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->fromuserid().data(), this->fromuserid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.NodeMessageRes.fromUserID"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string toUserID_outer = 4;
+      case 4: {
+        if (tag == 34u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_touserid_outer()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->touserid_outer().data(), this->touserid_outer().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.NodeMessageRes.toUserID_outer"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string toNodeID = 5;
+      case 5: {
+        if (tag == 42u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_tonodeid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->tonodeid().data(), this->tonodeid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.NodeMessageRes.toNodeID"));
         } else {
           goto handle_unusual;
         }
@@ -22357,6 +22354,36 @@ void NodeMessageRes::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->incrementid(), output);
   }
 
+  // string fromUserID = 3;
+  if (this->fromuserid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->fromuserid().data(), this->fromuserid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessageRes.fromUserID");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->fromuserid(), output);
+  }
+
+  // string toUserID_outer = 4;
+  if (this->touserid_outer().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->touserid_outer().data(), this->touserid_outer().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessageRes.toUserID_outer");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->touserid_outer(), output);
+  }
+
+  // string toNodeID = 5;
+  if (this->tonodeid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tonodeid().data(), this->tonodeid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessageRes.toNodeID");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      5, this->tonodeid(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:chat.NodeMessageRes)
 }
 
@@ -22380,6 +22407,39 @@ void NodeMessageRes::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->incrementid(), target);
   }
 
+  // string fromUserID = 3;
+  if (this->fromuserid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->fromuserid().data(), this->fromuserid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessageRes.fromUserID");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->fromuserid(), target);
+  }
+
+  // string toUserID_outer = 4;
+  if (this->touserid_outer().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->touserid_outer().data(), this->touserid_outer().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessageRes.toUserID_outer");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->touserid_outer(), target);
+  }
+
+  // string toNodeID = 5;
+  if (this->tonodeid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tonodeid().data(), this->tonodeid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessageRes.toNodeID");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->tonodeid(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:chat.NodeMessageRes)
   return target;
 }
@@ -22393,6 +22453,27 @@ size_t NodeMessageRes::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->id());
+  }
+
+  // string fromUserID = 3;
+  if (this->fromuserid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->fromuserid());
+  }
+
+  // string toUserID_outer = 4;
+  if (this->touserid_outer().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->touserid_outer());
+  }
+
+  // string toNodeID = 5;
+  if (this->tonodeid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->tonodeid());
   }
 
   // int32 incrementID = 2;
@@ -22432,6 +22513,18 @@ void NodeMessageRes::MergeFrom(const NodeMessageRes& from) {
 
     id_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.id_);
   }
+  if (from.fromuserid().size() > 0) {
+
+    fromuserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.fromuserid_);
+  }
+  if (from.touserid_outer().size() > 0) {
+
+    touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
+  }
+  if (from.tonodeid().size() > 0) {
+
+    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
+  }
   if (from.incrementid() != 0) {
     set_incrementid(from.incrementid());
   }
@@ -22461,6 +22554,9 @@ void NodeMessageRes::Swap(NodeMessageRes* other) {
 }
 void NodeMessageRes::InternalSwap(NodeMessageRes* other) {
   id_.Swap(&other->id_);
+  fromuserid_.Swap(&other->fromuserid_);
+  touserid_outer_.Swap(&other->touserid_outer_);
+  tonodeid_.Swap(&other->tonodeid_);
   std::swap(incrementid_, other->incrementid_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -22539,14 +22635,172 @@ void NodeMessageRes::set_incrementid(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:chat.NodeMessageRes.incrementID)
 }
 
+// string fromUserID = 3;
+void NodeMessageRes::clear_fromuserid() {
+  fromuserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& NodeMessageRes::fromuserid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageRes.fromUserID)
+  return fromuserid_.GetNoArena();
+}
+void NodeMessageRes::set_fromuserid(const ::std::string& value) {
+  
+  fromuserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeMessageRes.fromUserID)
+}
+#if LANG_CXX11
+void NodeMessageRes::set_fromuserid(::std::string&& value) {
+  
+  fromuserid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessageRes.fromUserID)
+}
+#endif
+void NodeMessageRes::set_fromuserid(const char* value) {
+  
+  fromuserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeMessageRes.fromUserID)
+}
+void NodeMessageRes::set_fromuserid(const char* value, size_t size) {
+  
+  fromuserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessageRes.fromUserID)
+}
+::std::string* NodeMessageRes::mutable_fromuserid() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.NodeMessageRes.fromUserID)
+  return fromuserid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* NodeMessageRes::release_fromuserid() {
+  // @@protoc_insertion_point(field_release:chat.NodeMessageRes.fromUserID)
+  
+  return fromuserid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void NodeMessageRes::set_allocated_fromuserid(::std::string* fromuserid) {
+  if (fromuserid != NULL) {
+    
+  } else {
+    
+  }
+  fromuserid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), fromuserid);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageRes.fromUserID)
+}
+
+// string toUserID_outer = 4;
+void NodeMessageRes::clear_touserid_outer() {
+  touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& NodeMessageRes::touserid_outer() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageRes.toUserID_outer)
+  return touserid_outer_.GetNoArena();
+}
+void NodeMessageRes::set_touserid_outer(const ::std::string& value) {
+  
+  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeMessageRes.toUserID_outer)
+}
+#if LANG_CXX11
+void NodeMessageRes::set_touserid_outer(::std::string&& value) {
+  
+  touserid_outer_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessageRes.toUserID_outer)
+}
+#endif
+void NodeMessageRes::set_touserid_outer(const char* value) {
+  
+  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeMessageRes.toUserID_outer)
+}
+void NodeMessageRes::set_touserid_outer(const char* value, size_t size) {
+  
+  touserid_outer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessageRes.toUserID_outer)
+}
+::std::string* NodeMessageRes::mutable_touserid_outer() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.NodeMessageRes.toUserID_outer)
+  return touserid_outer_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* NodeMessageRes::release_touserid_outer() {
+  // @@protoc_insertion_point(field_release:chat.NodeMessageRes.toUserID_outer)
+  
+  return touserid_outer_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void NodeMessageRes::set_allocated_touserid_outer(::std::string* touserid_outer) {
+  if (touserid_outer != NULL) {
+    
+  } else {
+    
+  }
+  touserid_outer_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), touserid_outer);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageRes.toUserID_outer)
+}
+
+// string toNodeID = 5;
+void NodeMessageRes::clear_tonodeid() {
+  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& NodeMessageRes::tonodeid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageRes.toNodeID)
+  return tonodeid_.GetNoArena();
+}
+void NodeMessageRes::set_tonodeid(const ::std::string& value) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeMessageRes.toNodeID)
+}
+#if LANG_CXX11
+void NodeMessageRes::set_tonodeid(::std::string&& value) {
+  
+  tonodeid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessageRes.toNodeID)
+}
+#endif
+void NodeMessageRes::set_tonodeid(const char* value) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeMessageRes.toNodeID)
+}
+void NodeMessageRes::set_tonodeid(const char* value, size_t size) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessageRes.toNodeID)
+}
+::std::string* NodeMessageRes::mutable_tonodeid() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.NodeMessageRes.toNodeID)
+  return tonodeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* NodeMessageRes::release_tonodeid() {
+  // @@protoc_insertion_point(field_release:chat.NodeMessageRes.toNodeID)
+  
+  return tonodeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void NodeMessageRes::set_allocated_tonodeid(::std::string* tonodeid) {
+  if (tonodeid != NULL) {
+    
+  } else {
+    
+  }
+  tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageRes.toNodeID)
+}
+
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
 
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int NodeMessageNoti::kToNodeIDFieldNumber;
-const int NodeMessageNoti::kUnreadIncrementFieldNumber;
+const int NodeMessageNoti::kFromUserIDFieldNumber;
 const int NodeMessageNoti::kToUserIDOuterFieldNumber;
+const int NodeMessageNoti::kToNodeIDFieldNumber;
+const int NodeMessageNoti::kReadedIncrementFieldNumber;
+const int NodeMessageNoti::kUnreadIncrementFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 NodeMessageNoti::NodeMessageNoti()
@@ -22562,22 +22816,30 @@ NodeMessageNoti::NodeMessageNoti(const NodeMessageNoti& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.tonodeid().size() > 0) {
-    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
+  fromuserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.fromuserid().size() > 0) {
+    fromuserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.fromuserid_);
   }
   touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.touserid_outer().size() > 0) {
     touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
   }
-  unreadincrement_ = from.unreadincrement_;
+  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.tonodeid().size() > 0) {
+    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
+  }
+  ::memcpy(&readedincrement_, &from.readedincrement_,
+    reinterpret_cast<char*>(&unreadincrement_) -
+    reinterpret_cast<char*>(&readedincrement_) + sizeof(unreadincrement_));
   // @@protoc_insertion_point(copy_constructor:chat.NodeMessageNoti)
 }
 
 void NodeMessageNoti::SharedCtor() {
-  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  fromuserid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   touserid_outer_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  unreadincrement_ = 0;
+  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&readedincrement_, 0, reinterpret_cast<char*>(&unreadincrement_) -
+    reinterpret_cast<char*>(&readedincrement_) + sizeof(unreadincrement_));
   _cached_size_ = 0;
 }
 
@@ -22587,8 +22849,9 @@ NodeMessageNoti::~NodeMessageNoti() {
 }
 
 void NodeMessageNoti::SharedDtor() {
-  tonodeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  fromuserid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   touserid_outer_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  tonodeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void NodeMessageNoti::SetCachedSize(int size) const {
@@ -22616,9 +22879,11 @@ NodeMessageNoti* NodeMessageNoti::New(::google::protobuf::Arena* arena) const {
 
 void NodeMessageNoti::Clear() {
 // @@protoc_insertion_point(message_clear_start:chat.NodeMessageNoti)
-  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  fromuserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  unreadincrement_ = 0;
+  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&readedincrement_, 0, reinterpret_cast<char*>(&unreadincrement_) -
+    reinterpret_cast<char*>(&readedincrement_) + sizeof(unreadincrement_));
 }
 
 bool NodeMessageNoti::MergePartialFromCodedStream(
@@ -22631,9 +22896,39 @@ bool NodeMessageNoti::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string toNodeID = 1;
+      // string fromUserID = 1;
       case 1: {
         if (tag == 10u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_fromuserid()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->fromuserid().data(), this->fromuserid().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.NodeMessageNoti.fromUserID"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string toUserID_outer = 2;
+      case 2: {
+        if (tag == 18u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_touserid_outer()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->touserid_outer().data(), this->touserid_outer().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.NodeMessageNoti.toUserID_outer"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string toNodeID = 3;
+      case 3: {
+        if (tag == 26u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_tonodeid()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -22646,28 +22941,26 @@ bool NodeMessageNoti::MergePartialFromCodedStream(
         break;
       }
 
-      // int32 unreadIncrement = 2;
-      case 2: {
-        if (tag == 16u) {
+      // int32 readedIncrement = 4;
+      case 4: {
+        if (tag == 32u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &unreadincrement_)));
+                 input, &readedincrement_)));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // string toUserID_outer = 3;
-      case 3: {
-        if (tag == 26u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_touserid_outer()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->touserid_outer().data(), this->touserid_outer().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "chat.NodeMessageNoti.toUserID_outer"));
+      // int32 unreadIncrement = 5;
+      case 5: {
+        if (tag == 40u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &unreadincrement_)));
         } else {
           goto handle_unusual;
         }
@@ -22698,29 +22991,44 @@ failure:
 void NodeMessageNoti::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:chat.NodeMessageNoti)
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
+  // string fromUserID = 1;
+  if (this->fromuserid().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tonodeid().data(), this->tonodeid().length(),
+      this->fromuserid().data(), this->fromuserid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.NodeMessageNoti.toNodeID");
+      "chat.NodeMessageNoti.fromUserID");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->tonodeid(), output);
+      1, this->fromuserid(), output);
   }
 
-  // int32 unreadIncrement = 2;
-  if (this->unreadincrement() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->unreadincrement(), output);
-  }
-
-  // string toUserID_outer = 3;
+  // string toUserID_outer = 2;
   if (this->touserid_outer().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->touserid_outer().data(), this->touserid_outer().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "chat.NodeMessageNoti.toUserID_outer");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->touserid_outer(), output);
+      2, this->touserid_outer(), output);
+  }
+
+  // string toNodeID = 3;
+  if (this->tonodeid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tonodeid().data(), this->tonodeid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessageNoti.toNodeID");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->tonodeid(), output);
+  }
+
+  // int32 readedIncrement = 4;
+  if (this->readedincrement() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->readedincrement(), output);
+  }
+
+  // int32 unreadIncrement = 5;
+  if (this->unreadincrement() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->unreadincrement(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:chat.NodeMessageNoti)
@@ -22730,23 +23038,18 @@ void NodeMessageNoti::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic;  // Unused
   // @@protoc_insertion_point(serialize_to_array_start:chat.NodeMessageNoti)
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
+  // string fromUserID = 1;
+  if (this->fromuserid().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tonodeid().data(), this->tonodeid().length(),
+      this->fromuserid().data(), this->fromuserid().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.NodeMessageNoti.toNodeID");
+      "chat.NodeMessageNoti.fromUserID");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->tonodeid(), target);
+        1, this->fromuserid(), target);
   }
 
-  // int32 unreadIncrement = 2;
-  if (this->unreadincrement() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->unreadincrement(), target);
-  }
-
-  // string toUserID_outer = 3;
+  // string toUserID_outer = 2;
   if (this->touserid_outer().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->touserid_outer().data(), this->touserid_outer().length(),
@@ -22754,7 +23057,28 @@ void NodeMessageNoti::SerializeWithCachedSizes(
       "chat.NodeMessageNoti.toUserID_outer");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->touserid_outer(), target);
+        2, this->touserid_outer(), target);
+  }
+
+  // string toNodeID = 3;
+  if (this->tonodeid().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->tonodeid().data(), this->tonodeid().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.NodeMessageNoti.toNodeID");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->tonodeid(), target);
+  }
+
+  // int32 readedIncrement = 4;
+  if (this->readedincrement() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->readedincrement(), target);
+  }
+
+  // int32 unreadIncrement = 5;
+  if (this->unreadincrement() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->unreadincrement(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:chat.NodeMessageNoti)
@@ -22765,21 +23089,35 @@ size_t NodeMessageNoti::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:chat.NodeMessageNoti)
   size_t total_size = 0;
 
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
+  // string fromUserID = 1;
+  if (this->fromuserid().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->tonodeid());
+        this->fromuserid());
   }
 
-  // string toUserID_outer = 3;
+  // string toUserID_outer = 2;
   if (this->touserid_outer().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->touserid_outer());
   }
 
-  // int32 unreadIncrement = 2;
+  // string toNodeID = 3;
+  if (this->tonodeid().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->tonodeid());
+  }
+
+  // int32 readedIncrement = 4;
+  if (this->readedincrement() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->readedincrement());
+  }
+
+  // int32 unreadIncrement = 5;
   if (this->unreadincrement() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -22812,13 +23150,20 @@ void NodeMessageNoti::MergeFrom(const NodeMessageNoti& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:chat.NodeMessageNoti)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.tonodeid().size() > 0) {
+  if (from.fromuserid().size() > 0) {
 
-    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
+    fromuserid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.fromuserid_);
   }
   if (from.touserid_outer().size() > 0) {
 
     touserid_outer_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.touserid_outer_);
+  }
+  if (from.tonodeid().size() > 0) {
+
+    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
+  }
+  if (from.readedincrement() != 0) {
+    set_readedincrement(from.readedincrement());
   }
   if (from.unreadincrement() != 0) {
     set_unreadincrement(from.unreadincrement());
@@ -22848,8 +23193,10 @@ void NodeMessageNoti::Swap(NodeMessageNoti* other) {
   InternalSwap(other);
 }
 void NodeMessageNoti::InternalSwap(NodeMessageNoti* other) {
-  tonodeid_.Swap(&other->tonodeid_);
+  fromuserid_.Swap(&other->fromuserid_);
   touserid_outer_.Swap(&other->touserid_outer_);
+  tonodeid_.Swap(&other->tonodeid_);
+  std::swap(readedincrement_, other->readedincrement_);
   std::swap(unreadincrement_, other->unreadincrement_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -22862,73 +23209,59 @@ void NodeMessageNoti::InternalSwap(NodeMessageNoti* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // NodeMessageNoti
 
-// string toNodeID = 1;
-void NodeMessageNoti::clear_tonodeid() {
-  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string fromUserID = 1;
+void NodeMessageNoti::clear_fromuserid() {
+  fromuserid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::std::string& NodeMessageNoti::tonodeid() const {
-  // @@protoc_insertion_point(field_get:chat.NodeMessageNoti.toNodeID)
-  return tonodeid_.GetNoArena();
+const ::std::string& NodeMessageNoti::fromuserid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageNoti.fromUserID)
+  return fromuserid_.GetNoArena();
 }
-void NodeMessageNoti::set_tonodeid(const ::std::string& value) {
+void NodeMessageNoti::set_fromuserid(const ::std::string& value) {
   
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.NodeMessageNoti.toNodeID)
+  fromuserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeMessageNoti.fromUserID)
 }
 #if LANG_CXX11
-void NodeMessageNoti::set_tonodeid(::std::string&& value) {
+void NodeMessageNoti::set_fromuserid(::std::string&& value) {
   
-  tonodeid_.SetNoArena(
+  fromuserid_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessageNoti.toNodeID)
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessageNoti.fromUserID)
 }
 #endif
-void NodeMessageNoti::set_tonodeid(const char* value) {
+void NodeMessageNoti::set_fromuserid(const char* value) {
   
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.NodeMessageNoti.toNodeID)
+  fromuserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeMessageNoti.fromUserID)
 }
-void NodeMessageNoti::set_tonodeid(const char* value, size_t size) {
+void NodeMessageNoti::set_fromuserid(const char* value, size_t size) {
   
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  fromuserid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessageNoti.toNodeID)
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessageNoti.fromUserID)
 }
-::std::string* NodeMessageNoti::mutable_tonodeid() {
+::std::string* NodeMessageNoti::mutable_fromuserid() {
   
-  // @@protoc_insertion_point(field_mutable:chat.NodeMessageNoti.toNodeID)
-  return tonodeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:chat.NodeMessageNoti.fromUserID)
+  return fromuserid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-::std::string* NodeMessageNoti::release_tonodeid() {
-  // @@protoc_insertion_point(field_release:chat.NodeMessageNoti.toNodeID)
+::std::string* NodeMessageNoti::release_fromuserid() {
+  // @@protoc_insertion_point(field_release:chat.NodeMessageNoti.fromUserID)
   
-  return tonodeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return fromuserid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-void NodeMessageNoti::set_allocated_tonodeid(::std::string* tonodeid) {
-  if (tonodeid != NULL) {
+void NodeMessageNoti::set_allocated_fromuserid(::std::string* fromuserid) {
+  if (fromuserid != NULL) {
     
   } else {
     
   }
-  tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
-  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageNoti.toNodeID)
+  fromuserid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), fromuserid);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageNoti.fromUserID)
 }
 
-// int32 unreadIncrement = 2;
-void NodeMessageNoti::clear_unreadincrement() {
-  unreadincrement_ = 0;
-}
-::google::protobuf::int32 NodeMessageNoti::unreadincrement() const {
-  // @@protoc_insertion_point(field_get:chat.NodeMessageNoti.unreadIncrement)
-  return unreadincrement_;
-}
-void NodeMessageNoti::set_unreadincrement(::google::protobuf::int32 value) {
-  
-  unreadincrement_ = value;
-  // @@protoc_insertion_point(field_set:chat.NodeMessageNoti.unreadIncrement)
-}
-
-// string toUserID_outer = 3;
+// string toUserID_outer = 2;
 void NodeMessageNoti::clear_touserid_outer() {
   touserid_outer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -22980,337 +23313,84 @@ void NodeMessageNoti::set_allocated_touserid_outer(::std::string* touserid_outer
   // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageNoti.toUserID_outer)
 }
 
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int setReadMessage::kToNodeIDFieldNumber;
-const int setReadMessage::kReadedIncrementFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-setReadMessage::setReadMessage()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    protobuf_chat_5fmessage_2eproto::InitDefaults();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:chat.setReadMessage)
-}
-setReadMessage::setReadMessage(const setReadMessage& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.tonodeid().size() > 0) {
-    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
-  }
-  readedincrement_ = from.readedincrement_;
-  // @@protoc_insertion_point(copy_constructor:chat.setReadMessage)
-}
-
-void setReadMessage::SharedCtor() {
-  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  readedincrement_ = 0;
-  _cached_size_ = 0;
-}
-
-setReadMessage::~setReadMessage() {
-  // @@protoc_insertion_point(destructor:chat.setReadMessage)
-  SharedDtor();
-}
-
-void setReadMessage::SharedDtor() {
-  tonodeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void setReadMessage::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* setReadMessage::descriptor() {
-  protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[52].descriptor;
-}
-
-const setReadMessage& setReadMessage::default_instance() {
-  protobuf_chat_5fmessage_2eproto::InitDefaults();
-  return *internal_default_instance();
-}
-
-setReadMessage* setReadMessage::New(::google::protobuf::Arena* arena) const {
-  setReadMessage* n = new setReadMessage;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void setReadMessage::Clear() {
-// @@protoc_insertion_point(message_clear_start:chat.setReadMessage)
-  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  readedincrement_ = 0;
-}
-
-bool setReadMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:chat.setReadMessage)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string toNodeID = 1;
-      case 1: {
-        if (tag == 10u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_tonodeid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->tonodeid().data(), this->tonodeid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "chat.setReadMessage.toNodeID"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // int32 readedIncrement = 2;
-      case 2: {
-        if (tag == 16u) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &readedincrement_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:chat.setReadMessage)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:chat.setReadMessage)
-  return false;
-#undef DO_
-}
-
-void setReadMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:chat.setReadMessage)
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tonodeid().data(), this->tonodeid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.setReadMessage.toNodeID");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->tonodeid(), output);
-  }
-
-  // int32 readedIncrement = 2;
-  if (this->readedincrement() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->readedincrement(), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:chat.setReadMessage)
-}
-
-::google::protobuf::uint8* setReadMessage::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:chat.setReadMessage)
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tonodeid().data(), this->tonodeid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.setReadMessage.toNodeID");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->tonodeid(), target);
-  }
-
-  // int32 readedIncrement = 2;
-  if (this->readedincrement() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->readedincrement(), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:chat.setReadMessage)
-  return target;
-}
-
-size_t setReadMessage::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:chat.setReadMessage)
-  size_t total_size = 0;
-
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->tonodeid());
-  }
-
-  // int32 readedIncrement = 2;
-  if (this->readedincrement() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->readedincrement());
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void setReadMessage::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:chat.setReadMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  const setReadMessage* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const setReadMessage>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:chat.setReadMessage)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:chat.setReadMessage)
-    MergeFrom(*source);
-  }
-}
-
-void setReadMessage::MergeFrom(const setReadMessage& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:chat.setReadMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.tonodeid().size() > 0) {
-
-    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
-  }
-  if (from.readedincrement() != 0) {
-    set_readedincrement(from.readedincrement());
-  }
-}
-
-void setReadMessage::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:chat.setReadMessage)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void setReadMessage::CopyFrom(const setReadMessage& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:chat.setReadMessage)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool setReadMessage::IsInitialized() const {
-  return true;
-}
-
-void setReadMessage::Swap(setReadMessage* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void setReadMessage::InternalSwap(setReadMessage* other) {
-  tonodeid_.Swap(&other->tonodeid_);
-  std::swap(readedincrement_, other->readedincrement_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata setReadMessage::GetMetadata() const {
-  protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[52];
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// setReadMessage
-
-// string toNodeID = 1;
-void setReadMessage::clear_tonodeid() {
+// string toNodeID = 3;
+void NodeMessageNoti::clear_tonodeid() {
   tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::std::string& setReadMessage::tonodeid() const {
-  // @@protoc_insertion_point(field_get:chat.setReadMessage.toNodeID)
+const ::std::string& NodeMessageNoti::tonodeid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageNoti.toNodeID)
   return tonodeid_.GetNoArena();
 }
-void setReadMessage::set_tonodeid(const ::std::string& value) {
+void NodeMessageNoti::set_tonodeid(const ::std::string& value) {
   
   tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.setReadMessage.toNodeID)
+  // @@protoc_insertion_point(field_set:chat.NodeMessageNoti.toNodeID)
 }
 #if LANG_CXX11
-void setReadMessage::set_tonodeid(::std::string&& value) {
+void NodeMessageNoti::set_tonodeid(::std::string&& value) {
   
   tonodeid_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.setReadMessage.toNodeID)
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeMessageNoti.toNodeID)
 }
 #endif
-void setReadMessage::set_tonodeid(const char* value) {
+void NodeMessageNoti::set_tonodeid(const char* value) {
   
   tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.setReadMessage.toNodeID)
+  // @@protoc_insertion_point(field_set_char:chat.NodeMessageNoti.toNodeID)
 }
-void setReadMessage::set_tonodeid(const char* value, size_t size) {
+void NodeMessageNoti::set_tonodeid(const char* value, size_t size) {
   
   tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.setReadMessage.toNodeID)
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeMessageNoti.toNodeID)
 }
-::std::string* setReadMessage::mutable_tonodeid() {
+::std::string* NodeMessageNoti::mutable_tonodeid() {
   
-  // @@protoc_insertion_point(field_mutable:chat.setReadMessage.toNodeID)
+  // @@protoc_insertion_point(field_mutable:chat.NodeMessageNoti.toNodeID)
   return tonodeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-::std::string* setReadMessage::release_tonodeid() {
-  // @@protoc_insertion_point(field_release:chat.setReadMessage.toNodeID)
+::std::string* NodeMessageNoti::release_tonodeid() {
+  // @@protoc_insertion_point(field_release:chat.NodeMessageNoti.toNodeID)
   
   return tonodeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-void setReadMessage::set_allocated_tonodeid(::std::string* tonodeid) {
+void NodeMessageNoti::set_allocated_tonodeid(::std::string* tonodeid) {
   if (tonodeid != NULL) {
     
   } else {
     
   }
   tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
-  // @@protoc_insertion_point(field_set_allocated:chat.setReadMessage.toNodeID)
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageNoti.toNodeID)
 }
 
-// int32 readedIncrement = 2;
-void setReadMessage::clear_readedincrement() {
+// int32 readedIncrement = 4;
+void NodeMessageNoti::clear_readedincrement() {
   readedincrement_ = 0;
 }
-::google::protobuf::int32 setReadMessage::readedincrement() const {
-  // @@protoc_insertion_point(field_get:chat.setReadMessage.readedIncrement)
+::google::protobuf::int32 NodeMessageNoti::readedincrement() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageNoti.readedIncrement)
   return readedincrement_;
 }
-void setReadMessage::set_readedincrement(::google::protobuf::int32 value) {
+void NodeMessageNoti::set_readedincrement(::google::protobuf::int32 value) {
   
   readedincrement_ = value;
-  // @@protoc_insertion_point(field_set:chat.setReadMessage.readedIncrement)
+  // @@protoc_insertion_point(field_set:chat.NodeMessageNoti.readedIncrement)
+}
+
+// int32 unreadIncrement = 5;
+void NodeMessageNoti::clear_unreadincrement() {
+  unreadincrement_ = 0;
+}
+::google::protobuf::int32 NodeMessageNoti::unreadincrement() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageNoti.unreadIncrement)
+  return unreadincrement_;
+}
+void NodeMessageNoti::set_unreadincrement(::google::protobuf::int32 value) {
+  
+  unreadincrement_ = value;
+  // @@protoc_insertion_point(field_set:chat.NodeMessageNoti.unreadIncrement)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -23369,7 +23449,7 @@ void QueryMessage::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* QueryMessage::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[53].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[52].descriptor;
 }
 
 const QueryMessage& QueryMessage::default_instance() {
@@ -23613,7 +23693,7 @@ void QueryMessage::InternalSwap(QueryMessage* other) {
 
 ::google::protobuf::Metadata QueryMessage::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[53];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[52];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -23704,339 +23784,6 @@ void QueryMessage::set_toincrementid(::google::protobuf::int32 value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int QueryOneMessage::kToNodeIDFieldNumber;
-const int QueryOneMessage::kIncrementIDFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-QueryOneMessage::QueryOneMessage()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    protobuf_chat_5fmessage_2eproto::InitDefaults();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:chat.QueryOneMessage)
-}
-QueryOneMessage::QueryOneMessage(const QueryOneMessage& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.tonodeid().size() > 0) {
-    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
-  }
-  incrementid_ = from.incrementid_;
-  // @@protoc_insertion_point(copy_constructor:chat.QueryOneMessage)
-}
-
-void QueryOneMessage::SharedCtor() {
-  tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  incrementid_ = 0;
-  _cached_size_ = 0;
-}
-
-QueryOneMessage::~QueryOneMessage() {
-  // @@protoc_insertion_point(destructor:chat.QueryOneMessage)
-  SharedDtor();
-}
-
-void QueryOneMessage::SharedDtor() {
-  tonodeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void QueryOneMessage::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* QueryOneMessage::descriptor() {
-  protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[54].descriptor;
-}
-
-const QueryOneMessage& QueryOneMessage::default_instance() {
-  protobuf_chat_5fmessage_2eproto::InitDefaults();
-  return *internal_default_instance();
-}
-
-QueryOneMessage* QueryOneMessage::New(::google::protobuf::Arena* arena) const {
-  QueryOneMessage* n = new QueryOneMessage;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void QueryOneMessage::Clear() {
-// @@protoc_insertion_point(message_clear_start:chat.QueryOneMessage)
-  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  incrementid_ = 0;
-}
-
-bool QueryOneMessage::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:chat.QueryOneMessage)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string toNodeID = 1;
-      case 1: {
-        if (tag == 10u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_tonodeid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->tonodeid().data(), this->tonodeid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "chat.QueryOneMessage.toNodeID"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // int32 incrementID = 2;
-      case 2: {
-        if (tag == 16u) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &incrementid_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:chat.QueryOneMessage)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:chat.QueryOneMessage)
-  return false;
-#undef DO_
-}
-
-void QueryOneMessage::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:chat.QueryOneMessage)
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tonodeid().data(), this->tonodeid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.QueryOneMessage.toNodeID");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->tonodeid(), output);
-  }
-
-  // int32 incrementID = 2;
-  if (this->incrementid() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->incrementid(), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:chat.QueryOneMessage)
-}
-
-::google::protobuf::uint8* QueryOneMessage::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic;  // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:chat.QueryOneMessage)
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->tonodeid().data(), this->tonodeid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.QueryOneMessage.toNodeID");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->tonodeid(), target);
-  }
-
-  // int32 incrementID = 2;
-  if (this->incrementid() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->incrementid(), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:chat.QueryOneMessage)
-  return target;
-}
-
-size_t QueryOneMessage::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:chat.QueryOneMessage)
-  size_t total_size = 0;
-
-  // string toNodeID = 1;
-  if (this->tonodeid().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->tonodeid());
-  }
-
-  // int32 incrementID = 2;
-  if (this->incrementid() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->incrementid());
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void QueryOneMessage::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:chat.QueryOneMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  const QueryOneMessage* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const QueryOneMessage>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:chat.QueryOneMessage)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:chat.QueryOneMessage)
-    MergeFrom(*source);
-  }
-}
-
-void QueryOneMessage::MergeFrom(const QueryOneMessage& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:chat.QueryOneMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.tonodeid().size() > 0) {
-
-    tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
-  }
-  if (from.incrementid() != 0) {
-    set_incrementid(from.incrementid());
-  }
-}
-
-void QueryOneMessage::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:chat.QueryOneMessage)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void QueryOneMessage::CopyFrom(const QueryOneMessage& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:chat.QueryOneMessage)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool QueryOneMessage::IsInitialized() const {
-  return true;
-}
-
-void QueryOneMessage::Swap(QueryOneMessage* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void QueryOneMessage::InternalSwap(QueryOneMessage* other) {
-  tonodeid_.Swap(&other->tonodeid_);
-  std::swap(incrementid_, other->incrementid_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata QueryOneMessage::GetMetadata() const {
-  protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[54];
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// QueryOneMessage
-
-// string toNodeID = 1;
-void QueryOneMessage::clear_tonodeid() {
-  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-const ::std::string& QueryOneMessage::tonodeid() const {
-  // @@protoc_insertion_point(field_get:chat.QueryOneMessage.toNodeID)
-  return tonodeid_.GetNoArena();
-}
-void QueryOneMessage::set_tonodeid(const ::std::string& value) {
-  
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.QueryOneMessage.toNodeID)
-}
-#if LANG_CXX11
-void QueryOneMessage::set_tonodeid(::std::string&& value) {
-  
-  tonodeid_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.QueryOneMessage.toNodeID)
-}
-#endif
-void QueryOneMessage::set_tonodeid(const char* value) {
-  
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.QueryOneMessage.toNodeID)
-}
-void QueryOneMessage::set_tonodeid(const char* value, size_t size) {
-  
-  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.QueryOneMessage.toNodeID)
-}
-::std::string* QueryOneMessage::mutable_tonodeid() {
-  
-  // @@protoc_insertion_point(field_mutable:chat.QueryOneMessage.toNodeID)
-  return tonodeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* QueryOneMessage::release_tonodeid() {
-  // @@protoc_insertion_point(field_release:chat.QueryOneMessage.toNodeID)
-  
-  return tonodeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void QueryOneMessage::set_allocated_tonodeid(::std::string* tonodeid) {
-  if (tonodeid != NULL) {
-    
-  } else {
-    
-  }
-  tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
-  // @@protoc_insertion_point(field_set_allocated:chat.QueryOneMessage.toNodeID)
-}
-
-// int32 incrementID = 2;
-void QueryOneMessage::clear_incrementid() {
-  incrementid_ = 0;
-}
-::google::protobuf::int32 QueryOneMessage::incrementid() const {
-  // @@protoc_insertion_point(field_get:chat.QueryOneMessage.incrementID)
-  return incrementid_;
-}
-void QueryOneMessage::set_incrementid(::google::protobuf::int32 value) {
-  
-  incrementid_ = value;
-  // @@protoc_insertion_point(field_set:chat.QueryOneMessage.incrementID)
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int QueryMessageRes::kMessagesFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -24076,7 +23823,7 @@ void QueryMessageRes::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* QueryMessageRes::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[55].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[53].descriptor;
 }
 
 const QueryMessageRes& QueryMessageRes::default_instance() {
@@ -24241,7 +23988,7 @@ void QueryMessageRes::InternalSwap(QueryMessageRes* other) {
 
 ::google::protobuf::Metadata QueryMessageRes::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[55];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[53];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -24333,7 +24080,7 @@ void ServerConnect::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* ServerConnect::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[56].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[54].descriptor;
 }
 
 const ServerConnect& ServerConnect::default_instance() {
@@ -24556,7 +24303,7 @@ void ServerConnect::InternalSwap(ServerConnect* other) {
 
 ::google::protobuf::Metadata ServerConnect::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[56];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[54];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -24722,7 +24469,7 @@ void ServerDisconnect::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* ServerDisconnect::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[57].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[55].descriptor;
 }
 
 const ServerDisconnect& ServerDisconnect::default_instance() {
@@ -24945,7 +24692,7 @@ void ServerDisconnect::InternalSwap(ServerDisconnect* other) {
 
 ::google::protobuf::Metadata ServerDisconnect::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[57];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[55];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -25091,7 +24838,7 @@ ConnectInfo::ConnectInfo(const ConnectInfo& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  const ::google::protobuf::Descriptor*& ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[58].descriptor;
+  const ::google::protobuf::Descriptor*& ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[56].descriptor;
   users_.SetAssignDescriptorCallback(
       protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce);
   users_.SetEntryDescriptor(
@@ -25132,7 +24879,7 @@ ConnectInfo::ConnectInfo(const ConnectInfo& from)
 }
 
 void ConnectInfo::SharedCtor() {
-  const ::google::protobuf::Descriptor*& ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[58].descriptor;
+  const ::google::protobuf::Descriptor*& ConnectInfo_UsersEntry_descriptor = protobuf_chat_5fmessage_2eproto::file_level_metadata[56].descriptor;
   users_.SetAssignDescriptorCallback(
       protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce);
   users_.SetEntryDescriptor(
@@ -25171,7 +24918,7 @@ void ConnectInfo::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* ConnectInfo::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[59].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[57].descriptor;
 }
 
 const ConnectInfo& ConnectInfo::default_instance() {
@@ -25879,7 +25626,7 @@ void ConnectInfo::InternalSwap(ConnectInfo* other) {
 
 ::google::protobuf::Metadata ConnectInfo::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[59];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[57];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -26366,7 +26113,7 @@ void ConnectInfoLittle::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* ConnectInfoLittle::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[60].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[58].descriptor;
 }
 
 const ConnectInfoLittle& ConnectInfoLittle::default_instance() {
@@ -26640,7 +26387,7 @@ void ConnectInfoLittle::InternalSwap(ConnectInfoLittle* other) {
 
 ::google::protobuf::Metadata ConnectInfoLittle::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[60];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[58];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -26799,7 +26546,7 @@ void Media::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* Media::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[61].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[59].descriptor;
 }
 
 const Media& Media::default_instance() {
@@ -27059,7 +26806,7 @@ void Media::InternalSwap(Media* other) {
 
 ::google::protobuf::Metadata Media::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[61];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[59];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -27228,7 +26975,7 @@ void MediaRes::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* MediaRes::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[62].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[60].descriptor;
 }
 
 const MediaRes& MediaRes::default_instance() {
@@ -27386,7 +27133,7 @@ void MediaRes::InternalSwap(MediaRes* other) {
 
 ::google::protobuf::Metadata MediaRes::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[62];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[60];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -27455,7 +27202,7 @@ void QueryMedia::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* QueryMedia::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[63].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[61].descriptor;
 }
 
 const QueryMedia& QueryMedia::default_instance() {
@@ -27629,7 +27376,7 @@ void QueryMedia::InternalSwap(QueryMedia* other) {
 
 ::google::protobuf::Metadata QueryMedia::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[63];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[61];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -27739,7 +27486,7 @@ void QueryMediaRes::SetCachedSize(int size) const {
 }
 const ::google::protobuf::Descriptor* QueryMediaRes::descriptor() {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[64].descriptor;
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[62].descriptor;
 }
 
 const QueryMediaRes& QueryMediaRes::default_instance() {
@@ -27903,7 +27650,7 @@ void QueryMediaRes::InternalSwap(QueryMediaRes* other) {
 
 ::google::protobuf::Metadata QueryMediaRes::GetMetadata() const {
   protobuf_chat_5fmessage_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_chat_5fmessage_2eproto::file_level_metadata[64];
+  return protobuf_chat_5fmessage_2eproto::file_level_metadata[62];
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS

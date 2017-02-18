@@ -165,11 +165,13 @@ void traverseDevices(chat::ConnectInfoLittle & infolittle, std::vector<Buffer_SP
 }
 
 // current server subscribe to toNode devices(exclude require device)
-void mountBuffer2Node(std::vector<Buffer_SP> && buf_sp_v, chat::NodeSpecifiy & node_specifiy) {
+void mountBuffer2Node(std::vector<Buffer_SP> && buf_sp_v, 
+    chat::NodeSpecifiy & node_specifiy) {
   YILOG_TRACE ("func: {}. node specifiy", __func__);
   auto client = yijian::threadCurrent::mongoClient();
   auto node_sp = client->queryNode(node_specifiy.tonodeid());
-  client->devices(node_sp->members(), 
+
+  client->devices(node_sp->members(), currentNode_->userid,
       [&buf_sp_v](chat::ConnectInfoLittle & infolittle) {
         traverseDevices(infolittle, std::forward<std::vector<Buffer_SP>>(buf_sp_v));
       });
@@ -308,17 +310,17 @@ void dispatch(chat::Login & login) {
       auto res = chat::LoginRes();
       res.set_issuccess(true);
       res.set_userid(user_sp->id());
+      res.set_uuid(currentNode_->uuid);
       YILOG_INFO ("login success {}", pro2string(res));
       mountBuffer2Node(yijianBuffer(res), node_self_);
       node_user_.set_touserid(currentNode_->userid);
 
       auto noti = chat::LoginNoti();
       noti.set_uuid(login.device().uuid());
+      YILOG_INFO ("send login noti {}", pro2string(noti));
       mountBuffer2Node(yijianBuffer(noti), node_user_);
 
-      noti.set_touserid_outer(currentNode_->userid);
-      YILOG_INFO ("send login noti {}", pro2string(noti));
-      mountBuffer2Node(yijianBuffer(noti), node_peer_);
+      mountBuffer2Node(yijianBuffer(res), node_peer_);
     }else {
       //client->loginRecord(login.countrycode(), login.phoneno(), 
        //   login.ips(), false);
@@ -337,13 +339,14 @@ void dispatch(chat::Login & login) {
 
 }
 
-void dispatch(chat::LoginNoti & noti) {
+void dispatch(chat::LoginRes & res) {
 
   YILOG_TRACE ("func: {}. ", __func__);
-  YILOG_INFO ("receive login noti {}", pro2string(noti));
+  YILOG_INFO ("receive login noti {}", pro2string(res));
   try {
-    node_user_.set_touserid(noti.touserid_outer());
-    noti.clear_touserid_outer();
+    auto noti = chat::LoginNoti();
+    noti.set_uuid(res.uuid());
+    node_user_.set_touserid(currentNode_->userid);
     mountBuffer2Node(yijianBuffer(noti), node_user_);
   }catch (std::system_error & sys_error) {
     mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()),
@@ -451,6 +454,18 @@ void dispatch(chat::ClientConnect & connect)  {
       res.set_sessionid(currentNode_->sessionid);
       YILOG_INFO ("connect success {}", pro2string(res));
       mountBuffer2Node(yijianBuffer(res), node_self_);
+      // send unreaded 
+      client->unreadNodes(currentNode_->userid,[]
+          (const std::string & tonodeid,
+           const int32_t unreadIncrement,
+           const int32_t readedIncrement){
+            auto noti = chat::NodeMessageNoti();
+            noti.set_touserid_outer(currentNode_->userid);
+            noti.set_tonodeid(tonodeid);
+            noti.set_readedincrement(readedIncrement);
+            noti.set_unreadincrement(unreadIncrement);
+            mountBuffer2Node(yijianBuffer(noti), node_self_);
+          });
     }
   }catch (std::system_error & sys_error) {
     auto res = chat::ClientConnectRes();
@@ -558,21 +573,20 @@ void dispatch(chat::AddFriend & frd) {
     YILOG_INFO ("add friend success {}", pro2string(*res));
     // send buffer
     mountBuffer2Node(yijianBuffer(*res), node_self_);
+    mountBuffer2Node(yijianBuffer(*res), node_peer_);
 
     // send to friend
     auto noti = chat::AddFriendNoti();
     auto addres = noti.mutable_response();
     *addres = *res;
     node_user_.set_touserid(res->inviteeid());
-    YILOG_INFO ("add friend send noti to friend {}", pro2string(*res));
+    YILOG_INFO ("add friend send noti to friend {}", pro2string(noti));
     mountBuffer2Node(yijianBuffer(noti), node_user_);
-    mountBuffer2Node(yijianBuffer(noti), node_peer_);
     // send buffer
     // send to other self
     node_user_.set_touserid(res->inviterid());
-    YILOG_INFO ("add friend send noti to self {}", pro2string(*res));
+    YILOG_INFO ("add friend send noti to self {}", pro2string(noti));
     mountBuffer2Node(yijianBuffer(noti), node_user_);
-    mountBuffer2Node(yijianBuffer(noti), node_peer_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -582,15 +596,20 @@ void dispatch(chat::AddFriend & frd) {
 
 }
 
-void dispatch(chat::AddFriendNoti & noti) {
+void dispatch(chat::AddFriendRes & res) {
 
   YILOG_TRACE ("func: {}. ", __func__);
-  YILOG_INFO ("add friend noti {}", pro2string(noti));
+  YILOG_INFO ("add friend noti {}", pro2string(res));
 
   try {
     // send to userid outer
-    node_user_.set_touserid(noti.touserid_outer());
-    noti.clear_touserid_outer();
+    auto noti = chat::AddFriendNoti();
+    *noti.mutable_response() = res;
+    // invitee
+    node_user_.set_touserid(res.inviteeid());
+    mountBuffer2Node(yijianBuffer(noti), node_user_);
+    // inviter
+    node_user_.set_touserid(res.inviterid());
     mountBuffer2Node(yijianBuffer(noti), node_user_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
@@ -618,22 +637,21 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
       client->addFriendAuthorize(addAuth.inviterid(),
           addAuth.inviteeid());
       // set  
+      authRes.set_inviterid(addAuth.inviterid());
+      authRes.set_inviteeid(addAuth.inviteeid());
       authRes.set_isagree(chat::IsAgree::agree);
-      auto response = noti.mutable_response();
-      (*response) = addAuth;
+      *noti.mutable_response() = authRes;
       // self
       YILOG_INFO ("add friend authorize success {}", 
           pro2string(authRes));
       mountBuffer2Node(yijianBuffer(authRes), node_self_);
       // inviter
-      noti.set_touserid_outer(addAuth.inviterid());
       node_user_.set_touserid(addAuth.inviterid());
       mountBuffer2Node(yijianBuffer(noti), node_user_);
-      mountBuffer2Node(yijianBuffer(noti), node_peer_);
       // invitee
-      noti.set_touserid_outer(addAuth.inviteeid());
       node_user_.set_touserid(addAuth.inviteeid());
-      mountBuffer2Node(yijianBuffer(authRes), node_user_);
+      mountBuffer2Node(yijianBuffer(noti), node_user_);
+      // peer
       mountBuffer2Node(yijianBuffer(authRes), node_peer_);
     }
   }catch (std::system_error & sys_error) {
@@ -644,14 +662,19 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
   }
 }
 
-void dispatch(chat::AddFriendAuthorizeNoti & noti) {
+void dispatch(chat::AddFriendAuthorizeRes & res) {
 
   YILOG_TRACE ("func: {}. ", __func__);
-  YILOG_INFO ("add friend authorize noti {}", pro2string(noti));
+  YILOG_INFO ("add friend authorize noti {}", pro2string(res));
 
   try {
-    node_user_.set_touserid(noti.touserid_outer());
-    noti.clear_touserid_outer();
+    auto noti = chat::AddFriendAuthorizeNoti();
+    *noti.mutable_response() = res;
+    // inviter
+    node_user_.set_touserid(res.inviterid());
+    mountBuffer2Node(yijianBuffer(noti), node_user_);
+    // invitee
+    node_user_.set_touserid(res.inviteeid());
     mountBuffer2Node(yijianBuffer(noti), node_user_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
@@ -865,32 +888,43 @@ void dispatch(chat::NodeMessage & message) {
   try {
     auto client = yijian::threadCurrent::mongoClient();
     auto res = client->insertMessage(message);
-    // update user unread
-    client->updateUnreadIncrement(currentNode_->userid, 
-        message.tonodeid(), res->incrementid());
     // send self
     YILOG_INFO ("message success {}", 
         pro2string(*res));
     mountBuffer2Node(yijianBuffer(*res), node_self_);
+    
+    // noti self server and res peer server
     auto noti = chat::NodeMessageNoti();
-    noti.set_tonodeid(message.tonodeid());
+    noti.set_fromuserid(currentNode_->userid);
     noti.set_unreadincrement(res->incrementid());
+    noti.set_tonodeid(message.tonodeid());
+
+    res->set_tonodeid(message.tonodeid());
+    res->set_fromuserid(currentNode_->userid);
+    
     if (likely(message.touserid_outer().empty())) {// node
+      // update unread
+      auto node_sp = client->queryNode(message.tonodeid());
+      client->updateUnreadIncrement(node_sp->members(), 
+        currentNode_->userid, message.tonodeid(), res->incrementid());
       // send to node
       node_specifiy_.set_tonodeid(message.tonodeid());
       mountBuffer2Node(yijianBuffer(noti), node_specifiy_);
-      mountBuffer2Node(yijianBuffer(noti), node_peer_);
+      mountBuffer2Node(yijianBuffer(*res), node_peer_);
     }else {// user
+      noti.set_touserid_outer(message.touserid_outer());
+      res->set_touserid_outer(message.touserid_outer());
       // to self other device
-      noti.set_touserid_outer(currentNode_->userid);
       node_user_.set_touserid(currentNode_->userid);
       mountBuffer2Node(yijianBuffer(noti), node_user_);
-      mountBuffer2Node(yijianBuffer(noti), node_peer_);
+      mountBuffer2Node(yijianBuffer(*res), node_peer_);
+      // update unread
+      client->updateUnreadIncrement(message.touserid_outer(),
+          message.tonodeid(), res->incrementid());
       // to friend
-      noti.set_touserid_outer(message.touserid_outer()) ;
       node_user_.set_touserid(message.touserid_outer());
       mountBuffer2Node(yijianBuffer(noti), node_user_);
-      mountBuffer2Node(yijianBuffer(noti), node_peer_);
+      mountBuffer2Node(yijianBuffer(*res), node_peer_);
     }
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
@@ -901,13 +935,19 @@ void dispatch(chat::NodeMessage & message) {
 
 }
 
-void dispatch(chat::NodeMessageNoti & noti) {
+void dispatch(chat::NodeMessageRes & msgres) {
 
   YILOG_TRACE ("func: {}. ", __func__);
-  YILOG_INFO ("message noti {}", pro2string(noti));
+  YILOG_INFO ("message noti {}", pro2string(msgres));
 
   try {
-    
+
+    auto noti = chat::NodeMessageNoti();
+    noti.set_fromuserid(msgres.fromuserid());
+    noti.set_touserid_outer(msgres.touserid_outer());
+    noti.set_unreadincrement(msgres.incrementid());
+    noti.set_tonodeid(msgres.tonodeid());
+
     if (noti.touserid_outer().empty()) {
       // sent to node
       node_specifiy_.set_tonodeid(noti.tonodeid());
@@ -959,6 +999,7 @@ void dispatch(chat::QueryMessage & query) {
         node_self_);
   }
 }
+/*
 void dispatch(chat::QueryOneMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
   YILOG_INFO ("query one message {}", pro2string(query));
@@ -982,6 +1023,7 @@ void dispatch(chat::QueryOneMessage & query) {
         node_self_);
   }
 }
+*/
 
 void dispatch(chat::Media & media) {
   YILOG_TRACE ("func: {}. media", __func__);
@@ -1112,8 +1154,8 @@ void dispatch(const int type, char const * header, const std::size_t length) {
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::loginnoti] = [=]() {
-        auto chat = chat::LoginNoti();
+      (*map_p)[ChatType::loginres] = [=]() {
+        auto chat = chat::LoginRes();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
@@ -1147,8 +1189,8 @@ void dispatch(const int type, char const * header, const std::size_t length) {
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::addfriendnoti] = [=]() {
-        auto chat = chat::AddFriendNoti();
+      (*map_p)[ChatType::addfriendres] = [=]() {
+        auto chat = chat::AddFriendRes();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
@@ -1157,8 +1199,8 @@ void dispatch(const int type, char const * header, const std::size_t length) {
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::addfriendauthorizenoti] = [=]() {
-        auto chat = chat::AddFriendAuthorizeNoti();
+      (*map_p)[ChatType::addfriendauthorizeres] = [=]() {
+        auto chat = chat::AddFriendAuthorizeRes();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
@@ -1192,13 +1234,15 @@ void dispatch(const int type, char const * header, const std::size_t length) {
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
+      /*
       (*map_p)[ChatType::queryonemessage] = [=]() {
         auto chat = chat::QueryOneMessage();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      (*map_p)[ChatType::nodemessagenoti] = [=]() {
-        auto chat = chat::NodeMessageNoti();
+      */
+      (*map_p)[ChatType::nodemessageres] = [=]() {
+        auto chat = chat::NodeMessageRes();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };

@@ -147,14 +147,17 @@ public:
   void devices(const chat::NodeUser & node_user, 
       std::function<void(chat::ConnectInfoLittle&)> && func);
 
-  template <class Vec_like> 
-  void devices(const Vec_like & membersid, 
+  template <class Vec_like_String> 
+  void devices(const Vec_like_String & membersid, 
+      const std::string & currentUserid,
       std::function<void(chat::ConnectInfoLittle&)> && func) {
     auto db = client_["chatdb"];
     auto connectinfo_col = db["connectInfo"];
     auto arraybuilder = bsoncxx::builder::stream::array{};
     for (auto & memberid: membersid) {
-      arraybuilder << memberid;
+      if (likely(memberid != currentUserid)) {
+        arraybuilder << memberid;
+      }
     }
     auto member_array = arraybuilder 
         << bsoncxx::builder::stream::finalize;
@@ -192,6 +195,42 @@ public:
   void updateReadedIncrement(const std::string & userid,
                              const std::string & tonodeid,
                              const int32_t readedIncrement);
+  template <class Vec_like_String> 
+  void updateUnreadIncrement(const Vec_like_String & userids,
+                             const std::string & currentUserid,
+                             const std::string & tonodeid,
+                             const int32_t unreadIncrement) {
+    YILOG_TRACE ("func: {}. ", __func__);
+    auto db = client_["chatdb"];
+    auto userUnread = db["userUnread"];
+    auto arraybuilder = bsoncxx::builder::stream::array{};
+    for (auto & memberid: userids) {
+      if (likely(memberid != currentUserid)) {
+        arraybuilder << memberid;
+      }
+    }
+    auto member_array = arraybuilder 
+        << bsoncxx::builder::stream::finalize;
+    try {
+    userUnread.update_many(
+        bsoncxx::builder::stream::document{} 
+        << "userID" 
+        << bsoncxx::builder::stream::open_document
+        << "$in" << member_array 
+        << bsoncxx::builder::stream::close_document 
+        << bsoncxx::builder::stream::finalize,
+        bsoncxx::builder::stream::document{} 
+        << "$set" 
+        << bsoncxx::builder::stream::open_document
+        << "unreadIncrement" << unreadIncrement
+        << bsoncxx::builder::stream::close_document 
+        << bsoncxx::builder::stream::finalize);
+    }catch(std::system_error & e) {
+      YILOG_ERROR ("update unread node failure.\n"
+          "system_error code:{}, what{}.",
+          e.code().value(), e.what());
+    }
+  }
   void updateUnreadIncrement(const std::string & userid,
                              const std::string & tonodeid,
                              const int32_t unreadIncrement);

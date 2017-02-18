@@ -338,18 +338,15 @@ struct Chat_ErrorNth: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   }
 }
 
-struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_NodeInfo"}
-  public var protoMessageName: String {return "NodeInfo"}
+struct Chat_NodeReadInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_NodeReadInfo"}
+  public var protoMessageName: String {return "NodeReadInfo"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "updatetime", swift: "updatetime"),
-    2: .same(proto: "readedIncrementid", swift: "readedIncrementid"),
-    3: .same(proto: "unreadIncrementid", swift: "unreadIncrementid"),
+    1: .same(proto: "readedIncrementid", swift: "readedIncrementid"),
+    2: .same(proto: "unreadIncrementid", swift: "unreadIncrementid"),
   ]
 
-
-  var updatetime: Int32 = 0
 
   var readedIncrementid: Int32 = 0
 
@@ -359,27 +356,22 @@ struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &updatetime)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &readedIncrementid)
-    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &unreadIncrementid)
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &readedIncrementid)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &unreadIncrementid)
     default: break
     }
   }
 
   public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if updatetime != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: updatetime, protoFieldNumber: 1)
-    }
     if readedIncrementid != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: readedIncrementid, protoFieldNumber: 2)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: readedIncrementid, protoFieldNumber: 1)
     }
     if unreadIncrementid != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: unreadIncrementid, protoFieldNumber: 3)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: unreadIncrementid, protoFieldNumber: 2)
     }
   }
 
-  public func _protoc_generated_isEqualTo(other: Chat_NodeInfo) -> Bool {
-    if updatetime != other.updatetime {return false}
+  public func _protoc_generated_isEqualTo(other: Chat_NodeReadInfo) -> Bool {
     if readedIncrementid != other.readedIncrementid {return false}
     if unreadIncrementid != other.unreadIncrementid {return false}
     return true
@@ -395,20 +387,20 @@ struct Chat_TalkList: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   ]
 
 
-  var nodemap: Dictionary<String,Chat_NodeInfo> = [:]
+  var nodemap: Dictionary<String,Chat_NodeReadInfo> = [:]
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
-    case 1: try setter.decodeMapField(fieldType: SwiftProtobuf.ProtobufMap<SwiftProtobuf.ProtobufString,Chat_NodeInfo>.self, value: &nodemap)
+    case 1: try setter.decodeMapField(fieldType: SwiftProtobuf.ProtobufMap<SwiftProtobuf.ProtobufString,Chat_NodeReadInfo>.self, value: &nodemap)
     default: break
     }
   }
 
   public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
     if !nodemap.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf.ProtobufMap<SwiftProtobuf.ProtobufString,Chat_NodeInfo>.self, value: nodemap, protoFieldNumber: 1)
+      try visitor.visitMapField(fieldType: SwiftProtobuf.ProtobufMap<SwiftProtobuf.ProtobufString,Chat_NodeReadInfo>.self, value: nodemap, protoFieldNumber: 1)
     }
   }
 
@@ -1856,14 +1848,17 @@ struct Chat_LoginRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   public static let _protobuf_fieldNames: FieldNameMap = [
     1: .same(proto: "isSuccess", swift: "isSuccess"),
     2: .same(proto: "userID", swift: "userId"),
-    3: .unique(proto: "e_no", json: "eNo", swift: "eNo"),
-    4: .unique(proto: "e_msg", json: "eMsg", swift: "eMsg"),
+    3: .same(proto: "uuid", swift: "uuid"),
+    4: .unique(proto: "e_no", json: "eNo", swift: "eNo"),
+    5: .unique(proto: "e_msg", json: "eMsg", swift: "eMsg"),
   ]
 
 
   var isSuccess: Bool = false
 
   var userId: String = ""
+
+  var uuid: String = ""
 
   var eNo: Int32 = 0
 
@@ -1875,8 +1870,9 @@ struct Chat_LoginRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
     switch protoFieldNumber {
     case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufBool.self, value: &isSuccess)
     case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &userId)
-    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &eNo)
-    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &eMsg)
+    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &uuid)
+    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &eNo)
+    case 5: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &eMsg)
     default: break
     }
   }
@@ -1888,17 +1884,21 @@ struct Chat_LoginRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
     if userId != "" {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: userId, protoFieldNumber: 2)
     }
+    if uuid != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: uuid, protoFieldNumber: 3)
+    }
     if eNo != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: eNo, protoFieldNumber: 3)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: eNo, protoFieldNumber: 4)
     }
     if eMsg != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: eMsg, protoFieldNumber: 4)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: eMsg, protoFieldNumber: 5)
     }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_LoginRes) -> Bool {
     if isSuccess != other.isSuccess {return false}
     if userId != other.userId {return false}
+    if uuid != other.uuid {return false}
     if eNo != other.eNo {return false}
     if eMsg != other.eMsg {return false}
     return true
@@ -2411,43 +2411,35 @@ struct Chat_AddFriendNoti: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
   public var protoMessageName: String {return "AddFriendNoti"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .unique(proto: "toUserID_outer", json: "toUserIDOuter", swift: "toUserIdOuter"),
-    2: .same(proto: "response", swift: "response"),
+    1: .same(proto: "response", swift: "response"),
   ]
 
   private class _StorageClass {
     typealias ExtendedMessage = Chat_AddFriendNoti
-    var _toUserIdOuter: String = ""
     var _response: Chat_AddFriendRes? = nil
 
     init() {}
 
     func decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
       switch protoFieldNumber {
-      case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &_toUserIdOuter)
-      case 2: try setter.decodeSingularMessageField(fieldType: Chat_AddFriendRes.self, value: &_response)
+      case 1: try setter.decodeSingularMessageField(fieldType: Chat_AddFriendRes.self, value: &_response)
       default: break
       }
     }
 
     func traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-      if _toUserIdOuter != "" {
-        try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: _toUserIdOuter, protoFieldNumber: 1)
-      }
       if let v = _response {
-        try visitor.visitSingularMessageField(value: v, protoFieldNumber: 2)
+        try visitor.visitSingularMessageField(value: v, protoFieldNumber: 1)
       }
     }
 
     func isEqualTo(other: _StorageClass) -> Bool {
-      if _toUserIdOuter != other._toUserIdOuter {return false}
       if _response != other._response {return false}
       return true
     }
 
     func copy() -> _StorageClass {
       let clone = _StorageClass()
-      clone._toUserIdOuter = _toUserIdOuter
       clone._response = _response
       return clone
     }
@@ -2455,11 +2447,6 @@ struct Chat_AddFriendNoti: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, S
 
   private var _storage = _StorageClass()
 
-
-  var toUserIdOuter: String {
-    get {return _storage._toUserIdOuter}
-    set {_uniqueStorage()._toUserIdOuter = newValue}
-  }
 
   var response: Chat_AddFriendRes {
     get {return _storage._response ?? Chat_AddFriendRes()}
@@ -2547,37 +2534,45 @@ struct Chat_AddFriendAuthorizeRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Me
   public var protoMessageName: String {return "AddFriendAuthorizeRes"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "isAgree", swift: "isAgree"),
-    2: .unique(proto: "toUserID_outer", json: "toUserIDOuter", swift: "toUserIdOuter"),
+    1: .same(proto: "inviterID", swift: "inviterId"),
+    2: .same(proto: "inviteeID", swift: "inviteeId"),
+    3: .same(proto: "isAgree", swift: "isAgree"),
   ]
 
 
-  var isAgree: Chat_IsAgree = Chat_IsAgree.unknow
+  var inviterId: String = ""
 
-  var toUserIdOuter: String = ""
+  var inviteeId: String = ""
+
+  var isAgree: Chat_IsAgree = Chat_IsAgree.unknow
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: Chat_IsAgree.self, value: &isAgree)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toUserIdOuter)
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &inviterId)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &inviteeId)
+    case 3: try setter.decodeSingularField(fieldType: Chat_IsAgree.self, value: &isAgree)
     default: break
     }
   }
 
   public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if isAgree != Chat_IsAgree.unknow {
-      try visitor.visitSingularField(fieldType: Chat_IsAgree.self, value: isAgree, protoFieldNumber: 1)
+    if inviterId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: inviterId, protoFieldNumber: 1)
     }
-    if toUserIdOuter != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toUserIdOuter, protoFieldNumber: 2)
+    if inviteeId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: inviteeId, protoFieldNumber: 2)
+    }
+    if isAgree != Chat_IsAgree.unknow {
+      try visitor.visitSingularField(fieldType: Chat_IsAgree.self, value: isAgree, protoFieldNumber: 3)
     }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_AddFriendAuthorizeRes) -> Bool {
+    if inviterId != other.inviterId {return false}
+    if inviteeId != other.inviteeId {return false}
     if isAgree != other.isAgree {return false}
-    if toUserIdOuter != other.toUserIdOuter {return false}
     return true
   }
 }
@@ -2587,43 +2582,35 @@ struct Chat_AddFriendAuthorizeNoti: SwiftProtobuf.Message, SwiftProtobuf.Proto3M
   public var protoMessageName: String {return "AddFriendAuthorizeNoti"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .unique(proto: "toUserID_outer", json: "toUserIDOuter", swift: "toUserIdOuter"),
-    2: .same(proto: "response", swift: "response"),
+    1: .same(proto: "response", swift: "response"),
   ]
 
   private class _StorageClass {
     typealias ExtendedMessage = Chat_AddFriendAuthorizeNoti
-    var _toUserIdOuter: String = ""
-    var _response: Chat_AddFriendAuthorize? = nil
+    var _response: Chat_AddFriendAuthorizeRes? = nil
 
     init() {}
 
     func decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
       switch protoFieldNumber {
-      case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &_toUserIdOuter)
-      case 2: try setter.decodeSingularMessageField(fieldType: Chat_AddFriendAuthorize.self, value: &_response)
+      case 1: try setter.decodeSingularMessageField(fieldType: Chat_AddFriendAuthorizeRes.self, value: &_response)
       default: break
       }
     }
 
     func traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-      if _toUserIdOuter != "" {
-        try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: _toUserIdOuter, protoFieldNumber: 1)
-      }
       if let v = _response {
-        try visitor.visitSingularMessageField(value: v, protoFieldNumber: 2)
+        try visitor.visitSingularMessageField(value: v, protoFieldNumber: 1)
       }
     }
 
     func isEqualTo(other: _StorageClass) -> Bool {
-      if _toUserIdOuter != other._toUserIdOuter {return false}
       if _response != other._response {return false}
       return true
     }
 
     func copy() -> _StorageClass {
       let clone = _StorageClass()
-      clone._toUserIdOuter = _toUserIdOuter
       clone._response = _response
       return clone
     }
@@ -2632,13 +2619,8 @@ struct Chat_AddFriendAuthorizeNoti: SwiftProtobuf.Message, SwiftProtobuf.Proto3M
   private var _storage = _StorageClass()
 
 
-  var toUserIdOuter: String {
-    get {return _storage._toUserIdOuter}
-    set {_uniqueStorage()._toUserIdOuter = newValue}
-  }
-
-  var response: Chat_AddFriendAuthorize {
-    get {return _storage._response ?? Chat_AddFriendAuthorize()}
+  var response: Chat_AddFriendAuthorizeRes {
+    get {return _storage._response ?? Chat_AddFriendAuthorizeRes()}
     set {_uniqueStorage()._response = newValue}
   }
   public var hasResponse: Bool {
@@ -3001,6 +2983,9 @@ struct Chat_NodeMessageRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, 
   public static let _protobuf_fieldNames: FieldNameMap = [
     1: .same(proto: "id", swift: "id"),
     2: .same(proto: "incrementID", swift: "incrementId"),
+    3: .same(proto: "fromUserID", swift: "fromUserId"),
+    4: .unique(proto: "toUserID_outer", json: "toUserIDOuter", swift: "toUserIdOuter"),
+    5: .same(proto: "toNodeID", swift: "toNodeId"),
   ]
 
 
@@ -3008,12 +2993,21 @@ struct Chat_NodeMessageRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, 
 
   var incrementId: Int32 = 0
 
+  var fromUserId: String = ""
+
+  var toUserIdOuter: String = ""
+
+  var toNodeId: String = ""
+
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
     case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &id)
     case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &incrementId)
+    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &fromUserId)
+    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toUserIdOuter)
+    case 5: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
     default: break
     }
   }
@@ -3025,11 +3019,23 @@ struct Chat_NodeMessageRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, 
     if incrementId != 0 {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: incrementId, protoFieldNumber: 2)
     }
+    if fromUserId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: fromUserId, protoFieldNumber: 3)
+    }
+    if toUserIdOuter != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toUserIdOuter, protoFieldNumber: 4)
+    }
+    if toNodeId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 5)
+    }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_NodeMessageRes) -> Bool {
     if id != other.id {return false}
     if incrementId != other.incrementId {return false}
+    if fromUserId != other.fromUserId {return false}
+    if toUserIdOuter != other.toUserIdOuter {return false}
+    if toNodeId != other.toNodeId {return false}
     return true
   }
 }
@@ -3047,85 +3053,62 @@ struct Chat_NodeMessageNoti: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message,
   public var protoMessageName: String {return "NodeMessageNoti"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "toNodeID", swift: "toNodeId"),
-    2: .same(proto: "unreadIncrement", swift: "unreadIncrement"),
-    3: .unique(proto: "toUserID_outer", json: "toUserIDOuter", swift: "toUserIdOuter"),
+    1: .same(proto: "fromUserID", swift: "fromUserId"),
+    2: .unique(proto: "toUserID_outer", json: "toUserIDOuter", swift: "toUserIdOuter"),
+    3: .same(proto: "toNodeID", swift: "toNodeId"),
+    4: .same(proto: "readedIncrement", swift: "readedIncrement"),
+    5: .same(proto: "unreadIncrement", swift: "unreadIncrement"),
   ]
 
 
-  var toNodeId: String = ""
-
-  var unreadIncrement: Int32 = 0
+  ///   node unreaded
+  var fromUserId: String = ""
 
   var toUserIdOuter: String = ""
-
-  init() {}
-
-  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
-    switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &unreadIncrement)
-    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toUserIdOuter)
-    default: break
-    }
-  }
-
-  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if toNodeId != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 1)
-    }
-    if unreadIncrement != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: unreadIncrement, protoFieldNumber: 2)
-    }
-    if toUserIdOuter != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toUserIdOuter, protoFieldNumber: 3)
-    }
-  }
-
-  public func _protoc_generated_isEqualTo(other: Chat_NodeMessageNoti) -> Bool {
-    if toNodeId != other.toNodeId {return false}
-    if unreadIncrement != other.unreadIncrement {return false}
-    if toUserIdOuter != other.toUserIdOuter {return false}
-    return true
-  }
-}
-
-struct Chat_setReadMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_setReadMessage"}
-  public var protoMessageName: String {return "setReadMessage"}
-  public var protoPackageName: String {return "chat"}
-  public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "toNodeID", swift: "toNodeId"),
-    2: .same(proto: "readedIncrement", swift: "readedIncrement"),
-  ]
-
 
   var toNodeId: String = ""
 
   var readedIncrement: Int32 = 0
 
+  var unreadIncrement: Int32 = 0
+
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &readedIncrement)
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &fromUserId)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toUserIdOuter)
+    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
+    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &readedIncrement)
+    case 5: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &unreadIncrement)
     default: break
     }
   }
 
   public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if fromUserId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: fromUserId, protoFieldNumber: 1)
+    }
+    if toUserIdOuter != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toUserIdOuter, protoFieldNumber: 2)
+    }
     if toNodeId != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 1)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 3)
     }
     if readedIncrement != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: readedIncrement, protoFieldNumber: 2)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: readedIncrement, protoFieldNumber: 4)
+    }
+    if unreadIncrement != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: unreadIncrement, protoFieldNumber: 5)
     }
   }
 
-  public func _protoc_generated_isEqualTo(other: Chat_setReadMessage) -> Bool {
+  public func _protoc_generated_isEqualTo(other: Chat_NodeMessageNoti) -> Bool {
+    if fromUserId != other.fromUserId {return false}
+    if toUserIdOuter != other.toUserIdOuter {return false}
     if toNodeId != other.toNodeId {return false}
     if readedIncrement != other.readedIncrement {return false}
+    if unreadIncrement != other.unreadIncrement {return false}
     return true
   }
 }
@@ -3178,45 +3161,11 @@ struct Chat_QueryMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Sw
   }
 }
 
-struct Chat_QueryOneMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_QueryOneMessage"}
-  public var protoMessageName: String {return "QueryOneMessage"}
-  public var protoPackageName: String {return "chat"}
-  public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "toNodeID", swift: "toNodeId"),
-    2: .same(proto: "incrementID", swift: "incrementId"),
-  ]
-
-
-  var toNodeId: String = ""
-
-  var incrementId: Int32 = 0
-
-  init() {}
-
-  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
-    switch protoFieldNumber {
-    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &incrementId)
-    default: break
-    }
-  }
-
-  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if toNodeId != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 1)
-    }
-    if incrementId != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: incrementId, protoFieldNumber: 2)
-    }
-  }
-
-  public func _protoc_generated_isEqualTo(other: Chat_QueryOneMessage) -> Bool {
-    if toNodeId != other.toNodeId {return false}
-    if incrementId != other.incrementId {return false}
-    return true
-  }
-}
+// 
+// message QueryOneMessage {
+// string toNodeID = 1;
+// int32  incrementID = 2;
+// }
 
 struct Chat_QueryMessageRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
   public var swiftClassName: String {return "Chat_QueryMessageRes"}

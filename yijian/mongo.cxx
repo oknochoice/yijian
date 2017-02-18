@@ -794,6 +794,31 @@ mongo_client::queryNode(const std::string & nodeID) {
 }
 
 // message 
+
+std::shared_ptr<chat::NodeMessage>
+mongo_client::queryMessage(const std::string & tonodeid, 
+    const int32_t incrementid) {
+  YILOG_TRACE ("func: {}. ", __func__);
+  auto db = client_["chatdb"];
+  auto nodemessage_collection = db["nodeMessage"];
+  auto maybe_result = nodemessage_collection.find_one(
+      document{} << "toNodeID" << tonodeid
+      << "incrementID" << incrementid
+      << finalize);
+
+  if (maybe_result) {
+    auto message_sp = std::make_shared<chat::NodeMessage>();
+    auto view = maybe_result->view();
+    nodemessageDocument(*message_sp, view);
+    return message_sp;
+  }else {
+    YILOG_ERROR("can not find message tonodeid {}, incrementid {}.", 
+        tonodeid, incrementid);
+    throw std::system_error(std::error_code(40052, std::generic_category()),
+        "missing message");
+  }
+}
+
 std::shared_ptr<chat::NodeMessageRes> 
 mongo_client::insertMessage(chat::NodeMessage & message) {
   YILOG_TRACE ("func: {}. ", __func__);
@@ -835,30 +860,6 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
          e.code().value(), e.what());
     throw std::system_error(std::error_code(40051, std::generic_category()),
         "insert message failure");
-  }
-}
-
-std::shared_ptr<chat::NodeMessage>
-mongo_client::queryMessage(const std::string & tonodeid, 
-    const int32_t incrementid) {
-  YILOG_TRACE ("func: {}. ", __func__);
-  auto db = client_["chatdb"];
-  auto nodemessage_collection = db["nodeMessage"];
-  auto maybe_result = nodemessage_collection.find_one(
-      document{} << "toNodeID" << tonodeid
-      << "incrementID" << incrementid
-      << finalize);
-
-  if (maybe_result) {
-    auto message_sp = std::make_shared<chat::NodeMessage>();
-    auto view = maybe_result->view();
-    nodemessageDocument(*message_sp, view);
-    return message_sp;
-  }else {
-    YILOG_ERROR("can not find message tonodeid {}, incrementid {}.", 
-        tonodeid, incrementid);
-    throw std::system_error(std::error_code(40052, std::generic_category()),
-        "missing message");
   }
 }
 

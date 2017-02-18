@@ -10,14 +10,13 @@ message ErrorNth {
   int32 maxnth = 1;
 }
 
-message NodeInfo {
-  int32 updatetime = 1;
-  int32 readedIncrementid = 2;
-  int32 unreadIncrementid = 3;
+message NodeReadInfo {
+  int32 readedIncrementid = 1;
+  int32 unreadIncrementid = 2;
 }
 
 message TalkList {
-  map<string, NodeInfo> nodemap  = 1;
+  map<string, NodeReadInfo> nodemap  = 1;
 }
 
 message Ping {
@@ -212,8 +211,9 @@ message LoginRes {
 
   bool    isSuccess = 1;
   string  userID = 2;
-  int32   e_no = 3;
-  string  e_msg = 4;
+  string  uuid = 3;
+  int32   e_no = 4;
+  string  e_msg = 5;
 
 }
 
@@ -294,8 +294,7 @@ message AddFriendRes {
 }
 
 message AddFriendNoti {
-  string toUserID_outer = 1;
-  AddFriendRes response = 2;
+  AddFriendRes response = 1;
 }
 
 message AddFriendAuthorize {
@@ -305,13 +304,13 @@ message AddFriendAuthorize {
 }
 
 message AddFriendAuthorizeRes {
-  IsAgree isAgree = 1;
-  string  toUserID_outer = 2;
+  string inviterID = 1;
+  string inviteeID = 2; 
+  IsAgree isAgree = 3;
 }
 
 message AddFriendAuthorizeNoti {
-  string toUserID_outer = 1;
-  AddFriendAuthorize response = 2;
+  AddFriendAuthorizeRes response = 1;
 }
 
 message QueryAddfriendInfo {
@@ -371,6 +370,10 @@ message NodeMessageRes {
   string id = 1;
   int32  incrementID = 2;
 
+  string fromUserID = 3;
+  string toUserID_outer = 4;
+  string toNodeID = 5;
+
 }
 /*
 db.userUnread
@@ -383,14 +386,12 @@ db.userUnread
 
 */
 message NodeMessageNoti {
-  string toNodeID = 1;
-  int32  unreadIncrement = 2;
-  string toUserID_outer = 3;
-}
-
-message setReadMessage {
-  string toNodeID = 1;
-  int32  readedIncrement = 2;
+  // node unreaded
+  string fromUserID = 1;
+  string toUserID_outer = 2;
+  string toNodeID = 3;
+  int32 readedIncrement = 4;
+  int32 unreadIncrement = 5;
 }
 
 message QueryMessage {
@@ -399,10 +400,12 @@ message QueryMessage {
   int32  toIncrementID = 3;
 }
 
+/*
 message QueryOneMessage {
   string toNodeID = 1;
   int32  incrementID = 2;
 }
+*/
 
 message QueryMessageRes {
   repeated NodeMessage messages = 1;
