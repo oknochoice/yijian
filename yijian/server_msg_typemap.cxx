@@ -1125,6 +1125,10 @@ void dispatch(chat::SetUserProperty & property) {
     client->setUserProperty(currentNode_->userid, property);
     auto res = chat::SetUserPropertyRes();
     res.set_property(property.property());
+    res.set_value(property.value());
+    if (property.property() == chat::UserProperty::icon) {
+      res.set_value(client->sourceDomain + property.value());
+    }
     mountBuffer2Node(yijianBuffer(res), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 

@@ -1,6 +1,7 @@
 #include "mongo.h"
 #include <chrono>
 
+
 void userNodocNoarr(chat::User & user, bsoncxx::document::view & view) {
 
   YILOG_TRACE ("func: {}. ", __func__);
@@ -293,7 +294,9 @@ mongo_client::queryUser(const std::string & phoneNo,
         "no this user");
   }
   auto user_view = maybe_result->view();
-  return userDocoument(user_view);
+  auto user_sp = userDocoument(user_view);
+  user_sp->set_icon(sourceDomain + user_sp->icon());
+  return user_sp;
 }
 
 std::shared_ptr<chat::User> 
@@ -442,7 +445,7 @@ mongo_client::addFriend(const chat::AddFriend & addfrd) {
         << "status" << "createNode" << close_document
         << finalize,
         journal_update_);
-    // create messge node count
+    // create message node count
     auto messageNode_count_col = db["messageNodeCount"];
     auto count_result = messageNode_count_col.insert_one(
         document{} << "nodeID" << msgNodeid
@@ -901,6 +904,9 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
   for (auto doc: cursor) {
     auto message = chat::NodeMessage();
     nodemessageDocument(message, doc);
+    if (message.type() != chat::MediaType::TEXT) {
+      message.set_content(sourceDomain + message.content());
+    }
     func(message);
   }
 }
@@ -973,7 +979,6 @@ void mongo_client::queryMedia(const std::string & md5,
   media.set_type(static_cast<chat::MediaType>(doc["type"].get_int32().value));
   media.set_md5(doc["md5"].get_utf8().value.to_string());
   media.set_path(doc["path"].get_utf8().value.to_string());
-
 }
 
 void mongo_client::devices(const chat::NodeUser & node_user, 

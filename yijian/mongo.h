@@ -239,6 +239,8 @@ public:
                         const int32_t unreadIncrement,
                         const int32_t readedIncrement)> && func);
 
+public:
+  const std::string sourceDomain = "oknochoice-file.b0.upaiyun.com";
 private:
   std::string serverName_;
 private:

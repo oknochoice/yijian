@@ -2151,6 +2151,20 @@ class SetUserPropertyRes : public ::google::protobuf::Message /* @@protoc_insert
 
   // accessors -------------------------------------------------------
 
+  // string value = 2;
+  void clear_value();
+  static const int kValueFieldNumber = 2;
+  const ::std::string& value() const;
+  void set_value(const ::std::string& value);
+  #if LANG_CXX11
+  void set_value(::std::string&& value);
+  #endif
+  void set_value(const char* value);
+  void set_value(const char* value, size_t size);
+  ::std::string* mutable_value();
+  ::std::string* release_value();
+  void set_allocated_value(::std::string* value);
+
   // .chat.UserProperty property = 1;
   void clear_property();
   static const int kPropertyFieldNumber = 1;
@@ -2161,6 +2175,7 @@ class SetUserPropertyRes : public ::google::protobuf::Message /* @@protoc_insert
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr value_;
   int property_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
@@ -9019,6 +9034,58 @@ inline void SetUserPropertyRes::set_property(::chat::UserProperty value) {
   
   property_ = value;
   // @@protoc_insertion_point(field_set:chat.SetUserPropertyRes.property)
+}
+
+// string value = 2;
+inline void SetUserPropertyRes::clear_value() {
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& SetUserPropertyRes::value() const {
+  // @@protoc_insertion_point(field_get:chat.SetUserPropertyRes.value)
+  return value_.GetNoArena();
+}
+inline void SetUserPropertyRes::set_value(const ::std::string& value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.SetUserPropertyRes.value)
+}
+#if LANG_CXX11
+inline void SetUserPropertyRes::set_value(::std::string&& value) {
+  
+  value_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.SetUserPropertyRes.value)
+}
+#endif
+inline void SetUserPropertyRes::set_value(const char* value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.SetUserPropertyRes.value)
+}
+inline void SetUserPropertyRes::set_value(const char* value, size_t size) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.SetUserPropertyRes.value)
+}
+inline ::std::string* SetUserPropertyRes::mutable_value() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.SetUserPropertyRes.value)
+  return value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* SetUserPropertyRes::release_value() {
+  // @@protoc_insertion_point(field_release:chat.SetUserPropertyRes.value)
+  
+  return value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void SetUserPropertyRes::set_allocated_value(::std::string* value) {
+  if (value != NULL) {
+    
+  } else {
+    
+  }
+  value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set_allocated:chat.SetUserPropertyRes.value)
 }
 
 // -------------------------------------------------------------------

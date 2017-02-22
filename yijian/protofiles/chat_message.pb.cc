@@ -258,6 +258,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SetUserPropertyRes, property_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SetUserPropertyRes, value_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(QueryUser, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -588,51 +589,51 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 76, -1, sizeof(User)},
   { 95, -1, sizeof(SetUserProperty)},
   { 101, -1, sizeof(SetUserPropertyRes)},
-  { 106, -1, sizeof(QueryUser)},
-  { 113, -1, sizeof(QueryUserRes)},
-  { 119, -1, sizeof(QueryUserVersion)},
-  { 124, -1, sizeof(QueryUserVersionRes)},
-  { 130, -1, sizeof(QueryNode)},
-  { 135, -1, sizeof(QueryNodeRes)},
-  { 141, -1, sizeof(QueryNodeVersion)},
-  { 146, -1, sizeof(QueryNodeVersionRes)},
-  { 152, -1, sizeof(Register)},
-  { 161, -1, sizeof(RegisterRes)},
-  { 169, -1, sizeof(Login)},
-  { 177, -1, sizeof(LoginRes)},
-  { 186, -1, sizeof(LoginNoti)},
-  { 192, -1, sizeof(ClientConnect)},
-  { 202, -1, sizeof(ClientConnectRes)},
-  { 212, -1, sizeof(ClientDisConnect)},
-  { 218, -1, sizeof(ClientDisConnectRes)},
-  { 224, -1, sizeof(Logout)},
-  { 230, -1, sizeof(LogoutRes)},
-  { 236, -1, sizeof(AddFriendInfo)},
-  { 243, -1, sizeof(AddFriend)},
-  { 250, -1, sizeof(AddFriendRes)},
-  { 257, -1, sizeof(AddFriendNoti)},
-  { 262, -1, sizeof(AddFriendAuthorize)},
-  { 269, -1, sizeof(AddFriendAuthorizeRes)},
-  { 276, -1, sizeof(AddFriendAuthorizeNoti)},
-  { 281, -1, sizeof(QueryAddfriendInfo)},
-  { 286, -1, sizeof(QueryAddfriendInfoRes)},
-  { 291, -1, sizeof(CreateGroup)},
-  { 298, -1, sizeof(CreateGroupRes)},
-  { 305, -1, sizeof(GroupAddMember)},
-  { 311, -1, sizeof(GroupAddMemberRes)},
-  { 317, -1, sizeof(NodeMessage)},
-  { 329, -1, sizeof(NodeMessageRes)},
-  { 339, -1, sizeof(NodeMessageNoti)},
-  { 348, -1, sizeof(QueryMessage)},
-  { 355, -1, sizeof(QueryMessageRes)},
-  { 360, -1, sizeof(ServerConnect)},
-  { 366, -1, sizeof(ServerDisconnect)},
-  { 372, -1, sizeof(ConnectInfo)},
-  { 387, -1, sizeof(ConnectInfoLittle)},
-  { 395, -1, sizeof(Media)},
-  { 402, -1, sizeof(MediaRes)},
-  { 407, -1, sizeof(QueryMedia)},
-  { 412, -1, sizeof(QueryMediaRes)},
+  { 107, -1, sizeof(QueryUser)},
+  { 114, -1, sizeof(QueryUserRes)},
+  { 120, -1, sizeof(QueryUserVersion)},
+  { 125, -1, sizeof(QueryUserVersionRes)},
+  { 131, -1, sizeof(QueryNode)},
+  { 136, -1, sizeof(QueryNodeRes)},
+  { 142, -1, sizeof(QueryNodeVersion)},
+  { 147, -1, sizeof(QueryNodeVersionRes)},
+  { 153, -1, sizeof(Register)},
+  { 162, -1, sizeof(RegisterRes)},
+  { 170, -1, sizeof(Login)},
+  { 178, -1, sizeof(LoginRes)},
+  { 187, -1, sizeof(LoginNoti)},
+  { 193, -1, sizeof(ClientConnect)},
+  { 203, -1, sizeof(ClientConnectRes)},
+  { 213, -1, sizeof(ClientDisConnect)},
+  { 219, -1, sizeof(ClientDisConnectRes)},
+  { 225, -1, sizeof(Logout)},
+  { 231, -1, sizeof(LogoutRes)},
+  { 237, -1, sizeof(AddFriendInfo)},
+  { 244, -1, sizeof(AddFriend)},
+  { 251, -1, sizeof(AddFriendRes)},
+  { 258, -1, sizeof(AddFriendNoti)},
+  { 263, -1, sizeof(AddFriendAuthorize)},
+  { 270, -1, sizeof(AddFriendAuthorizeRes)},
+  { 277, -1, sizeof(AddFriendAuthorizeNoti)},
+  { 282, -1, sizeof(QueryAddfriendInfo)},
+  { 287, -1, sizeof(QueryAddfriendInfoRes)},
+  { 292, -1, sizeof(CreateGroup)},
+  { 299, -1, sizeof(CreateGroupRes)},
+  { 306, -1, sizeof(GroupAddMember)},
+  { 312, -1, sizeof(GroupAddMemberRes)},
+  { 318, -1, sizeof(NodeMessage)},
+  { 330, -1, sizeof(NodeMessageRes)},
+  { 340, -1, sizeof(NodeMessageNoti)},
+  { 349, -1, sizeof(QueryMessage)},
+  { 356, -1, sizeof(QueryMessageRes)},
+  { 361, -1, sizeof(ServerConnect)},
+  { 367, -1, sizeof(ServerDisconnect)},
+  { 373, -1, sizeof(ConnectInfo)},
+  { 388, -1, sizeof(ConnectInfoLittle)},
+  { 396, -1, sizeof(Media)},
+  { 403, -1, sizeof(MediaRes)},
+  { 408, -1, sizeof(QueryMedia)},
+  { 413, -1, sizeof(QueryMediaRes)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -983,103 +984,103 @@ void AddDescriptorsImpl() {
       "chat.UserInfo\022\021\n\tblacklist\030\r \003(\t\022\024\n\014grou"
       "pNodeIDs\030\016 \003(\t\022\035\n\007devices\030\017 \003(\0132\014.chat.D"
       "evice\"F\n\017SetUserProperty\022$\n\010property\030\001 \001"
-      "(\0162\022.chat.UserProperty\022\r\n\005value\030\002 \001(\t\":\n"
+      "(\0162\022.chat.UserProperty\022\r\n\005value\030\002 \001(\t\"I\n"
       "\022SetUserPropertyRes\022$\n\010property\030\001 \001(\0162\022."
-      "chat.UserProperty\"A\n\tQueryUser\022\016\n\006userID"
-      "\030\001 \001(\t\022\023\n\013countryCode\030\002 \001(\t\022\017\n\007phoneNo\030\003"
-      " \001(\t\"@\n\014QueryUserRes\022\026\n\016toUserID_outer\030\001"
-      " \001(\t\022\030\n\004user\030\002 \001(\0132\n.chat.User\"\"\n\020QueryU"
-      "serVersion\022\016\n\006userID\030\001 \001(\t\"6\n\023QueryUserV"
-      "ersionRes\022\016\n\006userID\030\001 \001(\t\022\017\n\007version\030\002 \001"
-      "(\005\"\035\n\tQueryNode\022\020\n\010toNodeID\030\001 \001(\t\"G\n\014Que"
-      "ryNodeRes\022\026\n\016toUserID_outer\030\001 \001(\t\022\037\n\004nod"
-      "e\030\002 \001(\0132\021.chat.MessageNode\"$\n\020QueryNodeV"
-      "ersion\022\020\n\010toNodeID\030\001 \001(\t\"8\n\023QueryNodeVer"
-      "sionRes\022\020\n\010toNodeID\030\001 \001(\t\022\017\n\007version\030\002 \001"
-      "(\005\"h\n\010Register\022\017\n\007phoneNo\030\001 \001(\t\022\023\n\013count"
-      "ryCode\030\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\020\n\010nickna"
-      "me\030\004 \001(\t\022\022\n\nverifycode\030\005 \001(\t\"M\n\013Register"
-      "Res\022\016\n\006userID\030\001 \001(\t\022\021\n\tisSuccess\030\002 \001(\010\022\r"
-      "\n\005e_msg\030\003 \001(\t\022\014\n\004e_no\030\004 \001(\005\"]\n\005Login\022\017\n\007"
-      "phoneNo\030\001 \001(\t\022\023\n\013countryCode\030\002 \001(\t\022\020\n\010pa"
-      "ssword\030\003 \001(\t\022\034\n\006device\030\004 \001(\0132\014.chat.Devi"
-      "ce\"X\n\010LoginRes\022\021\n\tisSuccess\030\001 \001(\010\022\016\n\006use"
-      "rID\030\002 \001(\t\022\014\n\004uuid\030\003 \001(\t\022\014\n\004e_no\030\004 \001(\005\022\r\n"
-      "\005e_msg\030\005 \001(\t\"1\n\tLoginNoti\022\026\n\016toUserID_ou"
-      "ter\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"\201\001\n\rClientConnec"
-      "t\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\022\024\n\014isRec"
-      "iveNoti\030\003 \001(\010\022\021\n\tOSVersion\030\004 \001(\t\022\022\n\nappV"
-      "ersion\030\005 \001(\t\022\025\n\rclientVersion\030\006 \001(\t\"s\n\020C"
-      "lientConnectRes\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030"
-      "\002 \001(\t\022\021\n\tsessionid\030\003 \001(\005\022\021\n\tisSuccess\030\004 "
-      "\001(\010\022\r\n\005e_msg\030\005 \001(\t\022\014\n\004e_no\030\006 \001(\005\"0\n\020Clie"
-      "ntDisConnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001"
-      "(\t\"3\n\023ClientDisConnectRes\022\014\n\004UUID\030\001 \001(\t\022"
-      "\016\n\006userID\030\002 \001(\t\"&\n\006Logout\022\016\n\006userID\030\001 \001("
-      "\t\022\014\n\004UUID\030\002 \001(\t\")\n\tLogoutRes\022\014\n\004UUID\030\001 \001"
-      "(\t\022\016\n\006userID\030\002 \001(\t\"C\n\rAddFriendInfo\022\017\n\007i"
-      "nviter\030\001 \001(\t\022\017\n\007invitee\030\002 \001(\t\022\020\n\010toNodeI"
-      "D\030\003 \001(\t\">\n\tAddFriend\022\021\n\tinviteeID\030\001 \001(\t\022"
-      "\021\n\tinviterID\030\002 \001(\t\022\013\n\003msg\030\003 \001(\t\"F\n\014AddFr"
-      "iendRes\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinviteeID\030"
-      "\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\"5\n\rAddFriendNoti"
-      "\022$\n\010response\030\001 \001(\0132\022.chat.AddFriendRes\"Z"
-      "\n\022AddFriendAuthorize\022\021\n\tinviterID\030\001 \001(\t\022"
-      "\021\n\tinviteeID\030\002 \001(\t\022\036\n\007isAgree\030\003 \001(\0162\r.ch"
-      "at.IsAgree\"]\n\025AddFriendAuthorizeRes\022\021\n\ti"
+      "chat.UserProperty\022\r\n\005value\030\002 \001(\t\"A\n\tQuer"
+      "yUser\022\016\n\006userID\030\001 \001(\t\022\023\n\013countryCode\030\002 \001"
+      "(\t\022\017\n\007phoneNo\030\003 \001(\t\"@\n\014QueryUserRes\022\026\n\016t"
+      "oUserID_outer\030\001 \001(\t\022\030\n\004user\030\002 \001(\0132\n.chat"
+      ".User\"\"\n\020QueryUserVersion\022\016\n\006userID\030\001 \001("
+      "\t\"6\n\023QueryUserVersionRes\022\016\n\006userID\030\001 \001(\t"
+      "\022\017\n\007version\030\002 \001(\005\"\035\n\tQueryNode\022\020\n\010toNode"
+      "ID\030\001 \001(\t\"G\n\014QueryNodeRes\022\026\n\016toUserID_out"
+      "er\030\001 \001(\t\022\037\n\004node\030\002 \001(\0132\021.chat.MessageNod"
+      "e\"$\n\020QueryNodeVersion\022\020\n\010toNodeID\030\001 \001(\t\""
+      "8\n\023QueryNodeVersionRes\022\020\n\010toNodeID\030\001 \001(\t"
+      "\022\017\n\007version\030\002 \001(\005\"h\n\010Register\022\017\n\007phoneNo"
+      "\030\001 \001(\t\022\023\n\013countryCode\030\002 \001(\t\022\020\n\010password\030"
+      "\003 \001(\t\022\020\n\010nickname\030\004 \001(\t\022\022\n\nverifycode\030\005 "
+      "\001(\t\"M\n\013RegisterRes\022\016\n\006userID\030\001 \001(\t\022\021\n\tis"
+      "Success\030\002 \001(\010\022\r\n\005e_msg\030\003 \001(\t\022\014\n\004e_no\030\004 \001"
+      "(\005\"]\n\005Login\022\017\n\007phoneNo\030\001 \001(\t\022\023\n\013countryC"
+      "ode\030\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\034\n\006device\030\004 "
+      "\001(\0132\014.chat.Device\"X\n\010LoginRes\022\021\n\tisSucce"
+      "ss\030\001 \001(\010\022\016\n\006userID\030\002 \001(\t\022\014\n\004uuid\030\003 \001(\t\022\014"
+      "\n\004e_no\030\004 \001(\005\022\r\n\005e_msg\030\005 \001(\t\"1\n\tLoginNoti"
+      "\022\026\n\016toUserID_outer\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\"\201"
+      "\001\n\rClientConnect\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID"
+      "\030\002 \001(\t\022\024\n\014isReciveNoti\030\003 \001(\010\022\021\n\tOSVersio"
+      "n\030\004 \001(\t\022\022\n\nappVersion\030\005 \001(\t\022\025\n\rclientVer"
+      "sion\030\006 \001(\t\"s\n\020ClientConnectRes\022\014\n\004UUID\030\001"
+      " \001(\t\022\016\n\006userID\030\002 \001(\t\022\021\n\tsessionid\030\003 \001(\005\022"
+      "\021\n\tisSuccess\030\004 \001(\010\022\r\n\005e_msg\030\005 \001(\t\022\014\n\004e_n"
+      "o\030\006 \001(\005\"0\n\020ClientDisConnect\022\016\n\006userID\030\001 "
+      "\001(\t\022\014\n\004UUID\030\002 \001(\t\"3\n\023ClientDisConnectRes"
+      "\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\"&\n\006Logout"
+      "\022\016\n\006userID\030\001 \001(\t\022\014\n\004UUID\030\002 \001(\t\")\n\tLogout"
+      "Res\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\"C\n\rAdd"
+      "FriendInfo\022\017\n\007inviter\030\001 \001(\t\022\017\n\007invitee\030\002"
+      " \001(\t\022\020\n\010toNodeID\030\003 \001(\t\">\n\tAddFriend\022\021\n\ti"
+      "nviteeID\030\001 \001(\t\022\021\n\tinviterID\030\002 \001(\t\022\013\n\003msg"
+      "\030\003 \001(\t\"F\n\014AddFriendRes\022\021\n\tinviterID\030\001 \001("
+      "\t\022\021\n\tinviteeID\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\"5"
+      "\n\rAddFriendNoti\022$\n\010response\030\001 \001(\0132\022.chat"
+      ".AddFriendRes\"Z\n\022AddFriendAuthorize\022\021\n\ti"
       "nviterID\030\001 \001(\t\022\021\n\tinviteeID\030\002 \001(\t\022\036\n\007isA"
-      "gree\030\003 \001(\0162\r.chat.IsAgree\"G\n\026AddFriendAu"
-      "thorizeNoti\022-\n\010response\030\001 \001(\0132\033.chat.Add"
-      "FriendAuthorizeRes\"#\n\022QueryAddfriendInfo"
-      "\022\r\n\005count\030\001 \001(\005\":\n\025QueryAddfriendInfoRes"
-      "\022!\n\004info\030\001 \003(\0132\023.chat.AddFriendInfo\"B\n\013C"
-      "reateGroup\022\016\n\006userID\030\001 \001(\t\022\020\n\010nickname\030\002"
-      " \001(\t\022\021\n\tmembersID\030\003 \003(\t\"L\n\016CreateGroupRe"
-      "s\022\026\n\016toUserID_outer\030\001 \001(\t\022\020\n\010nickname\030\002 "
-      "\001(\t\022\020\n\010toNodeID\030\003 \001(\t\"5\n\016GroupAddMember\022"
-      "\020\n\010toNodeID\030\001 \001(\t\022\021\n\tmembersID\030\002 \003(\t\"=\n\021"
-      "GroupAddMemberRes\022\026\n\016toUserID_outer\030\001 \001("
-      "\t\022\020\n\010toNodeID\030\002 \001(\t\"\257\001\n\013NodeMessage\022\n\n\002i"
-      "d\030\001 \001(\t\022\022\n\nfromUserID\030\002 \001(\t\022\020\n\010toNodeID\030"
-      "\003 \001(\t\022\023\n\013incrementID\030\004 \001(\005\022\035\n\004type\030\005 \001(\016"
-      "2\017.chat.MediaType\022\017\n\007content\030\006 \001(\t\022\026\n\016to"
-      "UserID_outer\030\007 \001(\t\022\021\n\ttimestamp\030\010 \001(\005\"\202\001"
-      "\n\016NodeMessageRes\022\n\n\002id\030\001 \001(\t\022\023\n\013incremen"
-      "tID\030\002 \001(\005\022\022\n\nfromUserID\030\003 \001(\t\022\026\n\016toUserI"
-      "D_outer\030\004 \001(\t\022\020\n\010toNodeID\030\005 \001(\t\022\021\n\ttimes"
-      "tamp\030\006 \001(\005\"\201\001\n\017NodeMessageNoti\022\022\n\nfromUs"
-      "erID\030\001 \001(\t\022\026\n\016toUserID_outer\030\002 \001(\t\022\020\n\010to"
-      "NodeID\030\003 \001(\t\022\027\n\017readedIncrement\030\004 \001(\005\022\027\n"
-      "\017unreadIncrement\030\005 \001(\005\"P\n\014QueryMessage\022\020"
-      "\n\010toNodeID\030\001 \001(\t\022\027\n\017fromIncrementID\030\002 \001("
-      "\005\022\025\n\rtoIncrementID\030\003 \001(\005\"6\n\017QueryMessage"
-      "Res\022#\n\010messages\030\001 \003(\0132\021.chat.NodeMessage"
-      "\"5\n\rServerConnect\022\022\n\nserverName\030\001 \001(\t\022\020\n"
-      "\010serverIP\030\002 \001(\t\"8\n\020ServerDisconnect\022\022\n\ns"
-      "erverName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\"\247\002\n\013Co"
-      "nnectInfo\022\014\n\004UUID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022"
-      "\017\n\007isLogin\030\003 \001(\010\022\023\n\013isConnected\030\004 \001(\010\022\024\n"
-      "\014isReciveNoti\030\005 \001(\010\022\022\n\nserverName\030\006 \001(\t\022"
-      "+\n\005users\030\010 \003(\0132\034.chat.ConnectInfo.UsersE"
-      "ntry\022\025\n\rclientVersion\030\t \001(\t\022\021\n\tOSVersion"
-      "\030\n \001(\t\022\022\n\nappVersion\030\013 \001(\t\022\021\n\ttimestamp\030"
-      "\014 \001(\t\032,\n\nUsersEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005valu"
-      "e\030\002 \001(\005:\0028\001\"a\n\021ConnectInfoLittle\022\014\n\004UUID"
-      "\030\001 \001(\t\022\023\n\013isConnected\030\002 \001(\010\022\024\n\014isReciveN"
-      "oti\030\003 \001(\010\022\023\n\013nodepointor\030\004 \001(\003\"A\n\005Media\022"
-      "\013\n\003md5\030\001 \001(\t\022\014\n\004path\030\002 \001(\t\022\035\n\004type\030\003 \001(\016"
-      "2\017.chat.MediaType\"\035\n\010MediaRes\022\021\n\tisSucce"
-      "ss\030\001 \001(\010\"\031\n\nQueryMedia\022\013\n\003md5\030\001 \001(\t\"+\n\rQ"
-      "ueryMediaRes\022\032\n\005media\030\001 \001(\0132\013.chat.Media"
-      "*8\n\007IsAgree\022\n\n\006unknow\020\000\022\t\n\005agree\020\001\022\n\n\006re"
-      "fuse\020\002\022\n\n\006ignore\020\003*_\n\014UserProperty\022\014\n\010re"
-      "alname\020\000\022\014\n\010nickname\020\001\022\010\n\004icon\020\002\022\017\n\013desc"
-      "ription\020\003\022\n\n\006isMale\020\004\022\014\n\010birthday\020\005*3\n\tM"
-      "ediaType\022\n\n\006UNKNOW\020\000\022\010\n\004TEXT\020\001\022\007\n\003JPG\020\002\022"
-      "\007\n\003MP3\020\003B\003\370\001\000b\006proto3"
+      "gree\030\003 \001(\0162\r.chat.IsAgree\"]\n\025AddFriendAu"
+      "thorizeRes\022\021\n\tinviterID\030\001 \001(\t\022\021\n\tinvitee"
+      "ID\030\002 \001(\t\022\036\n\007isAgree\030\003 \001(\0162\r.chat.IsAgree"
+      "\"G\n\026AddFriendAuthorizeNoti\022-\n\010response\030\001"
+      " \001(\0132\033.chat.AddFriendAuthorizeRes\"#\n\022Que"
+      "ryAddfriendInfo\022\r\n\005count\030\001 \001(\005\":\n\025QueryA"
+      "ddfriendInfoRes\022!\n\004info\030\001 \003(\0132\023.chat.Add"
+      "FriendInfo\"B\n\013CreateGroup\022\016\n\006userID\030\001 \001("
+      "\t\022\020\n\010nickname\030\002 \001(\t\022\021\n\tmembersID\030\003 \003(\t\"L"
+      "\n\016CreateGroupRes\022\026\n\016toUserID_outer\030\001 \001(\t"
+      "\022\020\n\010nickname\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\"5\n\016"
+      "GroupAddMember\022\020\n\010toNodeID\030\001 \001(\t\022\021\n\tmemb"
+      "ersID\030\002 \003(\t\"=\n\021GroupAddMemberRes\022\026\n\016toUs"
+      "erID_outer\030\001 \001(\t\022\020\n\010toNodeID\030\002 \001(\t\"\257\001\n\013N"
+      "odeMessage\022\n\n\002id\030\001 \001(\t\022\022\n\nfromUserID\030\002 \001"
+      "(\t\022\020\n\010toNodeID\030\003 \001(\t\022\023\n\013incrementID\030\004 \001("
+      "\005\022\035\n\004type\030\005 \001(\0162\017.chat.MediaType\022\017\n\007cont"
+      "ent\030\006 \001(\t\022\026\n\016toUserID_outer\030\007 \001(\t\022\021\n\ttim"
+      "estamp\030\010 \001(\005\"\202\001\n\016NodeMessageRes\022\n\n\002id\030\001 "
+      "\001(\t\022\023\n\013incrementID\030\002 \001(\005\022\022\n\nfromUserID\030\003"
+      " \001(\t\022\026\n\016toUserID_outer\030\004 \001(\t\022\020\n\010toNodeID"
+      "\030\005 \001(\t\022\021\n\ttimestamp\030\006 \001(\005\"\201\001\n\017NodeMessag"
+      "eNoti\022\022\n\nfromUserID\030\001 \001(\t\022\026\n\016toUserID_ou"
+      "ter\030\002 \001(\t\022\020\n\010toNodeID\030\003 \001(\t\022\027\n\017readedInc"
+      "rement\030\004 \001(\005\022\027\n\017unreadIncrement\030\005 \001(\005\"P\n"
+      "\014QueryMessage\022\020\n\010toNodeID\030\001 \001(\t\022\027\n\017fromI"
+      "ncrementID\030\002 \001(\005\022\025\n\rtoIncrementID\030\003 \001(\005\""
+      "6\n\017QueryMessageRes\022#\n\010messages\030\001 \003(\0132\021.c"
+      "hat.NodeMessage\"5\n\rServerConnect\022\022\n\nserv"
+      "erName\030\001 \001(\t\022\020\n\010serverIP\030\002 \001(\t\"8\n\020Server"
+      "Disconnect\022\022\n\nserverName\030\001 \001(\t\022\020\n\010server"
+      "IP\030\002 \001(\t\"\247\002\n\013ConnectInfo\022\014\n\004UUID\030\001 \001(\t\022\016"
+      "\n\006userID\030\002 \001(\t\022\017\n\007isLogin\030\003 \001(\010\022\023\n\013isCon"
+      "nected\030\004 \001(\010\022\024\n\014isReciveNoti\030\005 \001(\010\022\022\n\nse"
+      "rverName\030\006 \001(\t\022+\n\005users\030\010 \003(\0132\034.chat.Con"
+      "nectInfo.UsersEntry\022\025\n\rclientVersion\030\t \001"
+      "(\t\022\021\n\tOSVersion\030\n \001(\t\022\022\n\nappVersion\030\013 \001("
+      "\t\022\021\n\ttimestamp\030\014 \001(\t\032,\n\nUsersEntry\022\013\n\003ke"
+      "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\005:\0028\001\"a\n\021ConnectInf"
+      "oLittle\022\014\n\004UUID\030\001 \001(\t\022\023\n\013isConnected\030\002 \001"
+      "(\010\022\024\n\014isReciveNoti\030\003 \001(\010\022\023\n\013nodepointor\030"
+      "\004 \001(\003\"A\n\005Media\022\013\n\003md5\030\001 \001(\t\022\014\n\004path\030\002 \001("
+      "\t\022\035\n\004type\030\003 \001(\0162\017.chat.MediaType\"\035\n\010Medi"
+      "aRes\022\021\n\tisSuccess\030\001 \001(\010\"\031\n\nQueryMedia\022\013\n"
+      "\003md5\030\001 \001(\t\"+\n\rQueryMediaRes\022\032\n\005media\030\001 \001"
+      "(\0132\013.chat.Media*8\n\007IsAgree\022\n\n\006unknow\020\000\022\t"
+      "\n\005agree\020\001\022\n\n\006refuse\020\002\022\n\n\006ignore\020\003*_\n\014Use"
+      "rProperty\022\014\n\010realname\020\000\022\014\n\010nickname\020\001\022\010\n"
+      "\004icon\020\002\022\017\n\013description\020\003\022\n\n\006isMale\020\004\022\014\n\010"
+      "birthday\020\005*3\n\tMediaType\022\n\n\006UNKNOW\020\000\022\010\n\004T"
+      "EXT\020\001\022\007\n\003JPG\020\002\022\007\n\003MP3\020\003B\003\370\001\000b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 4941);
+      descriptor, 4956);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chat_message.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&TableStruct::Shutdown);
@@ -7581,6 +7582,7 @@ void SetUserProperty::set_allocated_value(::std::string* value) {
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int SetUserPropertyRes::kPropertyFieldNumber;
+const int SetUserPropertyRes::kValueFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 SetUserPropertyRes::SetUserPropertyRes()
@@ -7596,11 +7598,16 @@ SetUserPropertyRes::SetUserPropertyRes(const SetUserPropertyRes& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.value().size() > 0) {
+    value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
+  }
   property_ = from.property_;
   // @@protoc_insertion_point(copy_constructor:chat.SetUserPropertyRes)
 }
 
 void SetUserPropertyRes::SharedCtor() {
+  value_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   property_ = 0;
   _cached_size_ = 0;
 }
@@ -7611,6 +7618,7 @@ SetUserPropertyRes::~SetUserPropertyRes() {
 }
 
 void SetUserPropertyRes::SharedDtor() {
+  value_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void SetUserPropertyRes::SetCachedSize(int size) const {
@@ -7638,6 +7646,7 @@ SetUserPropertyRes* SetUserPropertyRes::New(::google::protobuf::Arena* arena) co
 
 void SetUserPropertyRes::Clear() {
 // @@protoc_insertion_point(message_clear_start:chat.SetUserPropertyRes)
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   property_ = 0;
 }
 
@@ -7659,6 +7668,21 @@ bool SetUserPropertyRes::MergePartialFromCodedStream(
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
           set_property(static_cast< ::chat::UserProperty >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string value = 2;
+      case 2: {
+        if (tag == 18u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_value()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->value().data(), this->value().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "chat.SetUserPropertyRes.value"));
         } else {
           goto handle_unusual;
         }
@@ -7695,6 +7719,16 @@ void SetUserPropertyRes::SerializeWithCachedSizes(
       1, this->property(), output);
   }
 
+  // string value = 2;
+  if (this->value().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->value().data(), this->value().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.SetUserPropertyRes.value");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->value(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:chat.SetUserPropertyRes)
 }
 
@@ -7708,6 +7742,17 @@ void SetUserPropertyRes::SerializeWithCachedSizes(
       1, this->property(), target);
   }
 
+  // string value = 2;
+  if (this->value().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->value().data(), this->value().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "chat.SetUserPropertyRes.value");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->value(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:chat.SetUserPropertyRes)
   return target;
 }
@@ -7715,6 +7760,13 @@ void SetUserPropertyRes::SerializeWithCachedSizes(
 size_t SetUserPropertyRes::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:chat.SetUserPropertyRes)
   size_t total_size = 0;
+
+  // string value = 2;
+  if (this->value().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->value());
+  }
 
   // .chat.UserProperty property = 1;
   if (this->property() != 0) {
@@ -7748,6 +7800,10 @@ void SetUserPropertyRes::MergeFrom(const SetUserPropertyRes& from) {
 // @@protoc_insertion_point(class_specific_merge_from_start:chat.SetUserPropertyRes)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.value().size() > 0) {
+
+    value_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.value_);
+  }
   if (from.property() != 0) {
     set_property(from.property());
   }
@@ -7776,6 +7832,7 @@ void SetUserPropertyRes::Swap(SetUserPropertyRes* other) {
   InternalSwap(other);
 }
 void SetUserPropertyRes::InternalSwap(SetUserPropertyRes* other) {
+  value_.Swap(&other->value_);
   std::swap(property_, other->property_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -7800,6 +7857,58 @@ void SetUserPropertyRes::set_property(::chat::UserProperty value) {
   
   property_ = value;
   // @@protoc_insertion_point(field_set:chat.SetUserPropertyRes.property)
+}
+
+// string value = 2;
+void SetUserPropertyRes::clear_value() {
+  value_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+const ::std::string& SetUserPropertyRes::value() const {
+  // @@protoc_insertion_point(field_get:chat.SetUserPropertyRes.value)
+  return value_.GetNoArena();
+}
+void SetUserPropertyRes::set_value(const ::std::string& value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.SetUserPropertyRes.value)
+}
+#if LANG_CXX11
+void SetUserPropertyRes::set_value(::std::string&& value) {
+  
+  value_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.SetUserPropertyRes.value)
+}
+#endif
+void SetUserPropertyRes::set_value(const char* value) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.SetUserPropertyRes.value)
+}
+void SetUserPropertyRes::set_value(const char* value, size_t size) {
+  
+  value_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.SetUserPropertyRes.value)
+}
+::std::string* SetUserPropertyRes::mutable_value() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.SetUserPropertyRes.value)
+  return value_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+::std::string* SetUserPropertyRes::release_value() {
+  // @@protoc_insertion_point(field_release:chat.SetUserPropertyRes.value)
+  
+  return value_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+void SetUserPropertyRes::set_allocated_value(::std::string* value) {
+  if (value != NULL) {
+    
+  } else {
+    
+  }
+  value_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set_allocated:chat.SetUserPropertyRes.value)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

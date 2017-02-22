@@ -1170,16 +1170,20 @@ struct Chat_SetUserPropertyRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Messa
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
     1: .same(proto: "property", swift: "property"),
+    2: .same(proto: "value", swift: "value"),
   ]
 
 
   var property: Chat_UserProperty = Chat_UserProperty.realname
+
+  var value: String = ""
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
     case 1: try setter.decodeSingularField(fieldType: Chat_UserProperty.self, value: &property)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &value)
     default: break
     }
   }
@@ -1188,10 +1192,14 @@ struct Chat_SetUserPropertyRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Messa
     if property != Chat_UserProperty.realname {
       try visitor.visitSingularField(fieldType: Chat_UserProperty.self, value: property, protoFieldNumber: 1)
     }
+    if value != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: value, protoFieldNumber: 2)
+    }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_SetUserPropertyRes) -> Bool {
     if property != other.property {return false}
+    if value != other.value {return false}
     return true
   }
 }

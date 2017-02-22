@@ -120,6 +120,7 @@ message SetUserProperty {
 
 message SetUserPropertyRes {
   UserProperty property = 1;
+  string value = 2;
 }
 
 message QueryUser {
