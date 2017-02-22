@@ -980,7 +980,7 @@ void dispatch(chat::QueryMessage & query) {
     // update user's readed  
     client->updateReadedIncrement(currentNode_->userid, 
         query.tonodeid(), query.toincrementid());
-    if (query.toincrementid() == query.fromincrementid()) {
+    if (unlikely(query.toincrementid() == query.fromincrementid())) {
       throw std::system_error(std::error_code(0, std::generic_category()),
           "just update node's readed");
     } else {
@@ -1052,7 +1052,7 @@ void dispatch(chat::QueryMedia & querymedia) {
       - PADDING_LENGTH;
     auto res = chat::QueryMediaRes();
     auto media_p = res.mutable_media();
-    client->queryMedia(querymedia.sha1(), *media_p);
+    client->queryMedia(querymedia.md5(), *media_p);
     YILOG_INFO ("query media success {}", pro2string(res));
     mountBuffer2Node(yijianBuffer(res), node_self_);
   }catch (std::system_error & sys_error) {

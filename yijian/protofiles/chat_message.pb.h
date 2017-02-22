@@ -117,6 +117,9 @@ extern MediaResDefaultTypeInternal _MediaRes_default_instance_;
 class MessageNode;
 class MessageNodeDefaultTypeInternal;
 extern MessageNodeDefaultTypeInternal _MessageNode_default_instance_;
+class NodeInfo;
+class NodeInfoDefaultTypeInternal;
+extern NodeInfoDefaultTypeInternal _NodeInfo_default_instance_;
 class NodeMessage;
 class NodeMessageDefaultTypeInternal;
 extern NodeMessageDefaultTypeInternal _NodeMessage_default_instance_;
@@ -129,9 +132,6 @@ extern NodeMessageResDefaultTypeInternal _NodeMessageRes_default_instance_;
 class NodePeerServer;
 class NodePeerServerDefaultTypeInternal;
 extern NodePeerServerDefaultTypeInternal _NodePeerServer_default_instance_;
-class NodeReadInfo;
-class NodeReadInfoDefaultTypeInternal;
-extern NodeReadInfoDefaultTypeInternal _NodeReadInfo_default_instance_;
 class NodeSelfDevice;
 class NodeSelfDeviceDefaultTypeInternal;
 extern NodeSelfDeviceDefaultTypeInternal _NodeSelfDevice_default_instance_;
@@ -431,37 +431,37 @@ class ErrorNth : public ::google::protobuf::Message /* @@protoc_insertion_point(
 };
 // -------------------------------------------------------------------
 
-class NodeReadInfo : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.NodeReadInfo) */ {
+class NodeInfo : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.NodeInfo) */ {
  public:
-  NodeReadInfo();
-  virtual ~NodeReadInfo();
+  NodeInfo();
+  virtual ~NodeInfo();
 
-  NodeReadInfo(const NodeReadInfo& from);
+  NodeInfo(const NodeInfo& from);
 
-  inline NodeReadInfo& operator=(const NodeReadInfo& from) {
+  inline NodeInfo& operator=(const NodeInfo& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const NodeReadInfo& default_instance();
+  static const NodeInfo& default_instance();
 
-  static inline const NodeReadInfo* internal_default_instance() {
-    return reinterpret_cast<const NodeReadInfo*>(
-               &_NodeReadInfo_default_instance_);
+  static inline const NodeInfo* internal_default_instance() {
+    return reinterpret_cast<const NodeInfo*>(
+               &_NodeInfo_default_instance_);
   }
 
-  void Swap(NodeReadInfo* other);
+  void Swap(NodeInfo* other);
 
   // implements Message ----------------------------------------------
 
-  inline NodeReadInfo* New() const PROTOBUF_FINAL { return New(NULL); }
+  inline NodeInfo* New() const PROTOBUF_FINAL { return New(NULL); }
 
-  NodeReadInfo* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  NodeInfo* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
   void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
   void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const NodeReadInfo& from);
-  void MergeFrom(const NodeReadInfo& from);
+  void CopyFrom(const NodeInfo& from);
+  void MergeFrom(const NodeInfo& from);
   void Clear() PROTOBUF_FINAL;
   bool IsInitialized() const PROTOBUF_FINAL;
 
@@ -482,7 +482,7 @@ class NodeReadInfo : public ::google::protobuf::Message /* @@protoc_insertion_po
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(NodeReadInfo* other);
+  void InternalSwap(NodeInfo* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return NULL;
@@ -498,24 +498,39 @@ class NodeReadInfo : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // int32 readedIncrementid = 1;
-  void clear_readedincrementid();
-  static const int kReadedIncrementidFieldNumber = 1;
-  ::google::protobuf::int32 readedincrementid() const;
-  void set_readedincrementid(::google::protobuf::int32 value);
+  // string toNodeID = 1;
+  void clear_tonodeid();
+  static const int kToNodeIDFieldNumber = 1;
+  const ::std::string& tonodeid() const;
+  void set_tonodeid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_tonodeid(::std::string&& value);
+  #endif
+  void set_tonodeid(const char* value);
+  void set_tonodeid(const char* value, size_t size);
+  ::std::string* mutable_tonodeid();
+  ::std::string* release_tonodeid();
+  void set_allocated_tonodeid(::std::string* tonodeid);
 
-  // int32 unreadIncrementid = 2;
-  void clear_unreadincrementid();
-  static const int kUnreadIncrementidFieldNumber = 2;
-  ::google::protobuf::int32 unreadincrementid() const;
-  void set_unreadincrementid(::google::protobuf::int32 value);
+  // int32 maxIncrementid = 2;
+  void clear_maxincrementid();
+  static const int kMaxIncrementidFieldNumber = 2;
+  ::google::protobuf::int32 maxincrementid() const;
+  void set_maxincrementid(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:chat.NodeReadInfo)
+  // int32 recentTimestamp = 3;
+  void clear_recenttimestamp();
+  static const int kRecentTimestampFieldNumber = 3;
+  ::google::protobuf::int32 recenttimestamp() const;
+  void set_recenttimestamp(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:chat.NodeInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::int32 readedincrementid_;
-  ::google::protobuf::int32 unreadincrementid_;
+  ::google::protobuf::internal::ArenaStringPtr tonodeid_;
+  ::google::protobuf::int32 maxincrementid_;
+  ::google::protobuf::int32 recenttimestamp_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -592,30 +607,30 @@ class TalkList : public ::google::protobuf::Message /* @@protoc_insertion_point(
 
   // accessors -------------------------------------------------------
 
-  // map<string, .chat.NodeReadInfo> nodemap = 1;
-  int nodemap_size() const;
-  void clear_nodemap();
-  static const int kNodemapFieldNumber = 1;
-  const ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >&
-      nodemap() const;
-  ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >*
-      mutable_nodemap();
+  // map<string, int32> nodeReadMap = 1;
+  int nodereadmap_size() const;
+  void clear_nodereadmap();
+  static const int kNodeReadMapFieldNumber = 1;
+  const ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >&
+      nodereadmap() const;
+  ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >*
+      mutable_nodereadmap();
 
   // @@protoc_insertion_point(class_scope:chat.TalkList)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   typedef ::google::protobuf::internal::MapEntryLite<
-      ::std::string, ::chat::NodeReadInfo,
+      ::std::string, ::google::protobuf::int32,
       ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
-      ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
       0 >
-      TalkList_NodemapEntry;
+      TalkList_NodeReadMapEntry;
   ::google::protobuf::internal::MapField<
-      ::std::string, ::chat::NodeReadInfo,
+      ::std::string, ::google::protobuf::int32,
       ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
-      ::google::protobuf::internal::WireFormatLite::TYPE_MESSAGE,
-      0 > nodemap_;
+      ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
+      0 > nodereadmap_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -5851,6 +5866,12 @@ class NodeMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::chat::MediaType type() const;
   void set_type(::chat::MediaType value);
 
+  // int32 timestamp = 8;
+  void clear_timestamp();
+  static const int kTimestampFieldNumber = 8;
+  ::google::protobuf::int32 timestamp() const;
+  void set_timestamp(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:chat.NodeMessage)
  private:
 
@@ -5862,6 +5883,7 @@ class NodeMessage : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::internal::ArenaStringPtr touserid_outer_;
   ::google::protobuf::int32 incrementid_;
   int type_;
+  ::google::protobuf::int32 timestamp_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -5996,6 +6018,12 @@ class NodeMessageRes : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::int32 incrementid() const;
   void set_incrementid(::google::protobuf::int32 value);
 
+  // int32 timestamp = 6;
+  void clear_timestamp();
+  static const int kTimestampFieldNumber = 6;
+  ::google::protobuf::int32 timestamp() const;
+  void set_timestamp(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:chat.NodeMessageRes)
  private:
 
@@ -6005,6 +6033,7 @@ class NodeMessageRes : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::internal::ArenaStringPtr touserid_outer_;
   ::google::protobuf::internal::ArenaStringPtr tonodeid_;
   ::google::protobuf::int32 incrementid_;
+  ::google::protobuf::int32 timestamp_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -6956,19 +6985,19 @@ class Media : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   // accessors -------------------------------------------------------
 
-  // string sha1 = 1;
-  void clear_sha1();
-  static const int kSha1FieldNumber = 1;
-  const ::std::string& sha1() const;
-  void set_sha1(const ::std::string& value);
+  // string md5 = 1;
+  void clear_md5();
+  static const int kMd5FieldNumber = 1;
+  const ::std::string& md5() const;
+  void set_md5(const ::std::string& value);
   #if LANG_CXX11
-  void set_sha1(::std::string&& value);
+  void set_md5(::std::string&& value);
   #endif
-  void set_sha1(const char* value);
-  void set_sha1(const char* value, size_t size);
-  ::std::string* mutable_sha1();
-  ::std::string* release_sha1();
-  void set_allocated_sha1(::std::string* sha1);
+  void set_md5(const char* value);
+  void set_md5(const char* value, size_t size);
+  ::std::string* mutable_md5();
+  ::std::string* release_md5();
+  void set_allocated_md5(::std::string* md5);
 
   // string path = 2;
   void clear_path();
@@ -6994,7 +7023,7 @@ class Media : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr sha1_;
+  ::google::protobuf::internal::ArenaStringPtr md5_;
   ::google::protobuf::internal::ArenaStringPtr path_;
   int type_;
   mutable int _cached_size_;
@@ -7152,25 +7181,25 @@ class QueryMedia : public ::google::protobuf::Message /* @@protoc_insertion_poin
 
   // accessors -------------------------------------------------------
 
-  // string sha1 = 1;
-  void clear_sha1();
-  static const int kSha1FieldNumber = 1;
-  const ::std::string& sha1() const;
-  void set_sha1(const ::std::string& value);
+  // string md5 = 1;
+  void clear_md5();
+  static const int kMd5FieldNumber = 1;
+  const ::std::string& md5() const;
+  void set_md5(const ::std::string& value);
   #if LANG_CXX11
-  void set_sha1(::std::string&& value);
+  void set_md5(::std::string&& value);
   #endif
-  void set_sha1(const char* value);
-  void set_sha1(const char* value, size_t size);
-  ::std::string* mutable_sha1();
-  ::std::string* release_sha1();
-  void set_allocated_sha1(::std::string* sha1);
+  void set_md5(const char* value);
+  void set_md5(const char* value, size_t size);
+  ::std::string* mutable_md5();
+  ::std::string* release_md5();
+  void set_allocated_md5(::std::string* md5);
 
   // @@protoc_insertion_point(class_scope:chat.QueryMedia)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr sha1_;
+  ::google::protobuf::internal::ArenaStringPtr md5_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -7284,34 +7313,86 @@ inline void ErrorNth::set_maxnth(::google::protobuf::int32 value) {
 
 // -------------------------------------------------------------------
 
-// NodeReadInfo
+// NodeInfo
 
-// int32 readedIncrementid = 1;
-inline void NodeReadInfo::clear_readedincrementid() {
-  readedincrementid_ = 0;
+// string toNodeID = 1;
+inline void NodeInfo::clear_tonodeid() {
+  tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::google::protobuf::int32 NodeReadInfo::readedincrementid() const {
-  // @@protoc_insertion_point(field_get:chat.NodeReadInfo.readedIncrementid)
-  return readedincrementid_;
+inline const ::std::string& NodeInfo::tonodeid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeInfo.toNodeID)
+  return tonodeid_.GetNoArena();
 }
-inline void NodeReadInfo::set_readedincrementid(::google::protobuf::int32 value) {
+inline void NodeInfo::set_tonodeid(const ::std::string& value) {
   
-  readedincrementid_ = value;
-  // @@protoc_insertion_point(field_set:chat.NodeReadInfo.readedIncrementid)
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeInfo.toNodeID)
+}
+#if LANG_CXX11
+inline void NodeInfo::set_tonodeid(::std::string&& value) {
+  
+  tonodeid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeInfo.toNodeID)
+}
+#endif
+inline void NodeInfo::set_tonodeid(const char* value) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeInfo.toNodeID)
+}
+inline void NodeInfo::set_tonodeid(const char* value, size_t size) {
+  
+  tonodeid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeInfo.toNodeID)
+}
+inline ::std::string* NodeInfo::mutable_tonodeid() {
+  
+  // @@protoc_insertion_point(field_mutable:chat.NodeInfo.toNodeID)
+  return tonodeid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* NodeInfo::release_tonodeid() {
+  // @@protoc_insertion_point(field_release:chat.NodeInfo.toNodeID)
+  
+  return tonodeid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void NodeInfo::set_allocated_tonodeid(::std::string* tonodeid) {
+  if (tonodeid != NULL) {
+    
+  } else {
+    
+  }
+  tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeInfo.toNodeID)
 }
 
-// int32 unreadIncrementid = 2;
-inline void NodeReadInfo::clear_unreadincrementid() {
-  unreadincrementid_ = 0;
+// int32 maxIncrementid = 2;
+inline void NodeInfo::clear_maxincrementid() {
+  maxincrementid_ = 0;
 }
-inline ::google::protobuf::int32 NodeReadInfo::unreadincrementid() const {
-  // @@protoc_insertion_point(field_get:chat.NodeReadInfo.unreadIncrementid)
-  return unreadincrementid_;
+inline ::google::protobuf::int32 NodeInfo::maxincrementid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeInfo.maxIncrementid)
+  return maxincrementid_;
 }
-inline void NodeReadInfo::set_unreadincrementid(::google::protobuf::int32 value) {
+inline void NodeInfo::set_maxincrementid(::google::protobuf::int32 value) {
   
-  unreadincrementid_ = value;
-  // @@protoc_insertion_point(field_set:chat.NodeReadInfo.unreadIncrementid)
+  maxincrementid_ = value;
+  // @@protoc_insertion_point(field_set:chat.NodeInfo.maxIncrementid)
+}
+
+// int32 recentTimestamp = 3;
+inline void NodeInfo::clear_recenttimestamp() {
+  recenttimestamp_ = 0;
+}
+inline ::google::protobuf::int32 NodeInfo::recenttimestamp() const {
+  // @@protoc_insertion_point(field_get:chat.NodeInfo.recentTimestamp)
+  return recenttimestamp_;
+}
+inline void NodeInfo::set_recenttimestamp(::google::protobuf::int32 value) {
+  
+  recenttimestamp_ = value;
+  // @@protoc_insertion_point(field_set:chat.NodeInfo.recentTimestamp)
 }
 
 // -------------------------------------------------------------------
@@ -7320,22 +7401,22 @@ inline void NodeReadInfo::set_unreadincrementid(::google::protobuf::int32 value)
 
 // TalkList
 
-// map<string, .chat.NodeReadInfo> nodemap = 1;
-inline int TalkList::nodemap_size() const {
-  return nodemap_.size();
+// map<string, int32> nodeReadMap = 1;
+inline int TalkList::nodereadmap_size() const {
+  return nodereadmap_.size();
 }
-inline void TalkList::clear_nodemap() {
-  nodemap_.Clear();
+inline void TalkList::clear_nodereadmap() {
+  nodereadmap_.Clear();
 }
-inline const ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >&
-TalkList::nodemap() const {
-  // @@protoc_insertion_point(field_map:chat.TalkList.nodemap)
-  return nodemap_.GetMap();
+inline const ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >&
+TalkList::nodereadmap() const {
+  // @@protoc_insertion_point(field_map:chat.TalkList.nodeReadMap)
+  return nodereadmap_.GetMap();
 }
-inline ::google::protobuf::Map< ::std::string, ::chat::NodeReadInfo >*
-TalkList::mutable_nodemap() {
-  // @@protoc_insertion_point(field_mutable_map:chat.TalkList.nodemap)
-  return nodemap_.MutableMap();
+inline ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >*
+TalkList::mutable_nodereadmap() {
+  // @@protoc_insertion_point(field_mutable_map:chat.TalkList.nodeReadMap)
+  return nodereadmap_.MutableMap();
 }
 
 // -------------------------------------------------------------------
@@ -13101,6 +13182,20 @@ inline void NodeMessage::set_allocated_touserid_outer(::std::string* touserid_ou
   // @@protoc_insertion_point(field_set_allocated:chat.NodeMessage.toUserID_outer)
 }
 
+// int32 timestamp = 8;
+inline void NodeMessage::clear_timestamp() {
+  timestamp_ = 0;
+}
+inline ::google::protobuf::int32 NodeMessage::timestamp() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessage.timestamp)
+  return timestamp_;
+}
+inline void NodeMessage::set_timestamp(::google::protobuf::int32 value) {
+  
+  timestamp_ = value;
+  // @@protoc_insertion_point(field_set:chat.NodeMessage.timestamp)
+}
+
 // -------------------------------------------------------------------
 
 // NodeMessageRes
@@ -13325,6 +13420,20 @@ inline void NodeMessageRes::set_allocated_tonodeid(::std::string* tonodeid) {
   }
   tonodeid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tonodeid);
   // @@protoc_insertion_point(field_set_allocated:chat.NodeMessageRes.toNodeID)
+}
+
+// int32 timestamp = 6;
+inline void NodeMessageRes::clear_timestamp() {
+  timestamp_ = 0;
+}
+inline ::google::protobuf::int32 NodeMessageRes::timestamp() const {
+  // @@protoc_insertion_point(field_get:chat.NodeMessageRes.timestamp)
+  return timestamp_;
+}
+inline void NodeMessageRes::set_timestamp(::google::protobuf::int32 value) {
+  
+  timestamp_ = value;
+  // @@protoc_insertion_point(field_set:chat.NodeMessageRes.timestamp)
 }
 
 // -------------------------------------------------------------------
@@ -14381,56 +14490,56 @@ inline void ConnectInfoLittle::set_nodepointor(::google::protobuf::int64 value) 
 
 // Media
 
-// string sha1 = 1;
-inline void Media::clear_sha1() {
-  sha1_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string md5 = 1;
+inline void Media::clear_md5() {
+  md5_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& Media::sha1() const {
-  // @@protoc_insertion_point(field_get:chat.Media.sha1)
-  return sha1_.GetNoArena();
+inline const ::std::string& Media::md5() const {
+  // @@protoc_insertion_point(field_get:chat.Media.md5)
+  return md5_.GetNoArena();
 }
-inline void Media::set_sha1(const ::std::string& value) {
+inline void Media::set_md5(const ::std::string& value) {
   
-  sha1_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.Media.sha1)
+  md5_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.Media.md5)
 }
 #if LANG_CXX11
-inline void Media::set_sha1(::std::string&& value) {
+inline void Media::set_md5(::std::string&& value) {
   
-  sha1_.SetNoArena(
+  md5_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.Media.sha1)
+  // @@protoc_insertion_point(field_set_rvalue:chat.Media.md5)
 }
 #endif
-inline void Media::set_sha1(const char* value) {
+inline void Media::set_md5(const char* value) {
   
-  sha1_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.Media.sha1)
+  md5_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.Media.md5)
 }
-inline void Media::set_sha1(const char* value, size_t size) {
+inline void Media::set_md5(const char* value, size_t size) {
   
-  sha1_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  md5_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.Media.sha1)
+  // @@protoc_insertion_point(field_set_pointer:chat.Media.md5)
 }
-inline ::std::string* Media::mutable_sha1() {
+inline ::std::string* Media::mutable_md5() {
   
-  // @@protoc_insertion_point(field_mutable:chat.Media.sha1)
-  return sha1_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:chat.Media.md5)
+  return md5_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* Media::release_sha1() {
-  // @@protoc_insertion_point(field_release:chat.Media.sha1)
+inline ::std::string* Media::release_md5() {
+  // @@protoc_insertion_point(field_release:chat.Media.md5)
   
-  return sha1_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return md5_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Media::set_allocated_sha1(::std::string* sha1) {
-  if (sha1 != NULL) {
+inline void Media::set_allocated_md5(::std::string* md5) {
+  if (md5 != NULL) {
     
   } else {
     
   }
-  sha1_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sha1);
-  // @@protoc_insertion_point(field_set_allocated:chat.Media.sha1)
+  md5_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), md5);
+  // @@protoc_insertion_point(field_set_allocated:chat.Media.md5)
 }
 
 // string path = 2;
@@ -14521,56 +14630,56 @@ inline void MediaRes::set_issuccess(bool value) {
 
 // QueryMedia
 
-// string sha1 = 1;
-inline void QueryMedia::clear_sha1() {
-  sha1_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string md5 = 1;
+inline void QueryMedia::clear_md5() {
+  md5_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& QueryMedia::sha1() const {
-  // @@protoc_insertion_point(field_get:chat.QueryMedia.sha1)
-  return sha1_.GetNoArena();
+inline const ::std::string& QueryMedia::md5() const {
+  // @@protoc_insertion_point(field_get:chat.QueryMedia.md5)
+  return md5_.GetNoArena();
 }
-inline void QueryMedia::set_sha1(const ::std::string& value) {
+inline void QueryMedia::set_md5(const ::std::string& value) {
   
-  sha1_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.QueryMedia.sha1)
+  md5_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.QueryMedia.md5)
 }
 #if LANG_CXX11
-inline void QueryMedia::set_sha1(::std::string&& value) {
+inline void QueryMedia::set_md5(::std::string&& value) {
   
-  sha1_.SetNoArena(
+  md5_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.QueryMedia.sha1)
+  // @@protoc_insertion_point(field_set_rvalue:chat.QueryMedia.md5)
 }
 #endif
-inline void QueryMedia::set_sha1(const char* value) {
+inline void QueryMedia::set_md5(const char* value) {
   
-  sha1_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.QueryMedia.sha1)
+  md5_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.QueryMedia.md5)
 }
-inline void QueryMedia::set_sha1(const char* value, size_t size) {
+inline void QueryMedia::set_md5(const char* value, size_t size) {
   
-  sha1_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  md5_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.QueryMedia.sha1)
+  // @@protoc_insertion_point(field_set_pointer:chat.QueryMedia.md5)
 }
-inline ::std::string* QueryMedia::mutable_sha1() {
+inline ::std::string* QueryMedia::mutable_md5() {
   
-  // @@protoc_insertion_point(field_mutable:chat.QueryMedia.sha1)
-  return sha1_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:chat.QueryMedia.md5)
+  return md5_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* QueryMedia::release_sha1() {
-  // @@protoc_insertion_point(field_release:chat.QueryMedia.sha1)
+inline ::std::string* QueryMedia::release_md5() {
+  // @@protoc_insertion_point(field_release:chat.QueryMedia.md5)
   
-  return sha1_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return md5_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void QueryMedia::set_allocated_sha1(::std::string* sha1) {
-  if (sha1 != NULL) {
+inline void QueryMedia::set_allocated_md5(::std::string* md5) {
+  if (md5 != NULL) {
     
   } else {
     
   }
-  sha1_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sha1);
-  // @@protoc_insertion_point(field_set_allocated:chat.QueryMedia.sha1)
+  md5_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), md5);
+  // @@protoc_insertion_point(field_set_allocated:chat.QueryMedia.md5)
 }
 
 // -------------------------------------------------------------------

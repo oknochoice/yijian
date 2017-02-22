@@ -94,6 +94,7 @@ void nodemessageDocument(chat::NodeMessage & nodemessage,
       //get_utf8().value.to_string());
   nodemessage.set_content(nodemessage_view["content"].
       get_utf8().value.to_string());
+  nodemessage.set_timestamp(nodemessage_view["_id"].get_oid().value.get_time_t());
 }
 
 /*
@@ -362,7 +363,9 @@ void mongo_client::setUserProperty(const std::string & userID, const chat::SetUs
         << finalize,
         document{} << "$set" << open_document
         << property_string << isTrue
-        << close_document
+        << close_document 
+        << "$inc" << open_document
+        << "version" << 1 << close_document
         << finalize);
   }else if (property_string == "birthday"){
     int32_t birthday_ts = std::stoi(property.value());
@@ -372,6 +375,8 @@ void mongo_client::setUserProperty(const std::string & userID, const chat::SetUs
         document{} << "$set" << open_document
         << property_string << birthday_ts
         << close_document
+        << "$inc" << open_document
+        << "version" << 1 << close_document
         << finalize);
   }else {
     user_collection.update_one(
@@ -380,6 +385,8 @@ void mongo_client::setUserProperty(const std::string & userID, const chat::SetUs
         document{} << "$set" << open_document
         << property_string << property.value()
         << close_document
+        << "$inc" << open_document
+        << "version" << 1 << close_document
         << finalize);
   }
 }
@@ -795,6 +802,7 @@ mongo_client::queryNode(const std::string & nodeID) {
 
 // message 
 
+/*
 std::shared_ptr<chat::NodeMessage>
 mongo_client::queryMessage(const std::string & tonodeid, 
     const int32_t incrementid) {
@@ -818,6 +826,7 @@ mongo_client::queryMessage(const std::string & tonodeid,
         "missing message");
   }
 }
+*/
 
 std::shared_ptr<chat::NodeMessageRes> 
 mongo_client::insertMessage(chat::NodeMessage & message) {
@@ -853,6 +862,7 @@ mongo_client::insertMessage(chat::NodeMessage & message) {
     auto msgRes = std::make_shared<chat::NodeMessageRes>();
     msgRes->set_id(result->inserted_id().get_oid().value.to_string());
     msgRes->set_incrementid(incrementid);
+    msgRes->set_timestamp(result->inserted_id().get_oid().value.get_time_t());
     return msgRes;
   }catch(std::system_error & e) {
     YILOG_ERROR("insert message failure\n"
@@ -880,7 +890,7 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
       << "$gte" << query.fromincrementid() 
       << close_document << close_document << open_document
       << "incrementID" << open_document
-      << "$lte" << query.toincrementid()
+      << "$lt" << query.toincrementid()
       << close_document << close_document << close_array;
   }
   auto filter = builder << finalize;
@@ -932,36 +942,36 @@ void mongo_client::insertMedia(
   auto media_col = db["media"];
   try {
   auto maybe_result = media_col.insert_one(
-      document{} << "sha1" << media.sha1()
+      document{} << "md5" << media.md5()
       << "path" << media.path()
       << finalize);
   }catch (std::system_error & e) {
-    YILOG_ERROR ("media insert failure, sha1: {}"
+    YILOG_ERROR ("media insert failure, md5: {}"
         "system_error code:{}, what:{}.", 
-        media.sha1(), e.code().value(), e.what());
+        media.md5(), e.code().value(), e.what());
     throw std::system_error(std::error_code(40061, std::generic_category()),
         "media insert failure");
   }
 }
 
 
-void mongo_client::queryMedia(const std::string & sha1, 
+void mongo_client::queryMedia(const std::string & md5, 
     chat::Media & media) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto db = client_["chatdb"];
   auto media_col = db["media"];
   auto maybe_result = media_col.find_one(
-      document{} << "sha1" << sha1
+      document{} << "md5" << md5
       << finalize);
   if (unlikely(!maybe_result)) {
-    YILOG_ERROR ("media not find, sha1: {}.",
-        sha1);
+    YILOG_ERROR ("media not find, md5: {}.",
+        md5);
     throw std::system_error(std::error_code(40062, std::generic_category()),
         "media not find");
   }
   auto doc = maybe_result->view();
   media.set_type(static_cast<chat::MediaType>(doc["type"].get_int32().value));
-  media.set_sha1(doc["sha1"].get_utf8().value.to_string());
+  media.set_md5(doc["md5"].get_utf8().value.to_string());
   media.set_path(doc["path"].get_utf8().value.to_string());
 
 }

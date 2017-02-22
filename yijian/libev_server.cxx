@@ -97,7 +97,7 @@ void ping_move2back(Read_IO_SP sp) {
 static void 
 pingtime_callback(EV_P_ ev_timer *w, int revents) {
   YILOG_TRACE ("func: {}. ", __func__);
-  ev_timer_stop(loop, w);
+//  ev_timer_stop(loop, w);
   uint64_t now = ping_time();
   auto it = pinglist_.begin();
   while(it != pinglist_.end()) {
@@ -114,7 +114,8 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
     }
 
   }
-  ev_timer_set (w, PINGPONGTIME, 0.);
+  // ev_timer_set (w, PINGPONGTIME, 0.);
+  w->repeat = PINGPONGTIME;
 
   // stop server
   if (unlikely(isStopThreadFunc_ == true)) {
@@ -136,7 +137,8 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
       exit(0);
     }
   }
-  ev_timer_start (loop, w);
+  //ev_timer_start (loop, w);
+  ev_timer_again(loop, w);
 }
 /*
  * quick remove node
@@ -918,8 +920,9 @@ int start_server_libev(IPS ips ) {
 
   //timer ping
   struct ev_timer * timer = timer_watcher();
-  ev_timer_init (timer, pingtime_callback, PINGPONGTIME, 0.);
-  ev_timer_start (lloop, timer);
+  ev_init (timer, pingtime_callback);
+  timer->repeat = PINGPONGTIME;
+  ev_timer_again (lloop, timer);
 
   //timer quick remove
   /*

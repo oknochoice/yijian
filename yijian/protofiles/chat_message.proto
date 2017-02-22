@@ -10,13 +10,14 @@ message ErrorNth {
   int32 maxnth = 1;
 }
 
-message NodeReadInfo {
-  int32 readedIncrementid = 1;
-  int32 unreadIncrementid = 2;
+message NodeInfo {
+  string toNodeID = 1;
+  int32  maxIncrementid = 2;
+  int32  recentTimestamp = 3;
 }
 
 message TalkList {
-  map<string, NodeReadInfo> nodemap  = 1;
+  map<string, int32> nodeReadMap = 1;
 }
 
 message Ping {
@@ -48,7 +49,6 @@ message Error {
 }
 
 message Device {
-
   enum    OperatingSystem {iOS = 0; Android = 1;}
   OperatingSystem OS = 1;
   string          deviceModel = 2;
@@ -363,6 +363,8 @@ message NodeMessage {
   string content = 6;// nontext base64
 
   string toUserID_outer = 7; // server used to quick search device
+
+  int32 timestamp = 8;// get from id (second)
   
 }
 message NodeMessageRes {
@@ -373,6 +375,7 @@ message NodeMessageRes {
   string fromUserID = 3;
   string toUserID_outer = 4;
   string toNodeID = 5;
+  int32 timestamp = 6;// get from id (second)
 
 }
 /*
@@ -474,7 +477,7 @@ message ConnectInfoLittle {
 //    content: 123,
 // }
 message Media {
-  string sha1 = 1;
+  string md5 = 1;
   string path = 2;
   MediaType type = 3;
 }
@@ -484,7 +487,7 @@ message MediaRes {
 }
 
 message QueryMedia {
-  string sha1 = 1;
+  string md5 = 1;
 }
 
 message QueryMediaRes {
