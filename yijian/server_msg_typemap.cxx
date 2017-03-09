@@ -1038,8 +1038,15 @@ void dispatch(chat::Media & media) {
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
-    mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
-        node_self_);
+    if (sys_error.code().value() == 40061) {
+      auto mediares = chat::MediaRes();
+      mediares.set_issuccess(true);
+      YILOG_INFO ("media {}", pro2string(mediares));
+      mountBuffer2Node(yijianBuffer(mediares), node_self_);
+    }else {
+      mountBuffer2Node(errorBuffer(sys_error.code().value(), sys_error.what()), 
+          node_self_);
+    }
   }
 }
 
@@ -1126,9 +1133,6 @@ void dispatch(chat::SetUserProperty & property) {
     auto res = chat::SetUserPropertyRes();
     res.set_property(property.property());
     res.set_value(property.value());
-    if (property.property() == chat::UserProperty::icon) {
-      res.set_value(client->sourceDomain + property.value());
-    }
     mountBuffer2Node(yijianBuffer(res), node_self_);
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 

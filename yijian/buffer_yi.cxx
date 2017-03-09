@@ -337,7 +337,9 @@ std::size_t buffer::socket_read(SSL * ssl, char * pos, std::size_t count) {
           "connection has been closed");
     }else if (error_l == SSL_ERROR_WANT_READ) {
       YILOG_TRACE("func: {}, SSL_ERROR_WANT_READ:", __func__);
-      readed = 0;
+      throw std::system_error(std::error_code(
+            20012, std::system_category()),
+          "read later");
     }else if (error_l == SSL_ERROR_WANT_CONNECT || 
         error_l == SSL_ERROR_WANT_ACCEPT) {
       YILOG_TRACE("func: {}, SSL_ERROR_WANT_CONNECT"
@@ -382,8 +384,7 @@ std::size_t buffer::socket_write(SSL * ssl, char * pos, std::size_t count) {
       YILOG_TRACE("func: {}, SSL_ERROR_WANT_READ:", __func__);
       throw std::system_error(std::error_code(
             20024, std::system_category()),
-          "read again now");
-      writed = 0;
+          "write again now");
     }else if (error_l == SSL_ERROR_WANT_CONNECT || 
         error_l == SSL_ERROR_WANT_ACCEPT) {
       YILOG_TRACE("func: {}, SSL_ERROR_WANT_CONNECT"

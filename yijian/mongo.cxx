@@ -295,7 +295,6 @@ mongo_client::queryUser(const std::string & phoneNo,
   }
   auto user_view = maybe_result->view();
   auto user_sp = userDocoument(user_view);
-  user_sp->set_icon(sourceDomain + user_sp->icon());
   return user_sp;
 }
 
@@ -904,9 +903,6 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
   for (auto doc: cursor) {
     auto message = chat::NodeMessage();
     nodemessageDocument(message, doc);
-    if (message.type() != chat::MediaType::TEXT) {
-      message.set_content(sourceDomain + message.content());
-    }
     func(message);
   }
 }

@@ -102,7 +102,8 @@ pingtime_callback(EV_P_ ev_timer *w, int revents) {
   auto it = pinglist_.begin();
   while(it != pinglist_.end()) {
 
-    YILOG_TRACE ("func: {}. forloop", __func__);
+    YILOG_TRACE ("func: {}. now:{}, it->time:{}", 
+        __func__, now, (*it)->ping_time);
 
     if (now - (*it)->ping_time > PINGPONGTIMEOUT) {
       uuidnode_delete((*it)->uuid);
@@ -743,7 +744,8 @@ connection_read_callback (struct ev_loop * loop,
         e.code().value() == 20005 ||
         e.code().value() == 20006 ||
         e.code().value() == 20007 ||
-        e.code().value() == 20008) {
+        e.code().value() == 20008 ||
+        e.code().value() == 20012) {
       // close node
       ev_io_stop(loop, rw);
       Read_IO * io = reinterpret_cast<Read_IO*>(rw);

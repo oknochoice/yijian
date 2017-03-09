@@ -22,5 +22,5 @@ db.connectInfo.createIndex({"UUID": 1}, {"unique": true})
 //db.connectInfo.createIndex({"toNodeIDs": 1, "serverName": 1})
 db.connectInfo.createIndex({"userID": 1, "serverName": 1, "toNodeIDs": 1})
 // media
-db.media.createIndex({"sha1": 1}, {"unique": true})
+db.media.createIndex({"md5": 1}, {"unique": true})
 
