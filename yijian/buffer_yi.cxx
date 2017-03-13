@@ -129,7 +129,7 @@ bool buffer::socket_read(SSL * sfd) {
       YILOG_TRACE ("func: {}, type: {}, length: {}", 
           __func__, data_type_, pair.first);
 
-      long readed = PADDING_LENGTH - (pair.second - header_pos_);
+      long readed = current_pos_ - data_pos_;
 
       remain_data_length_ = pair.first - readed;
       isParseFinish_ = true;
@@ -255,7 +255,7 @@ buffer::decoding_var_length(char * pos) {
       throw std::system_error(std::error_code(20001, std::generic_category()),
           "Malformed Remaining Length");
   }while((encodeByte & 128) != 0);
-  YILOG_TRACE("func: {}, return", __func__);
+  YILOG_TRACE("func: {}, return. value: {}", __func__, value);
   return std::make_pair(value, pos);
 }
 
@@ -419,9 +419,9 @@ void buffer::makeReWrite() {
   
 void buffer::encoding(const uint8_t type, const std::string & data) {
   data_length_ = data.length();
-  Assert(data_length_ > 0);
+  Assert(data_length_ >= 0);
   Assert(data_length_ <= 1024 - PADDING_LENGTH);
-  if (unlikely(data_length_ > 1024 - PADDING_LENGTH || data_length_ == 0)) {
+  if (unlikely(data_length_ > 1024 - PADDING_LENGTH)) {
     throw std::system_error(std::error_code(20011, std::generic_category()),
         "Malformed Length");
   }

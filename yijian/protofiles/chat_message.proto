@@ -20,6 +20,10 @@ message TalkList {
   map<string, int32> nodeReadMap = 1;
 }
 
+message Friends {
+  repeated string userid = 1;
+}
+
 message Ping {
   string msg = 1;
 }

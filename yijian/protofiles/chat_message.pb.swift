@@ -418,6 +418,38 @@ struct Chat_TalkList: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   }
 }
 
+struct Chat_Friends: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_Friends"}
+  public var protoMessageName: String {return "Friends"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "userid", swift: "userid"),
+  ]
+
+
+  var userid: [String] = []
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeRepeatedField(fieldType: SwiftProtobuf.ProtobufString.self, value: &userid)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if !userid.isEmpty {
+      try visitor.visitRepeatedField(fieldType: SwiftProtobuf.ProtobufString.self, value: userid, protoFieldNumber: 1)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_Friends) -> Bool {
+    if userid != other.userid {return false}
+    return true
+  }
+}
+
 struct Chat_Ping: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
   public var swiftClassName: String {return "Chat_Ping"}
   public var protoMessageName: String {return "Ping"}

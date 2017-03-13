@@ -2,7 +2,7 @@ mongo chatdb
 use chatdb
 
 // user 
-db.user.createIndex({"countryCode": 1, "phoneNo": 1}, {"unique": true})
+db.user.createIndex({"phoneNo": 1, "countryCode": 1}, {"unique": true})
 db.user.createIndex({"nickname": 1})
 // user unread
 db.userUnread.createIndex({"userID": 1, "toNodeID": 1}, {"unique": true})

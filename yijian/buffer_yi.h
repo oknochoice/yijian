@@ -15,7 +15,7 @@
 #define MSG_TYPE_LENGTH 1
 #define VAR_LENGTH 2
 #define SESSIONID_LENGTH 2
-#define PADDING_LENGTH (MSG_TYPE_LENGTH + VAR_LENGTH + SESSIONID_LENGTH)
+#define PADDING_LENGTH (SESSIONID_LENGTH + MSG_TYPE_LENGTH + VAR_LENGTH)
 
 enum class Message_Type : std::size_t {
   message = 1024,

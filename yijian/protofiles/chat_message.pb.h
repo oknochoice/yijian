@@ -87,6 +87,9 @@ extern ErrorDefaultTypeInternal _Error_default_instance_;
 class ErrorNth;
 class ErrorNthDefaultTypeInternal;
 extern ErrorNthDefaultTypeInternal _ErrorNth_default_instance_;
+class Friends;
+class FriendsDefaultTypeInternal;
+extern FriendsDefaultTypeInternal _Friends_default_instance_;
 class GroupAddMember;
 class GroupAddMemberDefaultTypeInternal;
 extern GroupAddMemberDefaultTypeInternal _GroupAddMember_default_instance_;
@@ -631,6 +634,99 @@ class TalkList : public ::google::protobuf::Message /* @@protoc_insertion_point(
       ::google::protobuf::internal::WireFormatLite::TYPE_STRING,
       ::google::protobuf::internal::WireFormatLite::TYPE_INT32,
       0 > nodereadmap_;
+  mutable int _cached_size_;
+  friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class Friends : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.Friends) */ {
+ public:
+  Friends();
+  virtual ~Friends();
+
+  Friends(const Friends& from);
+
+  inline Friends& operator=(const Friends& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Friends& default_instance();
+
+  static inline const Friends* internal_default_instance() {
+    return reinterpret_cast<const Friends*>(
+               &_Friends_default_instance_);
+  }
+
+  void Swap(Friends* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Friends* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  Friends* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const Friends& from);
+  void MergeFrom(const Friends& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(Friends* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated string userid = 1;
+  int userid_size() const;
+  void clear_userid();
+  static const int kUseridFieldNumber = 1;
+  const ::std::string& userid(int index) const;
+  ::std::string* mutable_userid(int index);
+  void set_userid(int index, const ::std::string& value);
+  void set_userid(int index, const char* value);
+  void set_userid(int index, const char* value, size_t size);
+  ::std::string* add_userid();
+  void add_userid(const ::std::string& value);
+  void add_userid(const char* value);
+  void add_userid(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& userid() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_userid();
+
+  // @@protoc_insertion_point(class_scope:chat.Friends)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> userid_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -7432,6 +7528,65 @@ inline ::google::protobuf::Map< ::std::string, ::google::protobuf::int32 >*
 TalkList::mutable_nodereadmap() {
   // @@protoc_insertion_point(field_mutable_map:chat.TalkList.nodeReadMap)
   return nodereadmap_.MutableMap();
+}
+
+// -------------------------------------------------------------------
+
+// Friends
+
+// repeated string userid = 1;
+inline int Friends::userid_size() const {
+  return userid_.size();
+}
+inline void Friends::clear_userid() {
+  userid_.Clear();
+}
+inline const ::std::string& Friends::userid(int index) const {
+  // @@protoc_insertion_point(field_get:chat.Friends.userid)
+  return userid_.Get(index);
+}
+inline ::std::string* Friends::mutable_userid(int index) {
+  // @@protoc_insertion_point(field_mutable:chat.Friends.userid)
+  return userid_.Mutable(index);
+}
+inline void Friends::set_userid(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:chat.Friends.userid)
+  userid_.Mutable(index)->assign(value);
+}
+inline void Friends::set_userid(int index, const char* value) {
+  userid_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:chat.Friends.userid)
+}
+inline void Friends::set_userid(int index, const char* value, size_t size) {
+  userid_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:chat.Friends.userid)
+}
+inline ::std::string* Friends::add_userid() {
+  // @@protoc_insertion_point(field_add_mutable:chat.Friends.userid)
+  return userid_.Add();
+}
+inline void Friends::add_userid(const ::std::string& value) {
+  userid_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:chat.Friends.userid)
+}
+inline void Friends::add_userid(const char* value) {
+  userid_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:chat.Friends.userid)
+}
+inline void Friends::add_userid(const char* value, size_t size) {
+  userid_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:chat.Friends.userid)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+Friends::userid() const {
+  // @@protoc_insertion_point(field_list:chat.Friends.userid)
+  return userid_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+Friends::mutable_userid() {
+  // @@protoc_insertion_point(field_mutable_list:chat.Friends.userid)
+  return &userid_;
 }
 
 // -------------------------------------------------------------------
@@ -14793,6 +14948,8 @@ inline void QueryMediaRes::set_allocated_media(::chat::Media* media) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

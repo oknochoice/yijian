@@ -744,8 +744,7 @@ connection_read_callback (struct ev_loop * loop,
         e.code().value() == 20005 ||
         e.code().value() == 20006 ||
         e.code().value() == 20007 ||
-        e.code().value() == 20008 ||
-        e.code().value() == 20012) {
+        e.code().value() == 20008) {
       // close node
       ev_io_stop(loop, rw);
       Read_IO * io = reinterpret_cast<Read_IO*>(rw);
