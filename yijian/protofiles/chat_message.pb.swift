@@ -386,34 +386,82 @@ struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   }
 }
 
-struct Chat_TalkList: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
-  public var swiftClassName: String {return "Chat_TalkList"}
-  public var protoMessageName: String {return "TalkList"}
+struct Chat_TalkInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_TalkInfo"}
+  public var protoMessageName: String {return "TalkInfo"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
-    1: .same(proto: "nodeReadMap", swift: "nodeReadMap"),
+    1: .same(proto: "toNodeID", swift: "toNodeId"),
+    2: .same(proto: "readedIncrement", swift: "readedIncrement"),
+    3: .same(proto: "toUserID", swift: "toUserId"),
   ]
 
 
-  var nodeReadMap: Dictionary<String,Int32> = [:]
+  var toNodeId: String = ""
+
+  var readedIncrement: Int32 = 0
+
+  var toUserId: String = ""
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
-    case 1: try setter.decodeMapField(fieldType: SwiftProtobuf.ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufInt32>.self, value: &nodeReadMap)
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &readedIncrement)
+    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toUserId)
     default: break
     }
   }
 
   public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
-    if !nodeReadMap.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf.ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufInt32>.self, value: nodeReadMap, protoFieldNumber: 1)
+    if toNodeId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 1)
+    }
+    if readedIncrement != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: readedIncrement, protoFieldNumber: 2)
+    }
+    if toUserId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toUserId, protoFieldNumber: 3)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_TalkInfo) -> Bool {
+    if toNodeId != other.toNodeId {return false}
+    if readedIncrement != other.readedIncrement {return false}
+    if toUserId != other.toUserId {return false}
+    return true
+  }
+}
+
+struct Chat_TalkList: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_TalkList"}
+  public var protoMessageName: String {return "TalkList"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "talks", swift: "talks"),
+  ]
+
+
+  var talks: [Chat_TalkInfo] = []
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeRepeatedMessageField(fieldType: Chat_TalkInfo.self, value: &talks)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if !talks.isEmpty {
+      try visitor.visitRepeatedMessageField(value: talks, protoFieldNumber: 1)
     }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_TalkList) -> Bool {
-    if nodeReadMap != other.nodeReadMap {return false}
+    if talks != other.talks {return false}
     return true
   }
 }

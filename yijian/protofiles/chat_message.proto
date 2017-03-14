@@ -16,8 +16,13 @@ message NodeInfo {
   int32  recentTimestamp = 3;
 }
 
+message TalkInfo {
+  string toNodeID = 1;
+  int32  readedIncrement = 2;
+  string toUserID = 3;
+}
 message TalkList {
-  map<string, int32> nodeReadMap = 1;
+  repeated TalkInfo talks = 1;
 }
 
 message Friends {

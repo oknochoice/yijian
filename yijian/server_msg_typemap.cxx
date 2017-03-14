@@ -528,9 +528,10 @@ void dispatch(chat::AddFriend & frd) {
   YILOG_INFO ("add friend {}", pro2string(frd));
 
   try {
-    if (frd.inviteeid().empty()) {
+    if (unlikely(frd.inviterid().empty() || frd.inviteeid().empty()
+        || frd.inviterid() != currentNode_->userid)) {
       throw std::system_error(std::error_code(11012, std::generic_category()),
-          "invitee id is empty");
+          "args error");
     }
     auto client = yijian::threadCurrent::mongoClient();
     // check blacklist
@@ -624,7 +625,8 @@ void dispatch(chat::AddFriendAuthorize & addAuth) {
   YILOG_TRACE ("func: {}. ", __func__);
   YILOG_INFO ("add friend authorize {}", pro2string(addAuth));
   try {
-    if (unlikely(addAuth.inviteeid() != currentNode_->userid)) {
+    if (unlikely(addAuth.inviterid().empty() || addAuth.inviteeid().empty()
+          || addAuth.inviteeid() != currentNode_->userid)) {
       throw std::system_error(std::error_code(11023, 
             std::generic_category()),
             "authorize permission error");
@@ -817,7 +819,7 @@ void dispatch(chat::QueryUser & queryUser) {
     user_sp->clear_password();
     auto queryUserRes = chat::QueryUserRes();
     auto queryuser = queryUserRes.mutable_user();
-    if (queryUser.userid() != currentNode_->userid) {
+    if (user_sp->id() != currentNode_->userid) {
       user_sp->clear_friends();
       user_sp->clear_blacklist();
       user_sp->clear_groupnodeids();
