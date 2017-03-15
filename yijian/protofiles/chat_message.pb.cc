@@ -973,7 +973,7 @@ void AddDescriptorsImpl() {
   static const char descriptor[] = {
       "\n\022chat_message.proto\022\004chat\"\032\n\010ErrorNth\022\016"
       "\n\006maxnth\030\001 \001(\005\"M\n\010NodeInfo\022\020\n\010toNodeID\030\001"
-      " \001(\t\022\026\n\016maxIncrementID\030\002 \001(\t\022\027\n\017recentTi"
+      " \001(\t\022\026\n\016maxIncrementID\030\002 \001(\005\022\027\n\017recentTi"
       "mestamp\030\003 \001(\005\"`\n\010TalkInfo\022\020\n\010toNodeID\030\001 "
       "\001(\t\022\027\n\017readedIncrement\030\002 \001(\005\022\027\n\017recentTi"
       "mestamp\030\003 \001(\005\022\020\n\010toUserID\030\004 \001(\t\"\037\n\010TalkL"
@@ -1464,18 +1464,16 @@ NodeInfo::NodeInfo(const NodeInfo& from)
   if (from.tonodeid().size() > 0) {
     tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
   }
-  maxincrementid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.maxincrementid().size() > 0) {
-    maxincrementid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.maxincrementid_);
-  }
-  recenttimestamp_ = from.recenttimestamp_;
+  ::memcpy(&maxincrementid_, &from.maxincrementid_,
+    reinterpret_cast<char*>(&recenttimestamp_) -
+    reinterpret_cast<char*>(&maxincrementid_) + sizeof(recenttimestamp_));
   // @@protoc_insertion_point(copy_constructor:chat.NodeInfo)
 }
 
 void NodeInfo::SharedCtor() {
   tonodeid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  maxincrementid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  recenttimestamp_ = 0;
+  ::memset(&maxincrementid_, 0, reinterpret_cast<char*>(&recenttimestamp_) -
+    reinterpret_cast<char*>(&maxincrementid_) + sizeof(recenttimestamp_));
   _cached_size_ = 0;
 }
 
@@ -1486,7 +1484,6 @@ NodeInfo::~NodeInfo() {
 
 void NodeInfo::SharedDtor() {
   tonodeid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  maxincrementid_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void NodeInfo::SetCachedSize(int size) const {
@@ -1515,8 +1512,8 @@ NodeInfo* NodeInfo::New(::google::protobuf::Arena* arena) const {
 void NodeInfo::Clear() {
 // @@protoc_insertion_point(message_clear_start:chat.NodeInfo)
   tonodeid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  maxincrementid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  recenttimestamp_ = 0;
+  ::memset(&maxincrementid_, 0, reinterpret_cast<char*>(&recenttimestamp_) -
+    reinterpret_cast<char*>(&maxincrementid_) + sizeof(recenttimestamp_));
 }
 
 bool NodeInfo::MergePartialFromCodedStream(
@@ -1544,15 +1541,13 @@ bool NodeInfo::MergePartialFromCodedStream(
         break;
       }
 
-      // string maxIncrementID = 2;
+      // int32 maxIncrementID = 2;
       case 2: {
-        if (tag == 18u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_maxincrementid()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->maxincrementid().data(), this->maxincrementid().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "chat.NodeInfo.maxIncrementID"));
+        if (tag == 16u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &maxincrementid_)));
         } else {
           goto handle_unusual;
         }
@@ -1606,14 +1601,9 @@ void NodeInfo::SerializeWithCachedSizes(
       1, this->tonodeid(), output);
   }
 
-  // string maxIncrementID = 2;
-  if (this->maxincrementid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->maxincrementid().data(), this->maxincrementid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.NodeInfo.maxIncrementID");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->maxincrementid(), output);
+  // int32 maxIncrementID = 2;
+  if (this->maxincrementid() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->maxincrementid(), output);
   }
 
   // int32 recentTimestamp = 3;
@@ -1639,15 +1629,9 @@ void NodeInfo::SerializeWithCachedSizes(
         1, this->tonodeid(), target);
   }
 
-  // string maxIncrementID = 2;
-  if (this->maxincrementid().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->maxincrementid().data(), this->maxincrementid().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "chat.NodeInfo.maxIncrementID");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->maxincrementid(), target);
+  // int32 maxIncrementID = 2;
+  if (this->maxincrementid() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->maxincrementid(), target);
   }
 
   // int32 recentTimestamp = 3;
@@ -1670,10 +1654,10 @@ size_t NodeInfo::ByteSizeLong() const {
         this->tonodeid());
   }
 
-  // string maxIncrementID = 2;
-  if (this->maxincrementid().size() > 0) {
+  // int32 maxIncrementID = 2;
+  if (this->maxincrementid() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
         this->maxincrementid());
   }
 
@@ -1714,9 +1698,8 @@ void NodeInfo::MergeFrom(const NodeInfo& from) {
 
     tonodeid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.tonodeid_);
   }
-  if (from.maxincrementid().size() > 0) {
-
-    maxincrementid_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.maxincrementid_);
+  if (from.maxincrementid() != 0) {
+    set_maxincrementid(from.maxincrementid());
   }
   if (from.recenttimestamp() != 0) {
     set_recenttimestamp(from.recenttimestamp());
@@ -1747,7 +1730,7 @@ void NodeInfo::Swap(NodeInfo* other) {
 }
 void NodeInfo::InternalSwap(NodeInfo* other) {
   tonodeid_.Swap(&other->tonodeid_);
-  maxincrementid_.Swap(&other->maxincrementid_);
+  std::swap(maxincrementid_, other->maxincrementid_);
   std::swap(recenttimestamp_, other->recenttimestamp_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -1812,56 +1795,18 @@ void NodeInfo::set_allocated_tonodeid(::std::string* tonodeid) {
   // @@protoc_insertion_point(field_set_allocated:chat.NodeInfo.toNodeID)
 }
 
-// string maxIncrementID = 2;
+// int32 maxIncrementID = 2;
 void NodeInfo::clear_maxincrementid() {
-  maxincrementid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  maxincrementid_ = 0;
 }
-const ::std::string& NodeInfo::maxincrementid() const {
+::google::protobuf::int32 NodeInfo::maxincrementid() const {
   // @@protoc_insertion_point(field_get:chat.NodeInfo.maxIncrementID)
-  return maxincrementid_.GetNoArena();
+  return maxincrementid_;
 }
-void NodeInfo::set_maxincrementid(const ::std::string& value) {
+void NodeInfo::set_maxincrementid(::google::protobuf::int32 value) {
   
-  maxincrementid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  maxincrementid_ = value;
   // @@protoc_insertion_point(field_set:chat.NodeInfo.maxIncrementID)
-}
-#if LANG_CXX11
-void NodeInfo::set_maxincrementid(::std::string&& value) {
-  
-  maxincrementid_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.NodeInfo.maxIncrementID)
-}
-#endif
-void NodeInfo::set_maxincrementid(const char* value) {
-  
-  maxincrementid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.NodeInfo.maxIncrementID)
-}
-void NodeInfo::set_maxincrementid(const char* value, size_t size) {
-  
-  maxincrementid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.NodeInfo.maxIncrementID)
-}
-::std::string* NodeInfo::mutable_maxincrementid() {
-  
-  // @@protoc_insertion_point(field_mutable:chat.NodeInfo.maxIncrementID)
-  return maxincrementid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-::std::string* NodeInfo::release_maxincrementid() {
-  // @@protoc_insertion_point(field_release:chat.NodeInfo.maxIncrementID)
-  
-  return maxincrementid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-void NodeInfo::set_allocated_maxincrementid(::std::string* maxincrementid) {
-  if (maxincrementid != NULL) {
-    
-  } else {
-    
-  }
-  maxincrementid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), maxincrementid);
-  // @@protoc_insertion_point(field_set_allocated:chat.NodeInfo.maxIncrementID)
 }
 
 // int32 recentTimestamp = 3;

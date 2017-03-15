@@ -351,7 +351,7 @@ struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
 
   var toNodeId: String = ""
 
-  var maxIncrementId: String = ""
+  var maxIncrementId: Int32 = 0
 
   var recentTimestamp: Int32 = 0
 
@@ -360,7 +360,7 @@ struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
     case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &maxIncrementId)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &maxIncrementId)
     case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &recentTimestamp)
     default: break
     }
@@ -370,8 +370,8 @@ struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
     if toNodeId != "" {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 1)
     }
-    if maxIncrementId != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: maxIncrementId, protoFieldNumber: 2)
+    if maxIncrementId != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: maxIncrementId, protoFieldNumber: 2)
     }
     if recentTimestamp != 0 {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: recentTimestamp, protoFieldNumber: 3)
