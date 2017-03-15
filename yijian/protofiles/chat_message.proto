@@ -10,13 +10,16 @@ message ErrorNth {
   int32 maxnth = 1;
 }
 
+message NodeInfo {
+  string toNodeID = 1;
+  string maxIncrement = 2;
+}
+
 message TalkInfo {
   string toNodeID = 1;
   int32  readedIncrement = 2;
-  int32  unreadIncrement = 3;
-  int32  storedMaxIncrementid = 4;
-  int32  recentTimestamp = 5;
-  string toUserID = 6;
+  int32  recentTimestamp = 3;
+  string toUserID = 4;
 }
 
 message TalkList {
