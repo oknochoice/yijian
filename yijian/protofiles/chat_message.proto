@@ -12,7 +12,8 @@ message ErrorNth {
 
 message NodeInfo {
   string toNodeID = 1;
-  string maxIncrement = 2;
+  string maxIncrementID = 2;
+  int32  recentTimestamp = 3;
 }
 
 message TalkInfo {

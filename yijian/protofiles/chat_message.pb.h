@@ -518,26 +518,33 @@ class NodeInfo : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_tonodeid();
   void set_allocated_tonodeid(::std::string* tonodeid);
 
-  // string maxIncrement = 2;
-  void clear_maxincrement();
-  static const int kMaxIncrementFieldNumber = 2;
-  const ::std::string& maxincrement() const;
-  void set_maxincrement(const ::std::string& value);
+  // string maxIncrementID = 2;
+  void clear_maxincrementid();
+  static const int kMaxIncrementIDFieldNumber = 2;
+  const ::std::string& maxincrementid() const;
+  void set_maxincrementid(const ::std::string& value);
   #if LANG_CXX11
-  void set_maxincrement(::std::string&& value);
+  void set_maxincrementid(::std::string&& value);
   #endif
-  void set_maxincrement(const char* value);
-  void set_maxincrement(const char* value, size_t size);
-  ::std::string* mutable_maxincrement();
-  ::std::string* release_maxincrement();
-  void set_allocated_maxincrement(::std::string* maxincrement);
+  void set_maxincrementid(const char* value);
+  void set_maxincrementid(const char* value, size_t size);
+  ::std::string* mutable_maxincrementid();
+  ::std::string* release_maxincrementid();
+  void set_allocated_maxincrementid(::std::string* maxincrementid);
+
+  // int32 recentTimestamp = 3;
+  void clear_recenttimestamp();
+  static const int kRecentTimestampFieldNumber = 3;
+  ::google::protobuf::int32 recenttimestamp() const;
+  void set_recenttimestamp(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:chat.NodeInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr tonodeid_;
-  ::google::protobuf::internal::ArenaStringPtr maxincrement_;
+  ::google::protobuf::internal::ArenaStringPtr maxincrementid_;
+  ::google::protobuf::int32 recenttimestamp_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -7595,56 +7602,70 @@ inline void NodeInfo::set_allocated_tonodeid(::std::string* tonodeid) {
   // @@protoc_insertion_point(field_set_allocated:chat.NodeInfo.toNodeID)
 }
 
-// string maxIncrement = 2;
-inline void NodeInfo::clear_maxincrement() {
-  maxincrement_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string maxIncrementID = 2;
+inline void NodeInfo::clear_maxincrementid() {
+  maxincrementid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& NodeInfo::maxincrement() const {
-  // @@protoc_insertion_point(field_get:chat.NodeInfo.maxIncrement)
-  return maxincrement_.GetNoArena();
+inline const ::std::string& NodeInfo::maxincrementid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeInfo.maxIncrementID)
+  return maxincrementid_.GetNoArena();
 }
-inline void NodeInfo::set_maxincrement(const ::std::string& value) {
+inline void NodeInfo::set_maxincrementid(const ::std::string& value) {
   
-  maxincrement_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:chat.NodeInfo.maxIncrement)
+  maxincrementid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:chat.NodeInfo.maxIncrementID)
 }
 #if LANG_CXX11
-inline void NodeInfo::set_maxincrement(::std::string&& value) {
+inline void NodeInfo::set_maxincrementid(::std::string&& value) {
   
-  maxincrement_.SetNoArena(
+  maxincrementid_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:chat.NodeInfo.maxIncrement)
+  // @@protoc_insertion_point(field_set_rvalue:chat.NodeInfo.maxIncrementID)
 }
 #endif
-inline void NodeInfo::set_maxincrement(const char* value) {
+inline void NodeInfo::set_maxincrementid(const char* value) {
   
-  maxincrement_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:chat.NodeInfo.maxIncrement)
+  maxincrementid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:chat.NodeInfo.maxIncrementID)
 }
-inline void NodeInfo::set_maxincrement(const char* value, size_t size) {
+inline void NodeInfo::set_maxincrementid(const char* value, size_t size) {
   
-  maxincrement_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  maxincrementid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:chat.NodeInfo.maxIncrement)
+  // @@protoc_insertion_point(field_set_pointer:chat.NodeInfo.maxIncrementID)
 }
-inline ::std::string* NodeInfo::mutable_maxincrement() {
+inline ::std::string* NodeInfo::mutable_maxincrementid() {
   
-  // @@protoc_insertion_point(field_mutable:chat.NodeInfo.maxIncrement)
-  return maxincrement_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:chat.NodeInfo.maxIncrementID)
+  return maxincrementid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* NodeInfo::release_maxincrement() {
-  // @@protoc_insertion_point(field_release:chat.NodeInfo.maxIncrement)
+inline ::std::string* NodeInfo::release_maxincrementid() {
+  // @@protoc_insertion_point(field_release:chat.NodeInfo.maxIncrementID)
   
-  return maxincrement_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return maxincrementid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void NodeInfo::set_allocated_maxincrement(::std::string* maxincrement) {
-  if (maxincrement != NULL) {
+inline void NodeInfo::set_allocated_maxincrementid(::std::string* maxincrementid) {
+  if (maxincrementid != NULL) {
     
   } else {
     
   }
-  maxincrement_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), maxincrement);
-  // @@protoc_insertion_point(field_set_allocated:chat.NodeInfo.maxIncrement)
+  maxincrementid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), maxincrementid);
+  // @@protoc_insertion_point(field_set_allocated:chat.NodeInfo.maxIncrementID)
+}
+
+// int32 recentTimestamp = 3;
+inline void NodeInfo::clear_recenttimestamp() {
+  recenttimestamp_ = 0;
+}
+inline ::google::protobuf::int32 NodeInfo::recenttimestamp() const {
+  // @@protoc_insertion_point(field_get:chat.NodeInfo.recentTimestamp)
+  return recenttimestamp_;
+}
+inline void NodeInfo::set_recenttimestamp(::google::protobuf::int32 value) {
+  
+  recenttimestamp_ = value;
+  // @@protoc_insertion_point(field_set:chat.NodeInfo.recentTimestamp)
 }
 
 // -------------------------------------------------------------------

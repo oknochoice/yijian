@@ -344,20 +344,24 @@ struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
     1: .same(proto: "toNodeID", swift: "toNodeId"),
-    2: .same(proto: "maxIncrement", swift: "maxIncrement"),
+    2: .same(proto: "maxIncrementID", swift: "maxIncrementId"),
+    3: .same(proto: "recentTimestamp", swift: "recentTimestamp"),
   ]
 
 
   var toNodeId: String = ""
 
-  var maxIncrement: String = ""
+  var maxIncrementId: String = ""
+
+  var recentTimestamp: Int32 = 0
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
     case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &maxIncrement)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &maxIncrementId)
+    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &recentTimestamp)
     default: break
     }
   }
@@ -366,14 +370,18 @@ struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
     if toNodeId != "" {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 1)
     }
-    if maxIncrement != "" {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: maxIncrement, protoFieldNumber: 2)
+    if maxIncrementId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: maxIncrementId, protoFieldNumber: 2)
+    }
+    if recentTimestamp != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: recentTimestamp, protoFieldNumber: 3)
     }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_NodeInfo) -> Bool {
     if toNodeId != other.toNodeId {return false}
-    if maxIncrement != other.maxIncrement {return false}
+    if maxIncrementId != other.maxIncrementId {return false}
+    if recentTimestamp != other.recentTimestamp {return false}
     return true
   }
 }
