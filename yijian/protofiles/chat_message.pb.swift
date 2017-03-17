@@ -3283,11 +3283,45 @@ struct Chat_QueryMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, Sw
   }
 }
 
-// 
-// message QueryOneMessage {
-// string toNodeID = 1;
-// int32  incrementID = 2;
-// }
+struct Chat_QueryOneMessage: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_QueryOneMessage"}
+  public var protoMessageName: String {return "QueryOneMessage"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "toNodeID", swift: "toNodeId"),
+    2: .same(proto: "incrementID", swift: "incrementId"),
+  ]
+
+
+  var toNodeId: String = ""
+
+  var incrementId: Int32 = 0
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &incrementId)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if toNodeId != "" {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 1)
+    }
+    if incrementId != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: incrementId, protoFieldNumber: 2)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_QueryOneMessage) -> Bool {
+    if toNodeId != other.toNodeId {return false}
+    if incrementId != other.incrementId {return false}
+    return true
+  }
+}
 
 struct Chat_QueryMessageRes: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
   public var swiftClassName: String {return "Chat_QueryMessageRes"}

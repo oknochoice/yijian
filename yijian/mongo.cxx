@@ -804,7 +804,6 @@ mongo_client::queryNode(const std::string & nodeID) {
 
 // message 
 
-/*
 std::shared_ptr<chat::NodeMessage>
 mongo_client::queryMessage(const std::string & tonodeid, 
     const int32_t incrementid) {
@@ -828,7 +827,6 @@ mongo_client::queryMessage(const std::string & tonodeid,
         "missing message");
   }
 }
-*/
 
 std::shared_ptr<chat::NodeMessageRes> 
 mongo_client::insertMessage(chat::NodeMessage & message) {
@@ -883,7 +881,8 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
   auto nodemessage_collection = db["nodeMessage"];
   auto builder = document{};
   builder << "toNodeID" << query.tonodeid();
-  if (query.toincrementid() != 0) {
+  if (query.toincrementid() == 0 && 
+      query.fromincrementid() == 0) {
     builder << "incrementID" << open_document
       << "$gte" << query.fromincrementid() << close_document;
   }else {
@@ -900,10 +899,19 @@ void mongo_client::queryMessage(chat::QueryMessage & query,
   opt.sort(document{} << "incrementID" << -1 << finalize);
   auto cursor = nodemessage_collection.find(filter.view(), opt);
   
+  int i = 0;
   for (auto doc: cursor) {
     auto message = chat::NodeMessage();
     nodemessageDocument(message, doc);
     func(message);
+    if (unlikely(i >= 10 && query.toincrementid() == 0 &&
+        query.fromincrementid() == 0)) {
+      break;
+    }
+    if (unlikely(query.toincrementid() == 0 
+          && message.incrementid() == query.fromincrementid())) {
+      break;
+    }
   }
 }
 

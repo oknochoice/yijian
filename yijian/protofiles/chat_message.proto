@@ -415,12 +415,10 @@ message QueryMessage {
   int32  toIncrementID = 3;
 }
 
-/*
 message QueryOneMessage {
   string toNodeID = 1;
   int32  incrementID = 2;
 }
-*/
 
 message QueryMessageRes {
   repeated NodeMessage messages = 1;

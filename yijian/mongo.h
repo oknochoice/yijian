@@ -128,8 +128,8 @@ public:
   std::shared_ptr<chat::NodeMessageRes> 
     insertMessage(chat::NodeMessage & message);
 
-  //std::shared_ptr<chat::NodeMessage>
-    //queryMessage(const std::string & tonodeid, const int32_t incrementid);
+  std::shared_ptr<chat::NodeMessage>
+    queryMessage(const std::string & tonodeid, const int32_t incrementid);
 
   void queryMessage(chat::QueryMessage & query, 
       std::function<void(chat::NodeMessage&)> && func);

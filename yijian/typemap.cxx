@@ -14,6 +14,7 @@ check_map_ = {
   {ChatType::groupaddmember, true},
   {ChatType::nodemessage, true},
   {ChatType::querymessage, true},
+  {ChatType::queryonemessage, true},
   {ChatType::media, true},
   {ChatType::querymedia, true},
   {ChatType::setuserproterty, true},

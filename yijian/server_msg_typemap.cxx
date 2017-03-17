@@ -973,7 +973,8 @@ void dispatch(chat::QueryMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
   YILOG_INFO ("query message {}", pro2string(query));
   try {
-    if (unlikely(query.toincrementid() < query.fromincrementid()
+    if (unlikely((query.toincrementid() <= query.fromincrementid() &&
+            query.toincrementid() != 0)
         || (query.toincrementid() - query.fromincrementid()) > 50)) {
       throw std::system_error(std::error_code(11008, std::generic_category()),
           "query is invalid");
@@ -981,11 +982,11 @@ void dispatch(chat::QueryMessage & query) {
     auto client = yijian::threadCurrent::mongoClient();
     // update user's readed  
     client->updateReadedIncrement(currentNode_->userid, 
-        query.tonodeid(), query.toincrementid());
-    if (unlikely(query.toincrementid() == query.fromincrementid())) {
-      throw std::system_error(std::error_code(0, std::generic_category()),
-          "just update node's readed");
-    } else {
+        query.tonodeid(), query.toincrementid() - 1);
+    //if (unlikely(query.toincrementid() == query.fromincrementid())) {
+    //  throw std::system_error(std::error_code(0, std::generic_category()),
+    //      "just update node's readed");
+    //} else {
       auto res = chat::QueryMessageRes();
       client->queryMessage(query, [&res](chat::NodeMessage & msg){
             auto msg_p = res.add_messages();
@@ -993,7 +994,7 @@ void dispatch(chat::QueryMessage & query) {
           });
       YILOG_INFO ("query message success {}", pro2string(res));
       mountBuffer2Node(yijianBuffer(res), node_self_);
-    }
+    //}
   }catch (std::system_error & sys_error) {
     YILOG_INFO ("func: {}. failure. errno:{}, msg:{}.", 
         __func__, sys_error.code().value(), sys_error.what());
@@ -1001,7 +1002,7 @@ void dispatch(chat::QueryMessage & query) {
         node_self_);
   }
 }
-/*
+
 void dispatch(chat::QueryOneMessage & query) {
   YILOG_TRACE ("func: {}. ", __func__);
   YILOG_INFO ("query one message {}", pro2string(query));
@@ -1025,7 +1026,6 @@ void dispatch(chat::QueryOneMessage & query) {
         node_self_);
   }
 }
-*/
 
 void dispatch(chat::Media & media) {
   YILOG_TRACE ("func: {}. media", __func__);
@@ -1244,13 +1244,11 @@ void dispatch(const int type, char const * header, const std::size_t length) {
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      /*
       (*map_p)[ChatType::queryonemessage] = [=]() {
         auto chat = chat::QueryOneMessage();
         chat.ParseFromArray(header, length);
         dispatch(chat);
       };
-      */
       (*map_p)[ChatType::nodemessageres] = [=]() {
         auto chat = chat::NodeMessageRes();
         chat.ParseFromArray(header, length);
