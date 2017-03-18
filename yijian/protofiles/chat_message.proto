@@ -10,17 +10,10 @@ message ErrorNth {
   int32 maxnth = 1;
 }
 
-message UnStore {
-  int32 fromIncrementID = 1;
-  int32 toIncrementID = 2;
-}
-
 message NodeInfo {
   string toNodeID = 1;
   int32  recentTimestamp = 2;
   int32  maxIncrementID = 3;
-  int32  minIncrementID = 4;
-  repeated UnStore nodeids = 5;
 }
 
 message TalkInfo {
