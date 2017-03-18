@@ -338,30 +338,78 @@ struct Chat_ErrorNth: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
   }
 }
 
+struct Chat_UnStore: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
+  public var swiftClassName: String {return "Chat_UnStore"}
+  public var protoMessageName: String {return "UnStore"}
+  public var protoPackageName: String {return "chat"}
+  public static let _protobuf_fieldNames: FieldNameMap = [
+    1: .same(proto: "fromIncrementID", swift: "fromIncrementId"),
+    2: .same(proto: "toIncrementID", swift: "toIncrementId"),
+  ]
+
+
+  var fromIncrementId: Int32 = 0
+
+  var toIncrementId: Int32 = 0
+
+  init() {}
+
+  public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
+    switch protoFieldNumber {
+    case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &fromIncrementId)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &toIncrementId)
+    default: break
+    }
+  }
+
+  public func _protoc_generated_traverse(visitor: inout SwiftProtobuf.Visitor) throws {
+    if fromIncrementId != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: fromIncrementId, protoFieldNumber: 1)
+    }
+    if toIncrementId != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: toIncrementId, protoFieldNumber: 2)
+    }
+  }
+
+  public func _protoc_generated_isEqualTo(other: Chat_UnStore) -> Bool {
+    if fromIncrementId != other.fromIncrementId {return false}
+    if toIncrementId != other.toIncrementId {return false}
+    return true
+  }
+}
+
 struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf.ProtoNameProviding {
   public var swiftClassName: String {return "Chat_NodeInfo"}
   public var protoMessageName: String {return "NodeInfo"}
   public var protoPackageName: String {return "chat"}
   public static let _protobuf_fieldNames: FieldNameMap = [
     1: .same(proto: "toNodeID", swift: "toNodeId"),
-    2: .same(proto: "maxIncrementID", swift: "maxIncrementId"),
-    3: .same(proto: "recentTimestamp", swift: "recentTimestamp"),
+    2: .same(proto: "recentTimestamp", swift: "recentTimestamp"),
+    3: .same(proto: "maxIncrementID", swift: "maxIncrementId"),
+    4: .same(proto: "minIncrementID", swift: "minIncrementId"),
+    5: .same(proto: "nodeids", swift: "nodeids"),
   ]
 
 
   var toNodeId: String = ""
 
+  var recentTimestamp: Int32 = 0
+
   var maxIncrementId: Int32 = 0
 
-  var recentTimestamp: Int32 = 0
+  var minIncrementId: Int32 = 0
+
+  var nodeids: [Chat_UnStore] = []
 
   init() {}
 
   public mutating func _protoc_generated_decodeField(setter: inout SwiftProtobuf.FieldDecoder, protoFieldNumber: Int) throws {
     switch protoFieldNumber {
     case 1: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: &toNodeId)
-    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &maxIncrementId)
-    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &recentTimestamp)
+    case 2: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &recentTimestamp)
+    case 3: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &maxIncrementId)
+    case 4: try setter.decodeSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: &minIncrementId)
+    case 5: try setter.decodeRepeatedMessageField(fieldType: Chat_UnStore.self, value: &nodeids)
     default: break
     }
   }
@@ -370,18 +418,26 @@ struct Chat_NodeInfo: SwiftProtobuf.Message, SwiftProtobuf.Proto3Message, SwiftP
     if toNodeId != "" {
       try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufString.self, value: toNodeId, protoFieldNumber: 1)
     }
-    if maxIncrementId != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: maxIncrementId, protoFieldNumber: 2)
-    }
     if recentTimestamp != 0 {
-      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: recentTimestamp, protoFieldNumber: 3)
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: recentTimestamp, protoFieldNumber: 2)
+    }
+    if maxIncrementId != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: maxIncrementId, protoFieldNumber: 3)
+    }
+    if minIncrementId != 0 {
+      try visitor.visitSingularField(fieldType: SwiftProtobuf.ProtobufInt32.self, value: minIncrementId, protoFieldNumber: 4)
+    }
+    if !nodeids.isEmpty {
+      try visitor.visitRepeatedMessageField(value: nodeids, protoFieldNumber: 5)
     }
   }
 
   public func _protoc_generated_isEqualTo(other: Chat_NodeInfo) -> Bool {
     if toNodeId != other.toNodeId {return false}
-    if maxIncrementId != other.maxIncrementId {return false}
     if recentTimestamp != other.recentTimestamp {return false}
+    if maxIncrementId != other.maxIncrementId {return false}
+    if minIncrementId != other.minIncrementId {return false}
+    if nodeids != other.nodeids {return false}
     return true
   }
 }

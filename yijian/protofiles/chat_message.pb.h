@@ -219,6 +219,9 @@ extern TalkInfoDefaultTypeInternal _TalkInfo_default_instance_;
 class TalkList;
 class TalkListDefaultTypeInternal;
 extern TalkListDefaultTypeInternal _TalkList_default_instance_;
+class UnStore;
+class UnStoreDefaultTypeInternal;
+extern UnStoreDefaultTypeInternal _UnStore_default_instance_;
 class User;
 class UserDefaultTypeInternal;
 extern UserDefaultTypeInternal _User_default_instance_;
@@ -440,6 +443,96 @@ class ErrorNth : public ::google::protobuf::Message /* @@protoc_insertion_point(
 };
 // -------------------------------------------------------------------
 
+class UnStore : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.UnStore) */ {
+ public:
+  UnStore();
+  virtual ~UnStore();
+
+  UnStore(const UnStore& from);
+
+  inline UnStore& operator=(const UnStore& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const UnStore& default_instance();
+
+  static inline const UnStore* internal_default_instance() {
+    return reinterpret_cast<const UnStore*>(
+               &_UnStore_default_instance_);
+  }
+
+  void Swap(UnStore* other);
+
+  // implements Message ----------------------------------------------
+
+  inline UnStore* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  UnStore* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const UnStore& from);
+  void MergeFrom(const UnStore& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output)
+      const PROTOBUF_FINAL {
+    return InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::io::CodedOutputStream::IsDefaultSerializationDeterministic(), output);
+  }
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(UnStore* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // int32 fromIncrementID = 1;
+  void clear_fromincrementid();
+  static const int kFromIncrementIDFieldNumber = 1;
+  ::google::protobuf::int32 fromincrementid() const;
+  void set_fromincrementid(::google::protobuf::int32 value);
+
+  // int32 toIncrementID = 2;
+  void clear_toincrementid();
+  static const int kToIncrementIDFieldNumber = 2;
+  ::google::protobuf::int32 toincrementid() const;
+  void set_toincrementid(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:chat.UnStore)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::int32 fromincrementid_;
+  ::google::protobuf::int32 toincrementid_;
+  mutable int _cached_size_;
+  friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class NodeInfo : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:chat.NodeInfo) */ {
  public:
   NodeInfo();
@@ -507,6 +600,18 @@ class NodeInfo : public ::google::protobuf::Message /* @@protoc_insertion_point(
 
   // accessors -------------------------------------------------------
 
+  // repeated .chat.UnStore nodeids = 5;
+  int nodeids_size() const;
+  void clear_nodeids();
+  static const int kNodeidsFieldNumber = 5;
+  const ::chat::UnStore& nodeids(int index) const;
+  ::chat::UnStore* mutable_nodeids(int index);
+  ::chat::UnStore* add_nodeids();
+  ::google::protobuf::RepeatedPtrField< ::chat::UnStore >*
+      mutable_nodeids();
+  const ::google::protobuf::RepeatedPtrField< ::chat::UnStore >&
+      nodeids() const;
+
   // string toNodeID = 1;
   void clear_tonodeid();
   static const int kToNodeIDFieldNumber = 1;
@@ -521,25 +626,33 @@ class NodeInfo : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_tonodeid();
   void set_allocated_tonodeid(::std::string* tonodeid);
 
-  // int32 maxIncrementID = 2;
+  // int32 recentTimestamp = 2;
+  void clear_recenttimestamp();
+  static const int kRecentTimestampFieldNumber = 2;
+  ::google::protobuf::int32 recenttimestamp() const;
+  void set_recenttimestamp(::google::protobuf::int32 value);
+
+  // int32 maxIncrementID = 3;
   void clear_maxincrementid();
-  static const int kMaxIncrementIDFieldNumber = 2;
+  static const int kMaxIncrementIDFieldNumber = 3;
   ::google::protobuf::int32 maxincrementid() const;
   void set_maxincrementid(::google::protobuf::int32 value);
 
-  // int32 recentTimestamp = 3;
-  void clear_recenttimestamp();
-  static const int kRecentTimestampFieldNumber = 3;
-  ::google::protobuf::int32 recenttimestamp() const;
-  void set_recenttimestamp(::google::protobuf::int32 value);
+  // int32 minIncrementID = 4;
+  void clear_minincrementid();
+  static const int kMinIncrementIDFieldNumber = 4;
+  ::google::protobuf::int32 minincrementid() const;
+  void set_minincrementid(::google::protobuf::int32 value);
 
   // @@protoc_insertion_point(class_scope:chat.NodeInfo)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::chat::UnStore > nodeids_;
   ::google::protobuf::internal::ArenaStringPtr tonodeid_;
-  ::google::protobuf::int32 maxincrementid_;
   ::google::protobuf::int32 recenttimestamp_;
+  ::google::protobuf::int32 maxincrementid_;
+  ::google::protobuf::int32 minincrementid_;
   mutable int _cached_size_;
   friend struct  protobuf_chat_5fmessage_2eproto::TableStruct;
 };
@@ -7641,6 +7754,38 @@ inline void ErrorNth::set_maxnth(::google::protobuf::int32 value) {
 
 // -------------------------------------------------------------------
 
+// UnStore
+
+// int32 fromIncrementID = 1;
+inline void UnStore::clear_fromincrementid() {
+  fromincrementid_ = 0;
+}
+inline ::google::protobuf::int32 UnStore::fromincrementid() const {
+  // @@protoc_insertion_point(field_get:chat.UnStore.fromIncrementID)
+  return fromincrementid_;
+}
+inline void UnStore::set_fromincrementid(::google::protobuf::int32 value) {
+  
+  fromincrementid_ = value;
+  // @@protoc_insertion_point(field_set:chat.UnStore.fromIncrementID)
+}
+
+// int32 toIncrementID = 2;
+inline void UnStore::clear_toincrementid() {
+  toincrementid_ = 0;
+}
+inline ::google::protobuf::int32 UnStore::toincrementid() const {
+  // @@protoc_insertion_point(field_get:chat.UnStore.toIncrementID)
+  return toincrementid_;
+}
+inline void UnStore::set_toincrementid(::google::protobuf::int32 value) {
+  
+  toincrementid_ = value;
+  // @@protoc_insertion_point(field_set:chat.UnStore.toIncrementID)
+}
+
+// -------------------------------------------------------------------
+
 // NodeInfo
 
 // string toNodeID = 1;
@@ -7695,7 +7840,21 @@ inline void NodeInfo::set_allocated_tonodeid(::std::string* tonodeid) {
   // @@protoc_insertion_point(field_set_allocated:chat.NodeInfo.toNodeID)
 }
 
-// int32 maxIncrementID = 2;
+// int32 recentTimestamp = 2;
+inline void NodeInfo::clear_recenttimestamp() {
+  recenttimestamp_ = 0;
+}
+inline ::google::protobuf::int32 NodeInfo::recenttimestamp() const {
+  // @@protoc_insertion_point(field_get:chat.NodeInfo.recentTimestamp)
+  return recenttimestamp_;
+}
+inline void NodeInfo::set_recenttimestamp(::google::protobuf::int32 value) {
+  
+  recenttimestamp_ = value;
+  // @@protoc_insertion_point(field_set:chat.NodeInfo.recentTimestamp)
+}
+
+// int32 maxIncrementID = 3;
 inline void NodeInfo::clear_maxincrementid() {
   maxincrementid_ = 0;
 }
@@ -7709,18 +7868,48 @@ inline void NodeInfo::set_maxincrementid(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:chat.NodeInfo.maxIncrementID)
 }
 
-// int32 recentTimestamp = 3;
-inline void NodeInfo::clear_recenttimestamp() {
-  recenttimestamp_ = 0;
+// int32 minIncrementID = 4;
+inline void NodeInfo::clear_minincrementid() {
+  minincrementid_ = 0;
 }
-inline ::google::protobuf::int32 NodeInfo::recenttimestamp() const {
-  // @@protoc_insertion_point(field_get:chat.NodeInfo.recentTimestamp)
-  return recenttimestamp_;
+inline ::google::protobuf::int32 NodeInfo::minincrementid() const {
+  // @@protoc_insertion_point(field_get:chat.NodeInfo.minIncrementID)
+  return minincrementid_;
 }
-inline void NodeInfo::set_recenttimestamp(::google::protobuf::int32 value) {
+inline void NodeInfo::set_minincrementid(::google::protobuf::int32 value) {
   
-  recenttimestamp_ = value;
-  // @@protoc_insertion_point(field_set:chat.NodeInfo.recentTimestamp)
+  minincrementid_ = value;
+  // @@protoc_insertion_point(field_set:chat.NodeInfo.minIncrementID)
+}
+
+// repeated .chat.UnStore nodeids = 5;
+inline int NodeInfo::nodeids_size() const {
+  return nodeids_.size();
+}
+inline void NodeInfo::clear_nodeids() {
+  nodeids_.Clear();
+}
+inline const ::chat::UnStore& NodeInfo::nodeids(int index) const {
+  // @@protoc_insertion_point(field_get:chat.NodeInfo.nodeids)
+  return nodeids_.Get(index);
+}
+inline ::chat::UnStore* NodeInfo::mutable_nodeids(int index) {
+  // @@protoc_insertion_point(field_mutable:chat.NodeInfo.nodeids)
+  return nodeids_.Mutable(index);
+}
+inline ::chat::UnStore* NodeInfo::add_nodeids() {
+  // @@protoc_insertion_point(field_add:chat.NodeInfo.nodeids)
+  return nodeids_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::chat::UnStore >*
+NodeInfo::mutable_nodeids() {
+  // @@protoc_insertion_point(field_mutable_list:chat.NodeInfo.nodeids)
+  return &nodeids_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::chat::UnStore >&
+NodeInfo::nodeids() const {
+  // @@protoc_insertion_point(field_list:chat.NodeInfo.nodeids)
+  return nodeids_;
 }
 
 // -------------------------------------------------------------------
@@ -15406,6 +15595,8 @@ inline void QueryMediaRes::set_allocated_media(::chat::Media* media) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
