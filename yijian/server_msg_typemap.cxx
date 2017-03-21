@@ -178,7 +178,8 @@ void mountBuffer2Node(std::vector<Buffer_SP> && buf_sp_v,
 }
 
 void mountBuffer2Node(std::vector<Buffer_SP> && buf_sp_v, chat::NodeUser & node_user) {
-  YILOG_TRACE ("func: {}. node user", __func__);
+  YILOG_TRACE ("func: {}. node user: {}", 
+      __func__, node_user.touserid());
   auto client = yijian::threadCurrent::mongoClient();
   client->devices(node_user, 
       [&buf_sp_v](chat::ConnectInfoLittle & infolittle) {

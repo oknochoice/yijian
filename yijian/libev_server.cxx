@@ -213,11 +213,15 @@ void mountBuffer2Device(const std::string & uuid,
     std::function<void(std::shared_ptr<Read_IO>)> && func) {
   YILOG_TRACE ("func: {}. ", __func__);
   auto it = uuidnode_map_.find(uuid);
+  //for (auto & item: uuidnode_map_) {
+    //YILOG_INFO ("nodemap item: {}", item.first);
+  //}
   if (likely(it != uuidnode_map_.end())) {
-    YILOG_INFO ("func: {}. find", __func__);
+    YILOG_INFO ("func: {}. finded uuid: {}", 
+        __func__, uuid);
     func(it->second);
   }else{
-    YILOG_INFO ("func: {}. find", __func__);
+    YILOG_INFO ("func: {}. no find", __func__);
   }
 }
 /*

@@ -1,0 +1,117 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            eb:83:ea:1f:5b:be:3b:1e:4b:7a:8c:6b:cd:2a:4f:32
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=CN, O=yijian, CN=Sub CA
+        Validity
+            Not Before: Jan 16 04:32:16 2017 GMT
+            Not After : Jan 16 04:32:16 2018 GMT
+        Subject: C=CN, O=yijian, CN=www.yijian.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:dd:7e:e7:a5:80:23:25:3e:7f:d6:5a:52:6c:2e:
+                    94:38:6d:e1:ce:07:09:56:ad:03:d1:80:20:3f:a9:
+                    25:6a:8c:96:fe:33:c3:90:4e:ff:28:cb:a8:20:66:
+                    53:52:46:95:d7:ef:46:ab:32:2a:e8:30:b5:78:65:
+                    14:77:1a:54:eb:b5:13:55:33:8c:76:b4:3b:9d:6c:
+                    a3:92:72:21:37:31:07:1f:bb:2c:6a:ef:d6:8b:e0:
+                    b5:25:3b:d2:18:76:3e:ee:9c:5a:6d:e3:b7:8a:6b:
+                    5e:48:9f:5e:0b:c6:00:fa:c2:f9:a6:b4:e8:3c:0c:
+                    dd:08:e6:97:08:94:9e:a8:fa:79:37:59:04:72:9d:
+                    cb:9c:cd:d5:c6:5d:b6:9d:d4:10:c5:ef:3b:a1:af:
+                    7a:f5:a1:21:cb:02:7c:4b:c0:61:1d:72:74:9d:4d:
+                    8d:a4:bf:99:c9:2b:20:8c:12:b2:64:c1:d6:39:75:
+                    e7:6a:ca:9a:e9:45:b1:62:0d:fc:9e:54:91:b4:dd:
+                    8b:b3:86:d1:e0:cc:d7:77:2d:1b:2c:50:ee:45:2d:
+                    e6:32:4d:a7:3b:f9:49:a2:4c:16:0f:5d:d3:ba:3f:
+                    1d:9b:2a:c8:d8:ea:f5:4b:69:6d:29:f9:d8:0b:21:
+                    6e:3c:c0:50:d1:a0:1d:34:ec:70:8b:62:05:69:73:
+                    cf:e3
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            Authority Information Access: 
+                CA Issuers - URI:http://sub-ca.yijian.com/sub-ca.crt
+                OCSP - URI:http://ocsp.sub-ca.yijian.com:9081
+
+            X509v3 Authority Key Identifier: 
+                keyid:F3:89:F0:50:CD:77:62:18:26:07:8D:41:C1:D5:D2:23:39:DB:1B:00
+
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 CRL Distribution Points: 
+
+                Full Name:
+                  URI:http://sub-ca.yijian.com/sub-ca.crl
+
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication, TLS Web Server Authentication
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Subject Key Identifier: 
+                78:BE:FB:12:AC:97:E9:EE:35:27:D4:95:BA:47:C1:EE:CD:9C:D9:E1
+            X509v3 Subject Alternative Name: 
+                DNS:www.yijian.com
+    Signature Algorithm: sha256WithRSAEncryption
+         9d:31:93:db:e1:9f:c5:8a:00:c3:49:94:f4:87:48:c8:3b:54:
+         42:e5:f0:c0:ab:f6:2c:72:02:f1:ab:ca:c0:f6:71:90:34:33:
+         fc:68:f1:6d:ba:fb:70:89:e4:34:5d:83:e6:9c:6c:5c:b4:7f:
+         8d:1b:05:ae:71:36:fb:75:dd:ea:9b:5a:e7:c0:1e:bc:78:9c:
+         6e:61:14:b8:c9:a4:0e:a4:39:a6:95:4e:86:e0:9e:67:1c:fe:
+         47:cb:93:aa:d6:c4:3d:9e:4c:78:3c:2d:10:92:af:72:b8:f0:
+         c8:d1:09:a0:31:d3:b7:3c:08:dd:a1:48:00:ac:b5:d2:03:cb:
+         85:b4:fc:de:01:d5:b6:1e:90:73:89:ce:e0:24:11:16:56:fe:
+         22:5d:07:b1:59:3b:80:55:de:48:76:3c:9c:cd:da:e2:9a:6c:
+         f0:1b:9e:9e:91:4b:f3:38:62:34:6c:0b:4d:fc:99:f8:97:25:
+         95:02:f8:09:de:6f:2b:9e:4f:b1:ad:ca:95:51:3f:6b:28:d3:
+         6b:cf:df:72:d3:43:4f:75:0c:63:51:ac:ea:88:48:d1:0f:cd:
+         c9:bd:c4:3a:cd:a2:0b:bf:7a:e8:82:d9:56:05:46:75:16:82:
+         c6:3a:2a:79:c3:2e:27:1a:c4:af:9f:6a:77:33:11:51:61:56:
+         cb:9d:39:3a:0c:3f:cb:8f:17:34:0e:5b:41:e8:e2:a5:98:f5:
+         13:1a:ed:2c:d4:16:a3:ff:f2:45:1d:ee:5f:7b:1d:54:fd:1e:
+         e4:28:4f:e9:eb:fa:37:0e:0f:b6:91:e3:fe:4c:b4:80:fb:58:
+         c1:1a:3d:43:ab:0f:a7:5e:21:33:53:2e:4f:08:23:53:cc:f7:
+         7c:68:09:70:92:a1:e8:3c:a4:e9:84:8a:b3:ff:99:ff:5a:1e:
+         20:35:70:ab:fa:c3:05:45:3b:db:1f:28:91:2a:ec:c4:e8:1a:
+         44:50:8b:a9:a1:86:e5:f3:53:6b:2f:b1:1f:6a:4a:31:26:2c:
+         a0:02:ac:e1:2f:c1:66:d7:06:dc:d2:9b:09:15:20:39:0c:a3:
+         b2:76:7d:74:1f:9d:78:2c:33:53:d3:39:f0:77:2d:fe:78:c3:
+         c2:d9:8f:e7:de:49:98:e4:0f:f1:20:33:51:fc:f0:8f:d4:ec:
+         d4:11:1f:e8:c4:1c:3f:40:fc:05:68:9e:55:fc:e5:15:f7:d2:
+         87:4a:ea:79:05:d6:48:15:b4:44:0c:ba:d1:07:2c:13:b5:07:
+         b3:25:4a:af:25:fb:32:92:f6:d9:55:ab:7d:4e:2a:40:b7:d6:
+         0c:f0:52:0f:f9:d0:cc:a3:94:5c:29:86:c4:ab:b8:0f:c6:0e:
+         30:50:ef:8a:20:d7:3a:07
+-----BEGIN CERTIFICATE-----
+MIIFNjCCAx6gAwIBAgIRAOuD6h9bvjseS3qMa80qTzIwDQYJKoZIhvcNAQELBQAw
+LzELMAkGA1UEBhMCQ04xDzANBgNVBAoMBnlpamlhbjEPMA0GA1UEAwwGU3ViIENB
+MB4XDTE3MDExNjA0MzIxNloXDTE4MDExNjA0MzIxNlowNzELMAkGA1UEBhMCQ04x
+DzANBgNVBAoMBnlpamlhbjEXMBUGA1UEAwwOd3d3Lnlpamlhbi5jb20wggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDdfuelgCMlPn/WWlJsLpQ4beHOBwlW
+rQPRgCA/qSVqjJb+M8OQTv8oy6ggZlNSRpXX70arMiroMLV4ZRR3GlTrtRNVM4x2
+tDudbKOSciE3MQcfuyxq79aL4LUlO9IYdj7unFpt47eKa15In14LxgD6wvmmtOg8
+DN0I5pcIlJ6o+nk3WQRyncuczdXGXbad1BDF7zuhr3r1oSHLAnxLwGEdcnSdTY2k
+v5nJKyCMErJkwdY5dedqyprpRbFiDfyeVJG03YuzhtHgzNd3LRssUO5FLeYyTac7
++UmiTBYPXdO6Px2bKsjY6vVLaW0p+dgLIW48wFDRoB007HCLYgVpc8/jAgMBAAGj
+ggFDMIIBPzBvBggrBgEFBQcBAQRjMGEwLwYIKwYBBQUHMAKGI2h0dHA6Ly9zdWIt
+Y2EueWlqaWFuLmNvbS9zdWItY2EuY3J0MC4GCCsGAQUFBzABhiJodHRwOi8vb2Nz
+cC5zdWItY2EueWlqaWFuLmNvbTo5MDgxMB8GA1UdIwQYMBaAFPOJ8FDNd2IYJgeN
+QcHV0iM52xsAMAwGA1UdEwEB/wQCMAAwNAYDVR0fBC0wKzApoCegJYYjaHR0cDov
+L3N1Yi1jYS55aWppYW4uY29tL3N1Yi1jYS5jcmwwHQYDVR0lBBYwFAYIKwYBBQUH
+AwIGCCsGAQUFBwMBMA4GA1UdDwEB/wQEAwIFoDAdBgNVHQ4EFgQUeL77EqyX6e41
+J9SVukfB7s2c2eEwGQYDVR0RBBIwEIIOd3d3Lnlpamlhbi5jb20wDQYJKoZIhvcN
+AQELBQADggIBAJ0xk9vhn8WKAMNJlPSHSMg7VELl8MCr9ixyAvGrysD2cZA0M/xo
+8W26+3CJ5DRdg+acbFy0f40bBa5xNvt13eqbWufAHrx4nG5hFLjJpA6kOaaVTobg
+nmcc/kfLk6rWxD2eTHg8LRCSr3K48MjRCaAx07c8CN2hSACstdIDy4W0/N4B1bYe
+kHOJzuAkERZW/iJdB7FZO4BV3kh2PJzN2uKabPAbnp6RS/M4YjRsC038mfiXJZUC
++AnebyueT7GtypVRP2so02vP33LTQ091DGNRrOqISNEPzcm9xDrNogu/euiC2VYF
+RnUWgsY6KnnDLicaxK+fanczEVFhVsudOToMP8uPFzQOW0Ho4qWY9RMa7SzUFqP/
+8kUd7l97HVT9HuQoT+nr+jcOD7aR4/5MtID7WMEaPUOrD6deITNTLk8II1PM93xo
+CXCSoeg8pOmEirP/mf9aHiA1cKv6wwVFO9sfKJEq7MToGkRQi6mhhuXzU2svsR9q
+SjEmLKACrOEvwWbXBtzSmwkVIDkMo7J2fXQfnXgsM1PTOfB3Lf54w8LZj+feSZjk
+D/EgM1H88I/U7NQRH+jEHD9A/AVonlX85RX30odK6nkF1kgVtEQMutEHLBO1B7Ml
+Sq8l+zKS9tlVq31OKkC31gzwUg/50MyjlFwphsSruA/GDjBQ74og1zoH
+-----END CERTIFICATE-----
